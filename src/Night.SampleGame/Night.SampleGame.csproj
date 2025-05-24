@@ -12,4 +12,18 @@
     <ProjectReference Include="..\Night.Engine\Night.Engine.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Copy NightPlatform.dll to output directory -->
+    <Content Include="..\Night.Platform\libs\win-x64\NightPlatform.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <!-- Copy SDL3 and its dependencies from SDL3-Prebuilt to output directory -->
+    <Content Include="..\..\lib\SDL3-Prebuilt\win64\*.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <!-- Add similar items for other platforms (linux-x64, osx) if/when supported -->
+  </ItemGroup>
+
 </Project>
