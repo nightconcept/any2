@@ -1,4 +1,4 @@
-name: Build SDL3
+name: Build Night.Platform + SDL3
 
 on:
   workflow_dispatch:
@@ -46,7 +46,7 @@ jobs:
             libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev
       - name: CMake Configure
-        run: cmake -B build -S Platform -DFOSTER_OVERRIDE_TARGET=${{matrix.target}} -D CMAKE_SYSTEM_VERSION=10.0.26100.0
+        run: cmake -B build -S Platform -DNIGHT_OVERRIDE_TARGET=${{matrix.target}} -D CMAKE_SYSTEM_VERSION=10.0.26100.0
       - name: CMake Build
         run: cmake --build build --config Release
       - name: Publish Artifact

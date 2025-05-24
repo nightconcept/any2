@@ -1,4 +1,4 @@
-#include "foster_platform.h"
+#include "night_platform.h"
 
 #define STBI_NO_STDIO
 #define STB_IMAGE_IMPLEMENTATION
@@ -18,16 +18,16 @@
 #define QOI_FREE(p) STBI_FREE(p) 
 #include "third_party/qoi.h"
 
-FosterBool FosterImage_TestQOI(const unsigned char* data, int length);
-unsigned char* FosterImage_LoadQOI(const unsigned char* data, int length, int* w, int * h);
-FosterBool FosterImage_WriteQOI(FosterWriteFn* func, void* context, int w, int h, const void* data);
+NightBool NightImage_TestQOI(const unsigned char* data, int length);
+unsigned char* NightImage_LoadQOI(const unsigned char* data, int length, int* w, int * h);
+NightBool NightImage_WriteQOI(NightWriteFn* func, void* context, int w, int h, const void* data);
 
-unsigned char* FosterImageLoad(const unsigned char* data, int length, int* w, int* h)
+unsigned char* NightImageLoad(const unsigned char* data, int length, int* w, int* h)
 {
 	// Test for QOI image first
-	if (FosterImage_TestQOI(data, length))
+	if (NightImage_TestQOI(data, length))
 	{
-		return FosterImage_LoadQOI(data, length, w, h);
+		return NightImage_LoadQOI(data, length, w, h);
 	}
 	// fallback to normal stb image loading (png, bmp, etc)
 	else
@@ -37,25 +37,25 @@ unsigned char* FosterImageLoad(const unsigned char* data, int length, int* w, in
 	}
 }
 
-void FosterImageFree(unsigned char* data)
+void NightImageFree(unsigned char* data)
 {
 	stbi_image_free(data);
 }
 
-FosterBool FosterImageWrite(FosterWriteFn* func, void* context, FosterImageWriteFormat format, int w, int h, const void* data)
+NightBool NightImageWrite(NightWriteFn* func, void* context, NightImageWriteFormat format, int w, int h, const void* data)
 {
-	// note: 'FosterWriteFn' and 'stbi_write_func' must be the same
+	// note: 'NightWriteFn' and 'stbi_write_func' must be the same
 	switch (format)
 	{
-	case FOSTER_IMAGE_WRITE_FORMAT_PNG:
+	case NIGHT_IMAGE_WRITE_FORMAT_PNG:
 		return stbi_write_png_to_func((stbi_write_func*)func, context, w, h, 4, data, w * 4) != 0;
-	case FOSTER_IMAGE_WRITE_FORMAT_QOI:
-		return FosterImage_WriteQOI(func, context, w, h, data);
+	case NIGHT_IMAGE_WRITE_FORMAT_QOI:
+		return NightImage_WriteQOI(func, context, w, h, data);
 	}
 	return 0;
 }
 
-FosterFont* FosterFontInit(unsigned char* data, int length)
+NightFont* NightFontInit(unsigned char* data, int length)
 {
 	if (stbtt_GetNumberOfFonts(data) <= 0)
 		return NULL;
@@ -69,34 +69,34 @@ FosterFont* FosterFontInit(unsigned char* data, int length)
 		return NULL;
 	}
 
-	return (FosterFont*)info;
+	return (NightFont*)info;
 }
 
-void FosterFontGetMetrics(FosterFont* font, int* ascent, int* descent, int* linegap)
+void NightFontGetMetrics(NightFont* font, int* ascent, int* descent, int* linegap)
 {
 	stbtt_fontinfo* info = (stbtt_fontinfo*)font;
 	stbtt_GetFontVMetrics(info, ascent, descent, linegap);
 }
 
-int FosterFontGetGlyphIndex(FosterFont* font, int codepoint)
+int NightFontGetGlyphIndex(NightFont* font, int codepoint)
 {
 	stbtt_fontinfo* info = (stbtt_fontinfo*)font;
 	return stbtt_FindGlyphIndex(info, codepoint);
 }
 
-float FosterFontGetScale(FosterFont* font, float size)
+float NightFontGetScale(NightFont* font, float size)
 {
 	stbtt_fontinfo* info = (stbtt_fontinfo*)font;
 	return stbtt_ScaleForMappingEmToPixels(info, size);
 }
 
-float FosterFontGetKerning(FosterFont* font, int glyph1, int glyph2, float scale)
+float NightFontGetKerning(NightFont* font, int glyph1, int glyph2, float scale)
 {
 	stbtt_fontinfo* info = (stbtt_fontinfo*)font;
 	return stbtt_GetGlyphKernAdvance(info, glyph1, glyph2) * scale;
 }
 
-void FosterFontGetCharacter(FosterFont* font, int glyph, float scale, int* width, int* height, float* advance, float* offsetX, float* offsetY, int* visible)
+void NightFontGetCharacter(NightFont* font, int glyph, float scale, int* width, int* height, float* advance, float* offsetX, float* offsetY, int* visible)
 {
 	stbtt_fontinfo* info = (stbtt_fontinfo*)font;
 
@@ -113,7 +113,7 @@ void FosterFontGetCharacter(FosterFont* font, int glyph, float scale, int* width
 	*visible = *width > 0 && *height > 0 && stbtt_IsGlyphEmpty(info, glyph) == 0;
 }
 
-void FosterFontGetPixels(FosterFont* font, unsigned char* dest, int glyph, int width, int height, float scale)
+void NightFontGetPixels(NightFont* font, unsigned char* dest, int glyph, int width, int height, float scale)
 {
 	stbtt_fontinfo* info = (stbtt_fontinfo*)font;
 
@@ -131,7 +131,7 @@ void FosterFontGetPixels(FosterFont* font, unsigned char* dest, int glyph, int w
 	}
 }
 
-void FosterFontFree(FosterFont* font)
+void NightFontFree(NightFont* font)
 {
 	stbtt_fontinfo* info = (stbtt_fontinfo*)font;
 	void* userdata;
@@ -140,7 +140,7 @@ void FosterFontFree(FosterFont* font)
 
 // Internal Methods:
 
-FosterBool FosterImage_TestQOI(const unsigned char* data, int length)
+NightBool NightImage_TestQOI(const unsigned char* data, int length)
 {
 	if (length < QOI_HEADER_SIZE)
 		return 0;
@@ -153,7 +153,7 @@ FosterBool FosterImage_TestQOI(const unsigned char* data, int length)
 	return 1;
 }
 
-unsigned char* FosterImage_LoadQOI(const unsigned char* data, int length, int* w, int * h)
+unsigned char* NightImage_LoadQOI(const unsigned char* data, int length, int* w, int * h)
 {
 	qoi_desc desc;
 	void* result = qoi_decode(data, length, &desc, 4);
@@ -172,7 +172,7 @@ unsigned char* FosterImage_LoadQOI(const unsigned char* data, int length, int* w
 	}
 }
 
-FosterBool FosterImage_WriteQOI(FosterWriteFn* func, void* context, int w, int h, const void* data)
+NightBool NightImage_WriteQOI(NightWriteFn* func, void* context, int w, int h, const void* data)
 {
 	qoi_desc desc = { w, h, 4, 1 };
 	int length;
