@@ -53,3 +53,12 @@
         - [x] Remove any direct P/Invoke declarations for SDL3 functions from `src/Night.SampleGame/Program.cs` or other files if they were using `Night.Platform.dll` or `SDL3.dll` directly for these.
         - [x] Update `src/Night.SampleGame/Program.cs` to call the SDL3 functions exposed by `Night.Engine` (which now use `SDL3-CS`).
     - **Verification:** `Night.Engine` and `Night.SampleGame` build successfully. `Night.SampleGame` can initialize and quit SDL, and retrieve version information using the `SDL3-CS` bindings via `Night.Engine`. No direct P/Invokes to `SDL3.dll` (for functions now covered by `Night.Engine`) remain in `Night.SampleGame`.
+
+- **Task 1.6:** Remove `Night.Platform` (Status: In-Progress)
+    - **Description:** Remove the `src/Night.Platform` directory and all references to it, as its functionality (primarily SDL3 building and basic interop) is now superseded by `lib/SDL3-CS` and pre-built SDL3 binaries.
+    - **Sub-tasks:**
+        - [ ] Delete the `src/Night.Platform` directory.
+        - [ ] Update or remove ` .github/workflows/build-libs.yml` to eliminate `Night.Platform` build steps.
+        - [ ] Remove any references to `Night.Platform` or its output libraries (e.g., `NightPlatform.dll`, `libNightPlatform.so`) from `.csproj` files, `Night.sln`, or other build/configuration files.
+        - [ ] Verify that `Night.Engine` and `Night.SampleGame` still build and run correctly using `lib/SDL3-CS` for all SDL3 interactions.
+    - **Verification:** The `src/Night.Platform` directory is gone. The project builds and runs without errors. The GitHub Actions workflow, if modified, completes successfully without trying to build `Night.Platform`.

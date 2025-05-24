@@ -114,13 +114,6 @@
 │       └── /assets                 # Game assets (images, sounds for prototype)
 │           └── /images
 │               └── player.png
-│   └── /Night.Platform             # C# Project for the the SDL3 platform
-│       ├── Night.SampleGame.csproj
-│       ├── Game.cs                 # WIP
-│       ├── Program.cs              # WIP
-│       └── /assets                 # WIP
-│           └── /images
-│               └── player.png
 ├── .gitignore
 ├── Night.sln                   # Visual Studio Solution File
 └── README.md
