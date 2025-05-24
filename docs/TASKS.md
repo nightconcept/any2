@@ -22,6 +22,12 @@
     - [x] Update [`Platform/README.md`](Platform/README.md:0) to reflect the new naming.
     - [x] Update [` .github/workflows/build-sdl3.yml`](.github/workflows/build-sdl3.yml:0) to use `NIGHT_OVERRIDE_TARGET` and reflect any other necessary changes due to renaming.
     - **Verification:** The `Platform` project builds successfully with the new names. The GitHub Actions workflow runs successfully, producing artifacts like `Night.Platform.dll`.
+- [ ] **Task 1.2.2:** Integrate `flibitijibibo-sdl3-cs` Bindings (Status: In-Progress, Partially Blocked)
+    - User approved `flibitijibibo-sdl3-cs` (https://github.com/flibitijibibo/SDL3-CS/) on 2025-05-24.
+    - [x] Add `flibitijibibo-sdl3-cs` as a git submodule to `/Night.Engine/SDL3`. (Submodule files appear to be cloned; .gitmodules updated).
+    - [ ] Record the specific submodule commit hash used. (Action: Pending - git commands interrupted; may require manual check or retry after environment stabilization).
+    - [ ] Integrate `SDL3.Core.cs` (and its `LICENSE` file) from the submodule into the `Night.Engine.csproj` for compilation. (Action: Blocked by Task 1.3 - `Night.Engine.csproj` does not exist yet).
+    - **Verification:** `Night.Engine` compiles successfully. The `SDL3.Core.cs` file is included in the `Night.Engine` project and compiled. The git submodule is correctly added and initialized. (Verification: Partially pending due to blocked/pending actions).
 
 - [ ] **Task 1.3:** Set up C# Projects (`Night.Engine` & `Night.SampleGame`)
     - [ ] Create `Night.Engine.csproj` as a .NET 9 C# class library.
@@ -37,8 +43,9 @@
     - [ ] In `Night.Engine`, add a P/Invoke declaration for a simple SDL3 function (e.g., `SDL_Init`, `SDL_Quit`, `SDL_GetVersion`).
     - [ ] Call this P/Invoke function from a test method within `Night.Engine` or from `Night.SampleGame`'s `Program.cs`.
     - **Verification:** The P/Invoke call executes without errors (e.g., `DllNotFoundException`), and if applicable, returns expected data (like SDL version). SDL can be initialized and quit.
-- [ ] **Task:** Setup Coding Standards Enforcement
+- [ ] **Task:** Setup Coding Standards Enforcement (Status: In-Progress)
     
-    - [ ] Create and configure `.editorconfig` at the project root to align with the Google C# Style Guide (indentation, column limit, etc.).
-    - [ ] Ensure Roslyn Analyzers are active and configured via `.editorconfig` for style and quality checks.
-    - **Verification:** Code formatting tools (`dotnet format`) apply styles consistent with `.editorconfig`. IDE shows warnings/errors based on analyzer settings.
+    - [x] Create and configure `.editorconfig` at the project root to align with the Google C# Style Guide (indentation, column limit, `using` directive order, placeholder for Roslyn Analyzers).
+    - [x] Updated `.pre-commit-config.yaml` for C# project with `dotnet format` and other standard hooks.
+    - [ ] Ensure Roslyn Analyzers are active and *fully* configured via `.editorconfig` for style and quality checks (placeholder added, full configuration pending).
+    - **Verification:** Code formatting tools (`dotnet format`) apply styles consistent with `.editorconfig`. IDE shows warnings/errors based on analyzer settings. `.pre-commit` hooks run successfully.

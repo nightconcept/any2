@@ -1,0 +1,3 @@
+[submodule "Night.Engine/SDL3"]
+	path = Night.Engine/SDL3
+	url = https://github.com/flibitijibibo/SDL3-CS

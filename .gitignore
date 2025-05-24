@@ -55,16 +55,8 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-# Devenv (keeping existing)
-.devenv*
-devenv.local.nix
-
-# direnv (keeping existing)
-.direnv
-
-# pre-commit (keeping existing)
-.pre-commit-config.yaml
-
 # Secrets
 secrets.json
 appsettings.Development.json
+
+.venv

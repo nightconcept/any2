@@ -11,6 +11,14 @@ trim_trailing_whitespace = true
 [*.{cs}]
 indent_style = space
 indent_size = 2
+csharp_max_line_length = 100
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = true
+csharp_preferred_using_directive_placement = outside_namespace:suggestion
+
+# Roslyn analyzer rules (example, more can be added based on Google C# Style Guide)
+# dotnet_diagnostic.IDE0001.severity = warning # Name can be simplified
+# dotnet_diagnostic.IDE0055.severity = error # Format document
 
 # use 2-spaces for csproj
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,nativeproj,locproj}]

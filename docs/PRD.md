@@ -74,7 +74,9 @@
 
 - **Primary Language(s):** C# 13 (using .NET 9).
 - **Key Frameworks/Libraries:**
-    - SDL3 (latest version, fetched as per Feature 0). No other external runtime libraries are planned for the core "Night" wrapper in this prototype phase.
+    - SDL3 (latest version, fetched as per Feature 0).
+    - `flibitijibibo-sdl3-cs` (https://github.com/flibitijibibo/SDL3-CS/): Approved C# bindings for SDL3 (User approved 2025-05-24). To be integrated as a git submodule.
+    - No other external runtime libraries are planned for the core "Night" wrapper in this prototype phase.
 - **Database (if any):** None for this prototype.
 - **Key APIs/Integrations (if any):**
     - Direct P/Invoke integration with the SDL3 native library.
@@ -104,7 +106,10 @@
 │   ├── Night.Engine.csproj
 │   ├── NightAPI.cs             # Main static classes (Night.Window, Night.Graphics, Night.Input, etc.)
 │   ├── Engine.cs               # Manages the game loop (Night.Engine.Run)
-│   ├── NativeMethods.cs        # Internal P/Invoke declarations for SDL3
+│   ├── NativeMethods.cs        # (Placeholder, to be superseded or directory for SDL3-CS bindings)
+│   ├── /SDL3/                  # Git submodule for flibitijibibo-sdl3-cs
+│   │   └── SDL3.Core.cs        # (From submodule) C# bindings for SDL3
+│   │   └── LICENSE             # (From submodule) License for SDL3-CS
 │   ├── DataStructures.cs       # (e.g., Sprite, Color, KeyCode enums, WindowFlags)
 │   └── /runtimes
 │       ├── sdl3_version.txt    # Records the version of the fetched SDL3 binaries
@@ -131,7 +136,7 @@
 - `/Night.Engine`: This is the C# class library project for the "Night" engine itself.
     - `NightAPI.cs`: Could hold the primary public static classes that mimic Love2D's modules (e.g., `Night.Window`, `Night.Graphics`, `Night.Keyboard`, `Night.Mouse`).
     - `Engine.cs`: Contains the core game loop logic that will call the user's `Load()`, `Update()`, `Draw()` methods.
-    - `NativeMethods.cs`: An internal class dedicated to the P/Invoke declarations for all necessary SDL3 functions.
+    - `NativeMethods.cs` / `/SDL3/`: The C# P/Invoke declarations for SDL3 will be sourced from the `flibitijibibo-sdl3-cs` bindings, located in the `/Night.Engine/SDL3/` subdirectory. The `SDL3.Core.cs` file from this library will provide the actual interop calls.
     - `DataStructures.cs`: Could define various enums (`KeyCode`, `MouseButton`), structs (`Color`, `Rectangle`), or classes (`Sprite`) used by the engine's API.
     - `/runtimes`: This directory and its subdirectories are structured for .NET's native dependency handling.
         - `sdl3_version.txt`: A text file indicating the version of the SDL3 binaries (e.g., a Git tag or commit hash from the SDL repository) currently present in the subdirectories.
