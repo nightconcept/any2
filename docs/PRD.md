@@ -10,7 +10,7 @@
 ## 2. Core Features / User Stories
 
 - **Feature 0: Project Foundation & SDL3 Integration Setup**
-    
+
     - **Description:** Establishes the C# project structure for the "Night" engine, a build process, and a mechanism to automatically fetch/integrate the latest SDL3 library (e.g., from its GitHub repository). This feature underpins the development of all other engine features by ensuring a working development and build environment for "Night" itself.
     - **User Action(s) (from the engine developer's perspective):**
         - Initialize the C# solution and project(s) for the "Night" engine.
@@ -22,7 +22,7 @@
         - The SDL3 library is reliably fetched and correctly linked by the C# project.
         - The engine developer has a clear process for building the "Night" engine with its SDL3 dependency.
 - **Feature 1: Window Management (Love2D Style)**
-    
+
     - **Description:** Provides capabilities to create, configure, and manage the application window, using the `Night` namespace and aiming for an API style similar to Love2D's `love.window` module.
     - **User Action(s) (from a C# developer's perspective using the wrapper):**
         - Call `Night.Window.SetMode(int width, int height, WindowFlags flags)`
@@ -33,7 +33,7 @@
         - The window title can be dynamically changed.
         - The application can control its main loop based on the window's state.
 - **Feature 2: Input Handling (Love2D Style)**
-    
+
     - **Description:** Allows the C# application to poll keyboard and mouse states, or receive input events, using the `Night` namespace and mirroring Love2D's `love.keyboard` and `love.mouse` modules.
     - **User Action(s) (C# developer):**
         - Call `bool Night.Keyboard.IsDown(KeyCode key)`
@@ -44,7 +44,7 @@
         - The C# application can determine the real-time state of keys/mouse buttons or react to input events.
         - The C# application can get the current mouse position.
 - **Feature 3: 2D Sprite Rendering (Love2D Style)**
-    
+
     - **Description:** Enables loading images and drawing them as sprites, using the `Night` namespace, akin to Love2D's `love.graphics.newImage()` and `love.graphics.draw()`.
     - **User Action(s) (C# developer):**
         - Call `Sprite Night.Graphics.NewImage(string filePath)`
@@ -56,7 +56,7 @@
         - Sprites are rendered with transformations.
         - The screen is cleared and new frames are presented as part of the game loop.
 - **Feature 4: Love2D-Style Game Loop Structure**
-    
+
     - **Description:** Provides a pre-defined game loop managed by the `Night` engine. The C# developer implements specific callback functions (e.g., `Load`, `Update`, `Draw`, `KeyPressed`) that the engine calls at appropriate times.
     - **User Action(s) (C# developer structures their code this way):**
         - Implement methods within their game class that `Night` will call:
@@ -96,51 +96,43 @@
 ## 4. Project Structure
 
 ```plaintext
-/ (project-root, e.g., your Git repository root)
+/ any2 (to be renamed to night-engine later)
 ├── /docs
 │   ├── PRD.md
 │   └── TASKS.md
-├── /scripts
-│   └── download_sdl3.py           # Python script to download/update SDL3 native binaries
-├── /Night.Engine               # Night C# Class Library Project
-│   ├── Night.Engine.csproj
-│   ├── NightAPI.cs             # Main static classes (Night.Window, Night.Graphics, Night.Input, etc.)
-│   ├── Engine.cs               # Manages the game loop (Night.Engine.Run)
-│   ├── NativeMethods.cs        # (Placeholder, to be superseded or directory for SDL3-CS bindings)
-│   ├── /SDL3/                  # Git submodule for flibitijibibo-sdl3-cs
-│   │   └── SDL3.Core.cs        # (From submodule) C# bindings for SDL3
-│   │   └── LICENSE             # (From submodule) License for SDL3-CS
-│   ├── DataStructures.cs       # (e.g., Sprite, Color, KeyCode enums, WindowFlags)
-│   └── /runtimes
-│       ├── sdl3_version.txt    # Records the version of the fetched SDL3 binaries
-│       ├── /win-x64/
-│       │   └── SDL3.dll
-│       ├── /linux-x64/
-│       │   └── libSDL3.so
-│       └── /osx-x64/
-│           └── libSDL3.dylib
-├── /Night.SampleGame           # C# Project for the sample platformer game
-│   ├── Night.SampleGame.csproj
-│   ├── Game.cs                 # Implements Night.Load, Night.Update, Night.Draw etc.
-│   ├── Program.cs              # Main entry point, calls Night.Engine.Run()
-│   └── /assets                 # Game assets (images, sounds for prototype)
-│       └── /images
-│           └── player.png
+├── /src
+│   ├── /Night.Engine               # Night C# Class Library Project
+│   │   ├── Night.Engine.csproj
+│   │   ├── API.cs                  # Main static classes (Night.Window, Night.Graphics, Night.Input, etc.)
+│   │   ├── Engine.cs               # Manages the game loop (Night.Engine.Run)
+│   │   ├── NativeMethods.cs        # (Placeholder, to be superseded or directory for SDL3-CS bindings)
+│   │   ├── DataStructures.cs       # (e.g., Sprite, Color, KeyCode enums, WindowFlags)
+│   └── /Night.SampleGame           # C# Project for the sample platformer game
+│       ├── Night.SampleGame.csproj
+│       ├── Game.cs                 # Implements Night.Load, Night.Update, Night.Draw etc.
+│       ├── Program.cs              # Main entry point, calls Night.Engine.Run()
+│       └── /assets                 # Game assets (images, sounds for prototype)
+│           └── /images
+│               └── player.png
+│   └── /Night.Platform             # C# Project for the the SDL3 platform
+│       ├── Night.SampleGame.csproj
+│       ├── Game.cs                 # WIP
+│       ├── Program.cs              # WIP
+│       └── /assets                 # WIP
+│           └── /images
+│               └── player.png
 ├── .gitignore
 ├── Night.sln                   # Visual Studio Solution File
 └── README.md
 ```
 - `/docs`: Contains all project documentation, including this PRD (`PRD.md`) and the upcoming task list (`TASKS.md`).
-- `/scripts`: Houses utility scripts.
-    - `Workspace_sdl3.py`: A Python script responsible for acquiring the SDL3 native libraries and placing them into the `/Night.Engine/runtimes` directory, and updating `sdl3_version.txt`.
-- `/Night.Engine`: This is the C# class library project for the "Night" engine itself.
-    - `NightAPI.cs`: Could hold the primary public static classes that mimic Love2D's modules (e.g., `Night.Window`, `Night.Graphics`, `Night.Keyboard`, `Night.Mouse`).
+- `/lib`: Contains all project libraries to be used.
+- `/src/Night.Engine`: This is the C# class library project for the "Night" engine itself.
+    - `API.cs`: Could hold the primary public static classes that mimic Love2D's modules (e.g., `Night.Window`, `Night.Graphics`, `Night.Keyboard`, `Night.Mouse`).
     - `Engine.cs`: Contains the core game loop logic that will call the user's `Load()`, `Update()`, `Draw()` methods.
     - `NativeMethods.cs` / `/SDL3/`: The C# P/Invoke declarations for SDL3 will be sourced from the `flibitijibibo-sdl3-cs` bindings, located in the `/Night.Engine/SDL3/` subdirectory. The `SDL3.Core.cs` file from this library will provide the actual interop calls.
     - `DataStructures.cs`: Could define various enums (`KeyCode`, `MouseButton`), structs (`Color`, `Rectangle`), or classes (`Sprite`) used by the engine's API.
-    - `/runtimes`: This directory and its subdirectories are structured for .NET's native dependency handling.
-        - `sdl3_version.txt`: A text file indicating the version of the SDL3 binaries (e.g., a Git tag or commit hash from the SDL repository) currently present in the subdirectories.
-- `/Night.SampleGame`: This is a separate C# project (e.g., a console application) that demonstrates how to use the "Night" engine. It would reference the `Night.Engine` project.
+- `/src/Night.SampleGame`: This is a separate C# project (e.g., a console application) that demonstrates how to use the "Night" engine. It would reference the `Night.Engine` project.
     - `Game.cs`: The main class for the sample game, where you'd implement the `Load()`, `Update()`, `Draw()` and input callback methods.
     - `Program.cs`: The entry point for the sample game application.
     - `/assets`: Contains assets like images or sound files needed for the sample game.

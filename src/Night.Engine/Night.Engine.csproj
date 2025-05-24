@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>13.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Include FosterPlatform.dll and SDL3.dll from src/Night.Platform/libs/win-x64 -->
+    <Content Include="..\Night.Platform\libs\win-x64\NightPlatform.dll">
+      <Link>runtimes\win-x64\native\NightPlatform.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Night.Platform\libs\win-x64\SDL3.dll">
+      <Link>runtimes\win-x64\native\SDL3.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <!-- Add similar items for other platforms (linux-x64, osx) as needed, pointing to the correct subdirectories in Night.Platform/libs -->
+    <!-- Example for osx:
+    <Content Include="..\Night.Platform\libs\osx\libFosterPlatform.dylib">
+      <Link>runtimes\osx\native\libFosterPlatform.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Night.Platform\libs\osx\libSDL3.dylib">
+      <Link>runtimes\osx\native\libSDL3.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    -->
+    <!-- Example for linux-x64:
+    <Content Include="..\Night.Platform\libs\linux-x64\libFosterPlatform.so">
+      <Link>runtimes\linux-x64\native\libFosterPlatform.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Night.Platform\libs\linux-x64\libSDL3.so">
+      <Link>runtimes\linux-x64\native\libSDL3.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\SDL3-CS\SDL3\SDL3.Core.csproj" />
+  </ItemGroup>
+
+</Project>
