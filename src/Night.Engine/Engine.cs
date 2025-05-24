@@ -1,37 +1,42 @@
-namespace Night.Engine;
+using System; // For NotImplementedException
+using Night.Types; // For IGame
+using System.Runtime.InteropServices;
+using static SDL3.SDL; // SDL_GetVersion is in SDL3.SDL
 
-/// <summary>
-/// Manages the main game loop and coordination of game states.
-/// </summary>
-public static class GameEngine // Renamed from Engine to avoid conflict with potential Night.Engine namespace
+// Namespace for the public Engine API, consistent with Night.Window, Night.Graphics etc.
+namespace Night
 {
     /// <summary>
-    /// Runs the game instance.
+    /// Manages the main game loop and coordination of game states.
+    /// Provides the main entry point to run a game.
     /// </summary>
-    /// <typeparam name="TGame">The type of the game to run, implementing IGame.</typeparam>
-    public static void Run<TGame>() where TGame : IGame, new()
+    public static class Engine
     {
-        TGame game = new TGame();
-        // Placeholder for game loop logic (Load, Update, Draw)
-        // game.Load();
-        // while (Night.Window.IsOpen()) // Example condition
-        // {
-        //     game.Update(0.016); // Example delta time
-        //     game.Draw();
-        //     Night.Graphics.Present(); // Example presentation
-        // }
+        /// <summary>
+        /// Runs the game instance.
+        /// The game loop will internally call Load, Update, and Draw methods
+        /// on the provided game type.
+        /// </summary>
+        /// <typeparam name="TGame">The type of the game to run.
+        /// Must implement <see cref="Night.Types.IGame"/> and have a parameterless constructor.</typeparam>
+        public static void Run<TGame>() where TGame : IGame, new()
+        {
+            var sdlv = SDL_GetVersion();
+            Console.WriteLine($"Night Engine: v0.0.1"); // Placeholder version
+            Console.WriteLine($"SDL: v{sdlv / 1000000}.{(sdlv / 1000) % 1000}.{sdlv % 1000}");
+            Console.WriteLine($"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})");
+            Console.WriteLine($"Framework: {RuntimeInformation.FrameworkDescription}");
+            // Stub for Task 2.2: Actual game loop logic to be implemented later.
+            // This method will eventually:
+            // 1. Create an instance of TGame.
+            // 2. Call game.Load().
+            // 3. Enter a loop (e.g., while (Night.Window.IsOpen())).
+            //    a. Process events.
+            //    b. Call game.Update(deltaTime).
+            //    c. Call game.Draw().
+            //    d. Call Night.Graphics.Present().
+            // 4. Clean up when the loop exits.
+            throw new NotImplementedException("The Night.Engine.Run method is not yet implemented.");
+        }
     }
-}
-
-/// <summary>
-/// Interface for a game that can be run by the Night Engine.
-/// </summary>
-public interface IGame
-{
-    void Load();
-    void Update(double deltaTime);
-    void Draw();
-    // Optional input handlers can be added here later
-    // void KeyPressed(KeyCode key, bool isRepeat);
-    // void MousePressed(int x, int y, MouseButton button, int presses);
 }

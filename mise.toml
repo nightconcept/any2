@@ -1,5 +1,5 @@
 [tools]
-dotnet = "9"
+dotnet = "9.0"
 python = "3.13"
 "pipx:gitingest" = { version = "latest" }
 "pipx:pre-commit" = { version = "latest" }
@@ -7,10 +7,22 @@ python = "3.13"
 [settings]
 python.uv_venv_auto = true
 
+[tasks.build]
+description = "Build the solution."
+run = [
+  "dotnet build Night.sln"
+]
+
 [tasks.digest]
 description = "Run gitingest on current directory."
 run = [
   "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/* .",
   "sed -i'' -e :a -e '/^\\n*$/{$d;N;ba' -e '}' docs/digest.txt && echo >> docs/digest.txt",
   "sed -i'' '$ { /^$/ d; }' docs/digest.txt"
+]
+
+[tasks.game]
+description = "Run the sample game."
+run = [
+  "dotnet run --project src/Night.SampleGame/Night.SampleGame.csproj"
 ]

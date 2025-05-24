@@ -1,4 +1,4 @@
-using Night.Engine; // To access IGame
+using Night.Types;  // To access IGame
 
 namespace Night.SampleGame;
 

@@ -1,64 +1,28 @@
-**Epic 1: Project Setup & SDL3 Integration**
+**Epic 3: Window Management Implementation**
 
-**Goal:** Establish the development environment, project structure as defined in the PRD, and ensure SDL3 native libraries are correctly fetched, linked, and usable by the C# projects.
+**Goal:** Fully implement the `Night.Window` module's public API (as stubbed in Epic 2) for creating, configuring, and managing the application window, using the SDL3-CS bindings.
 
-- [x] **Task 1.0:** Align Project Structure with PRD Section 4 (Revised) (Status: Review)
-    - [x] Review current project structure against `docs/PRD.md` Section 4 diagram.
-    - [x] Move `Night.Engine/SDL3` submodule to `lib/SDL3-CS`.
-    - [x] Remove `Night.Engine/runtimes` directory.
-    - [x] Verify no `scripts` directory exists at root (remove if found and not in PRD).
-    - [x] Create `lib/TASKS.md`.
-    - **Verification:** Project structure matches `docs/PRD.md` Section 4 diagram. `.gitmodules` is updated.
-- [x] **Task 1.1:** Initialize Git Repository & Solution Structure
-    - [x] Initialize Git repository with a `.gitignore` file suitable for a .NET project.
-    - [x] Create the `Night.sln` solution file.
-    - [x] Create the main folder structure: `/docs`, `/scripts`, `/Night.Engine`, `/Night.SampleGame` as per PRD Section 4.
-    - [x] Add initial `PRD.md` and a placeholder `TASKS.md` to `/docs`.
-    - [x] Add a basic `README.md` to the project root.
-    - **Verification:** Repository is cloneable, solution opens in IDE, folder structure matches PRD.
+- [ ] **Task:** Implement `Night.Window.SetMode(int width, int height, WindowFlags flags)`
+    - [ ] Use SDL3-CS functions to create an SDL window (e.g., `SDL.SDL_CreateWindow()`).
+        - [ ] Ensure the window is created with the specified `width` and `height`.
+        - [ ] Map the `Night.WindowFlags` (e.g., for fullscreen, resizable, borderless) to the corresponding SDL window flags or subsequent SDL function calls (e.g., `SDL.SDL_SetWindowFullscreen()`, `SDL.SDL_SetWindowResizable()`).
+    - [ ] If a default renderer is conceptually tied to the window in your design (common for 2D), create an SDL renderer (e.g., `SDL.SDL_CreateRenderer()`) associated with the window.
+        - [ ] Store the SDL window handle (and renderer handle, if applicable) internally within a private static part of `Night.Window`.
+    - [ ] Handle any necessary SDL initialization for video subsystems (`SDL.SDL_InitSubSystem(SDL.SDL_INIT_VIDEO)`) if not already handled globally.
+    - **Verification:** Calling `Night.Window.SetMode()` from `Night.SampleGame` successfully creates and displays a window with the specified dimensions and properties (e.g., fullscreen, resizable). No SDL errors are reported.
+- [ ] **Task:** Implement `Night.Window.SetTitle(string title)`
 
-- [x] **Task 1.2.1:** Refactor `Platform` Build System and Workflow (Status: Review)
-    - [x] Rename `FosterPlatform` to `Night.Platform` in [`src/Night.Platform/CMakeLists.txt`](src/Night.Platform/CMakeLists.txt:0) and update associated variables (e.g., `FOSTER_LIB_NAME` to `NIGHT_LIB_NAME`).
-    - [x] Rename `foster_platform.h` to `night_platform.h` and `foster_platform.c` to `night_platform.c`. Update include guards and internal references.
-    - [x] Update [`src/Night.Platform/README.md`](src/Night.Platform/README.md:0) to reflect the new naming.
-    - [x] Update [` .github/workflows/build-libs.yml`](.github/workflows/build-libs.yml:0) to use `NIGHT_OVERRIDE_TARGET` and reflect any other necessary changes due to renaming.
-    - **Verification:** The `Platform` project builds successfully with the new names. The GitHub Actions workflow runs successfully, producing artifacts like `Night.Platform.dll`.
+    - [ ] Use the appropriate SDL3-CS function to set the window's title (e.g., `SDL.SDL_SetWindowTitle()`), using the stored window handle.
+    - **Verification:** Calling `Night.Window.SetTitle()` from `Night.SampleGame` changes the title displayed in the window's title bar.
+- [ ] **Task:** Implement `Night.Window.IsOpen()` (Initial Implementation)
 
-- [x] **Task 1.3:** Set up C# Projects (`Night.Engine` & `Night.SampleGame`) (Status: Review)
-    - [x] Create `Night.Engine.csproj` as a .NET 9 C# class library.
-    - [x] Configure it to use C# 13.
-    - [x] Ensure it's set up to correctly include/load native binaries from the `/runtimes` folder for multiple platforms.
-    - [x] Create `Night.SampleGame.csproj` as a .NET 9 C# console application.
-    - [x] Configure it to use C# 13.
-    - [x] Add a project reference to `Night.Engine`.
-    - [x] Add basic placeholder C# files (`API.cs`, `Engine.cs` in `Night.Engine`; `Program.cs`, `Game.cs` in `Night.SampleGame`).
-    - **Verification:** Both projects build successfully. `Night.SampleGame` can reference types from `Night.Engine`.
+    - [ ] This method's primary role is to control the game loop. For now, its state will likely be tied to whether a `Quit` event has been received (which will be handled more fully in Epic 6: Game Loop).
+    - [ ] Create an internal static boolean flag (e.g., `_isWindowOpen` or `_isRunning`, default to `false` until `SetMode` is called, then `true`). `IsOpen()` will return this flag's value. The game loop (Epic 6) will set this to `false` on a quit event.
+    - **Verification:** The `Night.Window.IsOpen()` method can be called and returns `true` after a window is created, and its state can be conceptually altered (though full quit logic is later).
+- [ ] **Task:** Implement Basic Error Handling for Window Operations
 
-- [x] **Task 1.4:** Initial SDL3 P/Invoke Test (Status: Review)
-    - [x] In `Night.Engine` or `Night.SampleGame`, add P/Invoke declarations for simple functions from `src/Night.Platform/` (e.g., for `SDL_Init`, `SDL_Quit`, `SDL_GetVersion` equivalents via `Night.Platform.dll`). (Implemented directly against SDL3.dll in `Program.cs`)
-    - [x] Call these P/Invoke functions from `Night.SampleGame`'s `Program.cs`. (Implemented in `Program.cs`)
-    - **Verification:** The P/Invoke call executes without errors (e.g., `DllNotFoundException`), and if applicable, returns expected data (like SDL version). SDL can be initialized and quit. (Checked 2025-05-24: `SDL3.dll` copying mechanism via `Night.Engine.csproj` for `win-x64` is correctly configured.)
-- [ ] **Task:** Setup Coding Standards Enforcement (Status: In-Progress)
-
-    - [x] Create and configure `.editorconfig` at the project root to align with the Google C# Style Guide (indentation, column limit, `using` directive order, placeholder for Roslyn Analyzers).
-    - [x] Updated `.pre-commit-config.yaml` for C# project with `dotnet format` and other standard hooks.
-    - [ ] Ensure Roslyn Analyzers are active and *fully* configured via `.editorconfig` for style and quality checks (placeholder added, full configuration pending).
-    - **Verification:** Code formatting tools (`dotnet format`) apply styles consistent with `.editorconfig`. IDE shows warnings/errors based on analyzer settings. `.pre-commit` hooks run successfully.
-
-- **Task 1.5:** Integrate `lib/SDL3-CS` Bindings into `Night.Engine` (Status: Review)
-    - **Description:** Modify `Night.Engine` to use the C# bindings from `lib/SDL3-CS` for SDL3 interop, and update `Night.SampleGame` to use these new capabilities. This replaces any direct P/Invoke to `SDL3.dll` or reliance on `Night.Platform` for SDL3 functions.
-    - **Sub-tasks:**
-        - [x] Add a project reference from `src/Night.Engine/Night.Engine.csproj` to `lib/SDL3-CS/SDL3/SDL3.Core.csproj` (or `SDL3.Legacy.csproj` if .NET 8+ is not guaranteed for all targets, though PRD specifies .NET 9).
-        - [x] Update `src/Night.Engine/NightAPI.cs` (or a new `NativeMethods.cs` / `SDL3Integration.cs` file) to expose necessary SDL3 functions (e.g., `Init`, `Quit`, `GetVersion`) using the `SDL3-CS` bindings.
-        - [x] Remove any direct P/Invoke declarations for SDL3 functions from `src/Night.SampleGame/Program.cs` or other files if they were using `Night.Platform.dll` or `SDL3.dll` directly for these.
-        - [x] Update `src/Night.SampleGame/Program.cs` to call the SDL3 functions exposed by `Night.Engine` (which now use `SDL3-CS`).
-    - **Verification:** `Night.Engine` and `Night.SampleGame` build successfully. `Night.SampleGame` can initialize and quit SDL, and retrieve version information using the `SDL3-CS` bindings via `Night.Engine`. No direct P/Invokes to `SDL3.dll` (for functions now covered by `Night.Engine`) remain in `Night.SampleGame`.
-
-- **Task 1.6:** Remove `Night.Platform` (Status: In-Progress)
-    - **Description:** Remove the `src/Night.Platform` directory and all references to it, as its functionality (primarily SDL3 building and basic interop) is now superseded by `lib/SDL3-CS` and pre-built SDL3 binaries.
-    - **Sub-tasks:**
-        - [ ] Delete the `src/Night.Platform` directory.
-        - [ ] Update or remove ` .github/workflows/build-libs.yml` to eliminate `Night.Platform` build steps.
-        - [ ] Remove any references to `Night.Platform` or its output libraries (e.g., `NightPlatform.dll`, `libNightPlatform.so`) from `.csproj` files, `Night.sln`, or other build/configuration files.
-        - [ ] Verify that `Night.Engine` and `Night.SampleGame` still build and run correctly using `lib/SDL3-CS` for all SDL3 interactions.
-    - **Verification:** The `src/Night.Platform` directory is gone. The project builds and runs without errors. The GitHub Actions workflow, if modified, completes successfully without trying to build `Night.Platform`.
+    - [ ] For all SDL3-CS function calls made within `Night.Window` methods, check their return values for errors (e.g., null pointers for window/renderer handles, negative values for error codes).
+    - [ ] If an SDL error occurs, retrieve the error message (e.g., using `SDL.SDL_GetError()`).
+    - [ ] Log errors using a simple mechanism for the prototype (e.g., `Console.WriteLine($"Error in {methodName}: {SDL.SDL_GetError()}");`).
+    - [ ] Decide on an error strategy for the prototype (e.g., throw an exception, return a boolean success/failure from `Night` API methods).
+    - **Verification:** Invalid operations (e.g., setting title on a non-existent window if possible, or SDL internal errors) are caught and reported via console logs. The application behaves predictably (e.g., doesn't crash silently if window creation fails).
