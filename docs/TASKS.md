@@ -30,3 +30,13 @@
     - [ ] Ensure that input functions behave gracefully if called before SDL subsystems are fully initialized (e.g., return default/false values, log a warning). (Note: The main `Night.Engine.Run` should handle initialization order).
     - [ ] Review SDL documentation for any specific error conditions or edge cases for the input functions being used.
     - **Verification:** Input functions do not cause crashes if queried at an inappropriate time (though this should be rare with a proper game loop) and provide default 'safe' return values.
+
+**Epic 5: Love2D API Mapping**
+
+- [ ] **Task 5.1:** Map Love2D API to Night Engine API (Status: In-Progress)
+    - [ ] Identify all Love2D modules (e.g., `love.graphics`, `love.audio`, `love.filesystem`, `love` itself, etc.).
+    - [ ] For each module, use Context7 to fetch its API functions and documentation.
+    - [ ] Create a new markdown file for each Love2D module in the `docs/love2d-api/` directory (e.g., `docs/love2d-api/graphics.md`, `docs/love2d-api/audio.md`).
+    - [ ] In each file, list the Love2D functions and propose a corresponding Night Engine API name, following the style implied by the (currently empty) `docs/love2d-api/love2d-api-progress.md`.
+    - [ ] Ensure the mapping considers the Night Engine's C# conventions and existing architecture.
+    - **Verification:** Markdown files for each Love2D module are created with comprehensive API mappings.
