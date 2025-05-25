@@ -38,7 +38,6 @@ The "Night" engine project will adhere to the **Google C# Style Guide**. Key asp
     - **Encapsulation:** The P/Invoke layer and direct interactions with SDL3 native functions should be strictly internal to the `Night.Engine` library.
     - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
     - **Scope Adherence:** Focus strictly on implementing the agreed-upon features (0-4) for this prototype.
-    - **Dependency Management:** SDL3 native binaries are to be managed via the `scripts/fetch_sdl3.py` script and organized within the `/Night.Engine/runtimes` directory.
 - **Testing (if applicable for prototype):**
     - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Engine` features.
     - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Engine`.

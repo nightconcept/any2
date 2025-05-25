@@ -133,15 +133,6 @@
 - `README.md`: The main readme for the project.
 
 ## 5. File Descriptions (If applicable)
-
-- **`scripts/fetch_sdl3.py`**:
-    - **Purpose:** To automate the downloading of SDL3 native binaries (e.g., `.dll`, `.so`, `.dylib`) from a specified source (like GitHub releases or a specific URL) and place them into the correct subdirectories within `/Night.Engine/runtimes/`. It would also update `sdl3_version.txt`.
-    - **Format:** Python script.
-    - **Key Contents/Structure:** Likely use Python's `requests` library for downloading, `zipfile` or `tarfile` if dealing with archives, and file system operations. It would need logic to determine the correct binaries for different OS/architectures if fetching multiple.
-- **`/Night.Engine/runtimes/sdl3_version.txt`**:
-    - **Purpose:** To track the version of the SDL3 native binaries currently present in the `runtimes` folder. This helps ensure consistency and aids in debugging.
-    - **Format:** Plain text.
-    - **Key Contents/Structure:** A single line indicating the version, e.g., "SDL 3.17.1" or a Git commit hash if built from source.
 - **`Night.sln`**:
     - **Purpose:** The Visual Studio Solution file that groups the `Night.Engine` library project and the `Night.SampleGame` project together.
     - **Format:** Standard Visual Studio Solution format (text-based).
