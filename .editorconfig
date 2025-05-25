@@ -7,7 +7,6 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# use tabs by default for C#/C code
 [*.{cs}]
 indent_style = space
 indent_size = 2
@@ -16,7 +15,7 @@ dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = true
 csharp_preferred_using_directive_placement = outside_namespace:suggestion
 
-# Style - Naming Conventions (Refer to docs/operational-guidelines.md)
+# Style - Naming Conventions
 dotnet_diagnostic.IDE1006.severity = error # Naming rule violation (covers PascalCase, camelCase, _camelCase based on symbols)
 dotnet_diagnostic.IDE0051.severity = warning # Remove unused private members
 dotnet_diagnostic.IDE0052.severity = warning # Remove unread private members
@@ -53,8 +52,6 @@ dotnet_style_prefer_expression_bodied_local_functions = true:suggestion
 # Quality - General
 dotnet_diagnostic.CA1822.severity = warning # Mark members as static (if no instance data is accessed)
 dotnet_diagnostic.CA2211.severity = warning # Non-constant fields should not be visible
-# Add more specific Roslyn Analyzer rules as needed based on deeper review of Google C# Style Guide
-# and project needs. For example, rules from Microsoft.CodeAnalysis.NetAnalyzers.
 
 # use 2-spaces for csproj
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,nativeproj,locproj}]
