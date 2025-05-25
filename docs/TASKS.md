@@ -15,9 +15,9 @@
     - [x] Use the appropriate SDL3-CS function to set the window's title (e.g., `SDL.SDL_SetWindowTitle()`), using the stored window handle.
     - **Verification:** Calling `Night.Window.SetTitle()` from `Night.SampleGame` changes the title displayed in the window's title bar.
 
-- [ ] **Task 3.3:** Implement `Night.Window.IsOpen()` (Initial Implementation)
-    - [ ] This method's primary role is to control the game loop. For now, its state will likely be tied to whether a `Quit` event has been received (which will be handled more fully in Epic 6: Game Loop).
-    - [ ] Create an internal static boolean flag (e.g., `_isWindowOpen` or `_isRunning`, default to `false` until `SetMode` is called, then `true`). `IsOpen()` will return this flag's value. The game loop (Epic 6) will set this to `false` on a quit event.
+- [x] **Task 3.3:** Implement `Night.Window.IsOpen()` (Status: Review)
+    - [x] This method's primary role is to control the game loop. For now, its state will likely be tied to whether a `Quit` event has been received (which will be handled more fully in Epic 6: Game Loop).
+    - [x] Create an internal static boolean flag (e.g., `_isWindowOpen` or `_isRunning`, default to `false` until `SetMode` is called, then `true`). `IsOpen()` will return this flag's value. The game loop (Epic 6) will set this to `false` on a quit event.
     - **Verification:** The `Night.Window.IsOpen()` method can be called and returns `true` after a window is created, and its state can be conceptually altered (though full quit logic is later).
 
 - [ ] **Task 3.4:** Implement Basic Error Handling for Window Operations
