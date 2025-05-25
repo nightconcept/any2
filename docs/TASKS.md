@@ -11,8 +11,8 @@
     - [x] Handle any necessary SDL initialization for video subsystems (`SDL.SDL_InitSubSystem(SDL.SDL_INIT_VIDEO)`) if not already handled globally.
     - [x] **Verification:** Calling `Night.Window.SetMode()` from `Night.SampleGame` successfully creates and displays a window with the specified dimensions and properties (e.g., fullscreen, resizable). No SDL errors are reported.
 
-- [ ] **Task 3.2:** Implement `Night.Window.SetTitle(string title)` (Status: Review)
-    - [ ] Use the appropriate SDL3-CS function to set the window's title (e.g., `SDL.SDL_SetWindowTitle()`), using the stored window handle.
+- [x] **Task 3.2:** Implement `Night.Window.SetTitle(string title)` (Status: Review)
+    - [x] Use the appropriate SDL3-CS function to set the window's title (e.g., `SDL.SDL_SetWindowTitle()`), using the stored window handle.
     - **Verification:** Calling `Night.Window.SetTitle()` from `Night.SampleGame` changes the title displayed in the window's title bar.
 
 - [ ] **Task 3.3:** Implement `Night.Window.IsOpen()` (Initial Implementation)
