@@ -1,0 +1,3466 @@
+Directory structure:
+└── any2/
+    ├── README.md
+    ├── LICENSE
+    ├── Night.sln
+    ├── .editorconfig
+    ├── .pre-commit-config.yaml
+    ├── docs/
+    │   ├── PRD.md
+    │   ├── TASKS.md
+    │   ├── operational-guidelines.md
+    │   └── archive/
+    ├── lib/
+    ├── scripts/
+    │   └── update_sdl3.py
+    ├── src/
+    │   ├── Night.Engine/
+    │   │   ├── API.cs
+    │   │   ├── Engine.cs
+    │   │   ├── Night.Engine.csproj
+    │   │   ├── Types.cs
+    │   │   ├── bin/
+    │   │   │   └── Debug/
+    │   │   │       └── net9.0/
+    │   │   │           ├── Night.Engine.deps.json
+    │   │   │           ├── SDL3/
+    │   │   │           └── runtimes/
+    │   │   │               └── win-x64/
+    │   │   │                   └── native/
+    │   │   └── obj/
+    │   │       ├── Night.Engine.csproj.nuget.dgspec.json
+    │   │       ├── Night.Engine.csproj.nuget.g.props
+    │   │       ├── Night.Engine.csproj.nuget.g.targets
+    │   │       ├── project.assets.json
+    │   │       ├── project.nuget.cache
+    │   │       └── Debug/
+    │   │           └── net9.0/
+    │   │               ├── Night.En.7AF90C0B.Up2Date
+    │   │               ├── Night.Engine.AssemblyInfo.cs
+    │   │               ├── Night.Engine.AssemblyInfoInputs.cache
+    │   │               ├── Night.Engine.GeneratedMSBuildEditorConfig.editorconfig
+    │   │               ├── Night.Engine.GlobalUsings.g.cs
+    │   │               ├── Night.Engine.assets.cache
+    │   │               ├── Night.Engine.csproj.AssemblyReference.cache
+    │   │               ├── Night.Engine.csproj.CoreCompileInputs.cache
+    │   │               ├── Night.Engine.sourcelink.json
+    │   │               ├── .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+    │   │               ├── ref/
+    │   │               └── refint/
+    │   └── Night.SampleGame/
+    │       ├── Game.cs
+    │       ├── Night.SampleGame.csproj
+    │       ├── Program.cs
+    │       ├── bin/
+    │       │   └── Debug/
+    │       │       └── net9.0/
+    │       │           ├── Night.SampleGame.deps.json
+    │       │           ├── Night.SampleGame.runtimeconfig.json
+    │       │           └── runtimes/
+    │       │               └── win-x64/
+    │       │                   └── native/
+    │       └── obj/
+    │           ├── Night.SampleGame.csproj.nuget.dgspec.json
+    │           ├── Night.SampleGame.csproj.nuget.g.props
+    │           ├── Night.SampleGame.csproj.nuget.g.targets
+    │           ├── project.assets.json
+    │           ├── project.nuget.cache
+    │           └── Debug/
+    │               └── net9.0/
+    │                   ├── Night.Sa.E6945040.Up2Date
+    │                   ├── Night.SampleGame.AssemblyInfo.cs
+    │                   ├── Night.SampleGame.AssemblyInfoInputs.cache
+    │                   ├── Night.SampleGame.GeneratedMSBuildEditorConfig.editorconfig
+    │                   ├── Night.SampleGame.GlobalUsings.g.cs
+    │                   ├── Night.SampleGame.assets.cache
+    │                   ├── Night.SampleGame.csproj.AssemblyReference.cache
+    │                   ├── Night.SampleGame.csproj.CoreCompileInputs.cache
+    │                   ├── Night.SampleGame.genruntimeconfig.cache
+    │                   ├── Night.SampleGame.sourcelink.json
+    │                   ├── .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+    │                   ├── ref/
+    │                   └── refint/
+    ├── .cursor/
+    ├── .github/
+    │   ├── CODEOWNERS
+    │   ├── copilot-instructions.md
+    │   ├── dependabot.yml
+    │   ├── deactivated/
+    │   │   ├── build-sdl3.yml
+    │   │   ├── ci.yml
+    │   │   ├── codeql.yml
+    │   │   ├── dependency-review.yml
+    │   │   ├── release.yml
+    │   │   └── scorecard.yml
+    │   └── scripts/
+    │       └── determine_next_version.py
+    ├── .roo/
+    └── .windsurf/
+        └── rules/
+            └── rules.md
+
+================================================
+File: README.md
+================================================
+# Night Engine
+
+A C# game engine built on top of SDL3.
+
+This project aims to provide a simple, Love2D-inspired API for C# developers to create games and multimedia applications using the power of SDL3.
+
+## Project Structure
+
+- `/Night.Engine`: The core engine library.
+- `/Night.SampleGame`: A sample game demonstrating engine features.
+- `/docs`: Project documentation (PRD, tasks, etc.).
+- `/scripts`: Utility scripts (e.g., for fetching SDL3).
+
+## Getting Started
+
+(Instructions to be added once the engine is further developed)
+## macOS Development Notes
+
+### VS Code and `mise` for .NET SDK Versioning
+
+If you are using `mise` to manage your .NET SDK versions on macOS, you might encounter issues where VS Code (when launched via its `.app` bundle, e.g., from Finder, Spotlight, or Raycast) does not correctly pick up the `mise`-activated .NET SDK. This can lead to:
+- Linter errors complaining about incorrect .NET versions or missing fundamental types.
+- NuGet restore failures (e.g., `NETSDK1045` error) because VS Code's C# Dev Kit attempts to use a globally installed .NET SDK (like .NET 8) instead of the project-specified one (e.g., .NET 9).
+
+This happens because GUI-launched applications on macOS do not typically inherit the full shell environment (like `PATH` modifications) that `mise` sets up in your terminal.
+
+**Solution: Wrapper Script for Launching VS Code**
+
+To ensure VS Code launches with the correct `mise`-managed environment, you can use a wrapper shell script. This script explicitly sets up the environment before launching VS Code.
+
+1.  **Create the script** (e.g., save as `~/vscode-launcher.sh` or `~/bin/vscode-launcher.sh`):
+    ```zsh
+    #!/bin/zsh
+
+    # Wrapper script to launch VS Code with the mise-managed environment.
+
+    # Add mise shims directory to PATH
+    MISE_SHIMS_PATH="$HOME/.local/share/mise/shims"
+    export PATH="$MISE_SHIMS_PATH:$PATH"
+
+    # Optional: Navigate to your specific project directory if desired
+    # cd "/path/to/your/project"
+
+    # Launch VS Code, passing through any arguments
+    exec code "$@"
+    ```
+
+2.  **Make it executable:**
+    ```bash
+    chmod +x /path/to/your/vscode-launcher.sh
+    ```
+
+3.  **Configure your launcher** (e.g., Raycast, Alfred, or even a custom Dock icon) to execute this script instead of `Visual Studio Code.app` directly.
+
+This ensures that VS Code and its extensions (like the C# Dev Kit) inherit the correct PATH and use the .NET SDK version specified by `mise` for your project.
+
+
+================================================
+File: LICENSE
+================================================
+MIT License
+
+Copyright (c) 2025 Danny Solivan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+
+================================================
+File: Night.sln
+================================================
+ï»¿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Night.Engine", "src\Night.Engine\Night.Engine.csproj", "{259774D0-6C26-4CD6-8611-D184D8D04BF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Night.SampleGame", "src\Night.SampleGame\Night.SampleGame.csproj", "{665B8256-5042-4354-99DC-25D560A0DF8B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Debug|x64.Build.0 = Debug|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Debug|x86.Build.0 = Debug|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Release|x64.ActiveCfg = Release|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Release|x64.Build.0 = Release|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Release|x86.ActiveCfg = Release|Any CPU
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4}.Release|x86.Build.0 = Release|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Debug|x64.Build.0 = Debug|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Debug|x86.Build.0 = Debug|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Release|x64.ActiveCfg = Release|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Release|x64.Build.0 = Release|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Release|x86.ActiveCfg = Release|Any CPU
+		{665B8256-5042-4354-99DC-25D560A0DF8B}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{259774D0-6C26-4CD6-8611-D184D8D04BF4} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{665B8256-5042-4354-99DC-25D560A0DF8B} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+	EndGlobalSection
+EndGlobal
+
+
+
+================================================
+File: .editorconfig
+================================================
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{cs}]
+indent_style = space
+indent_size = 2
+csharp_max_line_length = 100
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = true
+csharp_preferred_using_directive_placement = outside_namespace:suggestion
+
+# Style - Naming Conventions
+dotnet_diagnostic.IDE1006.severity = error # Naming rule violation (covers PascalCase, camelCase, _camelCase based on symbols)
+dotnet_diagnostic.IDE0051.severity = warning # Remove unused private members
+dotnet_diagnostic.IDE0052.severity = warning # Remove unread private members
+dotnet_diagnostic.IDE0060.severity = warning # Remove unused parameter
+
+# Style - Code Clarity and Consistency
+dotnet_diagnostic.IDE0003.severity = suggestion # Add 'this.' or 'Me.' qualification
+dotnet_diagnostic.IDE0009.severity = suggestion # Add 'this.' or 'Me.' qualification (for members)
+dotnet_diagnostic.IDE0011.severity = suggestion # Add braces
+dotnet_diagnostic.IDE0017.severity = suggestion # Simplify object initialization
+dotnet_diagnostic.IDE0028.severity = suggestion # Simplify collection initialization
+dotnet_diagnostic.IDE0036.severity = suggestion # Order modifiers
+dotnet_diagnostic.IDE0040.severity = suggestion # Add accessibility modifiers
+dotnet_diagnostic.IDE0041.severity = warning # Use 'is null' check
+dotnet_diagnostic.IDE0044.severity = suggestion # Make field readonly
+dotnet_diagnostic.IDE0055.severity = error # Format document (enforce dotnet format)
+dotnet_diagnostic.IDE0058.severity = warning # Remove unnecessary expression value
+dotnet_diagnostic.IDE0059.severity = warning # Remove unnecessary value assignment
+dotnet_diagnostic.IDE0063.severity = suggestion # Use simple 'using' statement
+dotnet_diagnostic.IDE0066.severity = suggestion # Use switch expression
+dotnet_diagnostic.IDE0074.severity = suggestion # Use coalesce compound assignment
+dotnet_diagnostic.IDE0090.severity = suggestion # Simplify 'new' expression
+
+# Style - Expression-bodied members (preference for conciseness where appropriate)
+dotnet_style_prefer_expression_bodied_constructors = false
+dotnet_style_prefer_expression_bodied_methods = true:suggestion
+dotnet_style_prefer_expression_bodied_operators = true:suggestion
+dotnet_style_prefer_expression_bodied_properties = true:suggestion
+dotnet_style_prefer_expression_bodied_indexers = true:suggestion
+dotnet_style_prefer_expression_bodied_accessors = true:suggestion
+dotnet_style_prefer_expression_bodied_lambdas = true:suggestion
+dotnet_style_prefer_expression_bodied_local_functions = true:suggestion
+
+# Quality - General
+dotnet_diagnostic.CA1822.severity = warning # Mark members as static (if no instance data is accessed)
+dotnet_diagnostic.CA2211.severity = warning # Non-constant fields should not be visible
+
+# use 2-spaces for csproj
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,nativeproj,locproj}]
+indent_style = space
+indent_size = 2
+
+
+
+================================================
+File: .pre-commit-config.yaml
+================================================
+# Top-level pre-commit config for C# project
+repos:
+  - repo: local
+    hooks:
+      - id: dotnet-format
+        name: dotnet format
+        entry: dotnet format Night.sln --verify-no-changes
+        language: system
+        types: [csharp]
+        pass_filenames: false # Run on the whole solution if any C# file changes
+        always_run: false
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.2 # Updated to a more recent version
+    hooks:
+      - id: gitleaks
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: shellcheck
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0 # Updated to a more recent version
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files
+
+
+
+================================================
+File: docs/PRD.md
+================================================
+
+# Night Engine - Product Requirements Document (Prototype)
+
+## 1. Introduction
+
+- **Project Idea:** Create a system using C# on top of SDL3, called "Night Engine".
+- **Problem/Need:** The primary problem this approach aims to solve is reducing context switching for the developer. Building directly with C# and SDL3 via the "Night" engine will offer a more streamlined workflow compared to methods involving more languages or disparate tools.
+- **Prototype Goal:** The main goal for this prototype is to create a development environment or a foundational C# wrapper layer where a developer can leverage SDL3's capabilities primarily through C#, making game or multimedia development easier and more efficient. This involves achieving a comfortable level of C# integration with core SDL3 features, aiming for an API style reminiscent of Love2D, to simplify development by minimizing the need to switch between different programming paradigms or languages.
+
+## 2. Core Features / User Stories
+
+- **Feature 0: Project Foundation & SDL3 Integration Setup**
+
+    - **Description:** Establishes the C# project structure for the "Night" engine, a build process, and a mechanism to automatically fetch/integrate the latest SDL3 library (e.g., from its GitHub repository). This feature underpins the development of all other engine features by ensuring a working development and build environment for "Night" itself.
+    - **User Action(s) (from the engine developer's perspective):**
+        - Initialize the C# solution and project(s) for the "Night" engine.
+        - Implement a script or build process step (e.g., `Workspace_sdl3.py`) to clone/download the SDL3 source or pre-compiled binaries.
+        - Configure the C# project(s) for P/Invoke to SDL3, ensuring native library paths are correctly handled.
+        - Optionally, set up basic GitHub Actions (or other CI/CD) workflows for building and testing the "Night" engine prototype.
+    - **Outcome(s):**
+        - A C# solution/project for "Night" exists that can be successfully built.
+        - The SDL3 library is reliably fetched and correctly linked by the C# project.
+        - The engine developer has a clear process for building the "Night" engine with its SDL3 dependency.
+- **Feature 1: Window Management (Love2D Style)**
+
+    - **Description:** Provides capabilities to create, configure, and manage the application window, using the `Night` namespace and aiming for an API style similar to Love2D's `love.window` module.
+    - **User Action(s) (from a C# developer's perspective using the wrapper):**
+        - Call `Night.Window.SetMode(int width, int height, WindowFlags flags)`
+        - Call `Night.Window.SetTitle(string title)`
+        - Call `bool Night.Window.IsOpen()`
+    - **Outcome(s):**
+        - An application window appears with the specified dimensions and properties.
+        - The window title can be dynamically changed.
+        - The application can control its main loop based on the window's state.
+- **Feature 2: Input Handling (Love2D Style)**
+
+    - **Description:** Allows the C# application to poll keyboard and mouse states, or receive input events, using the `Night` namespace and mirroring Love2D's `love.keyboard` and `love.mouse` modules.
+    - **User Action(s) (C# developer):**
+        - Call `bool Night.Keyboard.IsDown(KeyCode key)`
+        - Call `bool Night.Mouse.IsDown(MouseButton button)`
+        - Call `(int x, int y) Night.Mouse.GetPosition()`
+        - (Alternatively, or in addition, implement event handlers like `Night.KeyPressed(KeyCode key, ...)` as part of Feature 4)
+    - **Outcome(s):**
+        - The C# application can determine the real-time state of keys/mouse buttons or react to input events.
+        - The C# application can get the current mouse position.
+- **Feature 3: 2D Sprite Rendering (Love2D Style)**
+
+    - **Description:** Enables loading images and drawing them as sprites, using the `Night` namespace, akin to Love2D's `love.graphics.newImage()` and `love.graphics.draw()`.
+    - **User Action(s) (C# developer):**
+        - Call `Sprite Night.Graphics.NewImage(string filePath)`
+        - Call `Night.Graphics.Draw(Sprite sprite, float x, float y, float rotation = 0, float scaleX = 1, float scaleY = 1, float offsetX = 0, float offsetY = 0)`
+        - Call `Night.Graphics.Clear(Color color)` (Typically at the start of the `Night.Draw()` callback)
+        - Call `Night.Graphics.Present()` (Typically at the end of the `Night.Draw()` callback, handled by the engine after user's `Draw` finishes)
+    - **Outcome(s):**
+        - Images are loaded into `Sprite` objects.
+        - Sprites are rendered with transformations.
+        - The screen is cleared and new frames are presented as part of the game loop.
+- **Feature 4: Love2D-Style Game Loop Structure**
+
+    - **Description:** Provides a pre-defined game loop managed by the `Night` engine. The C# developer implements specific callback functions (e.g., `Load`, `Update`, `Draw`, `KeyPressed`) that the engine calls at appropriate times.
+    - **User Action(s) (C# developer structures their code this way):**
+        - Implement methods within their game class that `Night` will call:
+            - `void MyGame.Load()`
+            - `void MyGame.Update(double deltaTime)`
+            - `void MyGame.Draw()`
+            - Optional: `void MyGame.KeyPressed(KeyCode key, bool isRepeat)`, `void MyGame.MousePressed(int x, int y, MouseButton button, int presses)`.
+        - Call a main `Night.Engine.Run(MyGameInstance)` or `Night.Engine.Run<MyGameClass>()` to start.
+    - **Outcome(s):**
+        - The `Night` engine manages the overall loop.
+        - Developers structure their game into familiar Love2D lifecycle methods.
+        - Input and other engine events can be handled via these callback methods.
+
+## 3. Technical Specifications
+
+- **Primary Language(s):** C# 13 (using .NET 9).
+- **Key Frameworks/Libraries:**
+    - SDL3 (latest version, fetched as per Feature 0).
+    - `flibitijibibo-sdl3-cs` (https://github.com/flibitijibibo/SDL3-CS/): Approved C# bindings for SDL3 (User approved 2025-05-24). To be integrated as a git submodule.
+    - No other external runtime libraries are planned for the core "Night" wrapper in this prototype phase.
+- **Database (if any):** None for this prototype.
+- **Key APIs/Integrations (if any):**
+    - Direct P/Invoke integration with the SDL3 native library.
+- **Deployment Target (if applicable for prototype):**
+    - The "Night" engine will be a C# class library (DLL).
+    - A separate C# "Sample Game" project will consume this library to demonstrate its functionality (e.g., a simple platformer).
+- **High-Level Architectural Approach:**
+    - "Night" will be a C# wrapper library that provides a static API, stylistically similar to Love2D, over the SDL3 native library.
+    - It will manage P/Invoke calls to SDL3 internally.
+    - The public API of "Night" will be designed for ease of use by C# game developers.
+- **Critical Technical Decisions/Constraints:**
+    - The public API of "Night" should closely mirror the structure and common function names of the Love2D API where practical and idiomatic for C#. However, specific API names and parameters will be refined during the prototyping process.
+    - All interactions with SDL3 will be through C# P/Invoke.
+    - A reliable and straightforward mechanism must be established for fetching SDL3 (source or precompiled binaries) and ensuring the native libraries are correctly loaded by C# applications using "Night".
+    - The primary focus for this prototype is on simplicity and achieving the core Love2D-like developer experience for the defined features.
+
+## 4. Project Structure
+
+```plaintext
+/ any2 (to be renamed to night-engine later)
+â”œâ”€â”€ /docs
+â”‚   â”œâ”€â”€ PRD.md
+â”‚   â””â”€â”€ TASKS.md
+â”œâ”€â”€ /src
+â”‚   â”œâ”€â”€ /Night.Engine               # Night C# Class Library Project
+â”‚   â”‚   â”œâ”€â”€ Night.Engine.csproj
+â”‚   â”‚   â”œâ”€â”€ API.cs                  # Main static classes (Night.Window, Night.Graphics, Night.Input, etc.)
+â”‚   â”‚   â”œâ”€â”€ Engine.cs               # Manages the game loop (Night.Engine.Run)
+â”‚   â”‚   â”œâ”€â”€ NativeMethods.cs        # (Placeholder, to be superseded or directory for SDL3-CS bindings)
+â”‚   â”‚   â”œâ”€â”€ DataStructures.cs       # (e.g., Sprite, Color, KeyCode enums, WindowFlags)
+â”‚   â””â”€â”€ /Night.SampleGame           # C# Project for the sample platformer game
+â”‚       â”œâ”€â”€ Night.SampleGame.csproj
+â”‚       â”œâ”€â”€ Game.cs                 # Implements Night.Load, Night.Update, Night.Draw etc.
+â”‚       â”œâ”€â”€ Program.cs              # Main entry point, calls Night.Engine.Run()
+â”‚       â””â”€â”€ /assets                 # Game assets (images, sounds for prototype)
+â”‚           â””â”€â”€ /images
+â”‚               â””â”€â”€ player.png
+â”œâ”€â”€ .gitignore
+â”œâ”€â”€ Night.sln                   # Visual Studio Solution File
+â””â”€â”€ README.md
+```
+- `/docs`: Contains all project documentation, including this PRD (`PRD.md`) and the upcoming task list (`TASKS.md`).
+- `/lib`: Contains all project libraries to be used.
+- `/src/Night.Engine`: This is the C# class library project for the "Night" engine itself.
+    - `API.cs`: Could hold the primary public static classes that mimic Love2D's modules (e.g., `Night.Window`, `Night.Graphics`, `Night.Keyboard`, `Night.Mouse`).
+    - `Engine.cs`: Contains the core game loop logic that will call the user's `Load()`, `Update()`, `Draw()` methods.
+    - `NativeMethods.cs` / `/SDL3/`: The C# P/Invoke declarations for SDL3 will be sourced from the `flibitijibibo-sdl3-cs` bindings, located in the `/Night.Engine/SDL3/` subdirectory. The `SDL3.Core.cs` file from this library will provide the actual interop calls.
+    - `DataStructures.cs`: Could define various enums (`KeyCode`, `MouseButton`), structs (`Color`, `Rectangle`), or classes (`Sprite`) used by the engine's API.
+- `/src/Night.SampleGame`: This is a separate C# project (e.g., a console application) that demonstrates how to use the "Night" engine. It would reference the `Night.Engine` project.
+    - `Game.cs`: The main class for the sample game, where you'd implement the `Load()`, `Update()`, `Draw()` and input callback methods.
+    - `Program.cs`: The entry point for the sample game application.
+    - `/assets`: Contains assets like images or sound files needed for the sample game.
+- `Night.sln`: The Visual Studio solution file, now located at the root, that will contain both the `Night.Engine` and `Night.SampleGame` projects.
+- `README.md`: The main readme for the project.
+
+## 5. File Descriptions (If applicable)
+- **`Night.sln`**:
+    - **Purpose:** The Visual Studio Solution file that groups the `Night.Engine` library project and the `Night.SampleGame` project together.
+    - **Format:** Standard Visual Studio Solution format (text-based).
+    - **Key Contents/Structure:** Defines project paths, configurations (Debug/Release), and dependencies between projects.
+- **`Night.Engine/Night.Engine.csproj` and `Night.SampleGame/Night.SampleGame.csproj`**:
+    - **Purpose:** These are the MSBuild project files for the engine library and the sample game, respectively. They define how each project is built.
+    - **Format:** XML (MSBuild format).
+    - **Key Contents/Structure:** Specifies target framework (.NET 9), C# language version, referenced packages, project references (`Night.SampleGame` will reference `Night.Engine`), and how native runtimes are handled.
+
+## 6. Future Considerations / Out of Scope (for this prototype)
+
+**Out of Scope for This Prototype:**
+
+- **Full Love2D API Parity:** While the style is inspired by Love2D, this prototype will only implement a subset of features. Modules like `love.audio`, `love.filesystem`, `love.font`, `love.joystick`, `love.physics`, `love.thread`, etc., are out of scope.
+- **Advanced Rendering:** Custom shaders, 3D graphics, complex lighting, particle systems, stencil/scissor operations beyond basic SDL3 capabilities used for 2D sprites.
+- **Audio System:** No sound effects or music playback.
+- **Font Rendering & Text Display:** The prototype will not support loading fonts or rendering text.
+- **Advanced Input:** Joystick/gamepad support beyond what SDL3 might offer for basic key events, touch input, gesture recognition.
+- **Physics Engine:** No collision detection or physics simulation capabilities will be part of the engine.
+- **Networking Capabilities:** No multiplayer or network communication features.
+- **Comprehensive Error Handling:** Error handling will be minimal.
+- **Performance Optimization:** The primary goal is functional correctness and API design.
+- **Game Packaging/Distribution Tools:** Not included.
+- **Editor/GUI Tools:** (Beyond what might be prototyped with ImGui in the future).
+
+**Potential Future Enhancements (Post-Prototype):**
+
+- **Dear ImGui Integration:** Integrate Dear ImGui to facilitate the creation of debug UIs, simple in-game editors, or developer tools directly within "Night" applications.
+- **Quake-Style Debug Console:** Implement a toggleable in-game console (e.g., accessed via a tab or backtick key) for runtime command execution, variable inspection/manipulation, and viewing engine/game logs.
+- **Entity Component System (ECS) Architecture:** Transition or build the engine's core scene and game object management around an ECS pattern for improved data-oriented design, performance, and flexibility.
+- **Audio Module (`Night.Audio`):** Integrate SDL_mixer (or equivalent SDL3 audio functionality) for sound effects and music playback.
+- **Font Rendering (`Night.Font`):** Add support for loading fonts (e.g., via SDL_ttf) and rendering text. This would also benefit the debug console and any ImGui interfaces.
+- **Expanded Input (`Night.Joystick`, `Night.Touch`):** Full support for game controllers/joysticks and touch interfaces.
+- **More Graphics Primitives & Features:** Support for drawing shapes (lines, rectangles, circles), basic shader integration, and a more advanced camera system, potentially designed with ECS in mind.
+- **Filesystem Abstraction (`Night.Filesystem`):** A simple, cross-platform API for file I/O.
+- **Timing Module (`Night.Timer`):** More advanced control over timing and FPS management.
+- **Lua Scripting Interface:** To more closely mirror Love2D's primary development language.
+- **Improved Error Handling & Debugging Tools:** Building upon the debug console.
+- **Performance Profiling and Optimization.**
+- **Expanded Platform Support.**
+- **Community Building:** Tutorials, more example projects, and comprehensive API documentation.
+
+
+
+================================================
+File: docs/TASKS.md
+================================================
+
+**Epic 4: Input Handling Implementation**
+
+**Goal:** Implement the `Night.Keyboard` and `Night.Mouse` modules for polling keyboard and mouse states, using the SDL3-CS bindings, to allow the game to respond to user input.
+
+- [ ] **Task 4.1:** Implement `Night.Keyboard.IsDown(KeyCode key)`
+    - [ ] Use SDL3-CS functions to get the current keyboard state (e.g., `SDL.SDL_GetKeyboardState(out int numkeys)` which returns a pointer to an array of key states).
+    - [ ] Define the `Night.KeyCode` enum if not already fully specified in Epic 2, ensuring it can be mapped to SDL's key representation (e.g., `SDL_Scancode` values). This mapping might involve looking up values in SDL3-CS's own enums (like `SDL_Scancode`).
+    - [ ] Implement the logic to check the state of the specified `Night.KeyCode` by looking up its corresponding SDL scancode in the state array returned by SDL.
+    - **Verification:** Calling `Night.Keyboard.IsDown()` with various `Night.KeyCode` values correctly returns `true` when the respective keys are held down and `false` otherwise, as tested in `Night.SampleGame`.
+
+- [ ] **Task 4.2:** Implement `Night.Mouse.IsDown(MouseButton button)`
+    - [ ] Use SDL3-CS functions to get the current mouse button state (e.g., `SDL.SDL_GetMouseState(out float x, out float y)` which typically also returns the button mask).
+    - [ ] Define the `Night.MouseButton` enum (e.g., `Left`, `Middle`, `Right`, `X1`, `X2`) if not already fully specified in Epic 2.
+    - [ ] Map `Night.MouseButton` enum values to the SDL button masks (e.g., `SDL.SDL_BUTTON_LMASK`, `SDL.SDL_BUTTON_RMASK`).
+    - [ ] Implement the logic to check if the specified `Night.MouseButton` is currently pressed by checking the bitmask returned by the SDL mouse state function.
+    - **Verification:** Calling `Night.Mouse.IsDown()` with various `Night.MouseButton` values correctly returns `true` when the respective buttons are held down and `false` otherwise, as tested in `Night.SampleGame`.
+
+- [ ] **Task 4.3:** Implement `Night.Mouse.GetPosition()`
+    - [ ] Use an SDL3-CS function to get the current mouse cursor coordinates relative to the focused window (e.g., `SDL.SDL_GetMouseState(out float x, out float y)` usually provides coordinates relative to the current window, but verify this behavior with SDL3).
+    - [ ] Ensure the returned coordinates are cast or converted to `(int x, int y)` as per the `Night` API.
+    - **Verification:** Calling `Night.Mouse.GetPosition()` returns the correct (x, y) integer coordinates of the mouse cursor within the game window boundaries.
+
+- [ ] **Task 4.4:** Define and Map `Night.KeyCode` and `Night.MouseButton` Enums
+    - [ ] Research and define comprehensive `Night.KeyCode` and `Night.MouseButton` enums that align with common keyboard layouts and mouse buttons, and correspond to SDL3's `SDL_Scancode` and mouse button definitions provided by SDL3-CS.
+    - [ ] Create any necessary internal mapping functions or structures if a direct cast is not possible or if `Night` enums need to be more abstract than SDL's.
+    - **Verification:** `Night.KeyCode` and `Night.MouseButton` enums are clearly defined and accurately map to the underlying SDL input system values.
+
+- [ ] **Task 4.5:** Basic Error Handling and State Management for Input
+    - [ ] Ensure that input functions behave gracefully if called before SDL subsystems are fully initialized (e.g., return default/false values, log a warning). (Note: The main `Night.Engine.Run` should handle initialization order).
+    - [ ] Review SDL documentation for any specific error conditions or edge cases for the input functions being used.
+    - **Verification:** Input functions do not cause crashes if queried at an inappropriate time (though this should be rare with a proper game loop) and provide default 'safe' return values.
+
+
+
+================================================
+File: docs/operational-guidelines.md
+================================================
+# Operational Guidelines
+
+The "Night" engine project will adhere to the **Google C# Style Guide**. Key aspects of this guide, supplemented by project-specific interpretations, are outlined below. All developers are expected to familiarize themselves with the full guide.
+
+- **Language Version:**
+    - C# 13 (utilizing .NET 9 features where appropriate).
+- **Formatting & Style:**
+    - **Primary Reference:** Google C# Style Guide.
+    - **Indentation:** 2 spaces, no tabs.
+    - **Column Limit:** 100 characters.
+    - **Whitespace, Braces, Line Wrapping:** Adhere to the detailed rules in the Google C# Style Guide. This includes rules like no line break before an opening brace, and braces used even when optional.
+    - **Tooling:**
+        - `dotnet format` will be used to help enforce formatting rules.
+        - An `.editorconfig` file will be added to the project root, configured to align with the Google C# Style Guide's formatting and style rules (e.g., indentation, column limit, using directives order).
+- **Linting:**
+    - **Primary Reference:** Google C# Style Guide for code quality expectations.
+    - **Tooling:** Utilize Roslyn Analyzers provided with the .NET SDK.
+    - The `.editorconfig` file will be configured to enable and set the severity of analyzer rules to align with the principles of the Google C# Style Guide. This includes rules related to naming, organization, and other code quality aspects.
+- **Naming Conventions:**
+    - **Primary Reference:** Google C# Style Guide, which generally follows Microsoft’s C# naming guidelines and CoreFX for unspecified cases.
+    - **General Rules Summary:**
+        - Names of classes, methods, enumerations, public fields, public properties, namespaces: `PascalCase`.
+        - Names of local variables, parameters: `camelCase`.
+        - Names of private, protected, internal, and protected internal fields and properties: `_camelCase` (e.g., `_privateField`).
+        - Naming convention is unaffected by modifiers such as `const`, `static`, `readonly`, etc..
+        - For casing, a “word” is anything written without internal spaces, including acronyms (e.g., `MyRpc` not `MyRPC`).
+        - Names of interfaces start with `I` (e.g., `IInterface`).
+        - Filenames and directory names are `PascalCase` (e.g., `MyFile.cs`).
+    - **Project Specific (API Design):** When naming public API elements for "Night" intended to mirror Love2D functions (e.g., `love.window.setTitle`), use the `PascalCase` version adhering to the above rules (e.g., `Night.Window.SetTitle(...)`).
+- **Code Organization:**
+    - **Primary Reference:** Google C# Style Guide.
+    - **Modifier Order:** `public protected internal private new abstract virtual override sealed static readonly extern unsafe volatile async`.
+    - **Namespace `using` Declarations:** Place at the top of the file, before any namespace declarations. Order alphabetically, with `System` imports always first.
+    - **Class Member Ordering:** Follow the prescribed order: Nested types, static/const/readonly fields, instance fields/properties, constructors/finalizers, methods. Within each group, elements are ordered by access: Public, Internal, Protected internal, Protected, Private.
+- **Key Principles (Project-Specific additions and emphasis):**
+    - **Adherence to Google C# Style Guide:** This is the foundational principle for code style and quality.
+    - **API Design (Night Engine):** Strive for an API design that is idiomatic to C# while closely mirroring the spirit, structure, and ease of use of the Love2D API for the features being implemented.
+    - **Encapsulation:** The P/Invoke layer and direct interactions with SDL3 native functions should be strictly internal to the `Night.Engine` library.
+    - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
+    - **Scope Adherence:** Focus strictly on implementing the agreed-upon features (0-4) for this prototype.
+- **Testing (if applicable for prototype):**
+    - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Engine` features.
+    - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Engine`.
+    - **Manual Verification:** Manual testing of the sample game against the defined user actions and outcomes for each feature in the PRD will be essential.
+
+
+
+
+
+================================================
+File: scripts/update_sdl3.py
+================================================
+import requests
+import zipfile
+import os
+import shutil
+import json
+import tempfile
+
+OWNER = "nightconcept"
+REPO = "build-sdl3"
+ASSET_NAME = "sdl3-bundle.zip"
+PREBUILT_DIR = os.path.join(os.path.dirname(__file__), "..", "lib", "SDL3-Prebuilt")
+VERSION_FILE = os.path.join(PREBUILT_DIR, "version.txt")
+
+# Ensure PREBUILT_DIR subdirectories exist
+os.makedirs(os.path.join(PREBUILT_DIR, "lib64"), exist_ok=True)
+os.makedirs(os.path.join(PREBUILT_DIR, "macos"), exist_ok=True)
+os.makedirs(os.path.join(PREBUILT_DIR, "win64"), exist_ok=True)
+
+def get_latest_release_info():
+    """Fetches the latest release information from GitHub."""
+    api_url = f"https://api.github.com/repos/{OWNER}/{REPO}/releases/latest"
+    print(f"Fetching latest release info from {api_url}...")
+    response = requests.get(api_url)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    release_data = response.json()
+    return release_data
+
+def find_asset_url(release_data, asset_name):
+    """Finds the download URL for a specific asset in the release data."""
+    for asset in release_data.get("assets", []):
+        if asset["name"] == asset_name:
+            return asset["browser_download_url"], release_data["tag_name"]
+    return None, None
+
+def download_file(url, dest_path):
+    """Downloads a file from a URL to a destination path."""
+    print(f"Downloading {url} to {dest_path}...")
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+    with open(dest_path, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            f.write(chunk)
+    print("Download complete.")
+
+def extract_zip(zip_path, extract_to_path):
+    """Extracts a zip file to a specified directory."""
+    print(f"Extracting {zip_path} to {extract_to_path}...")
+    with zipfile.ZipFile(zip_path, "r") as zip_ref:
+        zip_ref.extractall(extract_to_path)
+    print("Extraction complete.")
+
+def update_prebuilt_files(extract_path):
+    """Copies relevant files from the extracted bundle to the prebuilt directory."""
+    print(f"Updating files in {PREBUILT_DIR}...")
+
+    # Define source and destination mappings
+    # Based on user feedback and image, the zip extracts platform folders directly.
+    # Source structure (from zip, within extract_path):
+    #   linux-x64/libSDL3.so.0  (Note: may also contain other files, we only need .so.0)
+    #   macos/libSDL3.0.dylib
+    #   win64/SDL3.dll
+    #   android/... (ignored)
+    #   ios/... (ignored)
+    #
+    # Destination structure (in PREBUILT_DIR):
+    #   lib64/libSDL3.so.0
+    #   macos/libSDL3.0.dylib
+    #   win64/SDL3.dll
+
+    # The `extract_path` is the root where 'linux-x64', 'macos', 'win64' folders are.
+
+    mappings = {
+        os.path.join(extract_path, "linux-x64", "libSDL3.so.0"): os.path.join(PREBUILT_DIR, "lib64", "libSDL3.so.0"),
+        os.path.join(extract_path, "macos", "libSDL3.0.dylib"): os.path.join(PREBUILT_DIR, "macos", "libSDL3.0.dylib"),
+        os.path.join(extract_path, "win64", "SDL3.dll"): os.path.join(PREBUILT_DIR, "win64", "SDL3.dll"),
+    }
+
+    for src, dest in mappings.items():
+        if os.path.exists(src):
+            # Ensure destination directory exists
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            shutil.copy2(src, dest)
+            print(f"Copied {src} to {dest}")
+        else:
+            print(f"Warning: Source file {src} not found in extracted bundle.")
+
+    print("File update complete.")
+
+def update_version_file(version_tag):
+    """Updates the version.txt file with the new version tag."""
+    print(f"Updating {VERSION_FILE} to version {version_tag}...")
+    with open(VERSION_FILE, "w") as f:
+        f.write(version_tag.lstrip('v')) # Remove 'v' prefix if present
+    print("Version file updated.")
+
+def main():
+    try:
+        release_data = get_latest_release_info()
+        asset_url, version_tag = find_asset_url(release_data, ASSET_NAME)
+
+        if not asset_url:
+            print(f"Error: Could not find asset '{ASSET_NAME}' in the latest release.")
+            return
+
+        print(f"Found asset: {asset_url} (Version: {version_tag})")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            zip_path = os.path.join(tmpdir, ASSET_NAME)
+
+            download_file(asset_url, zip_path)
+
+            extract_target_path = os.path.join(tmpdir, "extracted_sdl3")
+            os.makedirs(extract_target_path, exist_ok=True)
+            extract_zip(zip_path, extract_target_path)
+
+            update_prebuilt_files(extract_target_path)
+            update_version_file(version_tag)
+
+        print("SDL3 update process completed successfully.")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error during network request: {e}")
+    except zipfile.BadZipFile:
+        print("Error: Downloaded file is not a valid zip file or is corrupted.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+if __name__ == "__main__":
+    main()
+
+
+
+================================================
+File: src/Night.Engine/API.cs
+================================================
+// Namespace for all public Night Engine APIs
+namespace Night;
+
+using System;
+
+using Night.Types; // For KeyCode, MouseButton, Color, Rectangle, WindowFlags, Sprite
+
+using static SDL3.SDL; // For direct access to SDL functions
+
+/// <summary>
+/// Provides functionality for managing the application window.
+/// Mimics Love2D's love.window module.
+/// </summary>
+public static class Window
+{
+  private static nint _window = nint.Zero;
+  private static nint _renderer = nint.Zero;
+  private static bool _isVideoInitialized = false;
+  private static bool _isWindowOpen = false; // Added for IsOpen()
+
+  /// <summary>
+  /// Sets the display mode of the window.
+  /// </summary>
+  /// <param name="width">The width of the window.</param>
+  /// <param name="height">The height of the window.</param>
+  /// <param name="flags">Window flags to apply.</param>
+  public static void SetMode(int width, int height, WindowFlags flags)
+  {
+    if (!_isVideoInitialized)
+    {
+      if (!SDL_InitSubSystem(SDL_InitFlags.SDL_INIT_VIDEO)) // Corrected: SDLBool check
+      {
+        string sdlError = SDL_GetError();
+        Console.WriteLine($"Error initializing SDL video subsystem: {sdlError}");
+        throw new Exception($"SDL Error initializing video subsystem: {sdlError}");
+      }
+      _isVideoInitialized = true;
+    }
+
+    // If a window already exists, destroy it before creating a new one
+    if (_window != nint.Zero)
+    {
+      if (_renderer != nint.Zero)
+      {
+        SDL_DestroyRenderer(_renderer);
+        _renderer = nint.Zero;
+      }
+      SDL_DestroyWindow(_window);
+      _window = nint.Zero;
+      _isWindowOpen = false; // Window closed
+    }
+
+    SDL_WindowFlags sdlFlags = (SDL_WindowFlags)flags;
+
+    _window = SDL_CreateWindow("Night Engine", width, height, sdlFlags);
+    if (_window == nint.Zero)
+    {
+      string sdlError = SDL_GetError();
+      Console.WriteLine($"Error creating SDL window: {sdlError}");
+      _isWindowOpen = false; // Window creation failed
+      throw new Exception($"SDL Error creating window: {sdlError}");
+    }
+
+    // Create a renderer. Passing null for the name lets SDL choose the best available driver.
+    // Hardware acceleration is generally preferred and often default.
+    // VSync (PRESENTVSYNC) would typically be set via renderer properties in SDL3 if not default.
+    // For simplicity in this step, we use the basic SDL_CreateRenderer.
+    _renderer = SDL_CreateRenderer(_window, null);
+    if (_renderer == nint.Zero)
+    {
+      string sdlError = SDL_GetError();
+      Console.WriteLine($"Error creating SDL renderer: {sdlError}");
+      // Clean up window if renderer creation fails
+      SDL_DestroyWindow(_window);
+      _window = nint.Zero;
+      _isWindowOpen = false; // Renderer creation failed, so window is not usable
+      throw new Exception($"SDL Error creating renderer: {sdlError}");
+    }
+    _isWindowOpen = true; // Window and renderer successfully created
+  }
+
+  /// <summary>
+  /// Sets the title of the window.
+  /// </summary>
+  /// <param name="title">The new window title.</param>
+  public static void SetTitle(string title)
+  {
+    if (_window == nint.Zero)
+    {
+      string errorMsg = "Error in Night.Window.SetTitle: Window handle is null. Was SetMode called successfully?";
+      Console.WriteLine(errorMsg);
+      throw new InvalidOperationException(errorMsg);
+    }
+    if (!SDL_SetWindowTitle(_window, title))
+    {
+      string sdlError = SDL_GetError();
+      Console.WriteLine($"Error in Night.Window.SetTitle: {sdlError}");
+      throw new Exception($"SDL Error in Night.Window.SetTitle: {sdlError}");
+    }
+  }
+
+  /// <summary>
+  /// Checks if the window is currently open.
+  /// </summary>
+  /// <returns>True if the window is open, false otherwise.</returns>
+  public static bool IsOpen()
+  {
+    return _isWindowOpen && _window != nint.Zero;
+  }
+
+  /// <summary>
+  /// Signals that the window should close.
+  /// This is typically called by the engine when a quit event is received.
+  /// </summary>
+  public static void Close()
+  {
+    _isWindowOpen = false;
+    // Actual window destruction is handled by SetMode re-call or application exit for now.
+    // Or could be SDL_DestroyWindow(_window); _window = nint.Zero; if Engine.Run doesn't own it.
+  }
+}
+
+/// <summary>
+/// Provides functionality for drawing graphics.
+/// Mimics Love2D's love.graphics module.
+/// </summary>
+public static class Graphics
+{
+  /// <summary>
+  /// Creates a new image (Sprite) from a file.
+  /// </summary>
+  /// <param name="filePath">The path to the image file.</param>
+  /// <returns>A new Sprite object.</returns>
+  public static Sprite NewImage(string filePath)
+  {
+    throw new NotImplementedException();
+  }
+
+  /// <summary>
+  /// Draws a sprite to the screen.
+  /// </summary>
+  /// <param name="sprite">The sprite to draw.</param>
+  /// <param name="x">The x-coordinate to draw the sprite at.</param>
+  /// <param name="y">The y-coordinate to draw the sprite at.</param>
+  /// <param name="rotation">The rotation of the sprite (in radians).</param>
+  /// <param name="scaleX">The horizontal scale factor.</param>
+  /// <param name="scaleY">The vertical scale factor.</param>
+  /// <param name="offsetX">The x-offset for the sprite's origin.</param>
+  /// <param name="offsetY">The y-offset for the sprite's origin.</param>
+  public static void Draw(
+      Sprite sprite,
+      float x,
+      float y,
+      float rotation = 0,
+      float scaleX = 1,
+      float scaleY = 1,
+      float offsetX = 0,
+      float offsetY = 0)
+  {
+    throw new NotImplementedException();
+  }
+
+  /// <summary>
+  /// Clears the screen to a specific color.
+  /// </summary>
+  /// <param name="color">The color to clear the screen with.</param>
+  public static void Clear(Color color)
+  {
+    throw new NotImplementedException();
+  }
+
+  /// <summary>
+  /// Presents the drawn graphics to the screen (swaps buffers).
+  /// </summary>
+  public static void Present()
+  {
+    throw new NotImplementedException();
+  }
+}
+
+/// <summary>
+/// Provides functionality for handling keyboard input.
+/// Mimics Love2D's love.keyboard module.
+/// </summary>
+public static class Keyboard
+{
+  /// <summary>
+  /// Checks if a specific key is currently pressed down.
+  /// </summary>
+  /// <param name="key">The key to check.</param>
+  /// <returns>True if the key is down, false otherwise.</returns>
+  public static bool IsDown(KeyCode key)
+  {
+    throw new NotImplementedException();
+  }
+}
+
+/// <summary>
+/// Provides functionality for handling mouse input.
+/// Mimics Love2D's love.mouse module.
+/// </summary>
+public static class Mouse
+{
+  /// <summary>
+  /// Checks if a specific mouse button is currently pressed down.
+  /// </summary>
+  /// <param name="button">The mouse button to check.</param>
+  /// <returns>True if the button is down, false otherwise.</returns>
+  public static bool IsDown(MouseButton button)
+  {
+    throw new NotImplementedException();
+  }
+
+  /// <summary>
+  /// Gets the current position of the mouse cursor.
+  /// </summary>
+  /// <returns>A tuple (int x, int y) representing the mouse coordinates.</returns>
+  public static (int x, int y) GetPosition()
+  {
+    throw new NotImplementedException();
+  }
+}
+
+/// <summary>
+/// Provides direct access to SDL3 functions using SDL3-CS bindings.
+/// This is an internal-facing or low-level API for the engine.
+/// </summary>
+public static class SDL
+{
+  /// <summary>
+  /// Initializes the SDL library. This must be called before any other SDL functions.
+  /// </summary>
+  /// <param name="flags">Initialization flags for SDL.</param>
+  /// <returns>0 on success or a negative error code on failure.</returns>
+  public static int Init(SDL3.SDL.SDL_InitFlags flags)
+  {
+    // SDL3.SDL.SDL_Init returns an SDLBool, which implicitly converts to bool.
+    // We convert this to 0 for success, <0 for failure.
+    return SDL3.SDL.SDL_Init(flags) ? 0 : -1;
+  }
+
+  /// <summary>
+  /// Cleans up all initialized subsystems. You should call this function on application exit.
+  /// </summary>
+  public static void Quit()
+  {
+    SDL3.SDL.SDL_Quit();
+  }
+
+  /// <summary>
+  /// Gets the version of SDL that is linked against.
+  /// The SDL3-CS binding for SDL_GetVersion returns a packed int.
+  /// </summary>
+  /// <returns>A string representing the SDL version "major.minor.patch".</returns>
+  public static string GetVersion()
+  {
+    int sdl_version = SDL3.SDL.SDL_GetVersion();
+    int major = sdl_version / 1000000;
+    int minor = (sdl_version / 1000) % 1000;
+    int patch = sdl_version % 1000;
+    return $"{major}.{minor}.{patch}";
+  }
+
+  // Expose SDL_InitFlags enum for convenience if needed by calling code for Init()
+  public static SDL3.SDL.SDL_InitFlags InitVideo => SDL3.SDL.SDL_InitFlags.SDL_INIT_VIDEO;
+  public static SDL3.SDL.SDL_InitFlags InitAudio => SDL3.SDL.SDL_InitFlags.SDL_INIT_AUDIO;
+  public static SDL3.SDL.SDL_InitFlags InitTimer => SDL3.SDL.SDL_InitFlags.SDL_INIT_TIMER;
+  public static SDL3.SDL.SDL_InitFlags InitEvents => SDL3.SDL.SDL_InitFlags.SDL_INIT_EVENTS;
+  // Add other flags as needed or expect the caller to use SDL3.SDL.SDL_InitFlags directly.
+}
+
+
+
+================================================
+File: src/Night.Engine/Engine.cs
+================================================
+using System;
+using System.Runtime.InteropServices;
+
+using Night.Types;
+
+using static SDL3.SDL;
+
+// Namespace for the public Engine API, consistent with Night.Window, Night.Graphics etc.
+namespace Night
+{
+  /// <summary>
+  /// Manages the main game loop and coordination of game states.
+  /// Provides the main entry point to run a game.
+  /// </summary>
+  public static class Engine
+  {
+    /// <summary>
+    /// Runs the game instance.
+    /// The game loop will internally call Load, Update, and Draw methods
+    /// on the provided game type.
+    /// </summary>
+    /// <typeparam name="TGame">The type of the game to run.
+    /// Must implement <see cref="Night.Types.IGame"/> and have a parameterless constructor.</typeparam>
+    public static void Run<TGame>() where TGame : IGame, new()
+    {
+      // It's good practice to ensure SDL is initialized before using its functions.
+      // Night.Window.SetMode handles SDL_InitSubSystem(SDL_INIT_VIDEO).
+      // If other subsystems are needed by the engine globally, they should be initialized.
+      // SDL_Init(SDL_InitFlags.SDL_INIT_EVENTS) might be useful here if not handled by Window.
+      // However, SDL_PollEvent will work if the video subsystem (which often initializes events) is up.
+
+      var sdlVersionPacked = SDL_GetVersion();
+      Console.WriteLine($"Night Engine: v0.0.1"); // Placeholder version
+      Console.WriteLine($"SDL: v{sdlVersionPacked / 1000000}.{(sdlVersionPacked / 1000) % 1000}.{sdlVersionPacked % 1000}");
+      Console.WriteLine($"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})");
+      Console.WriteLine($"Framework: {RuntimeInformation.FrameworkDescription}");
+
+      // Engine.Run expects Night.Window.SetMode to have been called by the application (e.g., in Program.cs)
+      // *before* Engine.Run is invoked.
+
+      TGame game = new TGame();
+      game.Load();
+
+      ulong perfFrequency = SDL_GetPerformanceFrequency();
+      ulong lastCounter = SDL_GetPerformanceCounter();
+
+      // Ensure the window is open before starting the loop.
+      // Night.Window.SetMode should have been called by the user application before Engine.Run.
+      if (!Window.IsOpen())
+      {
+        Console.WriteLine("Night.Engine.Run: Window is not open. Ensure Night.Window.SetMode() was called successfully before Run().");
+        // Potentially call SDL_Quit() here if Engine.Run was responsible for a global SDL_Init.
+        return;
+      }
+
+      while (Window.IsOpen())
+      {
+        // Event Processing
+        // SDL_PollEvent returns SDLBool, which is true if an event was pending, false otherwise.
+        while (SDL_PollEvent(out SDL_Event e))
+        {
+          // e.type is SDL_EventType, which is an enum with underlying type uint.
+          // Using an if statement to avoid C# compiler issues with uint-backed enums in switch.
+          // Explicitly cast both sides to uint for comparison.
+          if ((uint)e.type == (uint)SDL_EventType.SDL_EVENT_QUIT)
+          {
+            Window.Close();
+          }
+          // Other event handling (keyboard, mouse) will be added in later tasks/epics.
+          // else if (e.type == SDL_EventType.SDL_EVENT_KEY_DOWN) { /* ... */ }
+        }
+
+        // If Window.Close() was called due to an event, IsOpen() will now be false,
+        // and the outer loop should terminate.
+        if (!Window.IsOpen())
+        {
+          break;
+        }
+
+        // Calculate DeltaTime
+        ulong currentCounter = SDL_GetPerformanceCounter();
+        double deltaTime = (double)(currentCounter - lastCounter) / perfFrequency;
+        lastCounter = currentCounter;
+
+        // Clamp deltaTime to avoid large jumps if debugging or system lags
+        // A common practice, though the max value can be debated (e.g., 1/15th of a second)
+        if (deltaTime > 0.0666) // Approx 15 FPS
+        {
+          deltaTime = 0.0666;
+        }
+
+
+        game.Update(deltaTime);
+        game.Draw();
+
+        try
+        {
+          // Graphics.Present might not be implemented yet, but the call should be here.
+          Graphics.Present();
+        }
+        catch (NotImplementedException)
+        {
+          // Silently ignore if Graphics.Present is not yet implemented.
+          // Or log once: Console.WriteLine("Night.Graphics.Present() is not yet implemented.");
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine($"Error during Graphics.Present(): {ex.Message}");
+          // Potentially break loop or handle more gracefully
+        }
+
+        // A small delay can be added here if vsync is not enabled or to reduce CPU usage,
+        // but typically vsync (via renderer flags in SetMode) is preferred.
+        // SDL_Delay(1); // e.g., 1ms delay
+      }
+
+      // TODO: Call game.Unload() if it's added to IGame.
+      // TODO: Ensure proper SDL cleanup (SDL_Quit()), perhaps in a dedicated Engine.Shutdown()
+      // or if Engine.Run is the outermost layer that also did SDL_Init().
+      // For now, if Window.SetMode did SDL_InitSubSystem, a corresponding QuitSubSystem might be needed.
+      // SDL_Quit(); // This would be too broad if other parts of app still use SDL.
+    }
+  }
+}
+
+
+
+================================================
+File: src/Night.Engine/Night.Engine.csproj
+================================================
+ï»¿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>13.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\SDL3-CS\SDL3\SDL3.Core.csproj" />
+  </ItemGroup>
+
+</Project>
+
+
+
+================================================
+File: src/Night.Engine/Types.cs
+================================================
+// Copyright (c) 2025 Night Engine Contributors
+// Distributed under the MIT license. See LICENSE for details.
+
+// TODO: Expand KeyCode with more comprehensive SDL key codes.
+// Night Engine Data Structures
+
+namespace Night.Types
+{
+  /// <summary>
+  /// Represents keyboard keys.
+  /// </summary>
+  /// <remarks>
+  /// This is a preliminary list and will be expanded based on SDL3 key codes.
+  /// </remarks>
+  public enum KeyCode
+  {
+    Unknown,
+
+    // Letters
+    A, B, C, D, E, F, G, H, I, J, K, L, M,
+    N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+
+    // Numbers
+    Num0, Num1, Num2, Num3, Num4, Num5, Num6, Num7, Num8, Num9,
+
+    // Function keys
+    F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
+
+    // Control keys
+    LeftShift, RightShift, LeftControl, RightControl,
+    LeftAlt, RightAlt, LeftSuper, RightSuper, // Super key (Windows/Command key)
+    Enter, Escape, Space, Tab, Backspace, Delete, Insert,
+    Home, End, PageUp, PageDown,
+
+    // Arrow keys
+    Up, Down, Left, Right,
+  }
+
+  /// <summary>
+  /// Represents mouse buttons.
+  /// </summary>
+  public enum MouseButton
+  {
+    Unknown,
+    Left,
+    Middle,
+    Right,
+    X1, // Typically the first extra mouse button (e.g., "back")
+    X2  // Typically the second extra mouse button (e.g., "forward")
+  }
+
+  /// <summary>
+  /// Represents a color with Red, Green, Blue, and Alpha components.
+  /// </summary>
+  public struct Color
+  {
+    public byte R;
+    public byte G;
+    public byte B;
+    public byte A;
+
+    public Color(byte r, byte g, byte b, byte a = 255)
+    {
+      R = r;
+      G = g;
+      B = b;
+      A = a;
+    }
+
+    // Common color presets
+    public static readonly Color Black = new(0, 0, 0);
+    public static readonly Color White = new(255, 255, 255);
+    public static readonly Color Red = new(255, 0, 0);
+    public static readonly Color Green = new(0, 255, 0);
+    public static readonly Color Blue = new(0, 0, 255);
+    public static readonly Color Yellow = new(255, 255, 0);
+    public static readonly Color Magenta = new(255, 0, 255);
+    public static readonly Color Cyan = new(0, 255, 255);
+    public static readonly Color Transparent = new(0, 0, 0, 0);
+  }
+
+  /// <summary>
+  /// Represents a rectangle with position (X, Y) and dimensions (Width, Height).
+  /// </summary>
+  public struct Rectangle
+  {
+    public int X;
+    public int Y;
+    public int Width;
+    public int Height;
+
+    public Rectangle(int x, int y, int width, int height)
+    {
+      X = x;
+      Y = y;
+      Width = width;
+      Height = height;
+    }
+  }
+
+  /// <summary>
+  /// Specifies window creation flags. Values correspond to SDL_WindowFlags.
+  /// </summary>
+  /// <remarks>
+  /// See SDL_video.h for the full list of SDL_WindowFlags.
+  /// </remarks>
+  [System.Flags]
+  public enum WindowFlags : uint
+  {
+    None = 0,
+    Fullscreen = 0x00000001U,    // SDL_WINDOW_FULLSCREEN
+    OpenGL = 0x00000002U,        // SDL_WINDOW_OPENGL
+    Shown = 0x00000004U,         // SDL_WINDOW_SHOWN
+    Hidden = 0x00000008U,        // SDL_WINDOW_HIDDEN
+    Borderless = 0x00000010U,    // SDL_WINDOW_BORDERLESS
+    Resizable = 0x00000020U,     // SDL_WINDOW_RESIZABLE
+    Minimized = 0x00000040U,     // SDL_WINDOW_MINIMIZED
+    Maximized = 0x00000080U,     // SDL_WINDOW_MAXIMIZED
+                                 // MouseGrabbed = 0x00000100U, // SDL_WINDOW_MOUSE_GRABBED (Consider if needed for Night API)
+                                 // InputFocus = 0x00000200U,   // SDL_WINDOW_INPUT_FOCUS (Managed by SDL)
+                                 // MouseFocus = 0x00000400U,   // SDL_WINDOW_MOUSE_FOCUS (Managed by SDL)
+    HighDpi = 0x00002000U,       // SDL_WINDOW_HIGH_PIXEL_DENSITY
+                                 // MouseCapture = 0x00004000U, // SDL_WINDOW_MOUSE_CAPTURE (Consider if needed for Night API)
+                                 // AlwaysOnTop = 0x00008000U,  // SDL_WINDOW_ALWAYS_ON_TOP (Consider if useful)
+    Vulkan = 0x10000000U,        // SDL_WINDOW_VULKAN
+    Metal = 0x20000000U,         // SDL_WINDOW_METAL
+                                 // Transparent = 0x40000000U, // SDL_WINDOW_TRANSPARENT (Consider if useful)
+                                 // NotFocusable = 0x80000000U // SDL_WINDOW_NOT_FOCUSABLE (Consider if useful)
+  }
+
+  /// <summary>
+  /// Represents a 2D sprite.
+  /// </summary>
+  /// <remarks>
+  /// This is a placeholder structure. It will be expanded in Epic 5.
+  /// It might include texture references, source rectangles, etc.
+  /// </remarks>
+  public class Sprite
+  {
+    // Placeholder for texture identifier (e.g., an IntPtr or a managed object)
+    // internal object? _textureHandle; // Example, to be refined
+
+    // Placeholder for dimensions, if not derived from texture
+    // public int Width { get; internal set; }
+    // public int Height { get; internal set; }
+
+    // Placeholder for source rectangle within a texture atlas
+    // public Rectangle? SourceRectangle { get; internal set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Sprite"/> class.
+    /// </summary>
+    /// <remarks>
+    /// Constructor is internal or protected if creation is managed by the engine.
+    /// For now, public for flexibility during early prototyping.
+    /// </remarks>
+    public Sprite()
+    {
+      // Initialization logic will be added in Epic 5.
+    }
+  }
+
+  /// <summary>
+  /// Interface for a game that can be run by the Night Engine.
+  /// Game developers will implement this interface in their main game class.
+  /// </summary>
+  public interface IGame
+  {
+    /// <summary>
+    /// Called once when the game starts, for loading resources.
+    /// </summary>
+    void Load();
+
+    /// <summary>
+    /// Called repeatedly every frame, for updating game logic.
+    /// </summary>
+    /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
+    void Update(double deltaTime);
+
+    /// <summary>
+    /// Called repeatedly every frame, for drawing the game state.
+    /// </summary>
+    void Draw();
+
+    // Optional input handlers can be added here later as per PRD Feature 4.
+    // For example:
+    // void KeyPressed(KeyCode key, bool isRepeat);
+    // void MousePressed(int x, int y, MouseButton button, int presses);
+  }
+}
+
+
+
+================================================
+File: src/Night.Engine/bin/Debug/net9.0/Night.Engine.deps.json
+================================================
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Night.Engine/1.0.0": {
+        "dependencies": {
+          "SDL3.Core": "1.0.0"
+        },
+        "runtime": {
+          "Night.Engine.dll": {}
+        }
+      },
+      "SDL3.Core/1.0.0": {
+        "runtime": {
+          "SDL3.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Night.Engine/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SDL3.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
+
+
+
+
+================================================
+File: src/Night.Engine/obj/Night.Engine.csproj.nuget.dgspec.json
+================================================
+{
+  "format": 1,
+  "restore": {
+    "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj": {}
+  },
+  "projects": {
+    "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj",
+        "projectName": "SDL3.Core",
+        "projectPath": "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj",
+        "packagesPath": "C:\\Users\\Danny\\.nuget\\packages\\",
+        "outputPath": "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Danny\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj",
+        "projectName": "Night.Engine",
+        "projectPath": "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj",
+        "packagesPath": "C:\\Users\\Danny\\.nuget\\packages\\",
+        "outputPath": "E:\\git\\any2\\src\\Night.Engine\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Danny\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj": {
+                "projectPath": "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
+
+
+================================================
+File: src/Night.Engine/obj/Night.Engine.csproj.nuget.g.props
+================================================
+ï»¿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
+    <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
+    <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\Danny\.nuget\packages\;C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages</NuGetPackageFolders>
+    <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.14.0</NuGetToolVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <SourceRoot Include="C:\Users\Danny\.nuget\packages\" />
+    <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
+  </ItemGroup>
+</Project>
+
+
+================================================
+File: src/Night.Engine/obj/Night.Engine.csproj.nuget.g.targets
+================================================
+ï»¿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
+
+
+================================================
+File: src/Night.Engine/obj/project.assets.json
+================================================
+{
+  "version": 3,
+  "targets": {
+    "net9.0": {
+      "SDL3.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/SDL3.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SDL3.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SDL3.Core/1.0.0": {
+      "type": "project",
+      "path": "../../lib/SDL3-CS/SDL3/SDL3.Core.csproj",
+      "msbuildProject": "../../lib/SDL3-CS/SDL3/SDL3.Core.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net9.0": [
+      "SDL3.Core >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Danny\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj",
+      "projectName": "Night.Engine",
+      "projectPath": "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj",
+      "packagesPath": "C:\\Users\\Danny\\.nuget\\packages\\",
+      "outputPath": "E:\\git\\any2\\src\\Night.Engine\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\Danny\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
+      ],
+      "originalTargetFrameworks": [
+        "net9.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "projectReferences": {
+            "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj": {
+              "projectPath": "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "9.0.300"
+    },
+    "frameworks": {
+      "net9.0": {
+        "targetAlias": "net9.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
+
+
+================================================
+File: src/Night.Engine/obj/project.nuget.cache
+================================================
+{
+  "version": 2,
+  "dgSpecHash": "JK0O8YLYjEU=",
+  "success": true,
+  "projectFilePath": "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj",
+  "expectedPackageFiles": [],
+  "logs": []
+}
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/Night.En.7AF90C0B.Up2Date
+================================================
+
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/Night.Engine.AssemblyInfo.cs
+================================================
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+
+[assembly: System.Reflection.AssemblyCompanyAttribute("Night.Engine")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94f5d1218b844c748011b4f3e2eafe973b4e7bcc")]
+[assembly: System.Reflection.AssemblyProductAttribute("Night.Engine")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Night.Engine")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+
+// Generated by the MSBuild WriteCodeFragment class.
+
+
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/Night.Engine.AssemblyInfoInputs.cache
+================================================
+c392b2429e7b54129d6fae27fad26157adbc55efeeb34ebe9db3f8b6753015e8
+
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/Night.Engine.GeneratedMSBuildEditorConfig.editorconfig
+================================================
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Night.Engine
+build_property.ProjectDir = E:\git\any2\src\Night.Engine\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/Night.Engine.GlobalUsings.g.cs
+================================================
+// <auto-generated/>
+global using global::System;
+global using global::System.Collections.Generic;
+global using global::System.IO;
+global using global::System.Linq;
+global using global::System.Net.Http;
+global using global::System.Threading;
+global using global::System.Threading.Tasks;
+
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/Night.Engine.assets.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/Night.Engine.csproj.AssemblyReference.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/Night.Engine.csproj.CoreCompileInputs.cache
+================================================
+9d9768b3dfac3d184828c5d1633e5bc0d19ae1689b74d8fa7034ee01981d27de
+
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/Night.Engine.sourcelink.json
+================================================
+{"documents":{"E:\\git\\any2\\*":"https://raw.githubusercontent.com/nightconcept/any2/94f5d1218b844c748011b4f3e2eafe973b4e7bcc/*","E:\\git\\any2\\lib\\SDL3-CS\\*":"https://raw.githubusercontent.com/flibitijibibo/SDL3-CS/e26a111c1b90301e37475a4dfb6f5ce47447d677/*"}}
+
+
+================================================
+File: src/Night.Engine/obj/Debug/net9.0/.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+================================================
+// <autogenerated />
+using System;
+using System.Reflection;
+[assembly: global::System.Runtime.Versioning.TargetFrameworkAttribute(".NETCoreApp,Version=v9.0", FrameworkDisplayName = ".NET 9.0")]
+
+
+
+
+
+================================================
+File: src/Night.SampleGame/Game.cs
+================================================
+using Night.Types;
+
+namespace Night.SampleGame;
+
+public class Game : IGame
+{
+  public void Load()
+  {
+    // Placeholder for loading game assets and initial setup
+    Night.Window.SetMode(800, 600, WindowFlags.Shown | WindowFlags.Resizable);
+    Night.Window.SetTitle("Night Sample Game");
+  }
+
+  public void Update(double deltaTime)
+  {
+    // Placeholder for game logic updates
+    // System.Console.WriteLine($"SampleGame: Update, DeltaTime: {deltaTime}");
+  }
+
+  public void Draw()
+  {
+    // Placeholder for drawing game elements
+    // System.Console.WriteLine("SampleGame: Draw");
+  }
+}
+
+
+
+================================================
+File: src/Night.SampleGame/Night.SampleGame.csproj
+================================================
+ï»¿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>13.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Night.Engine\Night.Engine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\lib\SDL3-Prebuilt\win64\SDL3.dll" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+      <Link>SDL3.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\lib\SDL3-Prebuilt\macos\libSDL3.0.dylib" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+      <Link>libSDL3.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\lib\SDL3-Prebuilt\lib64\libSDL3.so.0" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+      <Link>libSDL3.so.0</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
+
+
+
+================================================
+File: src/Night.SampleGame/Program.cs
+================================================
+ï»¿using Night.SampleGame;
+
+public class Program
+{
+  public static void Main()
+  {
+    Night.Engine.Run<Game>();
+  }
+}
+
+
+
+================================================
+File: src/Night.SampleGame/bin/Debug/net9.0/Night.SampleGame.deps.json
+================================================
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Night.SampleGame/1.0.0": {
+        "dependencies": {
+          "Night.Engine": "1.0.0"
+        },
+        "runtime": {
+          "Night.SampleGame.dll": {}
+        }
+      },
+      "Night.Engine/1.0.0": {
+        "dependencies": {
+          "SDL3.Core": "1.0.0"
+        },
+        "runtime": {
+          "Night.Engine.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "SDL3.Core/1.0.0": {
+        "runtime": {
+          "SDL3.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Night.SampleGame/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Night.Engine/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SDL3.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
+
+
+================================================
+File: src/Night.SampleGame/bin/Debug/net9.0/Night.SampleGame.runtimeconfig.json
+================================================
+{
+  "runtimeOptions": {
+    "tfm": "net9.0",
+    "framework": {
+      "name": "Microsoft.NETCore.App",
+      "version": "9.0.0"
+    },
+    "configProperties": {
+      "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false
+    }
+  }
+}
+
+
+
+================================================
+File: src/Night.SampleGame/obj/Night.SampleGame.csproj.nuget.dgspec.json
+================================================
+{
+  "format": 1,
+  "restore": {
+    "E:\\git\\any2\\src\\Night.SampleGame\\Night.SampleGame.csproj": {}
+  },
+  "projects": {
+    "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj",
+        "projectName": "SDL3.Core",
+        "projectPath": "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj",
+        "packagesPath": "C:\\Users\\Danny\\.nuget\\packages\\",
+        "outputPath": "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Danny\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj",
+        "projectName": "Night.Engine",
+        "projectPath": "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj",
+        "packagesPath": "C:\\Users\\Danny\\.nuget\\packages\\",
+        "outputPath": "E:\\git\\any2\\src\\Night.Engine\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Danny\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj": {
+                "projectPath": "E:\\git\\any2\\lib\\SDL3-CS\\SDL3\\SDL3.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\git\\any2\\src\\Night.SampleGame\\Night.SampleGame.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\git\\any2\\src\\Night.SampleGame\\Night.SampleGame.csproj",
+        "projectName": "Night.SampleGame",
+        "projectPath": "E:\\git\\any2\\src\\Night.SampleGame\\Night.SampleGame.csproj",
+        "packagesPath": "C:\\Users\\Danny\\.nuget\\packages\\",
+        "outputPath": "E:\\git\\any2\\src\\Night.SampleGame\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Danny\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj": {
+                "projectPath": "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
+
+
+================================================
+File: src/Night.SampleGame/obj/Night.SampleGame.csproj.nuget.g.props
+================================================
+ï»¿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
+    <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
+    <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\Danny\.nuget\packages\;C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages</NuGetPackageFolders>
+    <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.14.0</NuGetToolVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <SourceRoot Include="C:\Users\Danny\.nuget\packages\" />
+    <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
+  </ItemGroup>
+</Project>
+
+
+================================================
+File: src/Night.SampleGame/obj/Night.SampleGame.csproj.nuget.g.targets
+================================================
+ï»¿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
+
+
+================================================
+File: src/Night.SampleGame/obj/project.assets.json
+================================================
+{
+  "version": 3,
+  "targets": {
+    "net9.0": {
+      "Night.Engine/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "SDL3.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Night.Engine.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Night.Engine.dll": {}
+        }
+      },
+      "SDL3.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/SDL3.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SDL3.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Night.Engine/1.0.0": {
+      "type": "project",
+      "path": "../Night.Engine/Night.Engine.csproj",
+      "msbuildProject": "../Night.Engine/Night.Engine.csproj"
+    },
+    "SDL3.Core/1.0.0": {
+      "type": "project",
+      "path": "../../lib/SDL3-CS/SDL3/SDL3.Core.csproj",
+      "msbuildProject": "../../lib/SDL3-CS/SDL3/SDL3.Core.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net9.0": [
+      "Night.Engine >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Danny\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "E:\\git\\any2\\src\\Night.SampleGame\\Night.SampleGame.csproj",
+      "projectName": "Night.SampleGame",
+      "projectPath": "E:\\git\\any2\\src\\Night.SampleGame\\Night.SampleGame.csproj",
+      "packagesPath": "C:\\Users\\Danny\\.nuget\\packages\\",
+      "outputPath": "E:\\git\\any2\\src\\Night.SampleGame\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\Danny\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
+      ],
+      "originalTargetFrameworks": [
+        "net9.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "projectReferences": {
+            "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj": {
+              "projectPath": "E:\\git\\any2\\src\\Night.Engine\\Night.Engine.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "9.0.300"
+    },
+    "frameworks": {
+      "net9.0": {
+        "targetAlias": "net9.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
+
+
+================================================
+File: src/Night.SampleGame/obj/project.nuget.cache
+================================================
+{
+  "version": 2,
+  "dgSpecHash": "VD9f8ZIjxDc=",
+  "success": true,
+  "projectFilePath": "E:\\git\\any2\\src\\Night.SampleGame\\Night.SampleGame.csproj",
+  "expectedPackageFiles": [],
+  "logs": []
+}
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.Sa.E6945040.Up2Date
+================================================
+
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfo.cs
+================================================
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+
+[assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94f5d1218b844c748011b4f3e2eafe973b4e7bcc")]
+[assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+
+// Generated by the MSBuild WriteCodeFragment class.
+
+
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
+================================================
+962a5fe2890c632cc744e29b819e15d53c7676e6452febe3688e1b08e8823418
+
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.SampleGame.GeneratedMSBuildEditorConfig.editorconfig
+================================================
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Night.SampleGame
+build_property.ProjectDir = E:\git\any2\src\Night.SampleGame\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.SampleGame.GlobalUsings.g.cs
+================================================
+// <auto-generated/>
+global using global::System;
+global using global::System.Collections.Generic;
+global using global::System.IO;
+global using global::System.Linq;
+global using global::System.Net.Http;
+global using global::System.Threading;
+global using global::System.Threading.Tasks;
+
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.SampleGame.assets.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.SampleGame.csproj.AssemblyReference.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.SampleGame.csproj.CoreCompileInputs.cache
+================================================
+3d035d1fb2b3f27cd4b0a70382985e55e383630d680e8b3cdef14c48569a2c56
+
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.SampleGame.genruntimeconfig.cache
+================================================
+e8501c210822affd6bb46c31b18d2f77f345de5643d301d9f5c98520af14207a
+
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
+================================================
+{"documents":{"E:\\git\\any2\\*":"https://raw.githubusercontent.com/nightconcept/any2/94f5d1218b844c748011b4f3e2eafe973b4e7bcc/*","E:\\git\\any2\\lib\\SDL3-CS\\*":"https://raw.githubusercontent.com/flibitijibibo/SDL3-CS/e26a111c1b90301e37475a4dfb6f5ce47447d677/*"}}
+
+
+================================================
+File: src/Night.SampleGame/obj/Debug/net9.0/.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+================================================
+// <autogenerated />
+using System;
+using System.Reflection;
+[assembly: global::System.Runtime.Versioning.TargetFrameworkAttribute(".NETCoreApp,Version=v9.0", FrameworkDisplayName = ".NET 9.0")]
+
+
+
+
+
+
+================================================
+File: .github/CODEOWNERS
+================================================
+# This is a CODEOWNERS file.
+#
+# Lines starting with '#' are comments.
+# Each line is a file pattern followed by one or more owners.
+# These patterns follow the same rules as .gitignore.
+#
+# Owners can be:
+# - A GitHub username (e.g., @octocat)
+# - A GitHub team name (e.g., @my-org/my-team)
+# - An email address (e.g., user@example.com)
+#
+# Order matters: the last matching pattern takes the most precedence.
+#
+# Example:
+# *       @global-owner1 @global-owner2  # All files are owned by these users/teams
+# *.js    @js-owner                      # .js files are owned by @js-owner
+# /docs/  docs@example.com               # Files in the /docs/ directory are owned by docs@example.com
+
+# All files in the repository are owned by nightconcept
+* @nightconcept dark@nightconcept.net
+
+# You can add more specific rules below if needed.
+# For example, if different parts of the project have different owners:
+#
+# /cmd/      @nightconcept
+# /internal/ @nightconcept
+# /scripts/  dark@nightconcept.net
+
+
+
+================================================
+File: .github/copilot-instructions.md
+================================================
+# AI Project Guidelines (Condensed)
+
+**Objective:** Define mandatory process, coding, testing, and interaction standards for AI assistance.
+
+## 1. Preparation
+
+* **Project Context (Session Start):** ALWAYS review key project docs: `docs/PRD.md` (architecture, goals, tech stack, versions, structure, style guide), `docs/digest.txt` (current state summary), `docs/TASKS.md` (assignments).
+* **Task Prep (Before Work):**
+    * ALWAYS consult `docs/TASKS.md` for your assignment. If missing, add it (concise description, `YYYY-MM-DD`).
+    * ALWAYS review relevant existing code *before* suggesting changes.
+
+## 2. Implementation Planning
+
+**Present this plan before providing code for a task:**
+
+* Problem description (brief).
+* Solution overview (high-level).
+* Implementation steps (list).
+* Risks/Challenges (foreseen).
+
+## 3. Development Workflow
+
+* **Plan First:** Present plan (Sec 2) before coding.
+* **Focus:** Target the specific task from `TASKS.md`. No unrelated refactoring unless tasked.
+* **Modification Approach:**
+    * Prioritize minimal, incremental, clean, elegant, idiomatic changes.
+    * Explain significant suggestions (Sec 5.4).
+    * Propose beneficial low-risk refactoring.
+    * Avoid duplication; use helpers/modules.
+    * Explain use of language strengths/pitfalls if relevant.
+* **Dependencies:** No new/updated external dependencies without explicit maintainer approval (check `docs/PRD.md` for approved stack/versions). Use only approved dependencies.
+* **Commits (User Task):** Follow Conventional Commits (`https://www.conventionalcommits.org/en/v1.0.0/`).
+* **Manual Testing:** Provide clear user instructions for manually testing the task's changes.
+
+## 4. Folder Structure
+
+* **Strict Adherence:** Follow structure defined in `docs/PRD.md`.
+* **Changes:** No adding/removing/relocating files/dirs without prior maintainer approval. Approved structure changes require updating `docs/PRD.md` *before* implementation.
+* **Source Location:** All source code must be in `src/`.
+* **Precedence:** This rule is foundational.
+
+## 5. Coding Standards
+
+### 5.1. General & Robustness
+
+* Follow language best practices unless overridden by `docs/PRD.md` or these guidelines.
+* Prioritize: Clarity, maintainability, efficiency.
+* Consider performance & basic security.
+* Implement robust error handling (language norms or `PRD.md` spec); handle errors gracefully.
+
+### 5.2. Modularity & Structure
+
+* Keep files focused (ideally < 500 lines); refactor large ones.
+* Prefer small, single-purpose functions.
+* Structure code logically (per `docs/PRD.md`) into modules.
+* Use clear, consistent imports (relative for local packages). Verify paths.
+
+### 5.3. Style & Formatting
+
+* **Priority:** 1) `docs/PRD.md`, 2) These rules, 3) Language common practices.
+* **Type Hinting:** Mandatory for functions/classes/modules (dynamic languages).
+* **Indentation:** 2 spaces.
+* **Function Calls:** No space: `func()` not `func ()`.
+* **Line Structure:** Avoid collapsing statements if clarity suffers.
+* **Scope:** Default local. More descriptive names for wider scope. Avoid single-letter vars (except iterators/tiny scope; `i` only for loops). Use `_` for ignored vars.
+* **Casing:** Match current file style; else language common style. `UPPER_CASE` for constants only.
+* **Booleans:** Prefer `is_` prefix for boolean functions.
+* **File Headers:** Top comment: Title (descriptive, not filename) + brief purpose. No version/OS info.
+
+### 5.4. Documentation & Comments
+
+* **Docstrings:** Required for public functions, classes, modules (standard format).
+* **Code Comments:** Explain non-obvious logic, complex algorithms, decisions (*why*, not *what*).
+* **Reasoning Comments:** Use `# Reason:` for complex block rationale.
+* **README Updates:** Update `docs/README.md` for core features, dependency changes, or setup/build modifications.
+
+## 6. Testing
+
+* **Goal:** Tests are living documentation specifying behavior. Use common language framework.
+* **Behavior Specification:** Tests specify behavior. Type/scope/timing (e.g., E2E, Unit, Integration) defined in `docs/PRD.md` per project phase.
+* **Location:** Place tests in `/src/test` (Lua: `/src/spec`), mirroring `src/` structure (Sec 4).
+    * Ex: Tests for `src/engine/mod.js` -> `src/test/engine/mod_test.js`.
+    * Ex: Lua spec for `src/engine/mod.lua` -> `src/spec/engine/mod_spec.lua`.
+* **Content:** Tests clearly describe expected behavior per `PRD.md` goals for the current phase.
+    * **Prototype Phase:** Primary focus on automated E2E tests validating core functionality.
+* **Strategy & Coverage:** Defined in `PRD.md`, evolves with phases.
+    * **Prototype Phase:** E2E priority. Comprehensive unit tests & code coverage metrics (e.g., 100% statement coverage) are **not** the focus *unless* specified in `docs/PRD.md` for a later phase demanding them.
+* **Updating Tests:** Review/update tests with code changes to reflect *current* expected behavior. Fix failing/outdated tests promptly.
+
+## 7. AI Interaction Protocols
+
+### 7.1. Engineering Role & Audience
+
+* **Role:** Act as a **Senior Software Engineer**.
+* **Audience:** Target **Mid-Level Software Engineers** (code = best practices, clear, documented; explanations thorough; justify complex choices).
+
+### 7.2. Interaction Guidelines
+
+* Ask clarifying questions if needed; do not assume.
+* Verify facts (libs, APIs, file paths); do not invent. Use MCP servers if available.
+* Do not delete/overwrite code unless instructed or part of the defined task.
+* Report significant blockers/errors *during* implementation promptly with context and suggestions.
+* If a task seems complex, state potential benefit from a more advanced model **boldly** at the start (e.g., "**Suggestion: This complex refactoring might benefit from a more advanced model.**").
+* Be friendly, helpful, collaborative.
+* Explicitly state when task requirements are met. Mark task complete in `docs/TASKS.md`.
+
+
+
+================================================
+File: .github/dependabot.yml
+================================================
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      # Check for updates to GitHub Actions every week
+      interval: "weekly"
+
+
+
+================================================
+File: .github/deactivated/build-sdl3.yml
+================================================
+name: Build Night.Platform + SDL3
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'Platform/**'
+      - '!Platform/libs/**'
+  pull_request:
+    paths:
+      - 'Platform/**'
+      - '!Platform/libs/**'
+jobs:
+  Build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            arch: x64
+            target: win-x64
+            ext: .dll
+          - os: macos-latest
+            arch: x64-arm64
+            target: osx
+            ext: .dylib
+          - os: ubuntu-latest
+            arch: x64
+            target: linux-x64
+            ext: .so
+    runs-on: ${{matrix.os}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get CMake
+        uses: lukka/get-cmake@v3.29.4
+      - name: Setup Linux dependencies
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential git make \
+            pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
+            libaudio-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
+            libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev \
+            libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
+            libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev
+      - name: CMake Configure
+        run: cmake -B build -S Platform -DNIGHT_OVERRIDE_TARGET=${{matrix.target}} -D CMAKE_SYSTEM_VERSION=10.0.26100.0
+      - name: CMake Build
+        run: cmake --build build --config Release
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{matrix.os}}-${{matrix.arch}}-build
+          path: Platform/libs/${{matrix.target}}/*${{matrix.ext}}*
+  UpdateLibs:
+    if: github.ref == 'refs/heads/main'
+    needs: [Build]
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download windows x64 libs
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-latest-x64-build
+          path: Platform/libs/win-x64
+      - name: Download macos libs
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-latest-x64-arm64-build
+          path: Platform/libs/osx
+      - name: Download ubuntu libs
+        uses: actions/download-artifact@v4
+        with:
+          name: ubuntu-latest-x64-build
+          path: Platform/libs/linux-x64
+      - name: Display structure of libs
+        run: ls -R
+        working-directory: Platform/libs
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9.1.3
+        with:
+          message: Updated platform libs
+          committer_name: GitHub Actions
+          committer_email: actions@github.com
+
+
+
+================================================
+File: .github/deactivated/ci.yml
+================================================
+name: Go CI
+permissions:
+  contents: read
+  security-events: write
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test on Go ${{ matrix.go-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ '1.24' ]
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 2
+
+      - name: Set up Go
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Install Go tools
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          go install github.com/mattn/goveralls@latest
+
+      - name: Download Go modules
+        run: |
+          go mod download
+          go mod verify
+
+      - name: Run govulncheck
+        uses: golang/govulncheck-action@b625fbe08f3bccbe446d94fbf87fcc875a4f50ee # v1.0.4
+
+      - name: Lint source
+        run: golangci-lint run ./...
+
+      - name: Run tests with coverage
+        run: go test -v ./... -race -coverprofile=coverage.out -covermode=atomic
+
+      - name: Upload coverage to Coveralls
+        if: matrix.go-version == '1.24' # Only upload from one Go version
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          goveralls -coverprofile=coverage.out -service=github -repotoken $COVERALLS_TOKEN
+
+
+
+================================================
+File: .github/deactivated/codeql.yml
+================================================
+# For most projects, this workflow file will not need changing; you simply need
+# to commit it to your repository.
+#
+# You may wish to alter this file to override the set of languages analyzed,
+# or to provide custom queries or build logic.
+#
+# ******** NOTE ********
+# We have attempted to detect the languages in your repository. Please check
+# the `language` matrix defined below to confirm you have the correct set of
+# supported CodeQL languages.
+#
+name: "CodeQL"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: ["main"]
+  schedule:
+    - cron: "0 0 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["go"]
+        # CodeQL supports [ $supported-codeql-languages ]
+        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
+        with:
+          languages: ${{ matrix.language }}
+          # If you wish to specify custom queries, you can do so here or in a config file.
+          # By default, queries listed here will override any specified in a config file.
+          # Prefix the list here with "+" to use these queries and those in the config file.
+
+      # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+      # If this step fails, then you should remove it and run the build manually (see below)
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
+
+      # ℹ️ Command-line programs to run using the OS shell.
+      # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+
+      #   If the Autobuild fails above, remove it and uncomment the following three lines.
+      #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
+
+      # - run: |
+      #   echo "Run, Build Application using script"
+      #   ./location_of_script_within_repo/buildscript.sh
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
+        with:
+          category: "/language:${{matrix.language}}"
+
+
+
+================================================
+File: .github/deactivated/dependency-review.yml
+================================================
+# Dependency Review Action
+#
+# This Action will scan dependency manifest files that change as part of a Pull Request,
+# surfacing known-vulnerable versions of the packages declared or updated in the PR.
+# Once installed, if the workflow run is marked as required,
+# PRs introducing known-vulnerable packages will be blocked from merging.
+#
+# Source repository: https://github.com/actions/dependency-review-action
+name: 'Dependency Review'
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: 'Checkout Repository'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@38ecb5b593bf0eb19e335c03f97670f792489a8b # v4.7.0
+
+
+
+================================================
+File: .github/deactivated/release.yml
+================================================
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: "Type of version bump (alpha, beta, rc, promote_to_final, patch, minor, major)"
+        required: true
+        default: "alpha"
+        type: choice
+        options:
+          - alpha
+          - beta
+          - rc
+          - promote_to_final
+          - patch
+          - minor
+          - major
+      draft_release:
+        description: "Create as a draft release?"
+        required: true
+        default: "false"
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  determine_version:
+    runs-on: ubuntu-latest
+    outputs:
+      next_version: ${{ steps.get_version.outputs.next_version }}
+      is_prerelease: ${{ steps.get_version.outputs.is_prerelease }}
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0 # Required to fetch all tags
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install semver
+
+      - name: Determine next version
+        id: get_version
+        env:
+          BUMP_TYPE: ${{ github.event.inputs.bump_type }}
+        run: python .github/scripts/determine_next_version.py
+
+  build_and_release:
+    needs: determine_version
+    if: needs.determine_version.outputs.next_version != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to create releases and tags
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [amd64, arm64]
+        exclude: # Add exclusions if some combinations are not needed/supported
+          - goos: windows
+            goarch: arm64 # Example: if windows arm64 is not a target
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Go
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: '1.21' # As per PRD
+
+      - name: Set version output
+        id: version_output
+        run: |
+          echo "NEXT_VERSION=${{ needs.determine_version.outputs.next_version }}" >> $GITHUB_ENV
+          echo "IS_PRERELEASE=${{ needs.determine_version.outputs.is_prerelease }}" >> $GITHUB_ENV
+
+      - name: Build application
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          VERSION: ${{ env.NEXT_VERSION }}
+        run: |
+          echo "Building for $GOOS/$GOARCH with version $VERSION"
+          BINARY_NAME="almd"
+          if [ "$GOOS" == "windows" ]; then
+            BINARY_NAME="almd.exe"
+          fi
+          go build -v -o $BINARY_NAME -ldflags="-X 'main.version=$VERSION'" ./cmd/almd
+          ls -la $BINARY_NAME # Verify binary exists
+
+      - name: Archive binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          VERSION_NO_V: ${{ env.NEXT_VERSION }} # Assuming NEXT_VERSION has 'v' prefix
+        run: |
+          VERSION_TAG=${VERSION_NO_V#v} # Remove 'v' prefix for filename
+          ARCHIVE_NAME="almd_${VERSION_TAG}_${GOOS}_${GOARCH}"
+          BINARY_NAME="almd"
+          if [ "$GOOS" == "windows" ]; then
+            BINARY_NAME="almd.exe"
+            zip "${ARCHIVE_NAME}.zip" $BINARY_NAME
+            echo "ASSET_NAME=${ARCHIVE_NAME}.zip" >> $GITHUB_ENV
+            echo "ASSET_PATH=${ARCHIVE_NAME}.zip" >> $GITHUB_ENV
+          else
+            tar -czvf "${ARCHIVE_NAME}.tar.gz" $BINARY_NAME
+            echo "ASSET_NAME=${ARCHIVE_NAME}.tar.gz" >> $GITHUB_ENV
+            echo "ASSET_PATH=${ARCHIVE_NAME}.tar.gz" >> $GITHUB_ENV
+          fi
+          ls -la $ASSET_PATH # Verify archive exists
+
+      - name: Upload artifact for this job
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: almd-binaries-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: ${{ env.ASSET_PATH }}
+
+  create_release_tag:
+    needs: [determine_version, build_and_release] # Ensure build_and_release completes for all platforms
+    runs-on: ubuntu-latest
+    if: needs.determine_version.outputs.next_version != ''
+    permissions:
+      contents: write
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Create Git Tag
+        env:
+          NEXT_VERSION: ${{ needs.determine_version.outputs.next_version }}
+        run: |
+          echo "Creating tag $NEXT_VERSION"
+          git tag $NEXT_VERSION
+          git push origin $NEXT_VERSION
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          path: release-artifacts # Download all artifacts to this directory
+          # No specific name means download all artifacts from the run
+
+      - name: List downloaded artifacts
+        run: |
+          ls -R release-artifacts
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2.2.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.determine_version.outputs.next_version }}
+          name: Release ${{ needs.determine_version.outputs.next_version }}
+          body: |
+            Automated release for version ${{ needs.determine_version.outputs.next_version }}.
+            See CHANGELOG.md for details (if available).
+          draft: ${{ github.event.inputs.draft_release == 'true' }}
+          prerelease: ${{ needs.determine_version.outputs.is_prerelease == 'true' }}
+          files: |
+            release-artifacts/almd-binaries-linux-amd64/*.tar.gz
+            release-artifacts/almd-binaries-linux-arm64/*.tar.gz
+            release-artifacts/almd-binaries-windows-amd64/*.zip
+            release-artifacts/almd-binaries-darwin-amd64/*.tar.gz
+            release-artifacts/almd-binaries-darwin-arm64/*.tar.gz
+
+
+
+================================================
+File: .github/deactivated/scorecard.yml
+================================================
+# This workflow uses actions that are not certified by GitHub. They are provided
+# by a third-party and are governed by separate terms of service, privacy
+# policy, and support documentation.
+
+name: Scorecard supply-chain security
+on:
+  # For Branch-Protection check. Only the default branch is supported. See
+  # https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection
+  branch_protection_rule:
+  # To guarantee Maintained check is occasionally updated. See
+  # https://github.com/ossf/scorecard/blob/main/docs/checks.md#maintained
+  schedule:
+    - cron: '26 19 * * 2'
+  push:
+    branches: [ "main" ]
+
+# Declare default permissions as read only.
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    # `publish_results: true` only works when run from the default branch. conditional can be removed if disabled.
+    if: github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request'
+    permissions:
+      # Needed to upload the results to code-scanning dashboard.
+      security-events: write
+      # Needed to publish results and get a badge (see publish_results below).
+      id-token: write
+      # Uncomment the permissions below if installing in a private repository.
+      # contents: read
+      # actions: read
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: "Checkout code"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: "Run analysis"
+        uses: ossf/scorecard-action@f49aabe0b5af0936a0987cfb85d86b75731b0186 # v2.4.1
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          # (Optional) "write" PAT token. Uncomment the `repo_token` line below if:
+          # - you want to enable the Branch-Protection check on a *public* repository, or
+          # - you are installing Scorecard on a *private* repository
+          # To create the PAT, follow the steps in https://github.com/ossf/scorecard-action?tab=readme-ov-file#authentication-with-fine-grained-pat-optional.
+          # repo_token: ${{ secrets.SCORECARD_TOKEN }}
+
+          # Public repositories:
+          #   - Publish results to OpenSSF REST API for easy access by consumers
+          #   - Allows the repository to include the Scorecard badge.
+          #   - See https://github.com/ossf/scorecard-action#publishing-results.
+          # For private repositories:
+          #   - `publish_results` will always be set to `false`, regardless
+          #     of the value entered here.
+          publish_results: true
+
+          # (Optional) Uncomment file_mode if you have a .gitattributes with files marked export-ignore
+          # file_mode: git
+
+      # Upload the results as artifacts (optional). Commenting out will disable uploads of run results in SARIF
+      # format to the repository Actions tab.
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: SARIF file
+          path: results.sarif
+          retention-days: 5
+
+      # Upload the results to GitHub's code scanning dashboard (optional).
+      # Commenting out will disable upload of results to your repo's Code Scanning dashboard
+      - name: "Upload to code-scanning"
+        uses: github/codeql-action/upload-sarif@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
+        with:
+          sarif_file: results.sarif
+
+
+
+================================================
+File: .github/scripts/determine_next_version.py
+================================================
+import os
+import subprocess
+import semver
+import sys
+
+def get_tags():
+    try:
+        result = subprocess.run(['git', 'tag', '-l', 'v*', '--sort=v:refname'], capture_output=True, text=True, check=True)
+        tags = result.stdout.strip().split('\n')
+        return [tag for tag in tags if tag] # Filter out empty strings if any
+    except subprocess.CalledProcessError as e:
+        print(f"Error fetching tags: {e}", file=sys.stderr)
+        return []
+
+def get_latest_semver(tags):
+    latest_v = None
+    for tag_str in reversed(tags): # Iterate from newest to oldest based on git sort
+        try:
+            v = semver.VersionInfo.parse(tag_str[1:]) # Remove 'v' prefix
+            if latest_v is None or v > latest_v:
+                latest_v = v
+        except ValueError:
+            # Not a valid semver tag, skip
+            continue
+    return latest_v
+
+def get_latest_prerelease_for_base(tags, base_version, token):
+    """
+    Finds the latest prerelease tag for a given base version and token.
+    Example: base_version = 0.2.0, token = 'alpha' -> finds latest v0.2.0-alpha.N
+    Returns a semver.VersionInfo object or None.
+    """
+    latest_prerelease_v = None
+    for tag_str in reversed(tags): # Assumes tags are sorted v:refname
+        try:
+            v = semver.VersionInfo.parse(tag_str[1:])
+            if v.major == base_version.major and \
+               v.minor == base_version.minor and \
+               v.patch == base_version.patch and \
+               v.prerelease and len(v.prerelease) == 2 and v.prerelease[0] == token:
+                # Compare numeric part of the prerelease
+                if latest_prerelease_v is None or v.prerelease[1] > latest_prerelease_v.prerelease[1]:
+                    latest_prerelease_v = v
+        except ValueError:
+            # Not a valid semver tag or unexpected prerelease format
+            continue
+        except TypeError:
+            # Handle cases where prerelease[1] might not be comparable (e.g., not an int)
+            print(f"Warning: Prerelease part of tag {tag_str} is not as expected for comparison.", file=sys.stderr)
+            continue
+    return latest_prerelease_v
+
+def main():
+    bump_type = os.environ.get('BUMP_TYPE')
+    if not bump_type:
+        print("Error: BUMP_TYPE environment variable not set.", file=sys.stderr)
+        sys.exit(1)
+
+    tags = get_tags()
+    latest_v = get_latest_semver(tags)
+
+    next_v_str = ""
+    is_prerelease = "true"
+
+    if not latest_v:
+        if bump_type == 'alpha':
+            next_v = semver.VersionInfo(0, 2, 0, prerelease='alpha.1')
+            # Check for existing tags and bump if necessary
+            temp_next_v_tag = f"v{str(next_v)}"
+            while temp_next_v_tag in tags: # 'tags' contains all existing v* tags
+                next_v = next_v.bump_prerelease(token='alpha')
+                temp_next_v_tag = f"v{str(next_v)}"
+            next_v_str = str(next_v)
+        else:
+            print(f"Error: No existing tags found. Initial bump must be 'alpha' to start with 0.2.0-alpha.1.", file=sys.stderr)
+            sys.exit(1)
+    else:
+        current_v = latest_v
+        if bump_type == 'alpha':
+            if current_v.prerelease and current_v.prerelease[0] == 'alpha':
+                next_v = current_v.bump_prerelease(token='alpha')
+            else: # New alpha series for current major.minor.patch or next patch
+                # If current is final (e.g. 0.1.0), new alpha is 0.1.0-alpha.1
+                # If current is rc (e.g. 0.1.0-rc.1), new alpha is 0.1.0-alpha.1
+                # If current is beta (e.g. 0.1.0-beta.1), new alpha is 0.1.0-alpha.1
+                next_v = semver.VersionInfo(current_v.major, current_v.minor, current_v.patch, prerelease='alpha.1')
+
+            # Check for existing tags and bump if necessary
+            temp_next_v_tag = f"v{str(next_v)}"
+            while temp_next_v_tag in tags:
+                next_v = next_v.bump_prerelease(token='alpha') # Bumps 'alpha.1' to 'alpha.2', etc.
+                temp_next_v_tag = f"v{str(next_v)}"
+            next_v_str = str(next_v)
+        elif bump_type == 'beta':
+            if current_v.prerelease and current_v.prerelease[0] == 'beta':
+                next_v = current_v.bump_prerelease(token='beta')
+            else: # New beta series, must come from alpha or be a new beta for a version
+                # e.g., 0.1.0-alpha.2 -> 0.1.0-beta.1
+                next_v = semver.VersionInfo(current_v.major, current_v.minor, current_v.patch, prerelease='beta.1')
+
+            # Check for existing tags and bump if necessary
+            temp_next_v_tag = f"v{str(next_v)}"
+            while temp_next_v_tag in tags:
+                next_v = next_v.bump_prerelease(token='beta')
+                temp_next_v_tag = f"v{str(next_v)}"
+            next_v_str = str(next_v)
+        elif bump_type == 'rc':
+            if current_v.prerelease and current_v.prerelease[0] == 'rc':
+                next_v = current_v.bump_prerelease(token='rc')
+            else: # New RC series
+                next_v = semver.VersionInfo(current_v.major, current_v.minor, current_v.patch, prerelease='rc.1')
+
+            # Check for existing tags and bump if necessary
+            temp_next_v_tag = f"v{str(next_v)}"
+            while temp_next_v_tag in tags:
+                next_v = next_v.bump_prerelease(token='rc')
+                temp_next_v_tag = f"v{str(next_v)}"
+            next_v_str = str(next_v)
+        elif bump_type == 'promote_to_final':
+            if not current_v.prerelease:
+                print(f"Error: Version {current_v} is already final. Cannot promote.", file=sys.stderr)
+                sys.exit(1)
+            next_v = current_v.finalize_version()
+            next_v_str = str(next_v)
+            is_prerelease = "false"
+        elif bump_type == 'patch':
+            # For patch, minor, major, we always bump from the finalized version of the *overall* latest tag.
+            base_v = current_v.finalize_version()
+            next_v = base_v.bump_patch()
+            next_v_str = str(next_v)
+            is_prerelease = "false"
+        elif bump_type == 'minor':
+            base_v = current_v.finalize_version()
+            next_v = base_v.bump_minor()
+            next_v_str = str(next_v)
+            is_prerelease = "false"
+        elif bump_type == 'major':
+            base_v = current_v.finalize_version()
+            next_v = base_v.bump_major()
+            next_v_str = str(next_v)
+            is_prerelease = "false"
+        else:
+            print(f"Error: Unknown BUMP_TYPE '{bump_type}'", file=sys.stderr)
+            sys.exit(1)
+
+    if not next_v_str.startswith('v'):
+        next_v_tag = f"v{next_v_str}"
+    else:
+        next_v_tag = next_v_str
+
+
+    print(f"Calculated next version: {next_v_tag}", file=sys.stderr)
+    print(f"::set-output name=next_version::{next_v_tag}")
+    print(f"::set-output name=is_prerelease::{is_prerelease}")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+================================================
+File: .windsurf/rules/rules.md
+================================================
+# AI Project Guidelines
+
+**Objective:** Define mandatory process, coding, testing, and interaction standards for AI assistance.
+
+## 1. Preparation
+
+* **Project Context (Session Start):** ALWAYS review key project docs: `docs/PRD.md` (architecture, goals, tech stack, versions, structure, style guide) and `docs/digest.txt` (current state summary).
+
+## 2. Implementation Planning
+
+**Present this plan before providing code for a task:**
+
+* Problem description (brief).
+* Solution overview (high-level).
+* Implementation steps (list).
+* Risks/Challenges (foreseen).
+
+## 3. Development Workflow
+
+* **Plan First:** Present plan (Sec 2) before coding.
+* **Focus:** Target the specific task from the given from the prompt and related files which may contain tasks and task lists. No unrelated refactoring unless tasked.
+* **Modification Approach:**
+    * Prioritize minimal, incremental, clean, elegant, idiomatic changes.
+    * Explain significant suggestions (Sec 5.4).
+    * Propose beneficial low-risk refactoring.
+    * Avoid duplication; use helpers/modules.
+    * Explain use of language strengths/pitfalls if relevant.
+* **Dependencies:** No new/updated external dependencies without explicit maintainer approval (check `docs/PRD.md` for approved stack/versions). Use only approved dependencies.
+* **Commits (User Task):** Follow Conventional Commits (`https://www.conventionalcommits.org/en/v1.0.0/`).
+* **Manual Testing:** Provide clear user instructions for manually testing the task's changes.
+
+## 4. Folder Structure
+
+* **Strict Adherence:** Follow structure defined in `docs/PRD.md`.
+* **Changes:** No adding/removing/relocating files/dirs without prior maintainer approval. Approved structure changes require updating `docs/PRD.md` *before* implementation.
+* **Source Location:** All source code must be in `src/`.
+* **Precedence:** This rule is foundational.
+
+## 5. Coding Standards
+
+### 5.1. General & Robustness
+
+* Follow language best practices unless overridden by `docs/PRD.md` or these guidelines.
+* Prioritize: Clarity, maintainability, efficiency.
+* Consider performance & basic security.
+* Implement robust error handling (language norms or `PRD.md` spec); handle errors gracefully.
+
+### 5.2. Modularity & Structure
+
+* Keep files focused (ideally < 500 lines); refactor large ones.
+* Prefer small, single-purpose functions.
+* Structure code logically (per `docs/PRD.md`) into modules.
+* Use clear, consistent imports (relative for local packages). Verify paths.
+
+### 5.3. Style & Formatting
+
+* **Priority:** 1) `docs/PRD.md`, 2) These rules, 3) Language common practices.
+* **Type Hinting:** Mandatory for functions/classes/modules (dynamic languages).
+* **Indentation:** 2 spaces.
+* **Function Calls:** No space: `func()` not `func ()`.
+* **Line Structure:** Avoid collapsing statements if clarity suffers.
+* **Scope:** Default local. More descriptive names for wider scope. Avoid single-letter vars (except iterators/tiny scope; `i` only for loops). Use `_` for ignored vars.
+* **Casing:** Match current file style; else language common style. `UPPER_CASE` for constants only.
+* **Booleans:** Prefer `is_` prefix for boolean functions.
+* **File Headers:** Top comment: Title (descriptive, not filename) + brief purpose. No version/OS info.
+
+### 5.4. Documentation & Comments
+
+* **Docstrings:** Required for public functions, classes, modules (standard format).
+* **Code Comments:** Explain non-obvious logic, complex algorithms, decisions (*why*, not *what*). Write less comments.
+* **Reasoning Comments:** Use `# Reason:` for complex block rationale.
+* **README Updates:** Update `docs/README.md` for core features, dependency changes, or setup/build modifications.
+
+## 6. Testing
+
+* **Goal:** Tests are living documentation specifying behavior. Use common language framework.
+* **Behavior Specification:** Tests specify behavior. Type/scope/timing (e.g., E2E, Unit, Integration) defined in `docs/PRD.md` per project phase.
+* **Location:** Place tests in `/src/test` (Lua: `/src/spec`), mirroring `src/` structure (Sec 4).
+    * Ex: Tests for `src/engine/mod.js` -> `src/test/engine/mod_test.js`.
+    * Ex: Lua spec for `src/engine/mod.lua` -> `src/spec/engine/mod_spec.lua`.
+* **Content:** Tests clearly describe expected behavior per `PRD.md` goals for the current phase.
+    * **Prototype Phase:** Primary focus on automated E2E tests validating core functionality.
+* **Strategy & Coverage:** Defined in `PRD.md`, evolves with phases.
+    * **Prototype Phase:** E2E priority. Comprehensive unit tests & code coverage metrics (e.g., 100% statement coverage) are **not** the focus *unless* specified in `docs/PRD.md` for a later phase demanding them.
+* **Updating Tests:** Review/update tests with code changes to reflect *current* expected behavior. Fix failing/outdated tests promptly.
+
+## 7. AI Interaction Protocols
+
+### 7.1. Engineering Role & Audience
+
+* **Role:** Act as a **Senior Software Engineer**.
+* **Audience:** Target **Mid-Level Software Engineers** (code = best practices, clear, documented; explanations thorough; justify complex choices).
+
+### 7.2. Interaction Guidelines
+
+* Ask clarifying questions if needed; do not assume.
+* Verify facts (libs, APIs, file paths); do not invent. Use MCP servers if available.
+* Do not delete/overwrite code unless instructed or part of the defined task.
+* Report significant blockers/errors *during* implementation promptly with context and suggestions.
+* If a task seems complex, state potential benefit from a more advanced model **boldly** at the start (e.g., "**Suggestion: This complex refactoring might benefit from a more advanced model.**").
+* Be friendly, helpful, collaborative.
+* Explicitly state when task requirements are met. Mark task complete in any task lists found.
+
+

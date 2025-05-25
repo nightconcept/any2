@@ -106,7 +106,7 @@
 │   │   ├── API.cs                  # Main static classes (Night.Window, Night.Graphics, Night.Input, etc.)
 │   │   ├── Engine.cs               # Manages the game loop (Night.Engine.Run)
 │   │   ├── NativeMethods.cs        # (Placeholder, to be superseded or directory for SDL3-CS bindings)
-│   │   ├── DataStructures.cs       # (e.g., Sprite, Color, KeyCode enums, WindowFlags)
+│   │   ├── Types.cs                # (e.g., Sprite, Color, KeyCode enums, WindowFlags)
 │   └── /Night.SampleGame           # C# Project for the sample platformer game
 │       ├── Night.SampleGame.csproj
 │       ├── Game.cs                 # Implements Night.Load, Night.Update, Night.Draw etc.

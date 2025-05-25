@@ -3,10 +3,10 @@
 
 **Goal:** Implement the `Night.Keyboard` and `Night.Mouse` modules for polling keyboard and mouse states, using the SDL3-CS bindings, to allow the game to respond to user input.
 
-- [ ] **Task 4.1:** Implement `Night.Keyboard.IsDown(KeyCode key)`
-    - [ ] Use SDL3-CS functions to get the current keyboard state (e.g., `SDL.SDL_GetKeyboardState(out int numkeys)` which returns a pointer to an array of key states).
-    - [ ] Define the `Night.KeyCode` enum if not already fully specified in Epic 2, ensuring it can be mapped to SDL's key representation (e.g., `SDL_Scancode` values). This mapping might involve looking up values in SDL3-CS's own enums (like `SDL_Scancode`).
-    - [ ] Implement the logic to check the state of the specified `Night.KeyCode` by looking up its corresponding SDL scancode in the state array returned by SDL.
+- [x] **Task 4.1:** Implement `Night.Keyboard.IsDown(KeyCode key)` (Status: Completed)
+    - [x] Use SDL3-CS functions to get the current keyboard state (e.g., `SDL.SDL_GetKeyboardState(out int numkeys)` which returns a pointer to an array of key states).
+    - [x] Define the `Night.KeyCode` enum if not already fully specified in Epic 2, ensuring it can be mapped to SDL's key representation (e.g., `SDL_Scancode` values). This mapping might involve looking up values in SDL3-CS's own enums (like `SDL_Scancode`).
+    - [x] Implement the logic to check the state of the specified `Night.KeyCode` by looking up its corresponding SDL scancode in the state array returned by SDL.
     - **Verification:** Calling `Night.Keyboard.IsDown()` with various `Night.KeyCode` values correctly returns `true` when the respective keys are held down and `false` otherwise, as tested in `Night.SampleGame`.
 
 - [ ] **Task 4.2:** Implement `Night.Mouse.IsDown(MouseButton button)`
