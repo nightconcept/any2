@@ -13,19 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Windows -->
     <Content Include="..\..\lib\SDL3-Prebuilt\win64\SDL3.dll" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
       <Link>SDL3.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- macOS -->
     <Content Include="..\..\lib\SDL3-Prebuilt\macos\libSDL3.0.dylib" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
-      <Link>libSDL3.dylib</Link> <!-- Link as libSDL3.dylib as per runtime search paths -->
+      <Link>libSDL3.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- Linux -->
     <Content Include="..\..\lib\SDL3-Prebuilt\lib64\libSDL3.so.0" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
-      <Link>libSDL3.so.0</Link> <!-- Or potentially libSDL3.so if preferred by runtime -->
+      <Link>libSDL3.so.0</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

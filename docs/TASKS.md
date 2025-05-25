@@ -20,11 +20,11 @@
     - [x] Create an internal static boolean flag (e.g., `_isWindowOpen` or `_isRunning`, default to `false` until `SetMode` is called, then `true`). `IsOpen()` will return this flag's value. The game loop (Epic 6) will set this to `false` on a quit event.
     - **Verification:** The `Night.Window.IsOpen()` method can be called and returns `true` after a window is created, and its state can be conceptually altered (though full quit logic is later).
 
-- [ ] **Task 3.4:** Implement Basic Error Handling for Window Operations
-    - [ ] For all SDL3-CS function calls made within `Night.Window` methods, check their return values for errors (e.g., null pointers for window/renderer handles, negative values for error codes).
-    - [ ] If an SDL error occurs, retrieve the error message (e.g., using `SDL.SDL_GetError()`).
-    - [ ] Log errors using a simple mechanism for the prototype (e.g., `Console.WriteLine($"Error in {methodName}: {SDL.SDL_GetError()}");`).
-    - [ ] Decide on an error strategy for the prototype (e.g., throw an exception, return a boolean success/failure from `Night` API methods).
+- [x] **Task 3.4:** Implement Basic Error Handling for Window Operations (Status: Review)
+    - [x] For all SDL3-CS function calls made within `Night.Window` methods, check their return values for errors (e.g., null pointers for window/renderer handles, negative values for error codes).
+    - [x] If an SDL error occurs, retrieve the error message (e.g., using `SDL.SDL_GetError()`).
+    - [x] Log errors using a simple mechanism for the prototype (e.g., `Console.WriteLine($"Error in {methodName}: {SDL.SDL_GetError()}");`).
+    - [x] Decide on an error strategy for the prototype (e.g., throw an exception, return a boolean success/failure from `Night` API methods).
     - **Verification:** Invalid operations (e.g., setting title on a non-existent window if possible, or SDL internal errors) are caught and reported via console logs. The application behaves predictably (e.g., doesn't crash silently if window creation fails).
 
 ---

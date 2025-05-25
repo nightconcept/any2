@@ -30,9 +30,9 @@ public static class Window
     {
       if (!SDL_InitSubSystem(SDL_InitFlags.SDL_INIT_VIDEO)) // Corrected: SDLBool check
       {
-        Console.WriteLine($"Error initializing SDL video subsystem: {SDL_GetError()}");
-        // Consider throwing an exception or returning a bool for failure
-        return;
+        string sdlError = SDL_GetError();
+        Console.WriteLine($"Error initializing SDL video subsystem: {sdlError}");
+        throw new Exception($"SDL Error initializing video subsystem: {sdlError}");
       }
       _isVideoInitialized = true;
     }
@@ -55,10 +55,10 @@ public static class Window
     _window = SDL_CreateWindow("Night Engine", width, height, sdlFlags);
     if (_window == nint.Zero)
     {
-      Console.WriteLine($"Error creating SDL window: {SDL_GetError()}");
+      string sdlError = SDL_GetError();
+      Console.WriteLine($"Error creating SDL window: {sdlError}");
       _isWindowOpen = false; // Window creation failed
-      // Consider throwing an exception or returning a bool for failure
-      return;
+      throw new Exception($"SDL Error creating window: {sdlError}");
     }
 
     // Create a renderer. Passing null for the name lets SDL choose the best available driver.
@@ -68,18 +68,15 @@ public static class Window
     _renderer = SDL_CreateRenderer(_window, null);
     if (_renderer == nint.Zero)
     {
-      Console.WriteLine($"Error creating SDL renderer: {SDL_GetError()}");
+      string sdlError = SDL_GetError();
+      Console.WriteLine($"Error creating SDL renderer: {sdlError}");
       // Clean up window if renderer creation fails
       SDL_DestroyWindow(_window);
       _window = nint.Zero;
       _isWindowOpen = false; // Renderer creation failed, so window is not usable
-      // Consider throwing an exception or returning a bool for failure
-      return;
+      throw new Exception($"SDL Error creating renderer: {sdlError}");
     }
     _isWindowOpen = true; // Window and renderer successfully created
-
-    // TODO: Task 3.3 - Decide on a more robust error strategy (e.g., throw an exception, return a boolean).
-    // For now, errors are logged to the console.
   }
 
   /// <summary>
@@ -90,10 +87,16 @@ public static class Window
   {
     if (_window == nint.Zero)
     {
-      Console.WriteLine("Error in Night.Window.SetTitle: Window handle is null. Was SetMode called successfully?");
-      return;
+      string errorMsg = "Error in Night.Window.SetTitle: Window handle is null. Was SetMode called successfully?";
+      Console.WriteLine(errorMsg);
+      throw new InvalidOperationException(errorMsg);
     }
-    SDL_SetWindowTitle(_window, title);
+    if (!SDL_SetWindowTitle(_window, title))
+    {
+      string sdlError = SDL_GetError();
+      Console.WriteLine($"Error in Night.Window.SetTitle: {sdlError}");
+      throw new Exception($"SDL Error in Night.Window.SetTitle: {sdlError}");
+    }
   }
 
   /// <summary>
