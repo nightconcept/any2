@@ -1,6 +1,8 @@
 using System;
-using Night.Types;
 using System.Runtime.InteropServices;
+
+using Night.Types;
+
 using static SDL3.SDL;
 
 // Namespace for the public Engine API, consistent with Night.Window, Night.Graphics etc.
@@ -41,7 +43,6 @@ namespace Night
 
       ulong perfFrequency = SDL_GetPerformanceFrequency();
       ulong lastCounter = SDL_GetPerformanceCounter();
-      double deltaTime = 0.0;
 
       // Ensure the window is open before starting the loop.
       // Night.Window.SetMode should have been called by the user application before Engine.Run.
@@ -78,7 +79,7 @@ namespace Night
 
         // Calculate DeltaTime
         ulong currentCounter = SDL_GetPerformanceCounter();
-        deltaTime = (double)(currentCounter - lastCounter) / perfFrequency;
+        double deltaTime = (double)(currentCounter - lastCounter) / perfFrequency;
         lastCounter = currentCounter;
 
         // Clamp deltaTime to avoid large jumps if debugging or system lags

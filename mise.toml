@@ -20,3 +20,7 @@ run = [
 [tasks.game]
 description = "Run the sample game."
 run = ["dotnet run --project src/Night.SampleGame/Night.SampleGame.csproj"]
+
+[tasks.clean]
+description = "Clean bin and obj directories."
+run = ["dotnet clean Night.sln"]

@@ -29,7 +29,7 @@
 
 ---
 
-**Epic 4: Game Loop Implementation** (Status: In-Progress)
+**Not Epic 4: Game Loop Implementation** (Status: In-Progress)
 
 **Goal:** Implement the core game loop structure as defined in Feature 4 of the PRD, enabling the execution of a game using the `Night.Engine.Run` method.
 
@@ -44,8 +44,8 @@
     - [x] Implement basic cleanup when the loop exits.
     - [x] Remove the `NotImplementedException`.
     - **Verification:** Calling `Night.Engine.Run&lt;SampleGame.Game&gt;()` from `Night.SampleGame` initializes the game, runs a basic loop, and calls `Load`, `Update`, `Draw` methods on the `SampleGame.Game` instance. Console output indicates these methods are being called.
-- [ ] **Task 4.2:** Resolve SDL3 native library loading for cross-platform execution (Status: In-Progress)
-    - [ ] Ensure `SDL3.dylib` (macOS), `SDL3.dll` (Windows), and `libSDL3.so.0` (Linux) are correctly located or copied to the output directory for `Night.SampleGame` during build.
-    - [ ] Verify that `mise run game` executes successfully on macOS.
-    - [ ] Document the solution for ensuring cross-platform native library availability.
+- [x] **Task 4.2:** Resolve SDL3 native library loading for cross-platform execution (Status: In-Progress)
+    - [x] Ensure `SDL3.dylib` (macOS), `SDL3.dll` (Windows), and `libSDL3.so.0` (Linux) are correctly located or copied to the output directory for `Night.SampleGame` during build.
+    - [x] Verify that `mise run game` executes successfully on macOS.
+    - [x] Document the solution for ensuring cross-platform native library availability.
     - **Verification:** The `DllNotFoundException` for SDL3 is resolved, and the game starts without this error on the primary development platform (macOS).
