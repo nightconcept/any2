@@ -1,51 +1,32 @@
-**Epic 3: Window Management Implementation**
 
-**Goal:** Fully implement the `Night.Window` module's public API (as stubbed in Epic 2) for creating, configuring, and managing the application window, using the SDL3-CS bindings.
+**Epic 4: Input Handling Implementation**
 
-- [x] **Task 3.1:** Implement `Night.Window.SetMode(int width, int height, WindowFlags flags)` (Status: Done)
-    - [x] Use SDL3-CS functions to create an SDL window (e.g., `SDL.SDL_CreateWindow()`).
-        - [x] Ensure the window is created with the specified `width` and `height`.
-        - [x] Map the `Night.WindowFlags` (e.g., for fullscreen, resizable, borderless) to the corresponding SDL window flags or subsequent SDL function calls (e.g., `SDL.SDL_SetWindowFullscreen()`, `SDL.SDL_SetWindowResizable()`).
-    - [x] If a default renderer is conceptually tied to the window in your design (common for 2D), create an SDL renderer (e.g., `SDL.SDL_CreateRenderer()`) associated with the window.
-        - [x] Store the SDL window handle (and renderer handle, if applicable) internally within a private static part of `Night.Window`.
-    - [x] Handle any necessary SDL initialization for video subsystems (`SDL.SDL_InitSubSystem(SDL.SDL_INIT_VIDEO)`) if not already handled globally.
-    - [x] **Verification:** Calling `Night.Window.SetMode()` from `Night.SampleGame` successfully creates and displays a window with the specified dimensions and properties (e.g., fullscreen, resizable). No SDL errors are reported.
+**Goal:** Implement the `Night.Keyboard` and `Night.Mouse` modules for polling keyboard and mouse states, using the SDL3-CS bindings, to allow the game to respond to user input.
 
-- [x] **Task 3.2:** Implement `Night.Window.SetTitle(string title)` (Status: Review)
-    - [x] Use the appropriate SDL3-CS function to set the window's title (e.g., `SDL.SDL_SetWindowTitle()`), using the stored window handle.
-    - **Verification:** Calling `Night.Window.SetTitle()` from `Night.SampleGame` changes the title displayed in the window's title bar.
+- [ ] **Task 4.1:** Implement `Night.Keyboard.IsDown(KeyCode key)`
+    - [ ] Use SDL3-CS functions to get the current keyboard state (e.g., `SDL.SDL_GetKeyboardState(out int numkeys)` which returns a pointer to an array of key states).
+    - [ ] Define the `Night.KeyCode` enum if not already fully specified in Epic 2, ensuring it can be mapped to SDL's key representation (e.g., `SDL_Scancode` values). This mapping might involve looking up values in SDL3-CS's own enums (like `SDL_Scancode`).
+    - [ ] Implement the logic to check the state of the specified `Night.KeyCode` by looking up its corresponding SDL scancode in the state array returned by SDL.
+    - **Verification:** Calling `Night.Keyboard.IsDown()` with various `Night.KeyCode` values correctly returns `true` when the respective keys are held down and `false` otherwise, as tested in `Night.SampleGame`.
 
-- [x] **Task 3.3:** Implement `Night.Window.IsOpen()` (Status: Review)
-    - [x] This method's primary role is to control the game loop. For now, its state will likely be tied to whether a `Quit` event has been received (which will be handled more fully in Epic 6: Game Loop).
-    - [x] Create an internal static boolean flag (e.g., `_isWindowOpen` or `_isRunning`, default to `false` until `SetMode` is called, then `true`). `IsOpen()` will return this flag's value. The game loop (Epic 6) will set this to `false` on a quit event.
-    - **Verification:** The `Night.Window.IsOpen()` method can be called and returns `true` after a window is created, and its state can be conceptually altered (though full quit logic is later).
+- [ ] **Task 4.2:** Implement `Night.Mouse.IsDown(MouseButton button)`
+    - [ ] Use SDL3-CS functions to get the current mouse button state (e.g., `SDL.SDL_GetMouseState(out float x, out float y)` which typically also returns the button mask).
+    - [ ] Define the `Night.MouseButton` enum (e.g., `Left`, `Middle`, `Right`, `X1`, `X2`) if not already fully specified in Epic 2.
+    - [ ] Map `Night.MouseButton` enum values to the SDL button masks (e.g., `SDL.SDL_BUTTON_LMASK`, `SDL.SDL_BUTTON_RMASK`).
+    - [ ] Implement the logic to check if the specified `Night.MouseButton` is currently pressed by checking the bitmask returned by the SDL mouse state function.
+    - **Verification:** Calling `Night.Mouse.IsDown()` with various `Night.MouseButton` values correctly returns `true` when the respective buttons are held down and `false` otherwise, as tested in `Night.SampleGame`.
 
-- [x] **Task 3.4:** Implement Basic Error Handling for Window Operations (Status: Review)
-    - [x] For all SDL3-CS function calls made within `Night.Window` methods, check their return values for errors (e.g., null pointers for window/renderer handles, negative values for error codes).
-    - [x] If an SDL error occurs, retrieve the error message (e.g., using `SDL.SDL_GetError()`).
-    - [x] Log errors using a simple mechanism for the prototype (e.g., `Console.WriteLine($"Error in {methodName}: {SDL.SDL_GetError()}");`).
-    - [x] Decide on an error strategy for the prototype (e.g., throw an exception, return a boolean success/failure from `Night` API methods).
-    - **Verification:** Invalid operations (e.g., setting title on a non-existent window if possible, or SDL internal errors) are caught and reported via console logs. The application behaves predictably (e.g., doesn't crash silently if window creation fails).
+- [ ] **Task 4.3:** Implement `Night.Mouse.GetPosition()`
+    - [ ] Use an SDL3-CS function to get the current mouse cursor coordinates relative to the focused window (e.g., `SDL.SDL_GetMouseState(out float x, out float y)` usually provides coordinates relative to the current window, but verify this behavior with SDL3).
+    - [ ] Ensure the returned coordinates are cast or converted to `(int x, int y)` as per the `Night` API.
+    - **Verification:** Calling `Night.Mouse.GetPosition()` returns the correct (x, y) integer coordinates of the mouse cursor within the game window boundaries.
 
----
+- [ ] **Task 4.4:** Define and Map `Night.KeyCode` and `Night.MouseButton` Enums
+    - [ ] Research and define comprehensive `Night.KeyCode` and `Night.MouseButton` enums that align with common keyboard layouts and mouse buttons, and correspond to SDL3's `SDL_Scancode` and mouse button definitions provided by SDL3-CS.
+    - [ ] Create any necessary internal mapping functions or structures if a direct cast is not possible or if `Night` enums need to be more abstract than SDL's.
+    - **Verification:** `Night.KeyCode` and `Night.MouseButton` enums are clearly defined and accurately map to the underlying SDL input system values.
 
-**Not Epic 4: Game Loop Implementation** (Status: In-Progress)
-
-**Goal:** Implement the core game loop structure as defined in Feature 4 of the PRD, enabling the execution of a game using the `Night.Engine.Run` method.
-
-- [x] **Task 4.1:** Implement `Night.Engine.Run<TGame>`
-    - [x] Create an instance of `TGame`.
-    - [x] Call `game.Load()`.
-    - [x] Implement the main game loop (e.g., `while (Night.Window.IsOpen())`).
-        - [x] Process system events (placeholder for now, full event handling in later tasks).
-        - [x] Call `game.Update(deltaTime)` (deltaTime calculation to be basic for now).
-        - [x] Call `game.Draw()`.
-        - [x] Call `Night.Graphics.Present()` (assuming this will be available from Graphics module).
-    - [x] Implement basic cleanup when the loop exits.
-    - [x] Remove the `NotImplementedException`.
-    - **Verification:** Calling `Night.Engine.Run&lt;SampleGame.Game&gt;()` from `Night.SampleGame` initializes the game, runs a basic loop, and calls `Load`, `Update`, `Draw` methods on the `SampleGame.Game` instance. Console output indicates these methods are being called.
-- [x] **Task 4.2:** Resolve SDL3 native library loading for cross-platform execution (Status: In-Progress)
-    - [x] Ensure `SDL3.dylib` (macOS), `SDL3.dll` (Windows), and `libSDL3.so.0` (Linux) are correctly located or copied to the output directory for `Night.SampleGame` during build.
-    - [x] Verify that `mise run game` executes successfully on macOS.
-    - [x] Document the solution for ensuring cross-platform native library availability.
-    - **Verification:** The `DllNotFoundException` for SDL3 is resolved, and the game starts without this error on the primary development platform (macOS).
+- [ ] **Task 4.5:** Basic Error Handling and State Management for Input
+    - [ ] Ensure that input functions behave gracefully if called before SDL subsystems are fully initialized (e.g., return default/false values, log a warning). (Note: The main `Night.Engine.Run` should handle initialization order).
+    - [ ] Review SDL documentation for any specific error conditions or edge cases for the input functions being used.
+    - **Verification:** Input functions do not cause crashes if queried at an inappropriate time (though this should be rare with a proper game loop) and provide default 'safe' return values.
