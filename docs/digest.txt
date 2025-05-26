@@ -8,6 +8,7 @@ Directory structure:
     ├── docs/
     │   ├── PRD.md
     │   ├── operational-guidelines.md
+    │   ├── .DS_Store
     │   ├── epics/
     │   │   ├── epic1.md
     │   │   ├── epic2.md
@@ -42,11 +43,15 @@ Directory structure:
     │   └── update_sdl3.py
     ├── src/
     │   ├── Night.Engine/
-    │   │   ├── API.cs
-    │   │   ├── Engine.cs
+    │   │   ├── FrameworkLoop.cs
     │   │   ├── Night.Engine.csproj
     │   │   ├── Types.cs
     │   │   ├── Modules/
+    │   │   │   ├── Graphics.cs
+    │   │   │   ├── Keyboard.cs
+    │   │   │   ├── Mouse.cs
+    │   │   │   ├── SDL.cs
+    │   │   │   └── Window.cs
     │   │   ├── bin/
     │   │   └── obj/
     │   └── Night.SampleGame/
@@ -161,7 +166,7 @@ SOFTWARE.
 ================================================
 File: Night.sln
 ================================================
-ï»¿
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -321,182 +326,208 @@ repos:
 ================================================
 File: docs/PRD.md
 ================================================
-
-# Night Engine - Product Requirements Document (Prototype)
+# Night Engine - Product Requirements Document
 
 ## 1. Introduction
 
-- **Project Idea:** Create a system using C# on top of SDL3, called "Night Engine".
-- **Problem/Need:** The primary problem this approach aims to solve is reducing context switching for the developer. Building directly with C# and SDL3 via the "Night" engine will offer a more streamlined workflow compared to methods involving more languages or disparate tools.
-- **Prototype Goal:** The main goal for this prototype is to create a development environment or a foundational C# wrapper layer where a developer can leverage SDL3's capabilities primarily through C#, making game or multimedia development easier and more efficient. This involves achieving a comfortable level of C# integration with core SDL3 features, aiming for an API style reminiscent of Love2D, to simplify development by minimizing the need to switch between different programming paradigms or languages.
+- **Project Idea:** Create a layered system for game and multimedia development in C#. This system consists of "Night.Framework," a low-level, Love2D-inspired API built directly on SDL3 (via SDL3-CS bindings), and "Night.Engine," a higher-level, more opinionated set of tools and systems that will be built on top of Night.Framework.
+- **Problem/Need:** The primary goal is to provide a streamlined and efficient development workflow for C# developers. Night.Framework offers direct, SDL3-powered capabilities with a familiar API style, reducing context switching compared to using disparate tools or multiple languages directly. Night.Engine (to be developed later) will further simplify complex game development tasks by providing common engine systems.
+- **Development Goal:** The main goal for the current development phase is to establish a robust Night.Framework, providing a foundational C# wrapper layer where a developer can leverage SDL3's capabilities primarily through C#. This involves achieving a comfortable level of C# integration with core SDL3 features, aiming for an API style reminiscent of Love2D, to simplify development. Future phases will focus on building out Night.Engine components.
 
-## 2. Core Features / User Stories
 
-- **Feature 0: Project Foundation & SDL3 Integration Setup**
+## 2. Core Features
 
-    - **Description:** Establishes the C# project structure for the "Night" engine, a build process, and a mechanism to automatically fetch/integrate the latest SDL3 library (e.g., from its GitHub repository). This feature underpins the development of all other engine features by ensuring a working development and build environment for "Night" itself.
-    - **User Action(s) (from the engine developer's perspective):**
-        - Initialize the C# solution and project(s) for the "Night" engine.
-        - Implement a script or build process step (e.g., `Workspace_sdl3.py`) to clone/download the SDL3 source or pre-compiled binaries.
-        - Configure the C# project(s) for P/Invoke to SDL3, ensuring native library paths are correctly handled.
-        - Optionally, set up basic GitHub Actions (or other CI/CD) workflows for building and testing the "Night" engine prototype.
-    - **Outcome(s):**
-        - A C# solution/project for "Night" exists that can be successfully built.
-        - The SDL3 library is reliably fetched and correctly linked by the C# project.
-        - The engine developer has a clear process for building the "Night" engine with its SDL3 dependency.
-- **Feature 1: Window Management (Love2D Style)**
+This section outlines the core modules and functionalities of **Night.Framework**, followed by planned features for **Night.Engine**.
 
-    - **Description:** Provides capabilities to create, configure, and manage the application window, using the `Night` namespace and aiming for an API style similar to Love2D's `love.window` module.
-    - **User Action(s) (from a C# developer's perspective using the wrapper):**
-        - Call `Night.Window.SetMode(int width, int height, WindowFlags flags)`
-        - Call `Night.Window.SetTitle(string title)`
-        - Call `bool Night.Window.IsOpen()`
-    - **Outcome(s):**
-        - An application window appears with the specified dimensions and properties.
-        - The window title can be dynamically changed.
-        - The application can control its main loop based on the window's state.
-- **Feature 2: Input Handling (Love2D Style)**
+**Night.Framework (Love2D-style API):**
+- **Feature 0: Project Foundation & SDL3 Integration:**
+    - **Description:** Establishes the C# project structure for Night.Framework and Night.Engine, a build process, and utilizes the SDL3-CS C# bindings for SDL3 integration. This ensures a working development and build environment. SDL3 native libraries are managed via pre-built binaries, potentially updated via a script.
 
-    - **Description:** Allows the C# application to poll keyboard and mouse states, or receive input events, using the `Night` namespace and mirroring Love2D's `love.keyboard` and `love.mouse` modules.
-    - **User Action(s) (C# developer):**
-        - Call `bool Night.Keyboard.IsDown(KeyCode key)`
-        - Call `bool Night.Mouse.IsDown(MouseButton button)`
-        - Call `(int x, int y) Night.Mouse.GetPosition()`
-        - (Alternatively, or in addition, implement event handlers like `Night.KeyPressed(KeyCode key, ...)` as part of Feature 4)
-    - **Outcome(s):**
-        - The C# application can determine the real-time state of keys/mouse buttons or react to input events.
-        - The C# application can get the current mouse position.
-- **Feature 3: 2D Sprite Rendering (Love2D Style)**
+- **Feature 1: Window Management (`Night.Window`):**
+    - **Description:** Provides capabilities to create, configure, and manage the application window, using the `Night` namespace and an API style similar to Love2D's `love.window` module. This includes setting mode, title, and checking window state.
 
-    - **Description:** Enables loading images and drawing them as sprites, using the `Night` namespace, akin to Love2D's `love.graphics.newImage()` and `love.graphics.draw()`.
-    - **User Action(s) (C# developer):**
-        - Call `Sprite Night.Graphics.NewImage(string filePath)`
-        - Call `Night.Graphics.Draw(Sprite sprite, float x, float y, float rotation = 0, float scaleX = 1, float scaleY = 1, float offsetX = 0, float offsetY = 0)`
-        - Call `Night.Graphics.Clear(Color color)` (Typically at the start of the `Night.Draw()` callback)
-        - Call `Night.Graphics.Present()` (Typically at the end of the `Night.Draw()` callback, handled by the engine after user's `Draw` finishes)
-    - **Outcome(s):**
-        - Images are loaded into `Sprite` objects.
-        - Sprites are rendered with transformations.
-        - The screen is cleared and new frames are presented as part of the game loop.
-- **Feature 4: Love2D-Style Game Loop Structure**
+- **Feature 2: Input Handling (`Night.Input`, encompassing Keyboard and Mouse):**
+    - **Description:** Allows the C# application to poll keyboard and mouse states, or receive input events, using the `Night` namespace and mirroring Love2D's `love.keyboard` and `love.mouse` modules. This includes checking key/button presses and getting mouse position.
 
-    - **Description:** Provides a pre-defined game loop managed by the `Night` engine. The C# developer implements specific callback functions (e.g., `Load`, `Update`, `Draw`, `KeyPressed`) that the engine calls at appropriate times.
-    - **User Action(s) (C# developer structures their code this way):**
-        - Implement methods within their game class that `Night` will call:
-            - `void MyGame.Load()`
-            - `void MyGame.Update(double deltaTime)`
-            - `void MyGame.Draw()`
-            - Optional: `void MyGame.KeyPressed(KeyCode key, bool isRepeat)`, `void MyGame.MousePressed(int x, int y, MouseButton button, int presses)`.
-        - Call a main `Night.Framework.Run(MyGameInstance)` or `Night.Framework.Run<MyGameClass>()` to start.
-    - **Outcome(s):**
-        - The `Night` engine manages the overall loop.
-        - Developers structure their game into familiar Love2D lifecycle methods.
-        - Input and other engine events can be handled via these callback methods.
+- **Feature 3: 2D Graphics Rendering (`Night.Graphics`):**
+    - **Description:** Enables loading images and drawing them as sprites, along with basic 2D graphics operations. This module uses the `Night` namespace, akin to Love2D's `love.graphics` module. It leverages SDL_Renderer for its operations. Key functionalities include loading images, drawing sprites with transformations, clearing the screen, and presenting the frame.
+
+- **Feature 4: Game Loop Structure (`Night.Framework.Run`):**
+    - **Description:** Provides a pre-defined game loop managed by Night.Framework. The C# developer implements specific callback functions (e.g., `Load`, `Update`, `Draw`) defined in the `Night.IGame` interface that the framework calls at appropriate times.
+
+**Night.Engine** (Future Opinionated Systems - to be detailed in later PRD revisions):
+- **Entity Component System (ECS):** A data-oriented framework for managing game objects and logic.
+- **Scene Management:** Systems for organizing and managing game scenes.
+- **Advanced Asset Management:** More sophisticated tools for handling game assets.
+- **Physics Integration (Optional):** Wrappers or integration for a 2D/3D physics engine.
+- **(Other high-level engine modules as defined)**
+
 
 ## 3. Technical Specifications
-
 - **Primary Language(s):** C# 13 (using .NET 9).
-- **Key Frameworks/Libraries:**
-    - SDL3 (latest version, fetched as per Feature 0).
-    - `flibitijibibo-sdl3-cs` (https://github.com/flibitijibibo/SDL3-CS/): Approved C# bindings for SDL3 (User approved 2025-05-24). To be integrated as a git submodule.
-    - No other external runtime libraries are planned for the core "Night" wrapper in this prototype phase.
-- **Database (if any):** None for this prototype.
-- **Key APIs/Integrations (if any):**
-    - Direct P/Invoke integration with the SDL3 native library.
-- **Deployment Target (if applicable for prototype):**
-    - The "Night" engine will be a C# class library (DLL).
-    - A separate C# "Sample Game" project will consume this library to demonstrate its functionality (e.g., a simple platformer).
+- **Key Frameworks/Libraries:*
+    - SDL3 (latest version, managed as pre-built binaries).
+    - `flibitijibibo-sdl3-cs` (SDL3-CS): Approved C# bindings for SDL3, integrated as a git submodule or direct project reference.
+    - No other external runtime libraries are planned for Night.Framework. Night.Engine may introduce dependencies later.
+
+- **Database (if any):** None for Night.Framework or initial Night.Engine.
+
+- **Key APIs/Integrations:**
+    - Direct interaction with the SDL3 native library via the SDL3-CS C# bindings.
+
+- **Rendering Backend:**
+    - Night.Framework will utilize SDL_Renderer for 2D graphics operations. This is an internal implementation detail not directly exposed to the game developer using Night.Framework.
+    - Future enhancements may explore migrating to SDL_GPU for potential performance benefits or advanced features.
+
+- **Deployment Target:**
+    - Night.Framework will be a C# class library (DLL).
+    - Night.Engine (when developed) will be a separate C# class library (DLL) that depends on Night.Framework. For now, both Night.Framework and Night.Engine will be in a singular C# class library that is output as Night.Engine.
+    - A separate C# "Sample Game" project will consume Night.Framework (and eventually Night.Engine) to demonstrate functionality.
+    - **Target Platforms:** The long-term goal is to support Windows, macOS, Linux, iOS, and Android. Console support is a distant stretch goal.
+
 - **High-Level Architectural Approach:**
-    - "Night" will be a C# wrapper library that provides a static API, stylistically similar to Love2D, over the SDL3 native library.
-    - It will manage P/Invoke calls to SDL3 internally.
-    - The public API of "Night" will be designed for ease of use by C# game developers.
+    - **Night.Framework:** A C# library providing a static API, stylistically similar to Love2D, over the SDL3 native library (via SDL3-CS). It will manage interactions with SDL3-CS internally. The public API of Night.Framework will be designed for ease of use by C# game developers, primarily within the `Night` C# namespace.
+    - **Night.Engine:** A C# library that will provide more opinionated game development constructs (e.g., ECS, scene management). It will use Night.Framework for its low-level operations and will not interact with SDL3 directly.
+
 - **Critical Technical Decisions/Constraints:**
-    - The public API of "Night" should closely mirror the structure and common function names of the Love2D API where practical and idiomatic for C#. However, specific API names and parameters will be refined during the prototyping process.
-    - All interactions with SDL3 will be through C# P/Invoke.
-    - A reliable and straightforward mechanism must be established for fetching SDL3 (source or precompiled binaries) and ensuring the native libraries are correctly loaded by C# applications using "Night".
-    - The primary focus for this prototype is on simplicity and achieving the core Love2D-like developer experience for the defined features.
+    - The public API of Night.Framework should closely mirror the structure and common function names of the Love2D API where practical and idiomatic for C#.
+    - All interactions with SDL3 will be through the SDL3-CS bindings. Night.Engine will not use SDL3-CS directly.
+    - A reliable mechanism for managing and loading SDL3 native libraries for target platforms is essential.
+    - The primary focus for Night.Framework development is on simplicity, achieving the core Love2D-like developer experience for the defined features, and providing a solid foundation for Night.Engine.
+
 
 ## 4. Project Structure
 
-```plaintext
-/ any2 (to be renamed to night-engine later)
-â”œâ”€â”€ /docs
-â”‚   â”œâ”€â”€ PRD.md
-â”‚   â””â”€â”€ TASKS.md
-â”œâ”€â”€ /src
-â”‚   â”œâ”€â”€ /Night.Engine               # Night C# Class Library Project
-â”‚   â”‚   â”œâ”€â”€ Night.Engine.csproj
-â”‚   â”‚   â”œâ”€â”€ API.cs                  # Main static classes (Night.Window, Night.Graphics, Night.Input, etc.)
-â”‚   â”‚   â”œâ”€â”€ Engine.cs               # Manages the game loop (Night.Engine.Run)
-â”‚   â”‚   â”œâ”€â”€ NativeMethods.cs        # (Placeholder, to be superseded or directory for SDL3-CS bindings)
-â”‚   â”‚   â”œâ”€â”€ Types.cs                # (e.g., Sprite, Color, KeyCode enums, WindowFlags)
-â”‚   â””â”€â”€ /Night.SampleGame           # C# Project for the sample platformer game
-â”‚       â”œâ”€â”€ Night.SampleGame.csproj
-â”‚       â”œâ”€â”€ Game.cs                 # Implements Night.Load, Night.Update, Night.Draw etc.
-â”‚       â”œâ”€â”€ Program.cs              # Main entry point, calls Night.Engine.Run()
-â”‚       â””â”€â”€ /assets                 # Game assets (images, sounds for prototype)
-â”‚           â””â”€â”€ /images
-â”‚               â””â”€â”€ player.png
-â”œâ”€â”€ .gitignore
-â”œâ”€â”€ Night.sln                   # Visual Studio Solution File
-â””â”€â”€ README.md
 ```
-- `/docs`: Contains all project documentation, including this PRD (`PRD.md`) and the upcoming task list (`TASKS.md`).
-- `/lib`: Contains all project libraries to be used.
-- `/src/Night.Engine`: This is the C# class library project for the "Night" engine itself.
-    - `API.cs`: Could hold the primary public static classes that mimic Love2D's modules (e.g., `Night.Window`, `Night.Graphics`, `Night.Keyboard`, `Night.Mouse`).
-    - `Engine.cs`: Contains the core game loop logic that will call the user's `Load()`, `Update()`, `Draw()` methods.
-    - `NativeMethods.cs` / `/SDL3/`: The C# P/Invoke declarations for SDL3 will be sourced from the `flibitijibibo-sdl3-cs` bindings, located in the `/Night.Engine/SDL3/` subdirectory. The `SDL3.Core.cs` file from this library will provide the actual interop calls.
-    - `DataStructures.cs`: Could define various enums (`KeyCode`, `MouseButton`), structs (`Color`, `Rectangle`), or classes (`Sprite`) used by the engine's API.
-- `/src/Night.SampleGame`: This is a separate C# project (e.g., a console application) that demonstrates how to use the "Night" engine. It would reference the `Night.Engine` project.
-    - `Game.cs`: The main class for the sample game, where you'd implement the `Load()`, `Update()`, `Draw()` and input callback methods.
-    - `Program.cs`: The entry point for the sample game application.
-    - `/assets`: Contains assets like images or sound files needed for the sample game.
-- `Night.sln`: The Visual Studio solution file, now located at the root, that will contain both the `Night.Engine` and `Night.SampleGame` projects.
+/night-engine (root directory, formerly any2)
+|-- .editorconfig
+|-- .gitattributes
+|-- .github/
+|   |-- CODEOWNERS
+|   |-- copilot-instructions.md
+|   |-- dependabot.yml
+|   |-- workflows/
+|   |   |-- (active workflows, e.g., build, release)
+|   |-- scripts/
+|       |-- determine_next_version.py
+|-- .gitignore
+|-- .pre-commit-config.yaml
+|-- LICENSE
+|-- Night.sln
+|-- README.md
+|-- docs/
+|   |-- PRD.md (this file)
+|   |-- TASKS.md
+|   |-- operational-guidelines.md
+|   |-- epics/
+|   |   |-- epic1.md
+|   |   |-- ...
+|   |-- love2d-api/
+|       |-- audio.md
+|       |-- graphics.md
+|       |-- ...
+|-- lib/
+|   |-- SDL3-CS/ (git submodule or direct project files for SDL3 C# bindings)
+|   |-- SDL3-Prebuilt/
+|       |-- version.txt
+|       |-- lib64/
+|       |   |-- libSDL3.so.0
+|       |-- macos/
+|       |   |-- libSDL3.0.dylib
+|       |-- win64/
+|           |-- SDL3.dll
+|-- scripts/
+|   |-- update_sdl3.py
+|-- src/
+    |-- Night.Engine/
+    |   |-- Night.Engine.csproj
+    |   |-- Modules/
+    |   |   |-- Window.cs
+    |   |   |-- Graphics/
+    |   |       |-- Graphics.cs
+    |   |   |-- Keyboard.cs
+    |   |   |-- Mouse.cs
+    |   |   |-- Input.cs (if Keyboard and Mouse are combined or refactored)
+    |   |   |-- ... (other framework modules)
+    |   |-- FrameworkLoop.cs  (Manages Night.Framework.Run and game loop)
+    |   |-- Types.cs          (Structs and interfaces)
+    |   |-- Enums.cs          (Enums)
+    |   |-- ... (Placeholder for future engine components: ECS, SceneManager, etc.)
+    |-- Night.SampleGame/
+        |-- Night.SampleGame.csproj
+        |-- Program.cs        (Main entry point, calls Night.Framework.Run, provides IGame)
+        |-- assets/
+            |-- images/
+            |-- sounds/
+            |-- ...
+```
+
+- `/docs`: Project documentation (PRD, operational guidelines, tasks, API mapping, etc.).
+- `/lib`: Contains external libraries.
+    - `/lib/SDL3-CS`: Git submodule for the SDL3-CS bindings.
+    - `/lib/SDL3-Prebuilt`: Pre-compiled SDL3 native binaries for various platforms, managed by `scripts/update_sdl3.py`.
+- `/scripts`: Utility scripts for the project (e.g., `update_sdl3.py` for fetching SDL3 binaries).
+- `/src`: Contains all C# source code.
+    - `/src/Night.Engine`: C# class library project for the low-level Love2D-style API and opinionated engine. This project references SDL3-CS.
+        - `Night.Engine.csproj`: MSBuild project file.
+        - `/Modules/`: Directory containing individual C# files or folders for each Love2D-like module (e.g., `Window.cs`, `Graphics.cs`, `Keyboard.cs`, `Mouse.cs`). These will primarily contain static classes within the `Night` namespace.
+        - `FrameworkLoop.cs`: Contains the main game loop logic (`Night.Framework.Run()`) and related infrastructure.
+        - `Enums.cs`: Defines enums used by Night.Framework and consumer applications.
+        - `Types.cs`: Defines core data types and interfaces (e.g., `Night.Color`, `Night.KeyCode`, `Night.Sprite`, `Night.IGame`) used by Night.Framework and consumer applications.
+    - `/src/Night.SampleGame`: C# console application project demonstrating the use of Night.Framework (and eventually Night.Engine).
+        - `Night.SampleGame.csproj`: MSBuild project file. References `Night.Framework`.
+        - `Game.cs`: Implements `Night.IGame` with game-specific logic (`Load`, `Update`, `Draw`).
+        - `Program.cs`: Main entry point for the sample game application.
+        - `/assets`: Game assets like images or sound files needed for the sample game.
+- `Night.sln`: The Visual Studio solution file, grouping `Night.Framework`, `Night.Engine`, and `Night.SampleGame` projects.
 - `README.md`: The main readme for the project.
+- `.github/`: GitHub-specific files like workflows and issue templates.
+- `.editorconfig`, `.pre-commit-config.yaml`: Code style and pre-commit hook configurations.
 
-## 5. File Descriptions (If applicable)
-- **`Night.sln`**:
-    - **Purpose:** The Visual Studio Solution file that groups the `Night.Engine` library project and the `Night.SampleGame` project together.
-    - **Format:** Standard Visual Studio Solution format (text-based).
-    - **Key Contents/Structure:** Defines project paths, configurations (Debug/Release), and dependencies between projects.
-- **`Night.Engine/Night.Engine.csproj` and `Night.SampleGame/Night.SampleGame.csproj`**:
-    - **Purpose:** These are the MSBuild project files for the engine library and the sample game, respectively. They define how each project is built.
-    - **Format:** XML (MSBuild format).
-    - **Key Contents/Structure:** Specifies target framework (.NET 9), C# language version, referenced packages, project references (`Night.SampleGame` will reference `Night.Engine`), and how native runtimes are handled.
+## 5. File Descriptions
 
-## 6. Future Considerations / Out of Scope (for this prototype)
+- **`Night.sln`**: Visual Studio Solution file grouping `Night.Engine`, and `Night.SampleGame` projects. Defines project paths, configurations, and dependencies.
+- **`src/Night.Engine/Night.Engine.csproj`**: MSBuild project file for the Night.Framework and Night.Enginelibrary. Defines target framework (.NET 9), C# language version, references (notably SDL3-CS), and how native runtimes for SDL3 are handled/expected.
+- **`src/Night.SampleGame/Night.SampleGame.csproj`**: MSBuild project file for the sample game application. References `Night.Framework`.
 
-**Out of Scope for This Prototype:**
 
-- **Full Love2D API Parity:** While the style is inspired by Love2D, this prototype will only implement a subset of features. Modules like `love.audio`, `love.filesystem`, `love.font`, `love.joystick`, `love.physics`, `love.thread`, etc., are out of scope.
-- **Advanced Rendering:** Custom shaders, 3D graphics, complex lighting, particle systems, stencil/scissor operations beyond basic SDL3 capabilities used for 2D sprites.
-- **Audio System:** No sound effects or music playback.
-- **Font Rendering & Text Display:** The prototype will not support loading fonts or rendering text.
-- **Advanced Input:** Joystick/gamepad support beyond what SDL3 might offer for basic key events, touch input, gesture recognition.
-- **Physics Engine:** No collision detection or physics simulation capabilities will be part of the engine.
-- **Networking Capabilities:** No multiplayer or network communication features.
-- **Comprehensive Error Handling:** Error handling will be minimal.
-- **Performance Optimization:** The primary goal is functional correctness and API design.
-- **Game Packaging/Distribution Tools:** Not included.
-- **Editor/GUI Tools:** (Beyond what might be prototyped with ImGui in the future).
+## 6. Future Considerations
 
-**Potential Future Enhancements (Post-Prototype):**
+**Out of Scope for Initial Night.Framework Development (beyond core Window, Input, Graphics, Game Loop):**
 
-- **Dear ImGui Integration:** Integrate Dear ImGui to facilitate the creation of debug UIs, simple in-game editors, or developer tools directly within "Night" applications.
-- **Quake-Style Debug Console:** Implement a toggleable in-game console (e.g., accessed via a tab or backtick key) for runtime command execution, variable inspection/manipulation, and viewing engine/game logs.
-- **Entity Component System (ECS) Architecture:** Transition or build the engine's core scene and game object management around an ECS pattern for improved data-oriented design, performance, and flexibility.
-- **Audio Module (`Night.Audio`):** Integrate SDL_mixer (or equivalent SDL3 audio functionality) for sound effects and music playback.
-- **Font Rendering (`Night.Font`):** Add support for loading fonts (e.g., via SDL_ttf) and rendering text. This would also benefit the debug console and any ImGui interfaces.
-- **Expanded Input (`Night.Joystick`, `Night.Touch`):** Full support for game controllers/joysticks and touch interfaces.
-- **More Graphics Primitives & Features:** Support for drawing shapes (lines, rectangles, circles), basic shader integration, and a more advanced camera system, potentially designed with ECS in mind.
-- **Filesystem Abstraction (`Night.Filesystem`):** A simple, cross-platform API for file I/O.
-- **Timing Module (`Night.Timer`):** More advanced control over timing and FPS management.
-- **Lua Scripting Interface:** To more closely mirror Love2D's primary development language.
-- **Improved Error Handling & Debugging Tools:** Building upon the debug console.
-- **Performance Profiling and Optimization.**
-- **Expanded Platform Support.**
-- **Community Building:** Tutorials, more example projects, and comprehensive API documentation.
+- **Full Love2D API Parity:** Only a subset of Love2D modules and features will be implemented initially in Night.Framework. Modules like `love.audio`, `love.filesystem`, `love.font`, `love.joystick`, `love.thread`, etc., are out of scope for the initial set of framework modules. Some may be added to Night.Framework later, or equivalents might be part of Night.Engine.
+
+- **Advanced Rendering in Night.Framework:** Custom shaders, 3D graphics, complex lighting, particle systems beyond what SDL_Renderer offers for 2D sprites.
+- **Audio** System, Font Rendering, Advanced Input (Joysticks, Touch), Physics Engine, Networking Capabilities in **Night.Framework:** These are not targeted for the initial Night.Framework release.
+- **Comprehensive Error Handling:** Error handling will be functional but may be expanded later.
+- **Performance Optimization:** Initial focus is on functional correctness and API design for Night.Framework.
+- **Game Packaging/Distribution Tools, Editor/GUI Tools:** Not included.
+
+**Potential Future Enhancements (Post-initial Night.Framework, potentially as part of Night.Engine or additions to Night.Framework):**
+
+- **Night.Engine Core:**
+    - **Entity Component System (ECS) Architecture**.
+    - **Scene Management & Scene Graph.**
+    - **Advanced Game State Management.**
+
+- **Expanded Night.Framework Modules:**
+    - **Audio Module (`Night.Audio`):** Integrate SDL_mixer (or equivalent SDL3 audio) for sound and music.
+    - **Font Rendering (`Night.Font`):** Add support for loading fonts and rendering text (e.g., via SDL_ttf).
+    - **Expanded Input (`Night.Joystick`, `Night.Touch`):** Support for game controllers and touch interfaces.
+    - **More Graphics Primitives & Features:** Drawing shapes, basic shader integration via SDL_Renderer functions, and potentially a more advanced camera system.
+    - **Filesystem Abstraction (`Night.Filesystem`):** Cross-platform API for file I/O.
+    - **Timing** Module **(`Night.Timer`):** Advanced control over timing and FPS management.
+
+- **Tooling & Developer Experience:**
+    - **Dear ImGui Integration:** For debug UIs and simple in-game editors.
+    - **Quake-Style Debug Console**.
+    - **Lua Scripting Interface (long-term consideration)**.
+
+- **General:**
+    - **Improved Error Handling & Debugging Tools**.
+    - **Performance Profiling and Optimization.**
+    - **Expanded Platform Support Verification (Android, iOS).**
+    - **Community Building: Tutorials, more examples, comprehensive documentation**.
 
 
 
@@ -507,47 +538,45 @@ File: docs/operational-guidelines.md
 
 The "Night" engine project will adhere to the **Google C# Style Guide**. Key aspects of this guide, supplemented by project-specific interpretations, are outlined below. All developers are expected to familiarize themselves with the full guide.
 
-- **Language Version:**
-    - C# 13 (utilizing .NET 9 features where appropriate).
 - **Formatting & Style:**
-    - **Primary Reference:** Google C# Style Guide.
-    - **Indentation:** 2 spaces, no tabs.
-    - **Column Limit:** 100 characters.
-    - **Whitespace, Braces, Line Wrapping:** Adhere to the detailed rules in the Google C# Style Guide. This includes rules like no line break before an opening brace, and braces used even when optional.
-    - **Tooling:**
-        - `dotnet format` will be used to help enforce formatting rules.
-        - An `.editorconfig` file will be added to the project root, configured to align with the Google C# Style Guide's formatting and style rules (e.g., indentation, column limit, using directives order).
+  - **Indentation:** 2 spaces, no tabs.
+  - **Column Limit:** 100 characters.
+  - **Whitespace, Braces, Line Wrapping:** Adhere to the detailed rules in the Google C# Style Guide. This includes rules like no line break before an opening brace, and braces used even when optional.
+  - **Tooling:**
+    - `dotnet format` will be used to help enforce formatting rules.
+    - An `.editorconfig` file will be added to the project root, configured to align with the Google C# Style Guide's formatting and style rules (e.g., indentation, column limit, using directives order).
 - **Linting:**
-    - **Primary Reference:** Google C# Style Guide for code quality expectations.
-    - **Tooling:** Utilize Roslyn Analyzers provided with the .NET SDK.
-    - The `.editorconfig` file will be configured to enable and set the severity of analyzer rules to align with the principles of the Google C# Style Guide. This includes rules related to naming, organization, and other code quality aspects.
+  - **Tooling:** Utilize Roslyn Analyzers provided with the .NET SDK.
+  - The `.editorconfig` file will be configured to enable and set the severity of analyzer rules to align with the principles of the Google C# Style Guide. This includes rules related to naming, organization, and other code quality aspects.
 - **Naming Conventions:**
-    - **Primary Reference:** Google C# Style Guide, which generally follows Microsoft’s C# naming guidelines and CoreFX for unspecified cases.
-    - **General Rules Summary:**
-        - Names of classes, methods, enumerations, public fields, public properties, namespaces: `PascalCase`.
-        - Names of local variables, parameters: `camelCase`.
-        - Names of private, protected, internal, and protected internal fields and properties: `_camelCase` (e.g., `_privateField`).
-        - Naming convention is unaffected by modifiers such as `const`, `static`, `readonly`, etc..
-        - For casing, a “word” is anything written without internal spaces, including acronyms (e.g., `MyRpc` not `MyRPC`).
-        - Names of interfaces start with `I` (e.g., `IInterface`).
-        - Filenames and directory names are `PascalCase` (e.g., `MyFile.cs`).
-    - **Project Specific (API Design):** When naming public API elements for "Night" intended to mirror Love2D functions (e.g., `love.window.setTitle`), use the `PascalCase` version adhering to the above rules (e.g., `Night.Window.SetTitle(...)`).
+  - **General Rules Summary:**
+    - Names of classes, methods, enumerations, public fields, public properties, namespaces: `PascalCase`.
+    - Names of local variables, parameters: `camelCase`.
+    - Names of private, protected, internal, and protected internal fields and properties: `_camelCase` (e.g., `_privateField`).
+    - Naming convention is unaffected by modifiers such as `const`, `static`, `readonly`, etc..
+    - For casing, a “word” is anything written without internal spaces, including acronyms (e.g., `MyRpc` not `MyRPC`).
+    - Names of interfaces start with `I` (e.g., `IInterface`).
+    - Filenames and directory names are `PascalCase` (e.g., `MyFile.cs`).
+  - **Project Specific (API Design):** When naming public API elements for "Night" intended to mirror Love2D functions (e.g., `love.window.setTitle`), use the `PascalCase` version adhering to the above rules (e.g., `Night.Window.SetTitle(...)`).
 - **Code Organization:**
-    - **Primary Reference:** Google C# Style Guide.
-    - **Modifier Order:** `public protected internal private new abstract virtual override sealed static readonly extern unsafe volatile async`.
-    - **Namespace `using` Declarations:** Place at the top of the file, before any namespace declarations. Order alphabetically, with `System` imports always first.
-    - **Class Member Ordering:** Follow the prescribed order: Nested types, static/const/readonly fields, instance fields/properties, constructors/finalizers, methods. Within each group, elements are ordered by access: Public, Internal, Protected internal, Protected, Private.
+  - **Modifier Order:** `public protected internal private new abstract virtual override sealed static readonly extern unsafe volatile async`.
+  - **Namespace `using` Declarations:** Place at the top of the file, before any namespace declarations. Order alphabetically, with `System` imports always first.
+  - **Class Member Ordering:** Follow the prescribed order: Nested types, static/const/readonly fields, instance fields/properties, constructors/finalizers, methods. Within each group, elements are ordered by access: Public, Internal, Protected internal, Protected, Private.
 - **Key Principles (Project-Specific additions and emphasis):**
-    - **Adherence to Google C# Style Guide:** This is the foundational principle for code style and quality.
-    - **API Design (Night Engine):** Strive for an API design that is idiomatic to C# while closely mirroring the spirit, structure, and ease of use of the Love2D API for the features being implemented.
-    - **Encapsulation:** The P/Invoke layer and direct interactions with SDL3 native functions should be strictly internal to the `Night.Framework` library.
-    - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
-    - **Scope Adherence:** Focus strictly on implementing the agreed-upon features (0-4) for this prototype.
+  - **API Design (Night Engine):** Strive for an API design that is idiomatic to C# while closely mirroring the spirit, structure, and ease of use of the Love2D API for the features being implemented.
+  - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
+  - **Scope Adherence:** Focus strictly on implementing the agreed-upon features (0-4) for this prototype.
 - **Testing (if applicable for prototype):**
-    - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Framework` features.
-    - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Framework`.
-    - **Manual Verification:** Manual testing of the sample game against the defined user actions and outcomes for each feature in the PRD will be essential.
+  - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Framework` features.
+  - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Framework`.
+  - **Manual Verification:** Manual testing of the sample game against the defined user actions and outcomes for each feature in the PRD will be essential.
 
+
+
+================================================
+File: docs/.DS_Store
+================================================
+[Non-text file]
 
 
 ================================================
@@ -737,8 +766,8 @@ File: docs/epics/epic4.md
     - **Verification:** `Night.KeyCode` and `Night.MouseButton` enums are clearly defined and accurately map to the underlying SDL input system values.
 
 - [x] **Task 4.5:** Basic Error Handling and State Management for Input (Status: Review)
-    - [ ] Ensure that input functions behave gracefully if called before SDL subsystems are fully initialized (e.g., return default/false values, log a warning). (Note: The main `Night.Framework.Run` should handle initialization order).
-    - [ ] Review SDL documentation for any specific error conditions or edge cases for the input functions being used.
+    - [x] Ensure that input functions behave gracefully if called before SDL subsystems are fully initialized (e.g., return default/false values, log a warning). (Note: The main `Night.Framework.Run` should handle initialization order).
+    - [x] Review SDL documentation for any specific error conditions or edge cases for the input functions being used.
     - **Verification:** Input functions do not cause crashes if queried at an inappropriate time (though this should be rare with a proper game loop) and provide default 'safe' return values.
 
 
@@ -979,7 +1008,7 @@ This document maps the functions available in the `love.event` module of Love2D 
 |---------------------------------|------------------------------------------------------|---------------------------|--------------------------|------|
 | `love.event.clear()`            | `Night.Event.ClearQueue()` (Engine internal or not exposed) | `internal static void ClearQueue()` <br> Clears pending events. Engine might do this per frame. | Out of Scope | [ ] |
 | `love.event.poll()`             | `Night.Event.Poll()` (Engine internal) | `internal static Night.EventData? Poll()` <br> Returns next event if any. Engine uses this in its loop. | Out of Scope | [ ] |
-| `love.event.pump()`             | `Night.Event.PumpEvents()` (Engine internal) | `internal static void PumpEvents()` <br> Processes OS events into LÃ–VE events. Engine does this. | Out of Scope | [ ] |
+| `love.event.pump()`             | `Night.Event.PumpEvents()` (Engine internal) | `internal static void PumpEvents()` <br> Processes OS events into LÖVE events. Engine does this. | Out of Scope | [ ] |
 | `love.event.push(e, ...)`       | `Night.Event.PushCustomEvent(string eventName, params object[] args)` | `public static void PushCustomEvent(string eventName, params object[] args)` <br> Allows user to push custom events. Would require a `MyGame.CustomEvent(name, args)` callback. | Out of Scope | [ ] |
 | `love.event.quit(exitstatus)`   | `Night.Engine.RequestQuit(int exitStatus = 0)` | `public static void RequestQuit(int exitStatus = 0)` <br> Pushes a quit event. | In Scope (as `Night.Engine.RequestQuit`) | [ ] |
 | `love.event.wait()`             | `Night.Event.Wait()` (Engine internal or not exposed) | `internal static Night.EventData Wait()` <br> Waits for next event. Not typical for game loops. | Out of Scope | [ ] |
@@ -1193,7 +1222,7 @@ This document maps the functions available in the `love.image` module of Love2D 
 | Love2D Function (`love.image.`) | Night Engine API (`Night.Image` or `Texture`/`Sprite` methods) | Notes / C# Signature Idea | Status (Prototype Scope) | Done |
 |---------------------------------|----------------------------------------------------------------|---------------------------|--------------------------|------|
 | `love.image.newImageData(width, height, format, data)` | `Night.Image.NewImageData(int width, int height, Night.PixelFormat format = RGBA8, byte[]? data = null)` | `public static Night.ImageData NewImageData(...)` <br> Creates raw image data. `Night.ImageData` would be a class/struct. | Out of Scope | [ ] |
-| `love.image.isCompressed(filename)` or `love.image.isCompressed(filedata)` | `Night.Image.IsCompressed(string filePath)` or `Night.Image.IsCompressed(Night.FileData fileData)` | `public static bool IsCompressed(...)` <br> Checks if an image file is a compressed format LÃ–VE can load. | Out of Scope | [ ] |
+| `love.image.isCompressed(filename)` or `love.image.isCompressed(filedata)` | `Night.Image.IsCompressed(string filePath)` or `Night.Image.IsCompressed(Night.FileData fileData)` | `public static bool IsCompressed(...)` <br> Checks if an image file is a compressed format LÖVE can load. | Out of Scope | [ ] |
 | `love.image.newCompressedData(filename)` | `Night.Image.NewCompressedData(string filePath)` | `public static Night.CompressedImageData NewCompressedData(string filePath)` <br> Loads a compressed image file (e.g. DDS, KTX) into a special data object. | Out of Scope | [ ] |
 
 **Related functionality in Night Engine (on `Sprite` or `Texture` or `ImageData` objects):**
@@ -1789,452 +1818,7 @@ if __name__ == "__main__":
 
 
 ================================================
-File: src/Night.Engine/API.cs
-================================================
-// Namespace for all public Night Engine APIs
-namespace Night;
-
-using System;
-using System.Runtime.InteropServices; // For Marshal
-
-using Night.Types; // For KeyCode, MouseButton, Color, Rectangle, WindowFlags, Sprite
-
-using static SDL3.SDL; // For direct access to SDL functions
-
-/// <summary>
-/// Provides functionality for managing the application window.
-/// Mimics Love2D's love.window module.
-/// </summary>
-public static class Window
-{
-  private static nint _window = nint.Zero;
-  private static nint _renderer = nint.Zero;
-  private static bool _isVideoInitialized = false;
-  private static bool _isWindowOpen = false; // Added for IsOpen()
-
-  /// <summary>
-  /// Sets the display mode of the window.
-  /// </summary>
-  /// <param name="width">The width of the window.</param>
-  /// <param name="height">The height of the window.</param>
-  /// <param name="flags">Window flags to apply.</param>
-  public static void SetMode(int width, int height, WindowFlags flags)
-  {
-    if (!_isVideoInitialized)
-    {
-      if (!SDL_InitSubSystem(SDL_InitFlags.SDL_INIT_VIDEO)) // Corrected: SDLBool check
-      {
-        string sdlError = SDL_GetError();
-        Console.WriteLine($"Error initializing SDL video subsystem: {sdlError}");
-        throw new Exception($"SDL Error initializing video subsystem: {sdlError}");
-      }
-      _isVideoInitialized = true;
-    }
-
-    // If a window already exists, destroy it before creating a new one
-    if (_window != nint.Zero)
-    {
-      if (_renderer != nint.Zero)
-      {
-        SDL_DestroyRenderer(_renderer);
-        _renderer = nint.Zero;
-      }
-      SDL_DestroyWindow(_window);
-      _window = nint.Zero;
-      _isWindowOpen = false; // Window closed
-    }
-
-    SDL_WindowFlags sdlFlags = (SDL_WindowFlags)flags;
-
-    _window = SDL_CreateWindow("Night Engine", width, height, sdlFlags);
-    if (_window == nint.Zero)
-    {
-      string sdlError = SDL_GetError();
-      Console.WriteLine($"Error creating SDL window: {sdlError}");
-      _isWindowOpen = false; // Window creation failed
-      throw new Exception($"SDL Error creating window: {sdlError}");
-    }
-
-    // Create a renderer. Passing null for the name lets SDL choose the best available driver.
-    // Hardware acceleration is generally preferred and often default.
-    // VSync (PRESENTVSYNC) would typically be set via renderer properties in SDL3 if not default.
-    // For simplicity in this step, we use the basic SDL_CreateRenderer.
-    _renderer = SDL_CreateRenderer(_window, null);
-    if (_renderer == nint.Zero)
-    {
-      string sdlError = SDL_GetError();
-      Console.WriteLine($"Error creating SDL renderer: {sdlError}");
-      // Clean up window if renderer creation fails
-      SDL_DestroyWindow(_window);
-      _window = nint.Zero;
-      _isWindowOpen = false; // Renderer creation failed, so window is not usable
-      throw new Exception($"SDL Error creating renderer: {sdlError}");
-    }
-    _isWindowOpen = true; // Window and renderer successfully created
-  }
-
-  /// <summary>
-  /// Sets the title of the window.
-  /// </summary>
-  /// <param name="title">The new window title.</param>
-  public static void SetTitle(string title)
-  {
-    if (_window == nint.Zero)
-    {
-      string errorMsg = "Error in Night.Window.SetTitle: Window handle is null. Was SetMode called successfully?";
-      Console.WriteLine(errorMsg);
-      throw new InvalidOperationException(errorMsg);
-    }
-    if (!SDL_SetWindowTitle(_window, title))
-    {
-      string sdlError = SDL_GetError();
-      Console.WriteLine($"Error in Night.Window.SetTitle: {sdlError}");
-      throw new Exception($"SDL Error in Night.Window.SetTitle: {sdlError}");
-    }
-  }
-
-  /// <summary>
-  /// Checks if the window is currently open.
-  /// </summary>
-  /// <returns>True if the window is open, false otherwise.</returns>
-  public static bool IsOpen()
-  {
-    return _isWindowOpen && _window != nint.Zero;
-  }
-
-  /// <summary>
-  /// Signals that the window should close.
-  /// This is typically called by the engine when a quit event is received.
-  /// </summary>
-  public static void Close()
-  {
-    _isWindowOpen = false;
-    // Actual window destruction is handled by SetMode re-call or application exit for now.
-    // Or could be SDL_DestroyWindow(_window); _window = nint.Zero; if Engine.Run doesn't own it.
-  }
-}
-
-/// <summary>
-/// Provides functionality for drawing graphics.
-/// Mimics Love2D's love.graphics module.
-/// </summary>
-public static class Graphics
-{
-  /// <summary>
-  /// Creates a new image (Sprite) from a file.
-  /// </summary>
-  /// <param name="filePath">The path to the image file.</param>
-  /// <returns>A new Sprite object.</returns>
-  public static Sprite NewImage(string filePath)
-  {
-    throw new NotImplementedException();
-  }
-
-  /// <summary>
-  /// Draws a sprite to the screen.
-  /// </summary>
-  /// <param name="sprite">The sprite to draw.</param>
-  /// <param name="x">The x-coordinate to draw the sprite at.</param>
-  /// <param name="y">The y-coordinate to draw the sprite at.</param>
-  /// <param name="rotation">The rotation of the sprite (in radians).</param>
-  /// <param name="scaleX">The horizontal scale factor.</param>
-  /// <param name="scaleY">The vertical scale factor.</param>
-  /// <param name="offsetX">The x-offset for the sprite's origin.</param>
-  /// <param name="offsetY">The y-offset for the sprite's origin.</param>
-  public static void Draw(
-      Sprite sprite,
-      float x,
-      float y,
-      float rotation = 0,
-      float scaleX = 1,
-      float scaleY = 1,
-      float offsetX = 0,
-      float offsetY = 0)
-  {
-    throw new NotImplementedException();
-  }
-
-  /// <summary>
-  /// Clears the screen to a specific color.
-  /// </summary>
-  /// <param name="color">The color to clear the screen with.</param>
-  public static void Clear(Color color)
-  {
-    throw new NotImplementedException();
-  }
-
-  /// <summary>
-  /// Presents the drawn graphics to the screen (swaps buffers).
-  /// </summary>
-  public static void Present()
-  {
-    throw new NotImplementedException();
-  }
-}
-
-/// <summary>
-/// Provides functionality for handling keyboard input.
-/// Mimics Love2D's love.keyboard module.
-/// </summary>
-public static class Keyboard
-{
-  // TODO: Task 4.4 - Create a comprehensive mapping for all KeyCodes.
-  private static SDL_Scancode MapKeyCodeToScancode(KeyCode key)
-  {
-    switch (key)
-    {
-      // Letters
-      case KeyCode.A: return SDL_Scancode.SDL_SCANCODE_A;
-      case KeyCode.B: return SDL_Scancode.SDL_SCANCODE_B;
-      case KeyCode.C: return SDL_Scancode.SDL_SCANCODE_C;
-      case KeyCode.D: return SDL_Scancode.SDL_SCANCODE_D;
-      case KeyCode.E: return SDL_Scancode.SDL_SCANCODE_E;
-      case KeyCode.F: return SDL_Scancode.SDL_SCANCODE_F;
-      case KeyCode.G: return SDL_Scancode.SDL_SCANCODE_G;
-      case KeyCode.H: return SDL_Scancode.SDL_SCANCODE_H;
-      case KeyCode.I: return SDL_Scancode.SDL_SCANCODE_I;
-      case KeyCode.J: return SDL_Scancode.SDL_SCANCODE_J;
-      case KeyCode.K: return SDL_Scancode.SDL_SCANCODE_K;
-      case KeyCode.L: return SDL_Scancode.SDL_SCANCODE_L;
-      case KeyCode.M: return SDL_Scancode.SDL_SCANCODE_M;
-      case KeyCode.N: return SDL_Scancode.SDL_SCANCODE_N;
-      case KeyCode.O: return SDL_Scancode.SDL_SCANCODE_O;
-      case KeyCode.P: return SDL_Scancode.SDL_SCANCODE_P;
-      case KeyCode.Q: return SDL_Scancode.SDL_SCANCODE_Q;
-      case KeyCode.R: return SDL_Scancode.SDL_SCANCODE_R;
-      case KeyCode.S: return SDL_Scancode.SDL_SCANCODE_S;
-      case KeyCode.T: return SDL_Scancode.SDL_SCANCODE_T;
-      case KeyCode.U: return SDL_Scancode.SDL_SCANCODE_U;
-      case KeyCode.V: return SDL_Scancode.SDL_SCANCODE_V;
-      case KeyCode.W: return SDL_Scancode.SDL_SCANCODE_W;
-      case KeyCode.X: return SDL_Scancode.SDL_SCANCODE_X;
-      case KeyCode.Y: return SDL_Scancode.SDL_SCANCODE_Y;
-      case KeyCode.Z: return SDL_Scancode.SDL_SCANCODE_Z;
-
-      // Numbers
-      case KeyCode.Num0: return SDL_Scancode.SDL_SCANCODE_0;
-      case KeyCode.Num1: return SDL_Scancode.SDL_SCANCODE_1;
-      case KeyCode.Num2: return SDL_Scancode.SDL_SCANCODE_2;
-      case KeyCode.Num3: return SDL_Scancode.SDL_SCANCODE_3;
-      case KeyCode.Num4: return SDL_Scancode.SDL_SCANCODE_4;
-      case KeyCode.Num5: return SDL_Scancode.SDL_SCANCODE_5;
-      case KeyCode.Num6: return SDL_Scancode.SDL_SCANCODE_6;
-      case KeyCode.Num7: return SDL_Scancode.SDL_SCANCODE_7;
-      case KeyCode.Num8: return SDL_Scancode.SDL_SCANCODE_8;
-      case KeyCode.Num9: return SDL_Scancode.SDL_SCANCODE_9;
-
-      // Function keys
-      case KeyCode.F1: return SDL_Scancode.SDL_SCANCODE_F1;
-      case KeyCode.F2: return SDL_Scancode.SDL_SCANCODE_F2;
-      case KeyCode.F3: return SDL_Scancode.SDL_SCANCODE_F3;
-      case KeyCode.F4: return SDL_Scancode.SDL_SCANCODE_F4;
-      case KeyCode.F5: return SDL_Scancode.SDL_SCANCODE_F5;
-      case KeyCode.F6: return SDL_Scancode.SDL_SCANCODE_F6;
-      case KeyCode.F7: return SDL_Scancode.SDL_SCANCODE_F7;
-      case KeyCode.F8: return SDL_Scancode.SDL_SCANCODE_F8;
-      case KeyCode.F9: return SDL_Scancode.SDL_SCANCODE_F9;
-      case KeyCode.F10: return SDL_Scancode.SDL_SCANCODE_F10;
-      case KeyCode.F11: return SDL_Scancode.SDL_SCANCODE_F11;
-      case KeyCode.F12: return SDL_Scancode.SDL_SCANCODE_F12;
-
-      // Control keys
-      case KeyCode.LeftShift: return SDL_Scancode.SDL_SCANCODE_LSHIFT;
-      case KeyCode.RightShift: return SDL_Scancode.SDL_SCANCODE_RSHIFT;
-      case KeyCode.LeftCtrl: return SDL_Scancode.SDL_SCANCODE_LCTRL;
-      case KeyCode.RightCtrl: return SDL_Scancode.SDL_SCANCODE_RCTRL;
-      case KeyCode.LeftAlt: return SDL_Scancode.SDL_SCANCODE_LALT;
-      case KeyCode.RightAlt: return SDL_Scancode.SDL_SCANCODE_RALT;
-      case KeyCode.LeftSuper: return SDL_Scancode.SDL_SCANCODE_LGUI; // GUI key often maps to Super/Windows/Command
-      case KeyCode.RightSuper: return SDL_Scancode.SDL_SCANCODE_RGUI;
-      case KeyCode.Enter: return SDL_Scancode.SDL_SCANCODE_RETURN;
-      case KeyCode.Escape: return SDL_Scancode.SDL_SCANCODE_ESCAPE;
-      case KeyCode.Space: return SDL_Scancode.SDL_SCANCODE_SPACE;
-      case KeyCode.Tab: return SDL_Scancode.SDL_SCANCODE_TAB;
-      case KeyCode.Backspace: return SDL_Scancode.SDL_SCANCODE_BACKSPACE;
-      case KeyCode.Delete: return SDL_Scancode.SDL_SCANCODE_DELETE;
-      case KeyCode.Insert: return SDL_Scancode.SDL_SCANCODE_INSERT;
-      case KeyCode.Home: return SDL_Scancode.SDL_SCANCODE_HOME;
-      case KeyCode.End: return SDL_Scancode.SDL_SCANCODE_END;
-      case KeyCode.PageUp: return SDL_Scancode.SDL_SCANCODE_PAGEUP;
-      case KeyCode.PageDown: return SDL_Scancode.SDL_SCANCODE_PAGEDOWN;
-
-      // Arrow keys
-      case KeyCode.Up: return SDL_Scancode.SDL_SCANCODE_UP;
-      case KeyCode.Down: return SDL_Scancode.SDL_SCANCODE_DOWN;
-      case KeyCode.Left: return SDL_Scancode.SDL_SCANCODE_LEFT;
-      case KeyCode.Right: return SDL_Scancode.SDL_SCANCODE_RIGHT;
-
-      case KeyCode.Unknown:
-      default:
-        return SDL_Scancode.SDL_SCANCODE_UNKNOWN;
-    }
-  }
-
-  /// <summary>
-  /// Checks if a specific key is currently pressed down.
-  /// </summary>
-  /// <param name="key">The key to check.</param>
-  /// <returns>True if the key is down, false otherwise.</returns>
-  public static bool IsDown(KeyCode key)
-  {
-    if (!Framework.IsInputInitialized)
-    {
-      Console.WriteLine("Warning: Night.Keyboard.IsDown called before input system is initialized. Returning false.");
-      return false;
-    }
-
-    // The SDL_PumpEvents function should be called in the main event loop
-    // to update the keyboard state. Assuming Engine.Run() handles this.
-
-    nint keyboardStatePtr = SDL_GetKeyboardState(out int numKeys);
-
-    if (keyboardStatePtr == nint.Zero)
-    {
-      // This case should ideally not happen if SDL is initialized correctly.
-      // Log a warning or handle as per engine's error strategy.
-      Console.WriteLine("Warning: SDL_GetKeyboardState returned a null pointer.");
-      return false;
-    }
-
-    SDL_Scancode sdlScancode = MapKeyCodeToScancode(key);
-
-    if (sdlScancode == SDL_Scancode.SDL_SCANCODE_UNKNOWN)
-    {
-      return false; // Unknown or unmapped key
-    }
-
-    // Ensure scancode is within bounds. numKeys represents the number of scancodes.
-    if ((int)sdlScancode >= numKeys)
-    {
-      Console.WriteLine($"Warning: Scancode {(int)sdlScancode} is out of bounds (numKeys: {numKeys}).");
-      return false;
-    }
-
-    // The array is indexed by SDL_Scancode values.
-    // SDL_GetKeyboardState returns a pointer to an array of Uint8.
-    // A value of 1 means pressed, 0 means not pressed.
-    byte byteKeyState = Marshal.ReadByte(keyboardStatePtr, (int)sdlScancode);
-    return byteKeyState == 1;
-  }
-}
-
-/// <summary>
-/// Provides functionality for handling mouse input.
-/// Mimics Love2D's love.mouse module.
-/// </summary>
-public static class Mouse
-{
-  /// <summary>
-  /// Checks if a specific mouse button is currently pressed down.
-  /// </summary>
-  /// <param name="button">The mouse button to check.</param>
-  /// <returns>True if the button is down, false otherwise.</returns>
-  public static bool IsDown(MouseButton button)
-  {
-    if (!Framework.IsInputInitialized)
-    {
-      Console.WriteLine("Warning: Night.Mouse.IsDown called before input system is initialized. Returning false.");
-      return false;
-    }
-
-    SDL_MouseButtonFlags mouseState = SDL_GetMouseState(out float _, out float _);
-
-    SDL_MouseButtonFlags buttonMask;
-    switch (button)
-    {
-      case MouseButton.Left:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_LMASK;
-        break;
-      case MouseButton.Middle:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_MMASK;
-        break;
-      case MouseButton.Right:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_RMASK;
-        break;
-      case MouseButton.X1:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_X1MASK;
-        break;
-      case MouseButton.X2:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_X2MASK;
-        break;
-      case MouseButton.Unknown:
-      default:
-        return false; // Unknown or unmapped button
-    }
-
-    return (mouseState & buttonMask) != 0;
-  }
-
-  /// <summary>
-  /// Gets the current position of the mouse cursor.
-  /// </summary>
-  /// <returns>A tuple (int x, int y) representing the mouse coordinates.</returns>
-  public static (int x, int y) GetPosition()
-  {
-    if (!Framework.IsInputInitialized)
-    {
-      Console.WriteLine("Warning: Night.Mouse.GetPosition called before input system is initialized. Returning (0,0).");
-      return (0, 0);
-    }
-
-    float mouseX, mouseY;
-    SDL_GetMouseState(out mouseX, out mouseY); // This SDL3-CS function returns uint for button state, but we only need x, y
-    return ((int)mouseX, (int)mouseY);
-  }
-}
-
-/// <summary>
-/// Provides direct access to SDL3 functions using SDL3-CS bindings.
-/// This is an internal-facing or low-level API for the engine.
-/// </summary>
-public static class SDL
-{
-  /// <summary>
-  /// Initializes the SDL library. This must be called before any other SDL functions.
-  /// </summary>
-  /// <param name="flags">Initialization flags for SDL.</param>
-  /// <returns>0 on success or a negative error code on failure.</returns>
-  public static int Init(SDL3.SDL.SDL_InitFlags flags)
-  {
-    // SDL3.SDL.SDL_Init returns an SDLBool, which implicitly converts to bool.
-    // We convert this to 0 for success, <0 for failure.
-    return SDL3.SDL.SDL_Init(flags) ? 0 : -1;
-  }
-
-  /// <summary>
-  /// Cleans up all initialized subsystems. You should call this function on application exit.
-  /// </summary>
-  public static void Quit()
-  {
-    SDL3.SDL.SDL_Quit();
-  }
-
-  /// <summary>
-  /// Gets the version of SDL that is linked against.
-  /// The SDL3-CS binding for SDL_GetVersion returns a packed int.
-  /// </summary>
-  /// <returns>A string representing the SDL version "major.minor.patch".</returns>
-  public static string GetVersion()
-  {
-    int sdl_version = SDL3.SDL.SDL_GetVersion();
-    int major = sdl_version / 1000000;
-    int minor = (sdl_version / 1000) % 1000;
-    int patch = sdl_version % 1000;
-    return $"{major}.{minor}.{patch}";
-  }
-
-  // Expose SDL_InitFlags enum for convenience if needed by calling code for Init()
-  public static SDL3.SDL.SDL_InitFlags InitVideo => SDL3.SDL.SDL_InitFlags.SDL_INIT_VIDEO;
-  public static SDL3.SDL.SDL_InitFlags InitAudio => SDL3.SDL.SDL_InitFlags.SDL_INIT_AUDIO;
-  public static SDL3.SDL.SDL_InitFlags InitTimer => SDL3.SDL.SDL_InitFlags.SDL_INIT_TIMER;
-  public static SDL3.SDL.SDL_InitFlags InitEvents => SDL3.SDL.SDL_InitFlags.SDL_INIT_EVENTS;
-  // Add other flags as needed or expect the caller to use SDL3.SDL.SDL_InitFlags directly.
-}
-
-
-
-================================================
-File: src/Night.Engine/Engine.cs
+File: src/Night.Engine/FrameworkLoop.cs
 ================================================
 using System;
 using System.Runtime.InteropServices;
@@ -2376,7 +1960,7 @@ namespace Night
 ================================================
 File: src/Night.Engine/Night.Engine.csproj
 ================================================
-ï»¿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -2756,13 +2340,505 @@ namespace Night.Types
 
 
 
+================================================
+File: src/Night.Engine/Modules/Graphics.cs
+================================================
+using System;
+
+using Night.Types; // For Color, Sprite
+
+namespace Night;
+
+/// <summary>
+/// Provides functionality for drawing graphics.
+/// Mimics Love2D's love.graphics module.
+/// </summary>
+public static class Graphics
+{
+  /// <summary>
+  /// Creates a new image (Sprite) from a file.
+  /// </summary>
+  /// <param name="filePath">The path to the image file.</param>
+  /// <returns>A new Sprite object.</returns>
+  public static Sprite NewImage(string filePath)
+  {
+    throw new NotImplementedException();
+  }
+
+  /// <summary>
+  /// Draws a sprite to the screen.
+  /// </summary>
+  /// <param name="sprite">The sprite to draw.</param>
+  /// <param name="x">The x-coordinate to draw the sprite at.</param>
+  /// <param name="y">The y-coordinate to draw the sprite at.</param>
+  /// <param name="rotation">The rotation of the sprite (in radians).</param>
+  /// <param name="scaleX">The horizontal scale factor.</param>
+  /// <param name="scaleY">The vertical scale factor.</param>
+  /// <param name="offsetX">The x-offset for the sprite's origin.</param>
+  /// <param name="offsetY">The y-offset for the sprite's origin.</param>
+  public static void Draw(
+      Sprite sprite,
+      float x,
+      float y,
+      float rotation = 0,
+      float scaleX = 1,
+      float scaleY = 1,
+      float offsetX = 0,
+      float offsetY = 0)
+  {
+    throw new NotImplementedException();
+  }
+
+  /// <summary>
+  /// Clears the screen to a specific color.
+  /// </summary>
+  /// <param name="color">The color to clear the screen with.</param>
+  public static void Clear(Color color)
+  {
+    throw new NotImplementedException();
+  }
+
+  /// <summary>
+  /// Presents the drawn graphics to the screen (swaps buffers).
+  /// </summary>
+  public static void Present()
+  {
+    throw new NotImplementedException();
+  }
+}
+
+
+
+================================================
+File: src/Night.Engine/Modules/Keyboard.cs
+================================================
+using System;
+using System.Runtime.InteropServices; // For Marshal
+
+using Night.Types; // For KeyCode
+
+using static SDL3.SDL; // For direct access to SDL functions
+
+namespace Night;
+
+/// <summary>
+/// Provides functionality for handling keyboard input.
+/// Mimics Love2D's love.keyboard module.
+/// </summary>
+public static class Keyboard
+{
+  // TODO: Task 4.4 - Create a comprehensive mapping for all KeyCodes.
+  private static SDL_Scancode MapKeyCodeToScancode(KeyCode key)
+  {
+    switch (key)
+    {
+      // Letters
+      case KeyCode.A: return SDL_Scancode.SDL_SCANCODE_A;
+      case KeyCode.B: return SDL_Scancode.SDL_SCANCODE_B;
+      case KeyCode.C: return SDL_Scancode.SDL_SCANCODE_C;
+      case KeyCode.D: return SDL_Scancode.SDL_SCANCODE_D;
+      case KeyCode.E: return SDL_Scancode.SDL_SCANCODE_E;
+      case KeyCode.F: return SDL_Scancode.SDL_SCANCODE_F;
+      case KeyCode.G: return SDL_Scancode.SDL_SCANCODE_G;
+      case KeyCode.H: return SDL_Scancode.SDL_SCANCODE_H;
+      case KeyCode.I: return SDL_Scancode.SDL_SCANCODE_I;
+      case KeyCode.J: return SDL_Scancode.SDL_SCANCODE_J;
+      case KeyCode.K: return SDL_Scancode.SDL_SCANCODE_K;
+      case KeyCode.L: return SDL_Scancode.SDL_SCANCODE_L;
+      case KeyCode.M: return SDL_Scancode.SDL_SCANCODE_M;
+      case KeyCode.N: return SDL_Scancode.SDL_SCANCODE_N;
+      case KeyCode.O: return SDL_Scancode.SDL_SCANCODE_O;
+      case KeyCode.P: return SDL_Scancode.SDL_SCANCODE_P;
+      case KeyCode.Q: return SDL_Scancode.SDL_SCANCODE_Q;
+      case KeyCode.R: return SDL_Scancode.SDL_SCANCODE_R;
+      case KeyCode.S: return SDL_Scancode.SDL_SCANCODE_S;
+      case KeyCode.T: return SDL_Scancode.SDL_SCANCODE_T;
+      case KeyCode.U: return SDL_Scancode.SDL_SCANCODE_U;
+      case KeyCode.V: return SDL_Scancode.SDL_SCANCODE_V;
+      case KeyCode.W: return SDL_Scancode.SDL_SCANCODE_W;
+      case KeyCode.X: return SDL_Scancode.SDL_SCANCODE_X;
+      case KeyCode.Y: return SDL_Scancode.SDL_SCANCODE_Y;
+      case KeyCode.Z: return SDL_Scancode.SDL_SCANCODE_Z;
+
+      // Numbers
+      case KeyCode.Num0: return SDL_Scancode.SDL_SCANCODE_0;
+      case KeyCode.Num1: return SDL_Scancode.SDL_SCANCODE_1;
+      case KeyCode.Num2: return SDL_Scancode.SDL_SCANCODE_2;
+      case KeyCode.Num3: return SDL_Scancode.SDL_SCANCODE_3;
+      case KeyCode.Num4: return SDL_Scancode.SDL_SCANCODE_4;
+      case KeyCode.Num5: return SDL_Scancode.SDL_SCANCODE_5;
+      case KeyCode.Num6: return SDL_Scancode.SDL_SCANCODE_6;
+      case KeyCode.Num7: return SDL_Scancode.SDL_SCANCODE_7;
+      case KeyCode.Num8: return SDL_Scancode.SDL_SCANCODE_8;
+      case KeyCode.Num9: return SDL_Scancode.SDL_SCANCODE_9;
+
+      // Function keys
+      case KeyCode.F1: return SDL_Scancode.SDL_SCANCODE_F1;
+      case KeyCode.F2: return SDL_Scancode.SDL_SCANCODE_F2;
+      case KeyCode.F3: return SDL_Scancode.SDL_SCANCODE_F3;
+      case KeyCode.F4: return SDL_Scancode.SDL_SCANCODE_F4;
+      case KeyCode.F5: return SDL_Scancode.SDL_SCANCODE_F5;
+      case KeyCode.F6: return SDL_Scancode.SDL_SCANCODE_F6;
+      case KeyCode.F7: return SDL_Scancode.SDL_SCANCODE_F7;
+      case KeyCode.F8: return SDL_Scancode.SDL_SCANCODE_F8;
+      case KeyCode.F9: return SDL_Scancode.SDL_SCANCODE_F9;
+      case KeyCode.F10: return SDL_Scancode.SDL_SCANCODE_F10;
+      case KeyCode.F11: return SDL_Scancode.SDL_SCANCODE_F11;
+      case KeyCode.F12: return SDL_Scancode.SDL_SCANCODE_F12;
+
+      // Control keys
+      case KeyCode.LeftShift: return SDL_Scancode.SDL_SCANCODE_LSHIFT;
+      case KeyCode.RightShift: return SDL_Scancode.SDL_SCANCODE_RSHIFT;
+      case KeyCode.LeftCtrl: return SDL_Scancode.SDL_SCANCODE_LCTRL;
+      case KeyCode.RightCtrl: return SDL_Scancode.SDL_SCANCODE_RCTRL;
+      case KeyCode.LeftAlt: return SDL_Scancode.SDL_SCANCODE_LALT;
+      case KeyCode.RightAlt: return SDL_Scancode.SDL_SCANCODE_RALT;
+      case KeyCode.LeftSuper: return SDL_Scancode.SDL_SCANCODE_LGUI; // GUI key often maps to Super/Windows/Command
+      case KeyCode.RightSuper: return SDL_Scancode.SDL_SCANCODE_RGUI;
+      case KeyCode.Enter: return SDL_Scancode.SDL_SCANCODE_RETURN;
+      case KeyCode.Escape: return SDL_Scancode.SDL_SCANCODE_ESCAPE;
+      case KeyCode.Space: return SDL_Scancode.SDL_SCANCODE_SPACE;
+      case KeyCode.Tab: return SDL_Scancode.SDL_SCANCODE_TAB;
+      case KeyCode.Backspace: return SDL_Scancode.SDL_SCANCODE_BACKSPACE;
+      case KeyCode.Delete: return SDL_Scancode.SDL_SCANCODE_DELETE;
+      case KeyCode.Insert: return SDL_Scancode.SDL_SCANCODE_INSERT;
+      case KeyCode.Home: return SDL_Scancode.SDL_SCANCODE_HOME;
+      case KeyCode.End: return SDL_Scancode.SDL_SCANCODE_END;
+      case KeyCode.PageUp: return SDL_Scancode.SDL_SCANCODE_PAGEUP;
+      case KeyCode.PageDown: return SDL_Scancode.SDL_SCANCODE_PAGEDOWN;
+
+      // Arrow keys
+      case KeyCode.Up: return SDL_Scancode.SDL_SCANCODE_UP;
+      case KeyCode.Down: return SDL_Scancode.SDL_SCANCODE_DOWN;
+      case KeyCode.Left: return SDL_Scancode.SDL_SCANCODE_LEFT;
+      case KeyCode.Right: return SDL_Scancode.SDL_SCANCODE_RIGHT;
+
+      case KeyCode.Unknown:
+      default:
+        return SDL_Scancode.SDL_SCANCODE_UNKNOWN;
+    }
+  }
+
+  /// <summary>
+  /// Checks if a specific key is currently pressed down.
+  /// </summary>
+  /// <param name="key">The key to check.</param>
+  /// <returns>True if the key is down, false otherwise.</returns>
+  public static bool IsDown(KeyCode key)
+  {
+    if (!Framework.IsInputInitialized)
+    {
+      Console.WriteLine("Warning: Night.Keyboard.IsDown called before input system is initialized. Returning false.");
+      return false;
+    }
+
+    // The SDL_PumpEvents function should be called in the main event loop
+    // to update the keyboard state. Assuming Engine.Run() handles this.
+
+    nint keyboardStatePtr = SDL_GetKeyboardState(out int numKeys);
+
+    if (keyboardStatePtr == nint.Zero)
+    {
+      // This case should ideally not happen if SDL is initialized correctly.
+      // Log a warning or handle as per engine's error strategy.
+      Console.WriteLine("Warning: SDL_GetKeyboardState returned a null pointer.");
+      return false;
+    }
+
+    SDL_Scancode sdlScancode = MapKeyCodeToScancode(key);
+
+    if (sdlScancode == SDL_Scancode.SDL_SCANCODE_UNKNOWN)
+    {
+      return false; // Unknown or unmapped key
+    }
+
+    // Ensure scancode is within bounds. numKeys represents the number of scancodes.
+    if ((int)sdlScancode >= numKeys)
+    {
+      Console.WriteLine($"Warning: Scancode {(int)sdlScancode} is out of bounds (numKeys: {numKeys}).");
+      return false;
+    }
+
+    // The array is indexed by SDL_Scancode values.
+    // SDL_GetKeyboardState returns a pointer to an array of Uint8.
+    // A value of 1 means pressed, 0 means not pressed.
+    byte byteKeyState = Marshal.ReadByte(keyboardStatePtr, (int)sdlScancode);
+    return byteKeyState == 1;
+  }
+}
+
+
+
+================================================
+File: src/Night.Engine/Modules/Mouse.cs
+================================================
+using System;
+
+using Night.Types; // For MouseButton
+
+using static SDL3.SDL; // For direct access to SDL functions
+
+namespace Night;
+
+/// <summary>
+/// Provides functionality for handling mouse input.
+/// Mimics Love2D's love.mouse module.
+/// </summary>
+public static class Mouse
+{
+  /// <summary>
+  /// Checks if a specific mouse button is currently pressed down.
+  /// </summary>
+  /// <param name="button">The mouse button to check.</param>
+  /// <returns>True if the button is down, false otherwise.</returns>
+  public static bool IsDown(MouseButton button)
+  {
+    if (!Framework.IsInputInitialized)
+    {
+      Console.WriteLine("Warning: Night.Mouse.IsDown called before input system is initialized. Returning false.");
+      return false;
+    }
+
+    SDL_MouseButtonFlags mouseState = SDL_GetMouseState(out float _, out float _);
+
+    SDL_MouseButtonFlags buttonMask;
+    switch (button)
+    {
+      case MouseButton.Left:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_LMASK;
+        break;
+      case MouseButton.Middle:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_MMASK;
+        break;
+      case MouseButton.Right:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_RMASK;
+        break;
+      case MouseButton.X1:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_X1MASK;
+        break;
+      case MouseButton.X2:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_X2MASK;
+        break;
+      case MouseButton.Unknown:
+      default:
+        return false; // Unknown or unmapped button
+    }
+
+    return (mouseState & buttonMask) != 0;
+  }
+
+  /// <summary>
+  /// Gets the current position of the mouse cursor.
+  /// </summary>
+  /// <returns>A tuple (int x, int y) representing the mouse coordinates.</returns>
+  public static (int x, int y) GetPosition()
+  {
+    if (!Framework.IsInputInitialized)
+    {
+      Console.WriteLine("Warning: Night.Mouse.GetPosition called before input system is initialized. Returning (0,0).");
+      return (0, 0);
+    }
+
+    float mouseX, mouseY;
+    SDL_GetMouseState(out mouseX, out mouseY); // This SDL3-CS function returns uint for button state, but we only need x, y
+    return ((int)mouseX, (int)mouseY);
+  }
+}
+
+
+
+================================================
+File: src/Night.Engine/Modules/SDL.cs
+================================================
+using System;
+
+// No 'using static SDL3.SDL;' here as SDL3.SDL members are fully qualified.
+// No 'using Night.Types;' as no Night.Types are used in this specific class.
+
+namespace Night;
+
+/// <summary>
+/// Provides direct access to SDL3 functions using SDL3-CS bindings.
+/// This is an internal-facing or low-level API for the engine.
+/// </summary>
+public static class SDL
+{
+  /// <summary>
+  /// Initializes the SDL library. This must be called before any other SDL functions.
+  /// </summary>
+  /// <param name="flags">Initialization flags for SDL.</param>
+  /// <returns>0 on success or a negative error code on failure.</returns>
+  public static int Init(SDL3.SDL.SDL_InitFlags flags)
+  {
+    // SDL3.SDL.SDL_Init returns an SDLBool, which implicitly converts to bool.
+    // We convert this to 0 for success, <0 for failure.
+    return SDL3.SDL.SDL_Init(flags) ? 0 : -1;
+  }
+
+  /// <summary>
+  /// Cleans up all initialized subsystems. You should call this function on application exit.
+  /// </summary>
+  public static void Quit()
+  {
+    SDL3.SDL.SDL_Quit();
+  }
+
+  /// <summary>
+  /// Gets the version of SDL that is linked against.
+  /// The SDL3-CS binding for SDL_GetVersion returns a packed int.
+  /// </summary>
+  /// <returns>A string representing the SDL version "major.minor.patch".</returns>
+  public static string GetVersion()
+  {
+    int sdl_version = SDL3.SDL.SDL_GetVersion();
+    int major = sdl_version / 1000000;
+    int minor = (sdl_version / 1000) % 1000;
+    int patch = sdl_version % 1000;
+    return $"{major}.{minor}.{patch}";
+  }
+
+  // Expose SDL_InitFlags enum for convenience if needed by calling code for Init()
+  public static SDL3.SDL.SDL_InitFlags InitVideo => SDL3.SDL.SDL_InitFlags.SDL_INIT_VIDEO;
+  public static SDL3.SDL.SDL_InitFlags InitAudio => SDL3.SDL.SDL_InitFlags.SDL_INIT_AUDIO;
+  public static SDL3.SDL.SDL_InitFlags InitTimer => SDL3.SDL.SDL_InitFlags.SDL_INIT_TIMER;
+  public static SDL3.SDL.SDL_InitFlags InitEvents => SDL3.SDL.SDL_InitFlags.SDL_INIT_EVENTS;
+  // Add other flags as needed or expect the caller to use SDL3.SDL.SDL_InitFlags directly.
+}
+
+
+
+================================================
+File: src/Night.Engine/Modules/Window.cs
+================================================
+using System;
+
+using Night.Types;
+
+using static SDL3.SDL; // For direct access to SDL functions
+
+namespace Night;
+
+/// <summary>
+/// Provides functionality for managing the application window.
+/// Mimics Love2D's love.window module.
+/// </summary>
+public static class Window
+{
+  private static nint _window = nint.Zero;
+  private static nint _renderer = nint.Zero;
+  private static bool _isVideoInitialized = false;
+  private static bool _isWindowOpen = false; // Added for IsOpen()
+
+  /// <summary>
+  /// Sets the display mode of the window.
+  /// </summary>
+  /// <param name="width">The width of the window.</param>
+  /// <param name="height">The height of the window.</param>
+  /// <param name="flags">Window flags to apply.</param>
+  public static void SetMode(int width, int height, WindowFlags flags)
+  {
+    if (!_isVideoInitialized)
+    {
+      if (!SDL_InitSubSystem(SDL_InitFlags.SDL_INIT_VIDEO)) // Corrected: SDLBool check
+      {
+        string sdlError = SDL_GetError();
+        Console.WriteLine($"Error initializing SDL video subsystem: {sdlError}");
+        throw new Exception($"SDL Error initializing video subsystem: {sdlError}");
+      }
+      _isVideoInitialized = true;
+    }
+
+    // If a window already exists, destroy it before creating a new one
+    if (_window != nint.Zero)
+    {
+      if (_renderer != nint.Zero)
+      {
+        SDL_DestroyRenderer(_renderer);
+        _renderer = nint.Zero;
+      }
+      SDL_DestroyWindow(_window);
+      _window = nint.Zero;
+      _isWindowOpen = false; // Window closed
+    }
+
+    SDL_WindowFlags sdlFlags = (SDL_WindowFlags)flags;
+
+    _window = SDL_CreateWindow("Night Engine", width, height, sdlFlags);
+    if (_window == nint.Zero)
+    {
+      string sdlError = SDL_GetError();
+      Console.WriteLine($"Error creating SDL window: {sdlError}");
+      _isWindowOpen = false; // Window creation failed
+      throw new Exception($"SDL Error creating window: {sdlError}");
+    }
+
+    // Create a renderer. Passing null for the name lets SDL choose the best available driver.
+    // Hardware acceleration is generally preferred and often default.
+    // VSync (PRESENTVSYNC) would typically be set via renderer properties in SDL3 if not default.
+    // For simplicity in this step, we use the basic SDL_CreateRenderer.
+    _renderer = SDL_CreateRenderer(_window, null);
+    if (_renderer == nint.Zero)
+    {
+      string sdlError = SDL_GetError();
+      Console.WriteLine($"Error creating SDL renderer: {sdlError}");
+      // Clean up window if renderer creation fails
+      SDL_DestroyWindow(_window);
+      _window = nint.Zero;
+      _isWindowOpen = false; // Renderer creation failed, so window is not usable
+      throw new Exception($"SDL Error creating renderer: {sdlError}");
+    }
+    _isWindowOpen = true; // Window and renderer successfully created
+  }
+
+  /// <summary>
+  /// Sets the title of the window.
+  /// </summary>
+  /// <param name="title">The new window title.</param>
+  public static void SetTitle(string title)
+  {
+    if (_window == nint.Zero)
+    {
+      string errorMsg = "Error in Night.Window.SetTitle: Window handle is null. Was SetMode called successfully?";
+      Console.WriteLine(errorMsg);
+      throw new InvalidOperationException(errorMsg);
+    }
+    if (!SDL_SetWindowTitle(_window, title))
+    {
+      string sdlError = SDL_GetError();
+      Console.WriteLine($"Error in Night.Window.SetTitle: {sdlError}");
+      throw new Exception($"SDL Error in Night.Window.SetTitle: {sdlError}");
+    }
+  }
+
+  /// <summary>
+  /// Checks if the window is currently open.
+  /// </summary>
+  /// <returns>True if the window is open, false otherwise.</returns>
+  public static bool IsOpen()
+  {
+    return _isWindowOpen && _window != nint.Zero;
+  }
+
+  /// <summary>
+  /// Signals that the window should close.
+  /// This is typically called by the engine when a quit event is received.
+  /// </summary>
+  public static void Close()
+  {
+    _isWindowOpen = false;
+    // Actual window destruction is handled by SetMode re-call or application exit for now.
+    // Or could be SDL_DestroyWindow(_window); _window = nint.Zero; if Engine.Run doesn't own it.
+  }
+}
+
+
 
 
 
 ================================================
 File: src/Night.SampleGame/Night.SampleGame.csproj
 ================================================
-ï»¿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -2798,7 +2874,7 @@ File: src/Night.SampleGame/Night.SampleGame.csproj
 ================================================
 File: src/Night.SampleGame/Program.cs
 ================================================
-ï»¿using Night.Types;
+﻿using Night.Types;
 
 namespace Night.SampleGame;
 
