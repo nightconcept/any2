@@ -1,6 +1,6 @@
 using System;
+using SDL3;
 
-// No 'using static SDL3.SDL;' here as SDL3.SDL members are fully qualified.
 // No 'using Night.Types;' as no Night.Types are used in this specific class.
 
 namespace Night;
@@ -9,18 +9,16 @@ namespace Night;
 /// Provides direct access to SDL3 functions using SDL3-CS bindings.
 /// This is an internal-facing or low-level API for the engine.
 /// </summary>
-public static class SDL
+public static class NightSDL // Renamed from SDL
 {
   /// <summary>
   /// Initializes the SDL library. This must be called before any other SDL functions.
   /// </summary>
   /// <param name="flags">Initialization flags for SDL.</param>
-  /// <returns>0 on success or a negative error code on failure.</returns>
-  public static int Init(SDL3.SDL.SDL_InitFlags flags)
+  /// <returns>True on success or false on failure.</returns>
+  public static bool Init(SDL.InitFlags flags)
   {
-    // SDL3.SDL.SDL_Init returns an SDLBool, which implicitly converts to bool.
-    // We convert this to 0 for success, <0 for failure.
-    return SDL3.SDL.SDL_Init(flags) ? 0 : -1;
+    return SDL.Init(flags);
   }
 
   /// <summary>
@@ -28,27 +26,37 @@ public static class SDL
   /// </summary>
   public static void Quit()
   {
-    SDL3.SDL.SDL_Quit();
+    SDL.Quit();
   }
 
   /// <summary>
   /// Gets the version of SDL that is linked against.
-  /// The SDL3-CS binding for SDL_GetVersion returns a packed int.
+  /// The SDL3-CS binding for SDL.GetVersion returns a packed int.
   /// </summary>
   /// <returns>A string representing the SDL version "major.minor.patch".</returns>
   public static string GetVersion()
   {
-    int sdl_version = SDL3.SDL.SDL_GetVersion();
+    int sdl_version = SDL.GetVersion();
     int major = sdl_version / 1000000;
     int minor = (sdl_version / 1000) % 1000;
     int patch = sdl_version % 1000;
     return $"{major}.{minor}.{patch}";
   }
 
-  // Expose SDL_InitFlags enum for convenience if needed by calling code for Init()
-  public static SDL3.SDL.SDL_InitFlags InitVideo => SDL3.SDL.SDL_InitFlags.SDL_INIT_VIDEO;
-  public static SDL3.SDL.SDL_InitFlags InitAudio => SDL3.SDL.SDL_InitFlags.SDL_INIT_AUDIO;
-  public static SDL3.SDL.SDL_InitFlags InitTimer => SDL3.SDL.SDL_InitFlags.SDL_INIT_TIMER;
-  public static SDL3.SDL.SDL_InitFlags InitEvents => SDL3.SDL.SDL_InitFlags.SDL_INIT_EVENTS;
-  // Add other flags as needed or expect the caller to use SDL3.SDL.SDL_InitFlags directly.
+  /// <summary>
+  /// Gets the last error message that was set for the current thread.
+  /// </summary>
+  /// <returns>A string containing the last error message.</returns>
+  public static string GetError()
+  {
+    return SDL.GetError();
+  }
+
+  // Expose SDL.InitFlags enum for convenience if needed by calling code for Init()
+  public static SDL.InitFlags InitVideo => SDL.InitFlags.Video;
+  public static SDL.InitFlags InitAudio => SDL.InitFlags.Audio;
+  // The Timer subsystem is initialized by default in SDL3 and does not have/need a specific InitFlag.
+  // public static SDL.InitFlags InitTimer => SDL.InitFlags.Timer;
+  public static SDL.InitFlags InitEvents => SDL.InitFlags.Events;
+  // Add other flags as needed or expect the caller to use SDL.InitFlags directly.
 }

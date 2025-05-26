@@ -14,205 +14,206 @@ namespace Night.Types
   /// </remarks>
   public enum KeyCode
   {
-    Unknown = 0, // SDL_SCANCODE_UNKNOWN
+    Unknown = 0, // SDL.Scancode.Unknown
 
     // Letters
-    A = 4,  // SDL_SCANCODE_A
-    B = 5,  // SDL_SCANCODE_B
-    C = 6,  // SDL_SCANCODE_C
-    D = 7,  // SDL_SCANCODE_D
-    E = 8,  // SDL_SCANCODE_E
-    F = 9,  // SDL_SCANCODE_F
-    G = 10, // SDL_SCANCODE_G
-    H = 11, // SDL_SCANCODE_H
-    I = 12, // SDL_SCANCODE_I
-    J = 13, // SDL_SCANCODE_J
-    K = 14, // SDL_SCANCODE_K
-    L = 15, // SDL_SCANCODE_L
-    M = 16, // SDL_SCANCODE_M
-    N = 17, // SDL_SCANCODE_N
-    O = 18, // SDL_SCANCODE_O
-    P = 19, // SDL_SCANCODE_P
-    Q = 20, // SDL_SCANCODE_Q
-    R = 21, // SDL_SCANCODE_R
-    S = 22, // SDL_SCANCODE_S
-    T = 23, // SDL_SCANCODE_T
-    U = 24, // SDL_SCANCODE_U
-    V = 25, // SDL_SCANCODE_V
-    W = 26, // SDL_SCANCODE_W
-    X = 27, // SDL_SCANCODE_X
-    Y = 28, // SDL_SCANCODE_Y
-    Z = 29, // SDL_SCANCODE_Z
+    A = 4,  // SDL.Scancode.A
+    B = 5,  // SDL.Scancode.B
+    C = 6,  // SDL.Scancode.C
+    D = 7,  // SDL.Scancode.D
+    E = 8,  // SDL.Scancode.E
+    F = 9,  // SDL.Scancode.F
+    G = 10, // SDL.Scancode.G
+    H = 11, // SDL.Scancode.H
+    I = 12, // SDL.Scancode.I
+    J = 13, // SDL.Scancode.J
+    K = 14, // SDL.Scancode.K
+    L = 15, // SDL.Scancode.L
+    M = 16, // SDL.Scancode.M
+    N = 17, // SDL.Scancode.N
+    O = 18, // SDL.Scancode.O
+    P = 19, // SDL.Scancode.P
+    Q = 20, // SDL.Scancode.Q
+    R = 21, // SDL.Scancode.R
+    S = 22, // SDL.Scancode.S
+    T = 23, // SDL.Scancode.T
+    U = 24, // SDL.Scancode.U
+    V = 25, // SDL.Scancode.V
+    W = 26, // SDL.Scancode.W
+    X = 27, // SDL.Scancode.X
+    Y = 28, // SDL.Scancode.Y
+    Z = 29, // SDL.Scancode.Z
 
     // Numbers (Top row)
-    Num1 = 30, // SDL_SCANCODE_1
-    Num2 = 31, // SDL_SCANCODE_2
-    Num3 = 32, // SDL_SCANCODE_3
-    Num4 = 33, // SDL_SCANCODE_4
-    Num5 = 34, // SDL_SCANCODE_5
-    Num6 = 35, // SDL_SCANCODE_6
-    Num7 = 36, // SDL_SCANCODE_7
-    Num8 = 37, // SDL_SCANCODE_8
-    Num9 = 38, // SDL_SCANCODE_9
-    Num0 = 39, // SDL_SCANCODE_0
+    Alpha1 = 30, // SDL.Scancode.Alpha1 (Formerly Num1)
+    Alpha2 = 31, // SDL.Scancode.Alpha2 (Formerly Num2)
+    Alpha3 = 32, // SDL.Scancode.Alpha3 (Formerly Num3)
+    Alpha4 = 33, // SDL.Scancode.Alpha4 (Formerly Num4)
+    Alpha5 = 34, // SDL.Scancode.Alpha5 (Formerly Num5)
+    Alpha6 = 35, // SDL.Scancode.Alpha6 (Formerly Num6)
+    Alpha7 = 36, // SDL.Scancode.Alpha7 (Formerly Num7)
+    Alpha8 = 37, // SDL.Scancode.Alpha8 (Formerly Num8)
+    Alpha9 = 38, // SDL.Scancode.Alpha9 (Formerly Num9)
+    Alpha0 = 39, // SDL.Scancode.Alpha0 (Formerly Num0)
 
     // Control keys
-    Enter = 40,       // SDL_SCANCODE_RETURN
-    Escape = 41,      // SDL_SCANCODE_ESCAPE
-    Backspace = 42,   // SDL_SCANCODE_BACKSPACE
-    Tab = 43,         // SDL_SCANCODE_TAB
-    Space = 44,       // SDL_SCANCODE_SPACE
-    Minus = 45,       // SDL_SCANCODE_MINUS
-    Equals = 46,      // SDL_SCANCODE_EQUALS
-    LeftBracket = 47, // SDL_SCANCODE_LEFTBRACKET
-    RightBracket = 48,// SDL_SCANCODE_RIGHTBRACKET
-    Backslash = 49,   // SDL_SCANCODE_BACKSLASH (Might be #~ for UK keyboards)
-    NonUsHash = 50,   // SDL_SCANCODE_NONUSHASH (#~ for Non-US keyboards)
-    Semicolon = 51,   // SDL_SCANCODE_SEMICOLON
-    Apostrophe = 52,  // SDL_SCANCODE_APOSTROPHE
-    Grave = 53,       // SDL_SCANCODE_GRAVE (Accent grave `)
-    Comma = 54,       // SDL_SCANCODE_COMMA
-    Period = 55,      // SDL_SCANCODE_PERIOD
-    Slash = 56,       // SDL_SCANCODE_SLASH
-    CapsLock = 57,    // SDL_SCANCODE_CAPSLOCK
+    Return = 40,       // SDL.Scancode.Return (Formerly Enter)
+    Escape = 41,      // SDL.Scancode.Escape
+    Backspace = 42,   // SDL.Scancode.Backspace
+    Tab = 43,         // SDL.Scancode.Tab
+    Space = 44,       // SDL.Scancode.Space
+    Minus = 45,       // SDL.Scancode.Minus
+    Equals = 46,      // SDL.Scancode.Equals
+    Leftbracket = 47, // SDL.Scancode.Leftbracket (Formerly LeftBracket)
+    Rightbracket = 48,// SDL.Scancode.Rightbracket (Formerly RightBracket)
+    Backslash = 49,   // SDL.Scancode.Backslash
+    NonUshash = 50,   // SDL.Scancode.NonUshash (Formerly NonUsHash)
+    Semicolon = 51,   // SDL.Scancode.Semicolon
+    Apostrophe = 52,  // SDL.Scancode.Apostrophe
+    Grave = 53,       // SDL.Scancode.Grave
+    Comma = 54,       // SDL.Scancode.Comma
+    Period = 55,      // SDL.Scancode.Period
+    Slash = 56,       // SDL.Scancode.Slash
+    Capslock = 57,    // SDL.Scancode.Capslock (Formerly CapsLock)
 
     // Function keys
-    F1 = 58,  // SDL_SCANCODE_F1
-    F2 = 59,  // SDL_SCANCODE_F2
-    F3 = 60,  // SDL_SCANCODE_F3
-    F4 = 61,  // SDL_SCANCODE_F4
-    F5 = 62,  // SDL_SCANCODE_F5
-    F6 = 63,  // SDL_SCANCODE_F6
-    F7 = 64,  // SDL_SCANCODE_F7
-    F8 = 65,  // SDL_SCANCODE_F8
-    F9 = 66,  // SDL_SCANCODE_F9
-    F10 = 67, // SDL_SCANCODE_F10
-    F11 = 68, // SDL_SCANCODE_F11
-    F12 = 69, // SDL_SCANCODE_F12
+    F1 = 58,  // SDL.Scancode.F1
+    F2 = 59,  // SDL.Scancode.F2
+    F3 = 60,  // SDL.Scancode.F3
+    F4 = 61,  // SDL.Scancode.F4
+    F5 = 62,  // SDL.Scancode.F5
+    F6 = 63,  // SDL.Scancode.F6
+    F7 = 64,  // SDL.Scancode.F7
+    F8 = 65,  // SDL.Scancode.F8
+    F9 = 66,  // SDL.Scancode.F9
+    F10 = 67, // SDL.Scancode.F10
+    F11 = 68, // SDL.Scancode.F11
+    F12 = 69, // SDL.Scancode.F12
 
-    PrintScreen = 70, // SDL_SCANCODE_PRINTSCREEN
-    ScrollLock = 71,  // SDL_SCANCODE_SCROLLLOCK
-    Pause = 72,       // SDL_SCANCODE_PAUSE
-    Insert = 73,      // SDL_SCANCODE_INSERT
-    Home = 74,        // SDL_SCANCODE_HOME
-    PageUp = 75,      // SDL_SCANCODE_PAGEUP
-    Delete = 76,      // SDL_SCANCODE_DELETE
-    End = 77,         // SDL_SCANCODE_END
-    PageDown = 78,    // SDL_SCANCODE_PAGEDOWN
+    Printscreen = 70, // SDL.Scancode.Printscreen (Formerly PrintScreen)
+    Scrolllock = 71,  // SDL.Scancode.Scrolllock (Formerly ScrollLock)
+    Pause = 72,       // SDL.Scancode.Pause
+    Insert = 73,      // SDL.Scancode.Insert
+    Home = 74,        // SDL.Scancode.Home
+    Pageup = 75,      // SDL.Scancode.Pageup (Formerly PageUp)
+    Delete = 76,      // SDL.Scancode.Delete
+    End = 77,         // SDL.Scancode.End
+    Pagedown = 78,    // SDL.Scancode.Pagedown (Formerly PageDown)
 
     // Arrow keys
-    Right = 79, // SDL_SCANCODE_RIGHT
-    Left = 80,  // SDL_SCANCODE_LEFT
-    Down = 81,  // SDL_SCANCODE_DOWN
-    Up = 82,    // SDL_SCANCODE_UP
+    Right = 79, // SDL.Scancode.Right
+    Left = 80,  // SDL.Scancode.Left
+    Down = 81,  // SDL.Scancode.Down
+    Up = 82,    // SDL.Scancode.Up
 
-    NumLockClear = 83, // SDL_SCANCODE_NUMLOCKCLEAR
+    NumlockClear = 83, // SDL.Scancode.NumlockClear (Formerly NumLockClear)
 
     // Keypad
-    KpDivide = 84,   // SDL_SCANCODE_KP_DIVIDE
-    KpMultiply = 85, // SDL_SCANCODE_KP_MULTIPLY
-    KpMinus = 86,    // SDL_SCANCODE_KP_MINUS
-    KpPlus = 87,     // SDL_SCANCODE_KP_PLUS
-    KpEnter = 88,    // SDL_SCANCODE_KP_ENTER
-    Kp1 = 89,        // SDL_SCANCODE_KP_1
-    Kp2 = 90,        // SDL_SCANCODE_KP_2
-    Kp3 = 91,        // SDL_SCANCODE_KP_3
-    Kp4 = 92,        // SDL_SCANCODE_KP_4
-    Kp5 = 93,        // SDL_SCANCODE_KP_5
-    Kp6 = 94,        // SDL_SCANCODE_KP_6
-    Kp7 = 95,        // SDL_SCANCODE_KP_7
-    Kp8 = 96,        // SDL_SCANCODE_KP_8
-    Kp9 = 97,        // SDL_SCANCODE_KP_9
-    Kp0 = 98,        // SDL_SCANCODE_KP_0
-    KpPeriod = 99,   // SDL_SCANCODE_KP_PERIOD
+    KpDivide = 84,   // SDL.Scancode.KpDivide
+    KpMultiply = 85, // SDL.Scancode.KpMultiply
+    KpMinus = 86,    // SDL.Scancode.KpMinus
+    KpPlus = 87,     // SDL.Scancode.KpPlus
+    KpEnter = 88,    // SDL.Scancode.KpEnter
+    Kp1 = 89,        // SDL.Scancode.Kp1
+    Kp2 = 90,        // SDL.Scancode.Kp2
+    Kp3 = 91,        // SDL.Scancode.Kp3
+    Kp4 = 92,        // SDL.Scancode.Kp4
+    Kp5 = 93,        // SDL.Scancode.Kp5
+    Kp6 = 94,        // SDL.Scancode.Kp6
+    Kp7 = 95,        // SDL.Scancode.Kp7
+    Kp8 = 96,        // SDL.Scancode.Kp8
+    Kp9 = 97,        // SDL.Scancode.Kp9
+    Kp0 = 98,        // SDL.Scancode.Kp0
+    KpPeriod = 99,   // SDL.Scancode.KpPeriod
 
-    NonUsBackslash = 100, // SDL_SCANCODE_NONUSBACKSLASH
-    Application = 101,    // SDL_SCANCODE_APPLICATION (Context Menu Key)
-    Power = 102,          // SDL_SCANCODE_POWER
+    NonUsbackslash = 100, // SDL.Scancode.NonUsbackslash (Formerly NonUsBackslash)
+    Application = 101,    // SDL.Scancode.Application
+    Power = 102,          // SDL.Scancode.Power
 
-    KpEquals = 103, // SDL_SCANCODE_KP_EQUALS
-    F13 = 104,      // SDL_SCANCODE_F13
-    F14 = 105,      // SDL_SCANCODE_F14
-    F15 = 106,      // SDL_SCANCODE_F15
-    F16 = 107,      // SDL_SCANCODE_F16
-    F17 = 108,      // SDL_SCANCODE_F17
-    F18 = 109,      // SDL_SCANCODE_F18
-    F19 = 110,      // SDL_SCANCODE_F19
-    F20 = 111,      // SDL_SCANCODE_F20
-    F21 = 112,      // SDL_SCANCODE_F21
-    F22 = 113,      // SDL_SCANCODE_F22
-    F23 = 114,      // SDL_SCANCODE_F23
-    F24 = 115,      // SDL_SCANCODE_F24
+    KpEquals = 103, // SDL.Scancode.KpEquals
+    F13 = 104,      // SDL.Scancode.F13
+    F14 = 105,      // SDL.Scancode.F14
+    F15 = 106,      // SDL.Scancode.F15
+    F16 = 107,      // SDL.Scancode.F16
+    F17 = 108,      // SDL.Scancode.F17
+    F18 = 109,      // SDL.Scancode.F18
+    F19 = 110,      // SDL.Scancode.F19
+    F20 = 111,      // SDL.Scancode.F20
+    F21 = 112,      // SDL.Scancode.F21
+    F22 = 113,      // SDL.Scancode.F22
+    F23 = 114,      // SDL.Scancode.F23
+    F24 = 115,      // SDL.Scancode.F24
 
-    Execute = 116, // SDL_SCANCODE_EXECUTE
-    Help = 117,    // SDL_SCANCODE_HELP
-    Menu = 118,    // SDL_SCANCODE_MENU
-    Select = 119,  // SDL_SCANCODE_SELECT
-    Stop = 120,    // SDL_SCANCODE_STOP
-    Again = 121,   // SDL_SCANCODE_AGAIN
-    Undo = 122,    // SDL_SCANCODE_UNDO
-    Cut = 123,     // SDL_SCANCODE_CUT
-    Copy = 124,    // SDL_SCANCODE_COPY
-    Paste = 125,   // SDL_SCANCODE_PASTE
-    Find = 126,    // SDL_SCANCODE_FIND
-    Mute = 127,    // SDL_SCANCODE_MUTE
-    VolumeUp = 128,   // SDL_SCANCODE_VOLUMEUP
-    VolumeDown = 129, // SDL_SCANCODE_VOLUMEDOWN
+    Execute = 116, // SDL.Scancode.Execute
+    Help = 117,    // SDL.Scancode.Help
+    Menu = 118,    // SDL.Scancode.Menu
+    Select = 119,  // SDL.Scancode.Select
+    Stop = 120,    // SDL.Scancode.Stop
+    Again = 121,   // SDL.Scancode.Again
+    Undo = 122,    // SDL.Scancode.Undo
+    Cut = 123,     // SDL.Scancode.Cut
+    Copy = 124,    // SDL.Scancode.Copy
+    Paste = 125,   // SDL.Scancode.Paste
+    Find = 126,    // SDL.Scancode.Find
+    Mute = 127,    // SDL.Scancode.Mute
+    VolumeUp = 128,   // SDL.Scancode.VolumeUp
+    VolumeDown = 129, // SDL.Scancode.VolumeDown
 
     // Skipping some less common international and special keys for brevity,
-    // but they can be added if needed by referring to SDL_Scancode.
+    // but they can be added if needed by referring to SDL.Scancode.
 
-    KpComma = 133, // SDL_SCANCODE_KP_COMMA
+    KpComma = 133, // SDL.Scancode.KpComma
 
     // Modifier keys
-    LeftCtrl = 224,   // SDL_SCANCODE_LCTRL
-    LeftShift = 225,  // SDL_SCANCODE_LSHIFT
-    LeftAlt = 226,    // SDL_SCANCODE_LALT (Option key on Mac)
-    LeftSuper = 227,  // SDL_SCANCODE_LGUI (Windows key, Command key)
-    RightCtrl = 228,  // SDL_SCANCODE_RCTRL
-    RightShift = 229, // SDL_SCANCODE_RSHIFT
-    RightAlt = 230,   // SDL_SCANCODE_RALT (Option key on Mac, Alt Gr)
-    RightSuper = 231, // SDL_SCANCODE_RGUI (Windows key, Command key)
+    LCtrl = 224,   // SDL.Scancode.LCtrl (Formerly LeftCtrl)
+    LShift = 225,  // SDL.Scancode.LShift (Formerly LeftShift)
+    LAlt = 226,    // SDL.Scancode.LAlt (Formerly LeftAlt)
+    LGUI = 227,  // SDL.Scancode.LGUI (Formerly LeftSuper)
+    RCtrl = 228,  // SDL.Scancode.RCtrl (Formerly RightCtrl)
+    RShift = 229, // SDL.Scancode.RShift (Formerly RightShift)
+    RAlt = 230,   // SDL.Scancode.RAlt (Formerly RightAlt)
+    RGUI = 231, // SDL.Scancode.RGUI (Formerly RightSuper)
 
-    Mode = 257, // SDL_SCANCODE_MODE (AltGr, Multi_key)
+    Mode = 257, // SDL.Scancode.Mode
 
     // Media keys (subset)
-    MediaPlay = 262,        // SDL_SCANCODE_MEDIA_PLAY
-    MediaPause = 263,       // SDL_SCANCODE_MEDIA_PAUSE
-    MediaRecord = 264,      // SDL_SCANCODE_MEDIA_RECORD
-    MediaFastForward = 265, // SDL_SCANCODE_MEDIA_FAST_FORWARD
-    MediaRewind = 266,      // SDL_SCANCODE_MEDIA_REWIND
-    MediaNextTrack = 267,   // SDL_SCANCODE_MEDIA_NEXT_TRACK
-    MediaPreviousTrack = 268, // SDL_SCANCODE_MEDIA_PREVIOUS_TRACK
-    MediaStop = 269,        // SDL_SCANCODE_MEDIA_STOP
-    MediaEject = 270,       // SDL_SCANCODE_MEDIA_EJECT
-    MediaPlayPause = 271,   // SDL_SCANCODE_MEDIA_PLAY_PAUSE
-    MediaSelect = 272,      // SDL_SCANCODE_MEDIA_SELECT
+    MediaPlay = 262,        // SDL.Scancode.MediaPlay
+    MediaPause = 263,       // SDL.Scancode.MediaPause
+    MediaRecord = 264,      // SDL.Scancode.MediaRecord
+    MediaFastForward = 265, // SDL.Scancode.MediaFastForward
+    MediaRewind = 266,      // SDL.Scancode.MediaRewind
+    MediaNextTrack = 267,   // SDL.Scancode.MediaNextTrack
+    MediaPreviousTrack = 268, // SDL.Scancode.MediaPreviousTrack
+    MediaStop = 269,        // SDL.Scancode.MediaStop
+    MediaEject = 270,       // SDL.Scancode.MediaEject
+    MediaPlayPause = 271,   // SDL.Scancode.MediaPlayPause
+    MediaSelect = 272,      // SDL.Scancode.MediaSelect
 
     // Application control keys (subset)
-    AppSearch = 280,     // SDL_SCANCODE_AC_SEARCH
-    AppHome = 281,       // SDL_SCANCODE_AC_HOME
-    AppBack = 282,       // SDL_SCANCODE_AC_BACK
-    AppForward = 283,    // SDL_SCANCODE_AC_FORWARD
-    AppStop = 284,       // SDL_SCANCODE_AC_STOP
-    AppRefresh = 285,    // SDL_SCANCODE_AC_REFRESH
-    AppBookmarks = 286,  // SDL_SCANCODE_AC_BOOKMARKS
+    AppSearch = 280,     // SDL.Scancode.AppSearch
+    AppHome = 281,       // SDL.Scancode.AppHome
+    AppBack = 282,       // SDL.Scancode.AppBack
+    AppForward = 283,    // SDL.Scancode.AppForward
+    AppStop = 284,       // SDL.Scancode.AppStop
+    AppRefresh = 285,    // SDL.Scancode.AppRefresh
+    AppBookmarks = 286,  // SDL.Scancode.AppBookmarks
 
     // Total number of scancodes. Not a key itself.
-    // SDL_SCANCODE_COUNT = 512
+    // SDL.Scancode.Count = 512
   }
 
   /// <summary>
-  /// Represents mouse buttons.
+  /// Represents mouse buttons. Values correspond to SDL3.SDL.Button* constants.
+  /// (e.g., Left is 1, Middle is 2, etc.)
   /// </summary>
   public enum MouseButton
   {
-    Unknown,
-    Left,
-    Middle,
-    Right,
-    X1, // Typically the first extra mouse button (e.g., "back")
-    X2  // Typically the second extra mouse button (e.g., "forward")
+    Unknown = 0, // Not a direct SDL button constant
+    Left = 1,    // Corresponds to SDL.ButtonLeft
+    Middle = 2,  // Corresponds to SDL.ButtonMiddle
+    Right = 3,   // Corresponds to SDL.ButtonRight
+    X1 = 4,      // Corresponds to SDL.ButtonX1 (Typically "back")
+    X2 = 5       // Corresponds to SDL.ButtonX2 (Typically "forward")
   }
 
   /// <summary>
@@ -264,35 +265,9 @@ namespace Night.Types
     }
   }
 
-  /// <summary>
-  /// Specifies window creation flags. Values correspond to SDL_WindowFlags.
-  /// </summary>
-  /// <remarks>
-  /// See SDL_video.h for the full list of SDL_WindowFlags.
-  /// </remarks>
-  [System.Flags]
-  public enum WindowFlags : uint
-  {
-    None = 0,
-    Fullscreen = 0x00000001U,    // SDL_WINDOW_FULLSCREEN
-    OpenGL = 0x00000002U,        // SDL_WINDOW_OPENGL
-    Shown = 0x00000004U,         // SDL_WINDOW_SHOWN
-    Hidden = 0x00000008U,        // SDL_WINDOW_HIDDEN
-    Borderless = 0x00000010U,    // SDL_WINDOW_BORDERLESS
-    Resizable = 0x00000020U,     // SDL_WINDOW_RESIZABLE
-    Minimized = 0x00000040U,     // SDL_WINDOW_MINIMIZED
-    Maximized = 0x00000080U,     // SDL_WINDOW_MAXIMIZED
-                                 // MouseGrabbed = 0x00000100U, // SDL_WINDOW_MOUSE_GRABBED (Consider if needed for Night API)
-                                 // InputFocus = 0x00000200U,   // SDL_WINDOW_INPUT_FOCUS (Managed by SDL)
-                                 // MouseFocus = 0x00000400U,   // SDL_WINDOW_MOUSE_FOCUS (Managed by SDL)
-    HighDpi = 0x00002000U,       // SDL_WINDOW_HIGH_PIXEL_DENSITY
-                                 // MouseCapture = 0x00004000U, // SDL_WINDOW_MOUSE_CAPTURE (Consider if needed for Night API)
-                                 // AlwaysOnTop = 0x00008000U,  // SDL_WINDOW_ALWAYS_ON_TOP (Consider if useful)
-    Vulkan = 0x10000000U,        // SDL_WINDOW_VULKAN
-    Metal = 0x20000000U,         // SDL_WINDOW_METAL
-                                 // Transparent = 0x40000000U, // SDL_WINDOW_TRANSPARENT (Consider if useful)
-                                 // NotFocusable = 0x80000000U // SDL_WINDOW_NOT_FOCUSABLE (Consider if useful)
-  }
+  // Night.Types.WindowFlags is removed.
+  // SDL3.SDL.WindowFlags will be used directly.
+  // See epic8.md Task 8.1 and 8.4 notes.
 
   /// <summary>
   /// Represents a 2D sprite.

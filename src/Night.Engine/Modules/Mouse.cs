@@ -1,8 +1,7 @@
 using System;
 
 using Night.Types; // For MouseButton
-
-using static SDL3.SDL; // For direct access to SDL functions
+using SDL3; // Added for SDL3#
 
 namespace Night;
 
@@ -25,25 +24,25 @@ public static class Mouse
       return false;
     }
 
-    SDL_MouseButtonFlags mouseState = SDL_GetMouseState(out float _, out float _);
+    SDL.MouseButtonFlags mouseState = SDL.GetMouseState(out float _, out float _);
 
-    SDL_MouseButtonFlags buttonMask;
+    SDL.MouseButtonFlags buttonMask;
     switch (button)
     {
       case MouseButton.Left:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_LMASK;
+        buttonMask = SDL.MouseButtonFlags.Left;
         break;
       case MouseButton.Middle:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_MMASK;
+        buttonMask = SDL.MouseButtonFlags.Middle;
         break;
       case MouseButton.Right:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_RMASK;
+        buttonMask = SDL.MouseButtonFlags.Right;
         break;
       case MouseButton.X1:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_X1MASK;
+        buttonMask = SDL.MouseButtonFlags.X1;
         break;
       case MouseButton.X2:
-        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_X2MASK;
+        buttonMask = SDL.MouseButtonFlags.X2;
         break;
       case MouseButton.Unknown:
       default:
@@ -66,7 +65,7 @@ public static class Mouse
     }
 
     float mouseX, mouseY;
-    SDL_GetMouseState(out mouseX, out mouseY); // This SDL3-CS function returns uint for button state, but we only need x, y
+    SDL.GetMouseState(out mouseX, out mouseY);
     return ((int)mouseX, (int)mouseY);
   }
 }

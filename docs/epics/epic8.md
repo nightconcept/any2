@@ -133,13 +133,13 @@ The `edwardgushchin/SDL3-CS` (SDL3#) library, built locally from the submodule i
 - [x] Add a `<ProjectReference>` to the local `SDL3-CS.csproj` (e.g., `../../lib/SDL3-CS/SDL3-CS/SDL3-CS.csproj`) in `src/Night.Engine/Night.Engine.csproj`.
 - [x] Verify that native SDL3 binaries (e.g., `SDL3.dll` for Windows) are correctly managed (e.g., via `scripts/update_sdl3.py` and `lib/SDL3-Prebuilt/`) and accessible by `Night.Engine` and `Night.SampleGame`. (User to ensure native binaries are in place and copied to output).
 - - **Verification:** `Night.Engine` and `Night.SampleGame` projects restore and build successfully, referencing the locally built `SDL3-CS.dll`. The application can locate and load the native SDL3 binaries at runtime. (Builds referencing `SDL3-CS.dll` are now possible; native loading depends on user's manual management of binaries).
-- [ ] **Task 8.4:** Update `Night.Engine` Code to Utilize SDL3# Bindings
-    
-    - [ ] Referencing the checklist from Task 8.1, systematically update all C# files within `Night.Engine` that previously interacted with SDL3.
-    - [ ] Modify `using` statements if the namespace structure or static class access of SDL3# differs. The target seems to be `using SDL3;` and then `SDL.FunctionName()`.
-    - [ ] Update all calls to SDL functions, enums, structs, and constants to match the API provided by the new `SDL3-CS` (SDL3#) package. This will involve careful comparison of function signatures, parameter types, return types (e.g., `SDL_GetError()` vs. `SDL.GetError()`), and naming conventions (e.g., `SDL_INIT_VIDEO` from `flibitijibibo-sdl3-cs` vs. `SDL.InitFlags.Video` in the SDL3# example).
-    - [ ] Pay special attention to `Night.Types.cs`; ensure `Night.KeyCode`, `Night.WindowFlags`, etc., correctly map to or utilize the new SDL3# enum values. The existing `KeyCode` enum, for example, maps directly to `SDL_Scancode` values, which will need verification against the new bindings.
-    - [ ] Refactor or rewrite `src/Night.Engine/Modules/SDL.cs` to correctly wrap or pass through calls to the new SDL3# API. For instance, the existing `Night.SDL.Init` converts `SDLBool` to `int`; this will need to adapt to SDL3#'s `SDL.Init` which directly returns a `bool`.
+- [x] **Task 8.4:** Update `Night.Engine` Code to Utilize SDL3# Bindings
+    **Status: Completed**
+    - [x] Referencing the checklist from Task 8.1, systematically update all C# files within `Night.Engine` that previously interacted with SDL3.
+    - [x] Modify `using` statements if the namespace structure or static class access of SDL3# differs. The target seems to be `using SDL3;` and then `SDL.FunctionName()`.
+    - [x] Update all calls to SDL functions, enums, structs, and constants to match the API provided by the new `SDL3-CS` (SDL3#) package. This will involve careful comparison of function signatures, parameter types, return types (e.g., `SDL_GetError()` vs. `SDL.GetError()`), and naming conventions (e.g., `SDL_INIT_VIDEO` from `flibitijibibo-sdl3-cs` vs. `SDL.InitFlags.Video` in the SDL3# example).
+    - [x] Pay special attention to `Night.Types.cs`; ensure `Night.KeyCode`, `Night.WindowFlags`, etc., correctly map to or utilize the new SDL3# enum values. The existing `KeyCode` enum, for example, maps directly to `SDL_Scancode` values, which will need verification against the new bindings.
+    - [x] Refactor or rewrite `src/Night.Engine/Modules/SDL.cs` to correctly wrap or pass through calls to the new SDL3# API. For instance, the existing `Night.SDL.Init` converts `SDLBool` to `int`; this will need to adapt to SDL3#'s `SDL.Init` which directly returns a `bool`.
 - - **Verification:** `Night.Engine` compiles successfully against the new SDL3# bindings without any errors.
 - [ ] **Task 8.5:** Test `Night.SampleGame` and Refactor for Compatibility
     

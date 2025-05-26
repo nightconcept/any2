@@ -1,6 +1,6 @@
 using System;
-
-using Night.Types; // For Color, Sprite
+using Night.Types;
+using SDL3;
 
 namespace Night;
 
@@ -17,7 +17,8 @@ public static class Graphics
   /// <returns>A new Sprite object.</returns>
   public static Sprite NewImage(string filePath)
   {
-    throw new NotImplementedException();
+    // Implementation for this will be part of Epic 5 (Texture Loading)
+    throw new NotImplementedException("Graphics.NewImage is not yet implemented.");
   }
 
   /// <summary>
@@ -41,7 +42,8 @@ public static class Graphics
       float offsetX = 0,
       float offsetY = 0)
   {
-    throw new NotImplementedException();
+    // Implementation for this will be part of Epic 5 (Sprite Rendering)
+    throw new NotImplementedException("Graphics.Draw is not yet implemented.");
   }
 
   /// <summary>
@@ -50,7 +52,27 @@ public static class Graphics
   /// <param name="color">The color to clear the screen with.</param>
   public static void Clear(Color color)
   {
-    throw new NotImplementedException();
+    nint rendererPtr = Window.RendererPtr;
+    if (rendererPtr == nint.Zero)
+    {
+      Console.WriteLine("Error in Graphics.Clear: Renderer pointer is null. Was Window.SetMode called successfully?");
+      // Or throw new InvalidOperationException("Renderer not initialized.");
+      return;
+    }
+
+    if (!SDL.SetRenderDrawColor(rendererPtr, color.R, color.G, color.B, color.A))
+    {
+      string sdlError = SDL.GetError();
+      Console.WriteLine($"Error in Graphics.Clear (SetRenderDrawColor): {sdlError}");
+      // Potentially throw an exception or handle error.
+    }
+
+    if (!SDL.RenderClear(rendererPtr))
+    {
+      string sdlError = SDL.GetError();
+      Console.WriteLine($"Error in Graphics.Clear (RenderClear): {sdlError}");
+      // Potentially throw an exception or handle error.
+    }
   }
 
   /// <summary>
@@ -58,6 +80,19 @@ public static class Graphics
   /// </summary>
   public static void Present()
   {
-    throw new NotImplementedException();
+    nint rendererPtr = Window.RendererPtr;
+    if (rendererPtr == nint.Zero)
+    {
+      Console.WriteLine("Error in Graphics.Present: Renderer pointer is null. Was Window.SetMode called successfully?");
+      // Or throw new InvalidOperationException("Renderer not initialized.");
+      return;
+    }
+
+    if (!SDL.RenderPresent(rendererPtr))
+    {
+      string sdlError = SDL.GetError();
+      Console.WriteLine($"Error in Graphics.Present (RenderPresent): {sdlError}");
+      // Potentially throw an exception or handle error.
+    }
   }
 }

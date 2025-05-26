@@ -1,8 +1,8 @@
 using System;
+using SDL3; // Added for SDL3#
 
-using Night.Types;
-
-using static SDL3.SDL; // For direct access to SDL functions
+// Night.Types.WindowFlags is removed, so 'using Night.Types;' is no longer needed for it.
+// If other Night.Types are used later, it can be re-added.
 
 namespace Night;
 
@@ -13,23 +13,27 @@ namespace Night;
 public static class Window
 {
   private static nint _window = nint.Zero;
-  private static nint _renderer = nint.Zero;
+  private static nint _renderer = nint.Zero; // To be used by Graphics module
   private static bool _isVideoInitialized = false;
   private static bool _isWindowOpen = false; // Added for IsOpen()
+
+  // Internal accessor for the renderer, to be used by Night.Graphics
+  internal static nint RendererPtr => _renderer;
+
 
   /// <summary>
   /// Sets the display mode of the window.
   /// </summary>
   /// <param name="width">The width of the window.</param>
   /// <param name="height">The height of the window.</param>
-  /// <param name="flags">Window flags to apply.</param>
-  public static void SetMode(int width, int height, WindowFlags flags)
+  /// <param name="flags">SDL Window flags to apply.</param>
+  public static void SetMode(int width, int height, SDL.WindowFlags flags) // Changed to SDL.WindowFlags
   {
     if (!_isVideoInitialized)
     {
-      if (!SDL_InitSubSystem(SDL_InitFlags.SDL_INIT_VIDEO)) // Corrected: SDLBool check
+      if (!SDL.InitSubSystem(SDL.InitFlags.Video)) // Use SDL.InitSubSystem and SDL.InitFlags
       {
-        string sdlError = SDL_GetError();
+        string sdlError = SDL.GetError();
         Console.WriteLine($"Error initializing SDL video subsystem: {sdlError}");
         throw new Exception($"SDL Error initializing video subsystem: {sdlError}");
       }
@@ -41,20 +45,20 @@ public static class Window
     {
       if (_renderer != nint.Zero)
       {
-        SDL_DestroyRenderer(_renderer);
+        SDL.DestroyRenderer(_renderer);
         _renderer = nint.Zero;
       }
-      SDL_DestroyWindow(_window);
+      SDL.DestroyWindow(_window);
       _window = nint.Zero;
       _isWindowOpen = false; // Window closed
     }
 
-    SDL_WindowFlags sdlFlags = (SDL_WindowFlags)flags;
+    // SDL_WindowFlags sdlFlags = (SDL_WindowFlags)flags; // No longer needed, flags is already SDL.WindowFlags
 
-    _window = SDL_CreateWindow("Night Engine", width, height, sdlFlags);
+    _window = SDL.CreateWindow("Night Engine", width, height, flags); // Use flags directly
     if (_window == nint.Zero)
     {
-      string sdlError = SDL_GetError();
+      string sdlError = SDL.GetError();
       Console.WriteLine($"Error creating SDL window: {sdlError}");
       _isWindowOpen = false; // Window creation failed
       throw new Exception($"SDL Error creating window: {sdlError}");
@@ -63,14 +67,13 @@ public static class Window
     // Create a renderer. Passing null for the name lets SDL choose the best available driver.
     // Hardware acceleration is generally preferred and often default.
     // VSync (PRESENTVSYNC) would typically be set via renderer properties in SDL3 if not default.
-    // For simplicity in this step, we use the basic SDL_CreateRenderer.
-    _renderer = SDL_CreateRenderer(_window, null);
+    _renderer = SDL.CreateRenderer(_window, null); // Pass null for driver name
     if (_renderer == nint.Zero)
     {
-      string sdlError = SDL_GetError();
+      string sdlError = SDL.GetError();
       Console.WriteLine($"Error creating SDL renderer: {sdlError}");
       // Clean up window if renderer creation fails
-      SDL_DestroyWindow(_window);
+      SDL.DestroyWindow(_window);
       _window = nint.Zero;
       _isWindowOpen = false; // Renderer creation failed, so window is not usable
       throw new Exception($"SDL Error creating renderer: {sdlError}");
@@ -90,9 +93,9 @@ public static class Window
       Console.WriteLine(errorMsg);
       throw new InvalidOperationException(errorMsg);
     }
-    if (!SDL_SetWindowTitle(_window, title))
+    if (!SDL.SetWindowTitle(_window, title))
     {
-      string sdlError = SDL_GetError();
+      string sdlError = SDL.GetError();
       Console.WriteLine($"Error in Night.Window.SetTitle: {sdlError}");
       throw new Exception($"SDL Error in Night.Window.SetTitle: {sdlError}");
     }
@@ -115,6 +118,6 @@ public static class Window
   {
     _isWindowOpen = false;
     // Actual window destruction is handled by SetMode re-call or application exit for now.
-    // Or could be SDL_DestroyWindow(_window); _window = nint.Zero; if Engine.Run doesn't own it.
+    // Or could be SDL.DestroyWindow(_window); _window = nint.Zero; if Engine.Run doesn't own it.
   }
 }
