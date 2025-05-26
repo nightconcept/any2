@@ -3,42 +3,42 @@
 The "Night" engine project will adhere to the **Google C# Style Guide**. Key aspects of this guide, supplemented by project-specific interpretations, are outlined below. All developers are expected to familiarize themselves with the full guide.
 
 - **Language Version:**
-    - C# 13 (utilizing .NET 9 features where appropriate).
+  - C# 13 (utilizing .NET 9 features where appropriate).
 - **Formatting & Style:**
-    - **Primary Reference:** Google C# Style Guide.
-    - **Indentation:** 2 spaces, no tabs.
-    - **Column Limit:** 100 characters.
-    - **Whitespace, Braces, Line Wrapping:** Adhere to the detailed rules in the Google C# Style Guide. This includes rules like no line break before an opening brace, and braces used even when optional.
-    - **Tooling:**
-        - `dotnet format` will be used to help enforce formatting rules.
-        - An `.editorconfig` file will be added to the project root, configured to align with the Google C# Style Guide's formatting and style rules (e.g., indentation, column limit, using directives order).
+  - **Primary Reference:** Google C# Style Guide.
+  - **Indentation:** 2 spaces, no tabs.
+  - **Column Limit:** 100 characters.
+  - **Whitespace, Braces, Line Wrapping:** Adhere to the detailed rules in the Google C# Style Guide. This includes rules like no line break before an opening brace, and braces used even when optional.
+  - **Tooling:**
+    - `dotnet format` will be used to help enforce formatting rules.
+    - An `.editorconfig` file will be added to the project root, configured to align with the Google C# Style Guide's formatting and style rules (e.g., indentation, column limit, using directives order).
 - **Linting:**
-    - **Primary Reference:** Google C# Style Guide for code quality expectations.
-    - **Tooling:** Utilize Roslyn Analyzers provided with the .NET SDK.
-    - The `.editorconfig` file will be configured to enable and set the severity of analyzer rules to align with the principles of the Google C# Style Guide. This includes rules related to naming, organization, and other code quality aspects.
+  - **Primary Reference:** Google C# Style Guide for code quality expectations.
+  - **Tooling:** Utilize Roslyn Analyzers provided with the .NET SDK.
+  - The `.editorconfig` file will be configured to enable and set the severity of analyzer rules to align with the principles of the Google C# Style Guide. This includes rules related to naming, organization, and other code quality aspects.
 - **Naming Conventions:**
-    - **Primary Reference:** Google C# Style Guide, which generally follows Microsoft’s C# naming guidelines and CoreFX for unspecified cases.
-    - **General Rules Summary:**
-        - Names of classes, methods, enumerations, public fields, public properties, namespaces: `PascalCase`.
-        - Names of local variables, parameters: `camelCase`.
-        - Names of private, protected, internal, and protected internal fields and properties: `_camelCase` (e.g., `_privateField`).
-        - Naming convention is unaffected by modifiers such as `const`, `static`, `readonly`, etc..
-        - For casing, a “word” is anything written without internal spaces, including acronyms (e.g., `MyRpc` not `MyRPC`).
-        - Names of interfaces start with `I` (e.g., `IInterface`).
-        - Filenames and directory names are `PascalCase` (e.g., `MyFile.cs`).
-    - **Project Specific (API Design):** When naming public API elements for "Night" intended to mirror Love2D functions (e.g., `love.window.setTitle`), use the `PascalCase` version adhering to the above rules (e.g., `Night.Window.SetTitle(...)`).
+  - **Primary Reference:** Google C# Style Guide, which generally follows Microsoft’s C# naming guidelines and CoreFX for unspecified cases.
+  - **General Rules Summary:**
+    - Names of classes, methods, enumerations, public fields, public properties, namespaces: `PascalCase`.
+    - Names of local variables, parameters: `camelCase`.
+    - Names of private, protected, internal, and protected internal fields and properties: `_camelCase` (e.g., `_privateField`).
+    - Naming convention is unaffected by modifiers such as `const`, `static`, `readonly`, etc..
+    - For casing, a “word” is anything written without internal spaces, including acronyms (e.g., `MyRpc` not `MyRPC`).
+    - Names of interfaces start with `I` (e.g., `IInterface`).
+    - Filenames and directory names are `PascalCase` (e.g., `MyFile.cs`).
+  - **Project Specific (API Design):** When naming public API elements for "Night" intended to mirror Love2D functions (e.g., `love.window.setTitle`), use the `PascalCase` version adhering to the above rules (e.g., `Night.Window.SetTitle(...)`).
 - **Code Organization:**
-    - **Primary Reference:** Google C# Style Guide.
-    - **Modifier Order:** `public protected internal private new abstract virtual override sealed static readonly extern unsafe volatile async`.
-    - **Namespace `using` Declarations:** Place at the top of the file, before any namespace declarations. Order alphabetically, with `System` imports always first.
-    - **Class Member Ordering:** Follow the prescribed order: Nested types, static/const/readonly fields, instance fields/properties, constructors/finalizers, methods. Within each group, elements are ordered by access: Public, Internal, Protected internal, Protected, Private.
+  - **Primary Reference:** Google C# Style Guide.
+  - **Modifier Order:** `public protected internal private new abstract virtual override sealed static readonly extern unsafe volatile async`.
+  - **Namespace `using` Declarations:** Place at the top of the file, before any namespace declarations. Order alphabetically, with `System` imports always first.
+  - **Class Member Ordering:** Follow the prescribed order: Nested types, static/const/readonly fields, instance fields/properties, constructors/finalizers, methods. Within each group, elements are ordered by access: Public, Internal, Protected internal, Protected, Private.
 - **Key Principles (Project-Specific additions and emphasis):**
-    - **Adherence to Google C# Style Guide:** This is the foundational principle for code style and quality.
-    - **API Design (Night Engine):** Strive for an API design that is idiomatic to C# while closely mirroring the spirit, structure, and ease of use of the Love2D API for the features being implemented.
-    - **Encapsulation:** The P/Invoke layer and direct interactions with SDL3 native functions should be strictly internal to the `Night.Framework` library.
-    - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
-    - **Scope Adherence:** Focus strictly on implementing the agreed-upon features (0-4) for this prototype.
+  - **Adherence to Google C# Style Guide:** This is the foundational principle for code style and quality.
+  - **API Design (Night Engine):** Strive for an API design that is idiomatic to C# while closely mirroring the spirit, structure, and ease of use of the Love2D API for the features being implemented.
+  - **Encapsulation:** The P/Invoke layer and direct interactions with SDL3 native functions should be strictly internal to the `Night.Framework` library.
+  - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
+  - **Scope Adherence:** Focus strictly on implementing the agreed-upon features (0-4) for this prototype.
 - **Testing (if applicable for prototype):**
-    - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Framework` features.
-    - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Framework`.
-    - **Manual Verification:** Manual testing of the sample game against the defined user actions and outcomes for each feature in the PRD will be essential.
+  - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Framework` features.
+  - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Framework`.
+  - **Manual Verification:** Manual testing of the sample game against the defined user actions and outcomes for each feature in the PRD will be essential.
