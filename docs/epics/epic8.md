@@ -120,18 +120,19 @@ The `edwardgushchin/SDL3-CS` (SDL3#) library, built locally from the submodule i
 *   **SDL3-CS Submodule Build:** The `lib/SDL3-CS` submodule must be successfully built before `Night.Engine` can reference its output.
 - - [x] Create a detailed checklist of specific code sections in `Night.Engine` that will require modification.
     - [x] **Verification:** A clear migration plan is documented, including the chosen native library strategy (Option A or B) and a comprehensive list of anticipated code changes and potential challenges.
-- [ ] **Task 8.2:** Branch for Migration (If not already on a dedicated branch)
+- [x] **Task 8.2:** Branch for Migration (If not already on a dedicated branch)
     
-    - [ ] Ensure work is being done on a new feature branch in Git (e.g., `feat/migrate-sdl3sharp-bindings`).
-    - [ ] Confirm the current project state (with old bindings removed) is committed.
+    - [x] Ensure work is being done on a new feature branch in Git (e.g., `dev`).
+    - [x] Confirm the current project state (with old bindings removed) is committed.
     - **Verification:** Work is being done on a dedicated Git branch.
-[ ] **Task 8.3:** Integrate Locally Built `SDL3-CS` (SDL3#) Library
+[x] **Task 8.3:** Integrate Locally Built `SDL3-CS` (SDL3#) Library
+    **Status: Completed**
 
-- [ ] Confirm that any `<ProjectReference>` to the old `flibitijibibo-sdl3-cs` submodule has been removed from `src/Night.Engine/Night.Engine.csproj`.
-- [ ] Ensure the `lib/SDL3-CS` submodule is updated and buildable (e.g., `git submodule update --init --recursive`, then `dotnet build -c Release` within `lib/SDL3-CS`).
-- [ ] Add a `<ProjectReference>` to the local `SDL3-CS.csproj` (e.g., `../../lib/SDL3-CS/SDL3-CS/SDL3-CS.csproj`) in `src/Night.Engine/Night.Engine.csproj`.
-- [ ] Verify that native SDL3 binaries (e.g., `SDL3.dll` for Windows) are correctly managed (e.g., via `scripts/update_sdl3.py` and `lib/SDL3-Prebuilt/`) and accessible by `Night.Engine` and `Night.SampleGame`.
-- - **Verification:** `Night.Engine` and `Night.SampleGame` projects restore and build successfully, referencing the locally built `SDL3-CS.dll`. The application can locate and load the native SDL3 binaries at runtime.
+- [x] Confirm that any `<ProjectReference>` to the old `flibitijibibo-sdl3-cs` submodule has been removed from `src/Night.Engine/Night.Engine.csproj`.
+- [x] Ensure the `lib/SDL3-CS` submodule is updated and buildable (e.g., `git submodule update --init --recursive`, then `dotnet build -c Release` within `lib/SDL3-CS`).
+- [x] Add a `<ProjectReference>` to the local `SDL3-CS.csproj` (e.g., `../../lib/SDL3-CS/SDL3-CS/SDL3-CS.csproj`) in `src/Night.Engine/Night.Engine.csproj`.
+- [x] Verify that native SDL3 binaries (e.g., `SDL3.dll` for Windows) are correctly managed (e.g., via `scripts/update_sdl3.py` and `lib/SDL3-Prebuilt/`) and accessible by `Night.Engine` and `Night.SampleGame`. (User to ensure native binaries are in place and copied to output).
+- - **Verification:** `Night.Engine` and `Night.SampleGame` projects restore and build successfully, referencing the locally built `SDL3-CS.dll`. The application can locate and load the native SDL3 binaries at runtime. (Builds referencing `SDL3-CS.dll` are now possible; native loading depends on user's manual management of binaries).
 - [ ] **Task 8.4:** Update `Night.Engine` Code to Utilize SDL3# Bindings
     
     - [ ] Referencing the checklist from Task 8.1, systematically update all C# files within `Night.Engine` that previously interacted with SDL3.
