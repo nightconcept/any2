@@ -35,10 +35,10 @@ The "Night" engine project will adhere to the **Google C# Style Guide**. Key asp
 - **Key Principles (Project-Specific additions and emphasis):**
     - **Adherence to Google C# Style Guide:** This is the foundational principle for code style and quality.
     - **API Design (Night Engine):** Strive for an API design that is idiomatic to C# while closely mirroring the spirit, structure, and ease of use of the Love2D API for the features being implemented.
-    - **Encapsulation:** The P/Invoke layer and direct interactions with SDL3 native functions should be strictly internal to the `Night.Engine` library.
+    - **Encapsulation:** The P/Invoke layer and direct interactions with SDL3 native functions should be strictly internal to the `Night.Framework` library.
     - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
     - **Scope Adherence:** Focus strictly on implementing the agreed-upon features (0-4) for this prototype.
 - **Testing (if applicable for prototype):**
-    - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Engine` features.
-    - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Engine`.
+    - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Framework` features.
+    - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Framework`.
     - **Manual Verification:** Manual testing of the sample game against the defined user actions and outcomes for each feature in the PRD will be essential.

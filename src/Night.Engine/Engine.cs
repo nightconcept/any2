@@ -5,15 +5,21 @@ using Night.Types;
 
 using static SDL3.SDL;
 
-// Namespace for the public Engine API, consistent with Night.Window, Night.Graphics etc.
+// Namespace for the public Framework API, consistent with Night.Window, Night.Graphics etc.
 namespace Night
 {
   /// <summary>
   /// Manages the main game loop and coordination of game states.
   /// Provides the main entry point to run a game.
   /// </summary>
-  public static class Engine
+  public static class Framework
   {
+    /// <summary>
+    /// A flag indicating whether the core SDL systems, particularly for input,
+    /// have been successfully initialized.
+    /// </summary>
+    public static bool IsInputInitialized { get; private set; } = false;
+
     /// <summary>
     /// Runs the game instance.
     /// The game loop will internally call Load, Update, and Draw methods
@@ -52,6 +58,10 @@ namespace Night
         // Potentially call SDL_Quit() here if Engine.Run was responsible for a global SDL_Init.
         return;
       }
+
+      // At this point, Window.IsOpen() is true, implying SetMode was successful
+      // and SDL_INIT_VIDEO (which includes SDL_INIT_EVENTS) has been initialized.
+      IsInputInitialized = true;
 
       while (Window.IsOpen())
       {

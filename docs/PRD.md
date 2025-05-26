@@ -64,7 +64,7 @@
             - `void MyGame.Update(double deltaTime)`
             - `void MyGame.Draw()`
             - Optional: `void MyGame.KeyPressed(KeyCode key, bool isRepeat)`, `void MyGame.MousePressed(int x, int y, MouseButton button, int presses)`.
-        - Call a main `Night.Engine.Run(MyGameInstance)` or `Night.Engine.Run<MyGameClass>()` to start.
+        - Call a main `Night.Framework.Run(MyGameInstance)` or `Night.Framework.Run<MyGameClass>()` to start.
     - **Outcome(s):**
         - The `Night` engine manages the overall loop.
         - Developers structure their game into familiar Love2D lifecycle methods.

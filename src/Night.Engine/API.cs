@@ -247,8 +247,8 @@ public static class Keyboard
       // Control keys
       case KeyCode.LeftShift: return SDL_Scancode.SDL_SCANCODE_LSHIFT;
       case KeyCode.RightShift: return SDL_Scancode.SDL_SCANCODE_RSHIFT;
-      case KeyCode.LeftControl: return SDL_Scancode.SDL_SCANCODE_LCTRL;
-      case KeyCode.RightControl: return SDL_Scancode.SDL_SCANCODE_RCTRL;
+      case KeyCode.LeftCtrl: return SDL_Scancode.SDL_SCANCODE_LCTRL;
+      case KeyCode.RightCtrl: return SDL_Scancode.SDL_SCANCODE_RCTRL;
       case KeyCode.LeftAlt: return SDL_Scancode.SDL_SCANCODE_LALT;
       case KeyCode.RightAlt: return SDL_Scancode.SDL_SCANCODE_RALT;
       case KeyCode.LeftSuper: return SDL_Scancode.SDL_SCANCODE_LGUI; // GUI key often maps to Super/Windows/Command
@@ -284,6 +284,12 @@ public static class Keyboard
   /// <returns>True if the key is down, false otherwise.</returns>
   public static bool IsDown(KeyCode key)
   {
+    if (!Framework.IsInputInitialized)
+    {
+      Console.WriteLine("Warning: Night.Keyboard.IsDown called before input system is initialized. Returning false.");
+      return false;
+    }
+
     // The SDL_PumpEvents function should be called in the main event loop
     // to update the keyboard state. Assuming Engine.Run() handles this.
 
@@ -332,8 +338,11 @@ public static class Mouse
   /// <returns>True if the button is down, false otherwise.</returns>
   public static bool IsDown(MouseButton button)
   {
-    // SDL_PumpEvents should be called in the main event loop.
-    // Assuming Night.Engine.Run() handles this.
+    if (!Framework.IsInputInitialized)
+    {
+      Console.WriteLine("Warning: Night.Mouse.IsDown called before input system is initialized. Returning false.");
+      return false;
+    }
 
     SDL_MouseButtonFlags mouseState = SDL_GetMouseState(out float _, out float _);
 
@@ -369,8 +378,12 @@ public static class Mouse
   /// <returns>A tuple (int x, int y) representing the mouse coordinates.</returns>
   public static (int x, int y) GetPosition()
   {
-    // SDL_PumpEvents should be called in the main event loop.
-    // Assuming Night.Engine.Run() handles this.
+    if (!Framework.IsInputInitialized)
+    {
+      Console.WriteLine("Warning: Night.Mouse.GetPosition called before input system is initialized. Returning (0,0).");
+      return (0, 0);
+    }
+
     float mouseX, mouseY;
     SDL_GetMouseState(out mouseX, out mouseY); // This SDL3-CS function returns uint for button state, but we only need x, y
     return ((int)mouseX, (int)mouseY);
