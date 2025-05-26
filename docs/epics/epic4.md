@@ -9,12 +9,12 @@
     - [x] Implement the logic to check the state of the specified `Night.KeyCode` by looking up its corresponding SDL scancode in the state array returned by SDL.
     - **Verification:** Calling `Night.Keyboard.IsDown()` with various `Night.KeyCode` values correctly returns `true` when the respective keys are held down and `false` otherwise, as tested in `Night.SampleGame`.
 
-- [ ] **Task 4.2:** Implement `Night.Mouse.IsDown(MouseButton button)`
-    - [ ] Use SDL3-CS functions to get the current mouse button state (e.g., `SDL.SDL_GetMouseState(out float x, out float y)` which typically also returns the button mask).
-    - [ ] Define the `Night.MouseButton` enum (e.g., `Left`, `Middle`, `Right`, `X1`, `X2`) if not already fully specified in Epic 2.
-    - [ ] Map `Night.MouseButton` enum values to the SDL button masks (e.g., `SDL.SDL_BUTTON_LMASK`, `SDL.SDL_BUTTON_RMASK`).
-    - [ ] Implement the logic to check if the specified `Night.MouseButton` is currently pressed by checking the bitmask returned by the SDL mouse state function.
-    - **Verification:** Calling `Night.Mouse.IsDown()` with various `Night.MouseButton` values correctly returns `true` when the respective buttons are held down and `false` otherwise, as tested in `Night.SampleGame`.
+- [x] **Task 4.2:** Implement `Night.Mouse.IsDown(MouseButton button)`
+    - [x] Use SDL3-CS functions to get the current mouse button state (e.g., `SDL.SDL_GetMouseState(out float x, out float y)` which typically also returns the button mask).
+    - [x] Define the `Night.MouseButton` enum (e.g., `Left`, `Middle`, `Right`, `X1`, `X2`) if not already fully specified in Epic 2.
+    - [x] Map `Night.MouseButton` enum values to the SDL button masks (e.g., `SDL.SDL_BUTTON_LMASK`, `SDL.SDL_BUTTON_RMASK`).
+    - [x] Implement the logic to check if the specified `Night.MouseButton` is currently pressed by checking the bitmask returned by the SDL mouse state function.
+    - [x] **Verification:** Calling `Night.Mouse.IsDown()` with various `Night.MouseButton` values correctly returns `true` when the respective buttons are held down and `false` otherwise, as tested in `Night.SampleGame`.
 
 - [ ] **Task 4.3:** Implement `Night.Mouse.GetPosition()`
     - [ ] Use an SDL3-CS function to get the current mouse cursor coordinates relative to the focused window (e.g., `SDL.SDL_GetMouseState(out float x, out float y)` usually provides coordinates relative to the current window, but verify this behavior with SDL3).

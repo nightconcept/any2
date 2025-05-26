@@ -332,7 +332,35 @@ public static class Mouse
   /// <returns>True if the button is down, false otherwise.</returns>
   public static bool IsDown(MouseButton button)
   {
-    throw new NotImplementedException();
+    // SDL_PumpEvents should be called in the main event loop.
+    // Assuming Night.Engine.Run() handles this.
+
+    SDL_MouseButtonFlags mouseState = SDL_GetMouseState(out float _, out float _);
+
+    SDL_MouseButtonFlags buttonMask;
+    switch (button)
+    {
+      case MouseButton.Left:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_LMASK;
+        break;
+      case MouseButton.Middle:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_MMASK;
+        break;
+      case MouseButton.Right:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_RMASK;
+        break;
+      case MouseButton.X1:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_X1MASK;
+        break;
+      case MouseButton.X2:
+        buttonMask = SDL_MouseButtonFlags.SDL_BUTTON_X2MASK;
+        break;
+      case MouseButton.Unknown:
+      default:
+        return false; // Unknown or unmapped button
+    }
+
+    return (mouseState & buttonMask) != 0;
   }
 
   /// <summary>

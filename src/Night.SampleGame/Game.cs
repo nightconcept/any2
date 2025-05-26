@@ -9,6 +9,11 @@ public class Game : IGame
   private bool _wasADown = false;
   private bool _wasEscapeDown = false;
 
+  // Fields to store the previous state of mouse buttons for change detection
+  private bool _wasLeftMouseDown = false;
+  private bool _wasRightMouseDown = false;
+  private bool _wasMiddleMouseDown = false;
+
   public void Load()
   {
     // Placeholder for loading game assets and initial setup
@@ -58,6 +63,42 @@ public class Game : IGame
       System.Console.WriteLine("Key Released: Escape");
     }
     _wasEscapeDown = isEscapeCurrentlyDown;
+
+    // Test for Left Mouse Button state change
+    bool isLeftMouseCurrentlyDown = Night.Mouse.IsDown(Night.Types.MouseButton.Left);
+    if (isLeftMouseCurrentlyDown && !_wasLeftMouseDown)
+    {
+      System.Console.WriteLine("Mouse Button Pressed: Left");
+    }
+    else if (!isLeftMouseCurrentlyDown && _wasLeftMouseDown)
+    {
+      System.Console.WriteLine("Mouse Button Released: Left");
+    }
+    _wasLeftMouseDown = isLeftMouseCurrentlyDown;
+
+    // Test for Right Mouse Button state change
+    bool isRightMouseCurrentlyDown = Night.Mouse.IsDown(Night.Types.MouseButton.Right);
+    if (isRightMouseCurrentlyDown && !_wasRightMouseDown)
+    {
+      System.Console.WriteLine("Mouse Button Pressed: Right");
+    }
+    else if (!isRightMouseCurrentlyDown && _wasRightMouseDown)
+    {
+      System.Console.WriteLine("Mouse Button Released: Right");
+    }
+    _wasRightMouseDown = isRightMouseCurrentlyDown;
+
+    // Test for Middle Mouse Button state change
+    bool isMiddleMouseCurrentlyDown = Night.Mouse.IsDown(Night.Types.MouseButton.Middle);
+    if (isMiddleMouseCurrentlyDown && !_wasMiddleMouseDown)
+    {
+      System.Console.WriteLine("Mouse Button Pressed: Middle");
+    }
+    else if (!isMiddleMouseCurrentlyDown && _wasMiddleMouseDown)
+    {
+      System.Console.WriteLine("Mouse Button Released: Middle");
+    }
+    _wasMiddleMouseDown = isMiddleMouseCurrentlyDown;
   }
 
   public void Draw()
