@@ -16,9 +16,9 @@
     - [x] Implement the logic to check if the specified `Night.MouseButton` is currently pressed by checking the bitmask returned by the SDL mouse state function.
     - [x] **Verification:** Calling `Night.Mouse.IsDown()` with various `Night.MouseButton` values correctly returns `true` when the respective buttons are held down and `false` otherwise, as tested in `Night.SampleGame`.
 
-- [ ] **Task 4.3:** Implement `Night.Mouse.GetPosition()`
-    - [ ] Use an SDL3-CS function to get the current mouse cursor coordinates relative to the focused window (e.g., `SDL.SDL_GetMouseState(out float x, out float y)` usually provides coordinates relative to the current window, but verify this behavior with SDL3).
-    - [ ] Ensure the returned coordinates are cast or converted to `(int x, int y)` as per the `Night` API.
+- [x] **Task 4.3:** Implement `Night.Mouse.GetPosition()` (Status: Completed)
+    - [x] Use an SDL3-CS function to get the current mouse cursor coordinates relative to the focused window (e.g., `SDL.SDL_GetMouseState(out float x, out float y)` usually provides coordinates relative to the current window, but verify this behavior with SDL3).
+    - [x] Ensure the returned coordinates are cast or converted to `(int x, int y)` as per the `Night` API.
     - **Verification:** Calling `Night.Mouse.GetPosition()` returns the correct (x, y) integer coordinates of the mouse cursor within the game window boundaries.
 
 - [ ] **Task 4.4:** Define and Map `Night.KeyCode` and `Night.MouseButton` Enums

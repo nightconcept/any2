@@ -99,6 +99,10 @@ public class Game : IGame
       System.Console.WriteLine("Mouse Button Released: Middle");
     }
     _wasMiddleMouseDown = isMiddleMouseCurrentlyDown;
+
+    // Test Mouse Position
+    (int mouseX, int mouseY) = Night.Mouse.GetPosition();
+    System.Console.WriteLine($"Mouse Position: ({mouseX}, {mouseY})");
   }
 
   public void Draw()

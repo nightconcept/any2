@@ -369,7 +369,11 @@ public static class Mouse
   /// <returns>A tuple (int x, int y) representing the mouse coordinates.</returns>
   public static (int x, int y) GetPosition()
   {
-    throw new NotImplementedException();
+    // SDL_PumpEvents should be called in the main event loop.
+    // Assuming Night.Engine.Run() handles this.
+    float mouseX, mouseY;
+    SDL_GetMouseState(out mouseX, out mouseY); // This SDL3-CS function returns uint for button state, but we only need x, y
+    return ((int)mouseX, (int)mouseY);
   }
 }
 
