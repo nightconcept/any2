@@ -37,9 +37,10 @@ This section outlines the core modules and functionalities of **Night.Framework*
 
 ## 3. Technical Specifications
 - **Primary Language(s):** C# 13 (using .NET 9).
-- **Key Frameworks/Libraries:*
-    - SDL3 (latest version, managed as pre-built binaries).
-    - `flibitijibibo-sdl3-cs` (SDL3-CS): Approved C# bindings for SDL3, integrated as a git submodule or direct project reference.
+- **Key Frameworks/Libraries:**
+    - SDL3 (latest version). Native libraries managed via the `SDL3-CS.Native` NuGet package.
+    - `edwardgushchin/SDL3-CS` (hereafter "SDL3#"): Approved C# bindings for SDL3, integrated as a NuGet package. This library provides access to SDL3 core functions. (Note: SDL_image, SDL_mixer, SDL_ttf are separate considerations if needed later and may require additional NuGet packages or bindings).
+    - `SDL3-CS.Native`: NuGet package that provides the native SDL3 binaries.
     - No other external runtime libraries are planned for Night.Framework. Night.Engine may introduce dependencies later.
 
 - **Database (if any):** None for Night.Framework or initial Night.Engine.
@@ -63,8 +64,8 @@ This section outlines the core modules and functionalities of **Night.Framework*
 
 - **Critical Technical Decisions/Constraints:**
     - The public API of Night.Framework should closely mirror the structure and common function names of the Love2D API where practical and idiomatic for C#.
-    - All interactions with SDL3 will be through the SDL3-CS bindings. Night.Engine will not use SDL3-CS directly.
-    - A reliable mechanism for managing and loading SDL3 native libraries for target platforms is essential.
+    - All interactions with SDL3 will be through the SDL3# (`edwardgushchin/SDL3-CS`) bindings. Night.Engine will not use SDL3# directly.
+    - Native SDL3 libraries are managed via the `SDL3-CS.Native` NuGet package, ensuring a reliable loading mechanism.
     - The primary focus for Night.Framework development is on simplicity, achieving the core Love2D-like developer experience for the defined features, and providing a solid foundation for Night.Engine.
 
 
@@ -98,18 +99,7 @@ This section outlines the core modules and functionalities of **Night.Framework*
 |       |-- audio.md
 |       |-- graphics.md
 |       |-- ...
-|-- lib/
-|   |-- SDL3-CS/ (git submodule or direct project files for SDL3 C# bindings)
-|   |-- SDL3-Prebuilt/
-|       |-- version.txt
-|       |-- lib64/
-|       |   |-- libSDL3.so.0
-|       |-- macos/
-|       |   |-- libSDL3.0.dylib
-|       |-- win64/
-|           |-- SDL3.dll
-|-- scripts/
-|   |-- update_sdl3.py
+|-- lib/  (This directory might be removed if no other pre-built libraries are needed)
 |-- src/
     |-- Night.Engine/
     |   |-- Night.Engine.csproj
@@ -135,10 +125,8 @@ This section outlines the core modules and functionalities of **Night.Framework*
 ```
 
 - `/docs`: Project documentation (PRD, operational guidelines, tasks, API mapping, etc.).
-- `/lib`: Contains external libraries.
-    - `/lib/SDL3-CS`: Git submodule for the SDL3-CS bindings.
-    - `/lib/SDL3-Prebuilt`: Pre-compiled SDL3 native binaries for various platforms, managed by `scripts/update_sdl3.py`.
-- `/scripts`: Utility scripts for the project (e.g., `update_sdl3.py` for fetching SDL3 binaries).
+- `/lib`: May contain other external libraries if needed in the future. (SDL3 native binaries and C# bindings are now managed via NuGet).
+- `/scripts`: Utility scripts for the project. (`update_sdl3.py` is removed as SDL3 native binaries are managed by `SDL3-CS.Native` NuGet package).
 - `/src`: Contains all C# source code.
     - `/src/Night.Engine`: C# class library project for the low-level Love2D-style API and opinionated engine. This project references SDL3-CS.
         - `Night.Engine.csproj`: MSBuild project file.
@@ -159,7 +147,7 @@ This section outlines the core modules and functionalities of **Night.Framework*
 ## 5. File Descriptions
 
 - **`Night.sln`**: Visual Studio Solution file grouping `Night.Engine`, and `Night.SampleGame` projects. Defines project paths, configurations, and dependencies.
-- **`src/Night.Engine/Night.Engine.csproj`**: MSBuild project file for the Night.Framework and Night.Enginelibrary. Defines target framework (.NET 9), C# language version, references (notably SDL3-CS), and how native runtimes for SDL3 are handled/expected.
+- **`src/Night.Engine/Night.Engine.csproj`**: MSBuild project file for the Night.Framework and Night.Engine library. Defines target framework (.NET 9), C# language version, and references (notably `SDL3-CS` and `SDL3-CS.Native` NuGet packages).
 - **`src/Night.SampleGame/Night.SampleGame.csproj`**: MSBuild project file for the sample game application. References `Night.Framework`.
 
 
