@@ -1,0 +1,29 @@
+# Top-level pre-commit config for C# project
+repos:
+  - repo: local
+    hooks:
+      - id: dotnet-format
+        name: dotnet format
+        entry: dotnet format Night.sln --verify-no-changes
+        language: system
+        types: [csharp]
+        pass_filenames: false # Run on the whole solution if any C# file changes
+        always_run: false
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.2 # Updated to a more recent version
+    hooks:
+      - id: gitleaks
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: shellcheck
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0 # Updated to a more recent version
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files

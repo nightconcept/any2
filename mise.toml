@@ -1,0 +1,30 @@
+[tools]
+dotnet = "9"
+python = "3.13"
+"pipx:gitingest" = { version = "latest" }
+"pipx:pre-commit" = { version = "latest" }
+
+[settings]
+python.uv_venv_auto = true
+
+[tasks.build]
+alias = "build"
+description = "Build the solution."
+run = ["dotnet build Night.sln"]
+
+[tasks.digest]
+alias = "digest"
+description = "Run gitingest on current directory."
+run = [
+  "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/*,lib/*,.venv/*,.windsurf/*,src/Night.SampleGame/bin/*,src/Night.Engine/bin/*,src/Night.SampleGame/obj/*,src/Night.Engine/obj/* .",
+]
+
+[tasks.game]
+alias = "game"
+description = "Run the sample game."
+run = ["dotnet run --project src/Night.SampleGame/Night.SampleGame.csproj"]
+
+[tasks.clean]
+alias = "clean"
+description = "Clean bin and obj directories."
+run = ["dotnet clean Night.sln"]

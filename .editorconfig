@@ -1,0 +1,59 @@
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{cs}]
+indent_style = space
+indent_size = 2
+csharp_max_line_length = 100
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = true
+csharp_preferred_using_directive_placement = outside_namespace:suggestion
+
+# Style - Naming Conventions
+dotnet_diagnostic.IDE1006.severity = error # Naming rule violation (covers PascalCase, camelCase, _camelCase based on symbols)
+dotnet_diagnostic.IDE0051.severity = warning # Remove unused private members
+dotnet_diagnostic.IDE0052.severity = warning # Remove unread private members
+dotnet_diagnostic.IDE0060.severity = warning # Remove unused parameter
+
+# Style - Code Clarity and Consistency
+dotnet_diagnostic.IDE0003.severity = suggestion # Add 'this.' or 'Me.' qualification
+dotnet_diagnostic.IDE0009.severity = suggestion # Add 'this.' or 'Me.' qualification (for members)
+dotnet_diagnostic.IDE0011.severity = suggestion # Add braces
+dotnet_diagnostic.IDE0017.severity = suggestion # Simplify object initialization
+dotnet_diagnostic.IDE0028.severity = suggestion # Simplify collection initialization
+dotnet_diagnostic.IDE0036.severity = suggestion # Order modifiers
+dotnet_diagnostic.IDE0040.severity = suggestion # Add accessibility modifiers
+dotnet_diagnostic.IDE0041.severity = warning # Use 'is null' check
+dotnet_diagnostic.IDE0044.severity = suggestion # Make field readonly
+dotnet_diagnostic.IDE0055.severity = error # Format document (enforce dotnet format)
+dotnet_diagnostic.IDE0058.severity = warning # Remove unnecessary expression value
+dotnet_diagnostic.IDE0059.severity = warning # Remove unnecessary value assignment
+dotnet_diagnostic.IDE0063.severity = suggestion # Use simple 'using' statement
+dotnet_diagnostic.IDE0066.severity = suggestion # Use switch expression
+dotnet_diagnostic.IDE0074.severity = suggestion # Use coalesce compound assignment
+dotnet_diagnostic.IDE0090.severity = suggestion # Simplify 'new' expression
+
+# Style - Expression-bodied members (preference for conciseness where appropriate)
+dotnet_style_prefer_expression_bodied_constructors = false
+dotnet_style_prefer_expression_bodied_methods = true:suggestion
+dotnet_style_prefer_expression_bodied_operators = true:suggestion
+dotnet_style_prefer_expression_bodied_properties = true:suggestion
+dotnet_style_prefer_expression_bodied_indexers = true:suggestion
+dotnet_style_prefer_expression_bodied_accessors = true:suggestion
+dotnet_style_prefer_expression_bodied_lambdas = true:suggestion
+dotnet_style_prefer_expression_bodied_local_functions = true:suggestion
+
+# Quality - General
+dotnet_diagnostic.CA1822.severity = warning # Mark members as static (if no instance data is accessed)
+dotnet_diagnostic.CA2211.severity = warning # Non-constant fields should not be visible
+
+# use 2-spaces for csproj
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,nativeproj,locproj}]
+indent_style = space
+indent_size = 2

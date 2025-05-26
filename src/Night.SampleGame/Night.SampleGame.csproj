@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>13.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Night.Engine\Night.Engine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\lib\SDL3-Prebuilt\win64\SDL3.dll" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+      <Link>SDL3.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\lib\SDL3-Prebuilt\macos\libSDL3.0.dylib" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+      <Link>libSDL3.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\lib\SDL3-Prebuilt\lib64\libSDL3.so.0" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+      <Link>libSDL3.so.0</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
