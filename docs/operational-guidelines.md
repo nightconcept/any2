@@ -32,7 +32,7 @@ The "Night" engine project will adhere to the **Google C# Style Guide**. Key asp
   - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
   - **Scope Adherence:** Focus strictly on implementing the agreed-upon features (0-4) for this prototype.
 - **Testing (if applicable for prototype):**
-  - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Framework` features.
+  - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Framework`/`Night.Engine` features. Write the necessary code to test out new functionality in the SampleGame project to allow the user to manually verify. The `Program.cs` file in the SampleGame project is the best place to put this code.
   - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Framework`.
   - **Manual Verification:** Manual testing of the sample game against the defined user actions and outcomes for each feature in the PRD will be essential.
 

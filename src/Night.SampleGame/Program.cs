@@ -54,7 +54,7 @@ public class Game : IGame
 
   public void Draw()
   {
-    Night.Graphics.Clear(Night.Color.Black); // Clear screen to black
+    Night.Graphics.Clear(Night.Color.Cyan); // Clear screen to Cyan for testing
 
     if (_testSprite != null)
     {

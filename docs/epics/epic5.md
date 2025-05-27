@@ -15,10 +15,10 @@
     - [X] Ensure the correct SDL Renderer (obtained during window creation) is used for drawing.
     - **Verification:** Calling `Night.Graphics.Draw()` renders the specified `Night.Sprite` at the correct screen position, with the specified rotation and scale applied accurately. The origin of transformation (`offsetX`, `offsetY`) works as expected.
 
-- [ ] **Task 5.3:** Implement `Night.Graphics.Clear(Color color)`
-    - [ ] Map the `Night.Color` struct (R, G, B, A byte values) to the format required by SDL.
-    - [ ] Use SDL3-CS functions to set the renderer's current drawing color (e.g., `SDL.SDL_SetRenderDrawColor()`).
-    - [ ] Use SDL3-CS functions to clear the entire rendering target with the set color (e.g., `SDL.SDL_RenderClear()`).
+- [X] **Task 5.3:** Implement `Night.Graphics.Clear(Color color)` (Status: Review)
+    - [X] Map the `Night.Color` struct (R, G, B, A byte values) to the format required by SDL.
+    - [X] Use SDL3-CS functions to set the renderer's current drawing color (e.g., `SDL.SDL_SetRenderDrawColor()`).
+    - [X] Use SDL3-CS functions to clear the entire rendering target with the set color (e.g., `SDL.SDL_RenderClear()`).
     - **Verification:** Calling `Night.Graphics.Clear()` fills the game window with the specified `Night.Color`.
 
 - [ ] **Task 5.4:** Conceptualize `Night.Graphics.Present()` (Actual call in Game Loop)
