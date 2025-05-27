@@ -2,14 +2,13 @@
 
 **Goal:** Implement the core functionalities of the `Night.Graphics` module, enabling the loading of images as sprites and rendering them to the window. This includes screen clearing and handling the presentation of the rendered frame, all utilizing SDL3-CS bindings.
 
-- [ ] **Task 5.1:** Implement `Night.Graphics.NewImage(string filePath)`
-    
-    - [ ] Use SDL3-CS functions to load an image from a file path into an SDL Texture (e.g., `SDL.SDL_LoadTexture()` or an equivalent function provided by SDL3/SDL3-CS for common image formats like PNG, BMP). This will require an active SDL Renderer.
-    - [ ] Refine the `Night.Sprite` class (defined conceptually in Epic 2) to store the SDL Texture handle, as well as its width and height (which can be queried from the texture, e.g., using `SDL.SDL_QueryTexture()`).
-    - [ ] Implement error handling for file loading (e.g., file not found, unsupported image format, SDL errors) and log appropriately. Return `null` or throw an exception if loading fails.
+- [X] **Task 5.1:** Implement `Night.Graphics.NewImage(string filePath)` (Status: Review)
+    - [X] Use SDL3-CS functions (specifically `SDL3.Image.LoadTexture()`) to load an image from a file path into an SDL Texture. This requires an active SDL Renderer.
+    - [X] Refine the `Night.Sprite` class to store the SDL Texture handle, width, and height (queried using `SDL.GetTextureProperties()` and `SDL.GetNumberProperty()`).
+    - [X] Implement error handling for file loading (file not found, texture load errors, property query errors, invalid dimensions) and log appropriately. Return `null` if loading fails.
     - **Verification:** Calling `Night.Graphics.NewImage()` with a path to a valid image file (e.g., a PNG) returns a `Night.Sprite` object. This object contains a non-null texture handle and correct width/height attributes. Attempting to load an invalid file results in a clear error message and no crash.
+
 - [ ] **Task 5.2:** Implement `Night.Graphics.Draw(Sprite sprite, float x, float y, float rotation = 0, float scaleX = 1, float scaleY = 1, float offsetX = 0, float offsetY = 0)`
-    
     - [ ] Use SDL3-CS functions to render the `SDL_Texture` associated with the `Night.Sprite` object (e.g., `SDL.SDL_RenderTexture()` or `SDL.SDL_RenderTextureRotated()`, or similar SDL3 equivalents that support rotation and scaling).
     - [ ] Define the source rectangle (to draw the whole texture) and destination rectangle (`SDL_FRect` for float precision) based on the sprite's dimensions and the `x, y` parameters.
     - [ ] Apply `rotation` (in degrees), `scaleX`, `scaleY`. The `offsetX` and `offsetY` parameters should define the origin point for these transformations (e.g., if (0,0), top-left; if (sprite.Width/2, sprite.Height/2), center).

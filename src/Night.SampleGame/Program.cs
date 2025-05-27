@@ -1,4 +1,6 @@
-﻿using Night.Types;
+﻿using System; // For AppContext
+using System.IO; // For Path.Combine
+using Night;     // For IGame, KeyCode, MouseButton, Sprite, Color etc.
 
 using SDL3;
 
@@ -6,105 +8,40 @@ namespace Night.SampleGame;
 
 public class Game : IGame
 {
-  // Fields to store the previous state of keys for change detection
-  private bool _wasSpaceDown = false;
-  private bool _wasADown = false;
-  private bool _wasEscapeDown = false;
-
-  // Fields to store the previous state of mouse buttons for change detection
-  private bool _wasLeftMouseDown = false;
-  private bool _wasRightMouseDown = false;
-  private bool _wasMiddleMouseDown = false;
+  private Sprite? _testSprite; // To store the loaded image (nullable for CS8618)
 
   public void Load()
   {
     // Placeholder for loading game assets and initial setup
     Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     Night.Window.SetTitle("Night Sample Game");
+
+    // Test Night.Graphics.NewImage()
+    string baseDirectory = AppContext.BaseDirectory;
+    string imageRelativePath = Path.Combine("assets", "images", "test_texture.png");
+    string imageFullPath = Path.Combine(baseDirectory, imageRelativePath);
+
+    System.Console.WriteLine($"Attempting to load image from: {imageFullPath}");
+
+    _testSprite = Night.Graphics.NewImage(imageFullPath);
+    if (_testSprite != null)
+    {
+      System.Console.WriteLine(
+        $"Successfully loaded '{imageFullPath}'. " +
+        $"Width: {_testSprite.Width}, Height: {_testSprite.Height}, " +
+        $"TexturePtr: {_testSprite.Texture}"
+      );
+    }
+    else
+    {
+      System.Console.WriteLine($"Failed to load '{imageFullPath}'. Check console for SDL errors and ensure the file exists and is copied to output.");
+    }
   }
 
   public void Update(double deltaTime)
   {
     // Placeholder for game logic updates
     // System.Console.WriteLine($"SampleGame: Update, DeltaTime: {deltaTime}");
-
-    // Test for Space key state change
-    bool isSpaceCurrentlyDown = Night.Keyboard.IsDown(Night.Types.KeyCode.Space);
-    if (isSpaceCurrentlyDown && !_wasSpaceDown)
-    {
-      System.Console.WriteLine("Key Pressed: Space");
-    }
-    else if (!isSpaceCurrentlyDown && _wasSpaceDown)
-    {
-      System.Console.WriteLine("Key Released: Space");
-    }
-    _wasSpaceDown = isSpaceCurrentlyDown;
-
-    // Test for A key state change
-    bool isACurrentlyDown = Night.Keyboard.IsDown(Night.Types.KeyCode.A);
-    if (isACurrentlyDown && !_wasADown)
-    {
-      System.Console.WriteLine("Key Pressed: A");
-    }
-    else if (!isACurrentlyDown && _wasADown)
-    {
-      System.Console.WriteLine("Key Released: A");
-    }
-    _wasADown = isACurrentlyDown;
-
-    // Test for Escape key state change
-    bool isEscapeCurrentlyDown = Night.Keyboard.IsDown(Night.Types.KeyCode.Escape);
-    if (isEscapeCurrentlyDown && !_wasEscapeDown)
-    {
-      System.Console.WriteLine("Key Pressed: Escape. (Consider closing window)");
-      // Example of how it might be used to close on press:
-      // Night.Window.Close();
-    }
-    else if (!isEscapeCurrentlyDown && _wasEscapeDown)
-    {
-      System.Console.WriteLine("Key Released: Escape");
-    }
-    _wasEscapeDown = isEscapeCurrentlyDown;
-
-    // Test for Left Mouse Button state change
-    bool isLeftMouseCurrentlyDown = Night.Mouse.IsDown(Night.Types.MouseButton.Left);
-    if (isLeftMouseCurrentlyDown && !_wasLeftMouseDown)
-    {
-      System.Console.WriteLine("Mouse Button Pressed: Left");
-    }
-    else if (!isLeftMouseCurrentlyDown && _wasLeftMouseDown)
-    {
-      System.Console.WriteLine("Mouse Button Released: Left");
-    }
-    _wasLeftMouseDown = isLeftMouseCurrentlyDown;
-
-    // Test for Right Mouse Button state change
-    bool isRightMouseCurrentlyDown = Night.Mouse.IsDown(Night.Types.MouseButton.Right);
-    if (isRightMouseCurrentlyDown && !_wasRightMouseDown)
-    {
-      System.Console.WriteLine("Mouse Button Pressed: Right");
-    }
-    else if (!isRightMouseCurrentlyDown && _wasRightMouseDown)
-    {
-      System.Console.WriteLine("Mouse Button Released: Right");
-    }
-    _wasRightMouseDown = isRightMouseCurrentlyDown;
-
-    // Test for Middle Mouse Button state change
-    bool isMiddleMouseCurrentlyDown = Night.Mouse.IsDown(Night.Types.MouseButton.Middle);
-    if (isMiddleMouseCurrentlyDown && !_wasMiddleMouseDown)
-    {
-      System.Console.WriteLine("Mouse Button Pressed: Middle");
-    }
-    else if (!isMiddleMouseCurrentlyDown && _wasMiddleMouseDown)
-    {
-      System.Console.WriteLine("Mouse Button Released: Middle");
-    }
-    _wasMiddleMouseDown = isMiddleMouseCurrentlyDown;
-
-    // Test Mouse Position
-    (int mouseX, int mouseY) = Night.Mouse.GetPosition();
-    System.Console.WriteLine($"Mouse Position: ({mouseX}, {mouseY})");
   }
 
   public void Draw()

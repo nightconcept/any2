@@ -3,7 +3,9 @@
 
 // Night Engine Data Structures
 
-namespace Night.Types
+using System; // Required for IntPtr
+
+namespace Night
 {
   /// <summary>
   /// Represents keyboard keys. Values correspond to SDL_Scancode.
@@ -270,34 +272,36 @@ namespace Night.Types
   // See epic8.md Task 8.1 and 8.4 notes.
 
   /// <summary>
-  /// Represents a 2D sprite.
+  /// Represents a 2D sprite, typically an image loaded into a texture.
   /// </summary>
-  /// <remarks>
-  /// This is a placeholder structure. It will be expanded in Epic 5.
-  /// It might include texture references, source rectangles, etc.
-  /// </remarks>
   public class Sprite
   {
-    // Placeholder for texture identifier (e.g., an IntPtr or a managed object)
-    // internal object? _textureHandle; // Example, to be refined
+    /// <summary>
+    /// Gets the SDL texture handle.
+    /// </summary>
+    public IntPtr Texture { get; }
 
-    // Placeholder for dimensions, if not derived from texture
-    // public int Width { get; internal set; }
-    // public int Height { get; internal set; }
+    /// <summary>
+    /// Gets the width of the sprite in pixels.
+    /// </summary>
+    public int Width { get; }
 
-    // Placeholder for source rectangle within a texture atlas
-    // public Rectangle? SourceRectangle { get; internal set; }
+    /// <summary>
+    /// Gets the height of the sprite in pixels.
+    /// </summary>
+    public int Height { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Sprite"/> class.
     /// </summary>
-    /// <remarks>
-    /// Constructor is internal or protected if creation is managed by the engine.
-    /// For now, public for flexibility during early prototyping.
-    /// </remarks>
-    public Sprite()
+    /// <param name="texture">The SDL texture handle.</param>
+    /// <param name="width">The width of the texture.</param>
+    /// <param name="height">The height of the texture.</param>
+    public Sprite(IntPtr texture, int width, int height)
     {
-      // Initialization logic will be added in Epic 5.
+      Texture = texture;
+      Width = width;
+      Height = height;
     }
   }
 

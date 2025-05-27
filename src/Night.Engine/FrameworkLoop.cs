@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-using Night.Types;
+using Night; // For IGame interface and other core types
 
 using SDL3; // Added for SDL3#
 
@@ -26,7 +26,7 @@ namespace Night
     /// on the provided game type.
     /// </summary>
     /// <typeparam name="TGame">The type of the game to run.
-    /// Must implement <see cref="Night.Types.IGame"/> and have a parameterless constructor.</typeparam>
+    /// Must implement <see cref="Night.IGame"/> and have a parameterless constructor.</typeparam>
     public static void Run<TGame>() where TGame : IGame, new()
     {
       // It's good practice to ensure SDL is initialized before using its functions.

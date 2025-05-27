@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices; // For Marshal
 
-using Night.Types;
+using Night; // For KeyCode
 
 using SDL3;
 
@@ -13,7 +13,7 @@ namespace Night;
 /// </summary>
 public static class Keyboard
 {
-  // Since Night.Types.KeyCode now aligns with SDL.Scancode names and values,
+  // Since Night.KeyCode now aligns with SDL.Scancode names and values,
   // this mapping function essentially becomes a cast.
   // It's kept for potential future divergence or for clarity at call sites.
   private static SDL.Scancode MapKeyCodeToScancode(KeyCode key)

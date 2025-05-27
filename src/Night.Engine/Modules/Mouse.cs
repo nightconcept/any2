@@ -1,6 +1,6 @@
 using System;
 
-using Night.Types;
+using Night; // For MouseButton
 
 using SDL3;
 

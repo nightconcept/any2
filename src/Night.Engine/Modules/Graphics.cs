@@ -1,8 +1,16 @@
 using System;
+using System.IO; // For File.Exists
+using System.Runtime.InteropServices; // For Marshal
 
-using Night.Types;
+using Night; // For Sprite, Color
 
-using SDL3;
+using SDL3;    // For core SDL functions
+
+// SDL3.Image.Load is now used directly, so static import for LoadTexture is not strictly needed
+// but can be kept if other SDL3.Image functions are used directly elsewhere.
+// For clarity, if only SDL3.Image.Load and SDL3.Image.GetError are used,
+// direct calls like SDL3.Image.Load() are clearer.
+// using static SDL3.Image;
 
 namespace Night;
 
@@ -17,10 +25,52 @@ public static class Graphics
   /// </summary>
   /// <param name="filePath">The path to the image file.</param>
   /// <returns>A new Sprite object.</returns>
-  public static Sprite NewImage(string filePath)
+  public static Sprite? NewImage(string filePath)
   {
-    // Implementation for this will be part of Epic 5 (Texture Loading)
-    throw new NotImplementedException("Graphics.NewImage is not yet implemented.");
+    IntPtr rendererPtr = Window.RendererPtr;
+    if (rendererPtr == IntPtr.Zero)
+    {
+      Console.WriteLine("Error in Graphics.NewImage: Renderer pointer is null. Was Window.SetMode called successfully?");
+      return null;
+    }
+
+    if (!File.Exists(filePath))
+    {
+      Console.WriteLine($"Error in Graphics.NewImage: Image file not found at '{filePath}'.");
+      return null;
+    }
+
+    IntPtr surfacePtr = SDL3.Image.Load(filePath); // Use SDL3.Image.Load directly
+
+    if (surfacePtr == IntPtr.Zero)
+    {
+      string sdlError = SDL.GetError(); // Use standard SDL.GetError()
+      Console.WriteLine($"Error in Graphics.NewImage: Failed to load image into surface from '{filePath}'. SDL_image Error: {sdlError}");
+      return null;
+    }
+
+    SDL.Surface surface = Marshal.PtrToStructure<SDL.Surface>(surfacePtr);
+    int width = surface.Width;
+    int height = surface.Height;
+
+    if (width <= 0 || height <= 0)
+    {
+      Console.WriteLine($"Error: Invalid surface dimensions ({width}x{height}) for '{filePath}'.");
+      SDL.DestroySurface(surfacePtr);
+      return null;
+    }
+
+    IntPtr texturePtr = SDL.CreateTextureFromSurface(rendererPtr, surfacePtr);
+    SDL.DestroySurface(surfacePtr); // Surface is no longer needed after texture creation
+
+    if (texturePtr == IntPtr.Zero)
+    {
+      string sdlError = SDL.GetError();
+      Console.WriteLine($"Error in Graphics.NewImage: Failed to create texture from surface for '{filePath}'. SDL Error: {sdlError}");
+      // Note: surfacePtr is already destroyed at this point.
+      return null;
+    }
+    return new Sprite(texturePtr, width, height);
   }
 
   /// <summary>
