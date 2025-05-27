@@ -184,19 +184,8 @@ public static class Graphics
   /// </summary>
   public static void Present()
   {
-    nint rendererPtr = Window.RendererPtr;
-    if (rendererPtr == nint.Zero)
-    {
-      Console.WriteLine("Error in Graphics.Present: Renderer pointer is null. Was Window.SetMode called successfully?");
-      // Or throw new InvalidOperationException("Renderer not initialized.");
-      return;
-    }
-
-    if (!SDL.RenderPresent(rendererPtr))
-    {
-      string sdlError = SDL.GetError();
-      Console.WriteLine($"Error in Graphics.Present (RenderPresent): {sdlError}");
-      // Potentially throw an exception or handle error.
-    }
+    // This is a conceptual placeholder.
+    // The actual SDL.RenderPresent() call is managed by the Night.Engine's main loop.
+    Console.WriteLine("Debug: Night.Graphics.Present() called (placeholder for engine's render presentation step).");
   }
 }

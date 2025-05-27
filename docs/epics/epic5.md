@@ -21,7 +21,7 @@
     - [X] Use SDL3-CS functions to clear the entire rendering target with the set color (e.g., `SDL.SDL_RenderClear()`).
     - **Verification:** Calling `Night.Graphics.Clear()` fills the game window with the specified `Night.Color`.
 
-- [ ] **Task 5.4:** Conceptualize `Night.Graphics.Present()` (Actual call in Game Loop)
+- [X] **Task 5.4:** Conceptualize `Night.Graphics.Present()` (Actual call in Game Loop) (Status: Review)
     - [ ] The `Night.Graphics.Present()` method, if called directly by the user, will likely be a conceptual placeholder in this module. The actual call to SDL's frame presentation function (e.g., `SDL.SDL_RenderPresent()`) will be managed by the `Night.Engine`'s main loop (Epic 6) after all `Draw()` calls are complete for a frame.
     - [ ] For now, this method in `Night.Graphics` can be empty or log a debug message indicating it's a placeholder for the engine's render presentation step.
     - **Verification:** The method `Night.Graphics.Present()` exists and can be called without error. (Full visual verification of frame presentation is part of Epic 6).
