@@ -66,7 +66,7 @@ public static class Mouse
     }
 
     float mouseX, mouseY;
-    SDL.GetMouseState(out mouseX, out mouseY);
+    _ = SDL.GetMouseState(out mouseX, out mouseY);
     return ((int)mouseX, (int)mouseY);
   }
 }

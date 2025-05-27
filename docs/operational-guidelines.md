@@ -9,6 +9,7 @@ The "Night" engine project will adhere to the **Google C# Style Guide**. Key asp
   - **Tooling:**
     - `dotnet format` will be used to help enforce formatting rules.
     - An `.editorconfig` file will be added to the project root, configured to align with the Google C# Style Guide's formatting and style rules (e.g., indentation, column limit, using directives order).
+  - Format the `using` directives with specific spacing. Place all System.* directives first, followed by a blank line. Then, group other using directives (like third-party libraries or project-specific namespaces) logically, and insert a blank line between each distinct group. For example, list System usings, then a blank line, then Night usings, then a blank line, then SDL3 usings, rather than listing them all contiguously. `using` directives should  not have any comments associated with them.
 - **Linting:**
   - **Tooling:** Utilize Roslyn Analyzers provided with the .NET SDK.
   - The `.editorconfig` file will be configured to enable and set the severity of analyzer rules to align with the principles of the Google C# Style Guide. This includes rules related to naming, organization, and other code quality aspects.

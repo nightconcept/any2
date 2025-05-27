@@ -6,12 +6,6 @@ using Night; // For Sprite, Color
 
 using SDL3;    // For core SDL functions
 
-// SDL3.Image.Load is now used directly, so static import for LoadTexture is not strictly needed
-// but can be kept if other SDL3.Image functions are used directly elsewhere.
-// For clarity, if only SDL3.Image.Load and SDL3.Image.GetError are used,
-// direct calls like SDL3.Image.Load() are clearer.
-// using static SDL3.Image;
-
 namespace Night;
 
 /// <summary>
@@ -94,8 +88,66 @@ public static class Graphics
       float offsetX = 0,
       float offsetY = 0)
   {
-    // Implementation for this will be part of Epic 5 (Sprite Rendering)
-    throw new NotImplementedException("Graphics.Draw is not yet implemented.");
+    IntPtr rendererPtr = Window.RendererPtr;
+    if (rendererPtr == IntPtr.Zero)
+    {
+      Console.WriteLine("Error in Graphics.Draw: Renderer pointer is null. Was Window.SetMode called successfully?");
+      return;
+    }
+
+    if (sprite == null || sprite.Texture == IntPtr.Zero)
+    {
+      Console.WriteLine("Error in Graphics.Draw: Sprite or sprite texture is null.");
+      return;
+    }
+
+    SDL.FRect dstRectStruct = new SDL.FRect
+    {
+      X = x,
+      Y = y,
+      W = sprite.Width * scaleX,
+      H = sprite.Height * scaleY
+    };
+
+    SDL.FPoint centerPointStruct = new SDL.FPoint
+    {
+      X = offsetX * scaleX,
+      Y = offsetY * scaleY
+    };
+
+    double angleInDegrees = rotation * (180.0 / Math.PI); // Use Math.PI for double precision
+
+    IntPtr dstRectPtr = IntPtr.Zero;
+    IntPtr centerPointPtr = IntPtr.Zero;
+
+    try
+    {
+      dstRectPtr = Marshal.AllocHGlobal(Marshal.SizeOf(dstRectStruct));
+      Marshal.StructureToPtr(dstRectStruct, dstRectPtr, false);
+
+      centerPointPtr = Marshal.AllocHGlobal(Marshal.SizeOf(centerPointStruct));
+      Marshal.StructureToPtr(centerPointStruct, centerPointPtr, false);
+
+      // Use IntPtr.Zero for srcrect to draw the entire texture.
+      // SDL.RenderTextureRotated expects the angle in degrees.
+      // This overload expects IntPtr for dstrect and center.
+      if (!SDL.RenderTextureRotated(rendererPtr, sprite.Texture, IntPtr.Zero, dstRectPtr, angleInDegrees, centerPointPtr, SDL.FlipMode.None))
+      {
+        string sdlError = SDL.GetError();
+        Console.WriteLine($"Error in Graphics.Draw (RenderTextureRotated): {sdlError}");
+      }
+    }
+    finally
+    {
+      if (dstRectPtr != IntPtr.Zero)
+      {
+        Marshal.FreeHGlobal(dstRectPtr);
+      }
+      if (centerPointPtr != IntPtr.Zero)
+      {
+        Marshal.FreeHGlobal(centerPointPtr);
+      }
+    }
   }
 
   /// <summary>
