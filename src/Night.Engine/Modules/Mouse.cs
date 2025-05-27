@@ -1,7 +1,8 @@
 using System;
 
-using Night.Types; // For MouseButton
-using SDL3; // Added for SDL3#
+using Night.Types;
+
+using SDL3;
 
 namespace Night;
 

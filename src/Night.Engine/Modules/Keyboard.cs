@@ -1,8 +1,9 @@
 using System;
 using System.Runtime.InteropServices; // For Marshal
 
-using Night.Types; // For KeyCode
-using SDL3; // Added for SDL3#
+using Night.Types;
+
+using SDL3;
 
 namespace Night;
 

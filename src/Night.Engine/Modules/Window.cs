@@ -1,8 +1,6 @@
 using System;
-using SDL3; // Added for SDL3#
 
-// Night.Types.WindowFlags is removed, so 'using Night.Types;' is no longer needed for it.
-// If other Night.Types are used later, it can be re-added.
+using SDL3;
 
 namespace Night;
 

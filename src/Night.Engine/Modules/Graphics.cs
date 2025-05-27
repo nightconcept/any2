@@ -1,5 +1,7 @@
 using System;
+
 using Night.Types;
+
 using SDL3;
 
 namespace Night;
