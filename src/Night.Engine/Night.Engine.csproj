@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\SDL3-CS\SDL3-CS\SDL3-CS.csproj" />
+    <PackageReference Include="SDL3-CS" Version="*" />
   </ItemGroup>
 
 </Project>
