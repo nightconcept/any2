@@ -1,5 +1,7 @@
 ﻿using Night.Types;
 
+using SDL3;
+
 namespace Night.SampleGame;
 
 public class Game : IGame
@@ -17,7 +19,7 @@ public class Game : IGame
   public void Load()
   {
     // Placeholder for loading game assets and initial setup
-    Night.Window.SetMode(800, 600, WindowFlags.Shown | WindowFlags.Resizable);
+    Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     Night.Window.SetTitle("Night Sample Game");
   }
 

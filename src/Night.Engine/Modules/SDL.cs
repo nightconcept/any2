@@ -1,4 +1,5 @@
 using System;
+
 using SDL3;
 
 // No 'using Night.Types;' as no Night.Types are used in this specific class.

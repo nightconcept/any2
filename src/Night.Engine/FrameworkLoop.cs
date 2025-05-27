@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 
 using Night.Types;
+
 using SDL3; // Added for SDL3#
 
 // Namespace for the public Framework API, consistent with Night.Window, Night.Graphics etc.
