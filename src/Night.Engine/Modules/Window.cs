@@ -118,4 +118,29 @@ public static class Window
     // Actual window destruction is handled by SetMode re-call or application exit for now.
     // Or could be SDL.DestroyWindow(_window); _window = nint.Zero; if Engine.Run doesn't own it.
   }
+
+  /// <summary>
+  /// Internal method to shut down the window and renderer, and quit the video subsystem.
+  /// Should be called by the FrameworkLoop at the end of the application.
+  /// </summary>
+  internal static void Shutdown()
+  {
+    if (_renderer != nint.Zero)
+    {
+      SDL.DestroyRenderer(_renderer);
+      _renderer = nint.Zero;
+    }
+    if (_window != nint.Zero)
+    {
+      SDL.DestroyWindow(_window);
+      _window = nint.Zero;
+    }
+    if (_isVideoInitialized)
+    {
+      SDL.QuitSubSystem(SDL.InitFlags.Video);
+      _isVideoInitialized = false;
+    }
+    _isWindowOpen = false;
+    Console.WriteLine("Night.Window: Shutdown complete.");
+  }
 }

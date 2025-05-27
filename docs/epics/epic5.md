@@ -21,15 +21,18 @@
     - [X] Use SDL3-CS functions to clear the entire rendering target with the set color (e.g., `SDL.SDL_RenderClear()`).
     - **Verification:** Calling `Night.Graphics.Clear()` fills the game window with the specified `Night.Color`.
 
-- [X] **Task 5.4:** Conceptualize `Night.Graphics.Present()` (Actual call in Game Loop) (Status: Review)
-    - [ ] The `Night.Graphics.Present()` method, if called directly by the user, will likely be a conceptual placeholder in this module. The actual call to SDL's frame presentation function (e.g., `SDL.SDL_RenderPresent()`) will be managed by the `Night.Engine`'s main loop (Epic 6) after all `Draw()` calls are complete for a frame.
-    - [ ] For now, this method in `Night.Graphics` can be empty or log a debug message indicating it's a placeholder for the engine's render presentation step.
-    - **Verification:** The method `Night.Graphics.Present()` exists and can be called without error. (Full visual verification of frame presentation is part of Epic 6).
+- [X] **Task 5.4:** Implement `Night.Graphics.Present()` (Actual call in Game Loop) (Status: Review)
+    - [X] The `Night.Graphics.Present()` method now calls `SDL.RenderPresent()` using the active renderer. This is called by `Night.Framework.Run()` after all `Draw()` calls for a frame.
+    - [X] Error handling for `SDL.RenderPresent()` has been added.
+    - **Verification:** The method `Night.Graphics.Present()` exists, calls `SDL.RenderPresent()`, and graphics drawn in the `Draw()` phase are now visible on screen.
 
-- [ ] **Task 5.5:** Renderer Initialization and Management
-    - [ ] Confirm that the SDL Renderer instance is properly created (typically alongside the SDL Window in Epic 3, e.g., via `SDL.SDL_CreateRenderer()`) and stored internally where `Night.Graphics` methods can access it.
-    - [ ] Ensure renderer flags are appropriately set during creation (e.g., for hardware acceleration, vsync if desired by default for the prototype).
-    - [ ] Implement logic for destroying the SDL Renderer when the window is closed or the application quits (e.g., `SDL.SDL_DestroyRenderer()`).
+- [X] **Task 5.5:** Renderer Initialization and Management (Status: Review)
+    - [X] Confirm that the SDL Renderer instance is properly created (typically alongside the SDL Window in Epic 3, e.g., via `SDL.SDL_CreateRenderer()`) and stored internally where `Night.Graphics` methods can access it.
+        - *Implementation Notes: Renderer is created in `Night.Window.SetMode()` using `SDL.CreateRenderer(window, null)`, requesting a hardware-accelerated renderer. It's stored in `Night.Window` and accessed by `Night.Graphics` via `Window.RendererPtr`.*
+    - [X] Ensure renderer flags are appropriately set during creation (e.g., for hardware acceleration, vsync if desired by default for the prototype).
+        - *Implementation Notes: Hardware acceleration is implicitly requested. VSync was not set via `CreateRenderer` flags due to SDL3-CS overload; SDL3 typically defaults to VSync with accelerated renderers or it can be set via `SDL.SetRenderVSync()` post-creation if needed.*
+    - [X] Implement logic for destroying the SDL Renderer when the window is closed or the application quits (e.g., `SDL.SDL_DestroyRenderer()`).
+        - *Implementation Notes: `Night.Window.Shutdown()` method added to destroy renderer, window, and quit video subsystem. This is called from `Night.Framework.Run()` on exit.*
     - **Verification:** Graphics operations use a valid, initialized SDL Renderer. The renderer is cleanly destroyed on application exit.
 - [ ] **Task 5.6:** Basic Error Handling for Graphics Operations
     

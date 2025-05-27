@@ -124,7 +124,12 @@ namespace Night
       // TODO: Ensure proper SDL cleanup (NightSDL.Quit()), perhaps in a dedicated Engine.Shutdown()
       // or if Engine.Run is the outermost layer that also did NightSDL.Init().
       // For now, if Window.SetMode did SDL_InitSubSystem, a corresponding QuitSubSystem might be needed.
+      // Call the shutdown method in Night.Window to clean up renderer, window, and video subsystem.
+      Window.Shutdown();
       // NightSDL.Quit(); // This would be too broad if other parts of app still use SDL.
+      // If a global SDL.Init() was called at the very start (outside of Window),
+      // then a global SDL.Quit() would be needed here.
+      // For now, Window.Shutdown handles its own SDL.QuitSubSystem(SDL.InitFlags.Video).
     }
   }
 }
