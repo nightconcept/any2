@@ -140,46 +140,64 @@ namespace Night.SampleGame
       playerBoundingBox.X = (int)X;
       playerBoundingBox.Y = (int)Y;
 
-      bool resolvedAndGroundedThisFrame = false;
+      // Before checking collisions, assume player is not grounded unless a collision proves otherwise.
+      // This flag will be set if any interaction during the platform loop results in grounding.
+      bool newIsGroundedThisFrame = false;
 
       foreach (var platform in platforms)
       {
-        // Update playerBoundingBox.Y for each platform check, as Y might be adjusted by a previous platform.
-        playerBoundingBox.Y = (int)Y;
-        if (CheckAABBCollision(playerBoundingBox, platform))
+        // Horizontal overlap check (using player's float X for precision against integer platform.X)
+        bool horizontalOverlap = (X + Width > platform.X && X < platform.X + platform.Width);
+
+        if (horizontalOverlap)
         {
-          if (_velocityY > 0) // Moving Down
+          float playerFloatTop = Y;
+          float playerFloatBottom = Y + Height;
+
+          float platformTop = platform.Y;
+          float platformBottom = platform.Y + platform.Height;
+
+          if (_velocityY > 0) // Player is moving downwards
           {
-            Y = platform.Y - Height; // Snap to top of platform
-            _velocityY = 0;
-            resolvedAndGroundedThisFrame = true;
-          }
-          else if (_velocityY < 0) // Moving Up
-          {
-            // Check if player's top is actually hitting the platform's bottom
-            if (playerBoundingBox.Y < platform.Y + platform.Height && playerBoundingBox.Y + Height > platform.Y + platform.Height)
+            // Check if player's bottom has landed on or passed through the platform's top surface,
+            // and the player's top was above the platform's top (i.e., not starting from inside/below).
+            if (playerFloatBottom >= platformTop && playerFloatTop < platformTop)
             {
-              Y = platform.Y + platform.Height; // Snap to bottom of platform
-              _velocityY = 0;
+              Y = platformTop - Height; // Snap player's bottom to platform's top
+              _velocityY = 0f;
+              newIsGroundedThisFrame = true;
             }
-            // resolvedAndGroundedThisFrame remains false (hit head)
           }
-          else // _velocityY == 0 (Stationary or slid horizontally into vertical overlap)
+          else if (_velocityY < 0) // Player is moving upwards
           {
-            // If player is overlapping with the top part of the platform.
-            // Player's top (Y) must be above platform's top (platform.Y).
-            // Player's bottom (Y + Height) must be at or below platform's top (platform.Y).
-            // And critically, the player's bottom must be very close to the platform top to count as grounded.
-            float penetrationDepth = (Y + Height) - platform.Y;
-            if (penetrationDepth >= 0 && Y < platform.Y && penetrationDepth < 5.0f /* Allow small penetration to count as ground */ )
+            // Check if player's top has hit or passed through the platform's bottom surface,
+            // and the player's bottom was below the platform's bottom (i.e., not starting from inside/above).
+            if (playerFloatTop <= platformBottom && playerFloatBottom > platformBottom)
             {
-              Y = platform.Y - Height; // Snap to top
-              resolvedAndGroundedThisFrame = true; // Become or stay grounded
+              Y = platformBottom; // Snap player's top to platform's bottom
+              _velocityY = 0f;
+              // Hitting head does not make player grounded
+            }
+          }
+
+          // Additional check for stable grounding if player is (almost) stationary vertically.
+          // This handles cases where player is already on the platform, slid onto it, or just landed.
+          // It's important this runs even if _velocityY became 0 in this frame due to landing.
+          if (Math.Abs(_velocityY) < 0.1f) // If effectively stationary vertically
+          {
+            // Check if player's bottom is at or very slightly through the platform's top,
+            // and player's head is above the platform's top.
+            // The (platformTop + 1.0f) allows for a small 1px penetration to still count as grounded.
+            if (playerFloatBottom >= platformTop && playerFloatBottom < (platformTop + 1.0f) && playerFloatTop < platformTop)
+            {
+              Y = platformTop - Height; // Snap firmly
+              _velocityY = 0f;          // Ensure velocity is zeroed
+              newIsGroundedThisFrame = true;
             }
           }
         }
       }
-      _isGrounded = resolvedAndGroundedThisFrame;
+      _isGrounded = newIsGroundedThisFrame;
 
       // If a jump was initiated and _isGrounded became false,
       // and player is still moving upwards (_velocityY < 0), they are not grounded.

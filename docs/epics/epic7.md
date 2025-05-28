@@ -24,14 +24,15 @@
     - [X] Update player position based on velocity and `deltaTime`. (Includes temporary floor collision)
   - [X] **Drawing:** In a `Player.Draw()` method, render the player (rectangle or sprite) at its current position using `Night.Graphics.Draw()`.
   - **Verification:** The player character is displayed on the screen. It responds to left/right arrow key presses by moving horizontally. Pressing the jump key makes the player move upwards and then fall due to gravity. (Requires `assets/images/player_sprite_blue_32x64.png` to be visible).
-**Status: In-Progress**
+**Status: Review**
 - [X] **Task 7.3:** Implement Basic Level (Platforms) in `Night.SampleGame`
   - [X] Define platform data (e.g., an array or list of `Night.Rectangle` structs for position and size).
   - [X] In `Game.Load()` or a `Level.Load()` method, initialize these platforms.
   - [X] In `Game.Update()` or `Player.Update()`, implement simple Axis-Aligned Bounding Box (AABB) collision detection between the player and the platforms.
     - [X] Resolve collisions by preventing the player from passing through platforms (e.g., stop downward movement when landing on top of a platform, block horizontal movement into the side of a platform).
+    - [X] Stabilize player on platforms to prevent jittering.
   - [X] In `Game.Draw()` or a `Level.Draw()` method, render the platforms (e.g., as filled rectangles using a conceptual `Night.Graphics.DrawRectangle()` if added, or by drawing placeholder sprites for each). _Self-correction: The PRD doesn't specify `DrawRectangle`. For the prototype, platforms can be represented by loaded sprites or this might highlight a small graphics primitive need for the sample._
-  - **Verification:** Platforms are rendered on the screen. The player character can land on top of platforms and is appropriately stopped by them. The player does not fall through platforms.
+  - **Verification:** Platforms are rendered on the screen. The player character can land on top of platforms and is appropriately stopped by them without jitter. The player does not fall through platforms.
 
 - [ ] **Task 7.4:** Implement Main Game Logic in `Game.cs` (integrating `IGame`)
   - [ ] Ensure `Night.SampleGame.Game` class properly implements the `Night.IGame` interface (from Epic 6).
