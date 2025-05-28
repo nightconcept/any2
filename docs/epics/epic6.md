@@ -27,10 +27,10 @@
     - [x] Based on `ev.type`, dispatch to relevant `gameLogic` methods (e.g., `gameLogic.KeyPressed(ev.key.keysym.sym, ...)`). This requires mapping SDL event data to `Night` API parameters. (Addressed by Task 6.2.1 with `KeySymbol`)
   - **Verification:** The game loop correctly polls for events. The application closes cleanly when the window's close button is clicked (which generates an `SDL_EVENT_QUIT`). If basic event handlers are implemented, they are triggered. The `KeyPressed` callback is now a basic event handler with corrected key symbol reporting.
 
-- [ ] **Task 6.3:** Implement Delta Time Calculation and Pass to `Update`
-  - [ ] Before the main loop, get initial timing values using SDL3-CS timing functions (e.g., `SDL.SDL_GetPerformanceCounter()` and `SDL.SDL_GetPerformanceFrequency()` for high-resolution timing, or `SDL.SDL_GetTicks()` for millisecond-based timing).
-  - [ ] At the beginning of each loop iteration (or end), calculate the time elapsed since the last frame (`deltaTime`) in seconds (e.g., as a `double` or `float`).
-  - [ ] Call `gameLogic.Update(deltaTime)` method, passing the calculated delta time.
+- [x] **Task 6.3:** Implement Delta Time Calculation and Pass to `Update` `Status: Review`
+  - [x] Before the main loop, get initial timing values using SDL3-CS timing functions (e.g., `SDL.SDL_GetPerformanceCounter()` and `SDL.SDL_GetPerformanceFrequency()` for high-resolution timing, or `SDL.SDL_GetTicks()` for millisecond-based timing).
+  - [x] At the beginning of each loop iteration (or end), calculate the time elapsed since the last frame (`deltaTime`) in seconds (e.g., as a `double` or `float`).
+  - [x] Call `gameLogic.Update(deltaTime)` method, passing the calculated delta time.
   - **Verification:** The `gameLogic.Update()` method is called each frame and receives a `deltaTime` value that reasonably reflects the actual time elapsed per frame. Frame rate can be roughly monitored (e.g., by logging FPS) for stability.
 
 - [ ] **Task 6.4:** Integrate `gameLogic.Draw()` and Screen Presentation

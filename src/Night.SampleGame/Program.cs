@@ -39,11 +39,24 @@ public class Game : IGame
   }
 
   private float _rotationAngle = 0.0f; // Radians
+  private double _fpsTimer = 0.0;
+  private int _frameCount = 0;
 
   public void Update(double deltaTime)
   {
-    // Placeholder for game logic updates
-    // System.Console.WriteLine($"SampleGame: Update, DeltaTime: {deltaTime}");
+    // Log deltaTime
+    // System.Console.WriteLine($"SampleGame: Update, DeltaTime: {deltaTime:F6}s");
+
+    // Calculate and log FPS
+    _frameCount++;
+    _fpsTimer += deltaTime;
+    if (_fpsTimer >= 1.0)
+    {
+      System.Console.WriteLine($"SampleGame: FPS: {_frameCount / _fpsTimer:F2}");
+      _frameCount = 0;
+      _fpsTimer -= 1.0; // Subtract 1.0 instead of resetting to 0 for more stable average
+    }
+
     _rotationAngle += (float)(0.5 * deltaTime); // Rotate at 0.5 radians per second
     if (_rotationAngle > 2 * Math.PI)
     {
