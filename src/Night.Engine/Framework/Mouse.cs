@@ -1,21 +1,19 @@
 using System;
 
-using Night; // For MouseButton
-
 using SDL3;
 
 namespace Night;
 
 /// <summary>
-/// Provides functionality for handling mouse input.
-/// Mimics Love2D's love.mouse module.
+/// Provides an interface to the user's mouse.
 /// </summary>
 public static class Mouse
 {
   /// <summary>
-  /// Checks if a specific mouse button is currently pressed down.
+  /// Checks whether a certain mouse button is down.
+  /// This function does not detect mouse wheel scrolling.
   /// </summary>
-  /// <param name="button">The mouse button to check.</param>
+  /// <param name="button">The index of a button to check. 1 is the primary mouse button, 2 is the secondary mouse button, 3 is the middle button, 4 is the X1 button (typically "back"), and 5 is the X2 button (typically "forward").</param>
   /// <returns>True if the button is down, false otherwise.</returns>
   public static bool IsDown(MouseButton button)
   {
@@ -47,16 +45,16 @@ public static class Mouse
         break;
       case MouseButton.Unknown:
       default:
-        return false; // Unknown or unmapped button
+        return false;
     }
 
     return (mouseState & buttonMask) != 0;
   }
 
   /// <summary>
-  /// Gets the current position of the mouse cursor.
+  /// Gets the current position of the mouse cursor in the window.
   /// </summary>
-  /// <returns>A tuple (int x, int y) representing the mouse coordinates.</returns>
+  /// <returns>A tuple (int x, int y) representing the mouse cursor coordinates.</returns>
   public static (int x, int y) GetPosition()
   {
     if (!Framework.IsInputInitialized)

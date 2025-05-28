@@ -1,29 +1,19 @@
 using System;
-using System.Runtime.InteropServices; // For Marshal
+using System.Runtime.InteropServices;
 
-using Night; // For KeyCode
+using Night;
 
 using SDL3;
 
 namespace Night;
 
 /// <summary>
-/// Provides functionality for handling keyboard input.
-/// Mimics Love2D's love.keyboard module.
+/// Provides an interface to the user's keyboard.
 /// </summary>
 public static class Keyboard
 {
-  // Since Night.KeyCode now aligns with SDL.Scancode names and values,
-  // this mapping function essentially becomes a cast.
-  // It's kept for potential future divergence or for clarity at call sites.
-  private static SDL.Scancode MapKeyCodeToScancode(KeyCode key)
-  {
-    // Direct cast is possible because the enum values are identical.
-    return (SDL.Scancode)key;
-  }
-
   /// <summary>
-  /// Checks if a specific key is currently pressed down.
+  /// Checks whether a certain key is down.
   /// </summary>
   /// <param name="key">The key to check.</param>
   /// <returns>True if the key is down, false otherwise.</returns>
@@ -38,20 +28,20 @@ public static class Keyboard
     // The SDL.PumpEvents function should be called in the main event loop
     // to update the keyboard state. Framework.Run() handles this.
 
-    // SDL.GetKeyboardState in SDL3-CS returns a bool[] directly.
-    bool[] keyboardState = SDL.GetKeyboardState(out int numKeys);
+    bool[] keyboardState = SDL.GetKeyboardState(out int _);
 
-    if (keyboardState == null) // Check if the array itself is null (e.g., if SDL isn't initialized)
+    if (keyboardState == null)
     {
       Console.WriteLine("Warning: SDL.GetKeyboardState returned a null array.");
       return false;
     }
 
-    SDL.Scancode sdlScancode = MapKeyCodeToScancode(key);
+    // Direct cast is possible because the enum values are identical
+    SDL.Scancode sdlScancode = (SDL.Scancode)key;
 
     if (sdlScancode == SDL.Scancode.Unknown)
     {
-      return false; // Unknown or unmapped key
+      return false;
     }
 
     // Ensure scancode is within bounds of the returned array.

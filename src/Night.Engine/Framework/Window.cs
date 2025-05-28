@@ -5,27 +5,26 @@ using SDL3;
 namespace Night;
 
 /// <summary>
-/// Provides functionality for managing the application window.
-/// Mimics Love2D's love.window module.
+/// Provides an interface for modifying and retrieving information about the program's window.
 /// </summary>
 public static class Window
 {
   private static nint _window = nint.Zero;
-  private static nint _renderer = nint.Zero; // To be used by Graphics module
+  private static nint _renderer = nint.Zero;
   private static bool _isVideoInitialized = false;
-  private static bool _isWindowOpen = false; // Added for IsOpen()
+  private static bool _isWindowOpen = false;
 
   // Internal accessor for the renderer, to be used by Night.Graphics
   internal static nint RendererPtr => _renderer;
 
 
   /// <summary>
-  /// Sets the display mode of the window.
+  ///  	Sets the display mode and properties of the window.
   /// </summary>
   /// <param name="width">The width of the window.</param>
   /// <param name="height">The height of the window.</param>
   /// <param name="flags">SDL Window flags to apply.</param>
-  public static void SetMode(int width, int height, SDL.WindowFlags flags) // Changed to SDL.WindowFlags
+  public static void SetMode(int width, int height, SDL.WindowFlags flags)
   {
     if (!_isVideoInitialized)
     {
@@ -48,10 +47,8 @@ public static class Window
       }
       SDL.DestroyWindow(_window);
       _window = nint.Zero;
-      _isWindowOpen = false; // Window closed
+      _isWindowOpen = false;
     }
-
-    // SDL_WindowFlags sdlFlags = (SDL_WindowFlags)flags; // No longer needed, flags is already SDL.WindowFlags
 
     _window = SDL.CreateWindow("Night Engine", width, height, flags); // Use flags directly
     if (_window == nint.Zero)
@@ -80,7 +77,7 @@ public static class Window
   }
 
   /// <summary>
-  /// Sets the title of the window.
+  /// Sets the window title.
   /// </summary>
   /// <param name="title">The new window title.</param>
   public static void SetTitle(string title)

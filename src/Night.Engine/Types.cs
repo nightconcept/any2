@@ -3,7 +3,7 @@
 
 // Night Engine Data Structures
 
-using System; // Required for IntPtr
+using System;
 
 namespace Night
 {
@@ -205,7 +205,8 @@ namespace Night
   }
 
   /// <summary>
-  /// Represents mouse buttons. Values correspond to SDL3.SDL.Button* constants.
+  /// Represents mouse buttons. Values correspond to SDL_MouseButtonFlags/
+  /// SDL3.SDL.Button* constants.
   /// (e.g., Left is 1, Middle is 2, etc.)
   /// </summary>
   public enum MouseButton
@@ -267,10 +268,6 @@ namespace Night
     }
   }
 
-  // Night.Types.WindowFlags is removed.
-  // SDL3.SDL.WindowFlags will be used directly.
-  // See epic8.md Task 8.1 and 8.4 notes.
-
   /// <summary>
   /// Represents a 2D sprite, typically an image loaded into a texture.
   /// </summary>
@@ -312,24 +309,19 @@ namespace Night
   public interface IGame
   {
     /// <summary>
-    /// Called once when the game starts, for loading resources.
+    /// Called exactly once when the game starts for loading resources.
     /// </summary>
     void Load();
 
     /// <summary>
-    /// Called repeatedly every frame, for updating game logic.
+    /// Callback function used to update the state of the game every frame.
     /// </summary>
     /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
     void Update(double deltaTime);
 
     /// <summary>
-    /// Called repeatedly every frame, for drawing the game state.
+    /// Callback function used to draw on the screen every frame.
     /// </summary>
     void Draw();
-
-    // Optional input handlers can be added here later as per PRD Feature 4.
-    // For example:
-    // void KeyPressed(KeyCode key, bool isRepeat);
-    // void MousePressed(int x, int y, MouseButton button, int presses);
   }
 }

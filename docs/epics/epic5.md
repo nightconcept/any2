@@ -34,8 +34,8 @@
     - [X] Implement logic for destroying the SDL Renderer when the window is closed or the application quits (e.g., `SDL.SDL_DestroyRenderer()`).
         - *Implementation Notes: `Night.Window.Shutdown()` method added to destroy renderer, window, and quit video subsystem. This is called from `Night.Framework.Run()` on exit.*
     - **Verification:** Graphics operations use a valid, initialized SDL Renderer. The renderer is cleanly destroyed on application exit.
+
 - [ ] **Task 5.6:** Basic Error Handling for Graphics Operations
-    
     - [ ] For all relevant SDL3-CS graphics function calls, check return values for errors.
     - [ ] Retrieve and log specific SDL error messages (e.g., using `SDL.SDL_GetError()`) via `Console.WriteLine` or a similar simple logging mechanism for the prototype.
     - **Verification:** Errors during graphics operations (e.g., texture loading failure, issues during rendering calls) are reported with meaningful messages. The application does not crash silently due to graphics errors.

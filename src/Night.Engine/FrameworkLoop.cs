@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using Night; // For IGame interface and other core types
+using Night;
 
-using SDL3; // Added for SDL3#
+using SDL3;
 
 // Namespace for the public Framework API, consistent with Night.Window, Night.Graphics etc.
 namespace Night

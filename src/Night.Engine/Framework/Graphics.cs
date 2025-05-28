@@ -1,10 +1,10 @@
 using System;
-using System.IO; // For File.Exists
-using System.Runtime.InteropServices; // For Marshal
+using System.IO;
+using System.Runtime.InteropServices;
 
-using Night; // For Sprite, Color
+using Night;
 
-using SDL3;    // For core SDL functions
+using SDL3;
 
 namespace Night;
 

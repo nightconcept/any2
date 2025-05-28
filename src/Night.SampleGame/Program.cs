@@ -9,11 +9,10 @@ namespace Night.SampleGame;
 
 public class Game : IGame
 {
-  private Sprite? _testSprite; // To store the loaded image (nullable for CS8618)
+  private Sprite? _testSprite;
 
   public void Load()
   {
-    // Placeholder for loading game assets and initial setup
     Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     Night.Window.SetTitle("Night Sample Game");
 
