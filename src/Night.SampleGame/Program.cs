@@ -106,6 +106,7 @@ public class Program
 {
   public static void Main()
   {
-    Night.Framework.Run<Game>();
+    Game myGame = new Game();
+    Night.Framework.Run(myGame);
   }
 }

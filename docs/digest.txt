@@ -166,7 +166,7 @@ SOFTWARE.
 ================================================
 File: Night.sln
 ================================================
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -780,37 +780,37 @@ File: docs/epics/epic5.md
 **Goal:** Implement the core functionalities of the `Night.Graphics` module, enabling the loading of images as sprites and rendering them to the window. This includes screen clearing and handling the presentation of the rendered frame, all utilizing SDL3-CS bindings.
 
 - [ ] **Task 5.1:** Implement `Night.Graphics.NewImage(string filePath)`
-    
+
     - [ ] Use SDL3-CS functions to load an image from a file path into an SDL Texture (e.g., `SDL.SDL_LoadTexture()` or an equivalent function provided by SDL3/SDL3-CS for common image formats like PNG, BMP). This will require an active SDL Renderer.
     - [ ] Refine the `Night.Sprite` class (defined conceptually in Epic 2) to store the SDL Texture handle, as well as its width and height (which can be queried from the texture, e.g., using `SDL.SDL_QueryTexture()`).
     - [ ] Implement error handling for file loading (e.g., file not found, unsupported image format, SDL errors) and log appropriately. Return `null` or throw an exception if loading fails.
     - **Verification:** Calling `Night.Graphics.NewImage()` with a path to a valid image file (e.g., a PNG) returns a `Night.Sprite` object. This object contains a non-null texture handle and correct width/height attributes. Attempting to load an invalid file results in a clear error message and no crash.
 - [ ] **Task 5.2:** Implement `Night.Graphics.Draw(Sprite sprite, float x, float y, float rotation = 0, float scaleX = 1, float scaleY = 1, float offsetX = 0, float offsetY = 0)`
-    
+
     - [ ] Use SDL3-CS functions to render the `SDL_Texture` associated with the `Night.Sprite` object (e.g., `SDL.SDL_RenderTexture()` or `SDL.SDL_RenderTextureRotated()`, or similar SDL3 equivalents that support rotation and scaling).
     - [ ] Define the source rectangle (to draw the whole texture) and destination rectangle (`SDL_FRect` for float precision) based on the sprite's dimensions and the `x, y` parameters.
     - [ ] Apply `rotation` (in degrees), `scaleX`, `scaleY`. The `offsetX` and `offsetY` parameters should define the origin point for these transformations (e.g., if (0,0), top-left; if (sprite.Width/2, sprite.Height/2), center).
     - [ ] Ensure the correct SDL Renderer (obtained during window creation) is used for drawing.
     - **Verification:** Calling `Night.Graphics.Draw()` renders the specified `Night.Sprite` at the correct screen position, with the specified rotation and scale applied accurately. The origin of transformation (`offsetX`, `offsetY`) works as expected.
 - [ ] **Task 5.3:** Implement `Night.Graphics.Clear(Color color)`
-    
+
     - [ ] Map the `Night.Color` struct (R, G, B, A byte values) to the format required by SDL.
     - [ ] Use SDL3-CS functions to set the renderer's current drawing color (e.g., `SDL.SDL_SetRenderDrawColor()`).
     - [ ] Use SDL3-CS functions to clear the entire rendering target with the set color (e.g., `SDL.SDL_RenderClear()`).
     - **Verification:** Calling `Night.Graphics.Clear()` fills the game window with the specified `Night.Color`.
 - [ ] **Task 5.4:** Conceptualize `Night.Graphics.Present()` (Actual call in Game Loop)
-    
+
     - [ ] The `Night.Graphics.Present()` method, if called directly by the user, will likely be a conceptual placeholder in this module. The actual call to SDL's frame presentation function (e.g., `SDL.SDL_RenderPresent()`) will be managed by the `Night.Engine`'s main loop (Epic 6) after all `Draw()` calls are complete for a frame.
     - [ ] For now, this method in `Night.Graphics` can be empty or log a debug message indicating it's a placeholder for the engine's render presentation step.
     - **Verification:** The method `Night.Graphics.Present()` exists and can be called without error. (Full visual verification of frame presentation is part of Epic 6).
 - [ ] **Task 5.5:** Renderer Initialization and Management
-    
+
     - [ ] Confirm that the SDL Renderer instance is properly created (typically alongside the SDL Window in Epic 3, e.g., via `SDL.SDL_CreateRenderer()`) and stored internally where `Night.Graphics` methods can access it.
     - [ ] Ensure renderer flags are appropriately set during creation (e.g., for hardware acceleration, vsync if desired by default for the prototype).
     - [ ] Implement logic for destroying the SDL Renderer when the window is closed or the application quits (e.g., `SDL.SDL_DestroyRenderer()`).
     - **Verification:** Graphics operations use a valid, initialized SDL Renderer. The renderer is cleanly destroyed on application exit.
 - [ ] **Task 5.6:** Basic Error Handling for Graphics Operations
-    
+
     - [ ] For all relevant SDL3-CS graphics function calls, check return values for errors.
     - [ ] Retrieve and log specific SDL error messages (e.g., using `SDL.SDL_GetError()`) via `Console.WriteLine` or a similar simple logging mechanism for the prototype.
     - **Verification:** Errors during graphics operations (e.g., texture loading failure, issues during rendering calls) are reported with meaningful messages. The application does not crash silently due to graphics errors.
@@ -824,10 +824,10 @@ File: docs/epics/epic6.md
 
 **Goal:** Implement the `Night.Engine` class to manage the main game loop. This includes initializing and shutting down SDL, polling for events (especially quit events), calling the user-defined `Load`, `Update`, and `Draw` methods in the correct sequence, managing frame timing (delta time), and handling screen presentation.
 
-- [ ] **Task 6.1:** Implement Core `Night.Engine.Run(IGameLogic gameLogic)` Structure
-    
-    - [ ] Define an interface (e.g., `Night.IGameLogic`) that user game classes will implement, specifying methods like `Load()`, `Update(double deltaTime)`, `Draw()`, and optional input event handlers like `KeyPressed(KeyCode key, bool isRepeat)` etc., if this event-based approach is chosen for Feature 4.
-    - [ ] Implement the main `Night.Engine.Run(IGameLogic gameLogic)` method.
+- [ ] **Task 6.1:** Implement Core `Night.Engine.Run(IGame gameLogic)` Structure
+
+    - [ ] Define an interface (e.g., `Night.IGame`) that user game classes will implement, specifying methods like `Load()`, `Update(double deltaTime)`, `Draw()`, and optional input event handlers like `KeyPressed(KeyCode key, bool isRepeat)` etc., if this event-based approach is chosen for Feature 4.
+    - [ ] Implement the main `Night.Engine.Run(IGame gameLogic)` method.
     - [ ] **Initialization:**
         - [ ] Inside `Run`, before the loop, call `SDL.SDL_Init(SDL.SDL_INIT_VIDEO | ...other_subsystems_if_needed...)` using SDL3-CS. Log errors if initialization fails.
         - [ ] Call the provided `gameLogic.Load()` method once after successful SDL initialization.
@@ -835,27 +835,27 @@ File: docs/epics/epic6.md
         - [ ] Implement the primary game loop (e.g., `while (Night.Window.IsOpen()) { ... }`). The `Night.Window.IsOpen()` flag (from Epic 3) will be controlled by quit events.
     - [ ] **Shutdown:**
         - [ ] After the loop terminates, call appropriate SDL cleanup functions (e.g., destroy window, destroy renderer if not handled elsewhere, `SDL.SDL_QuitSubSystem(...)`, `SDL.SDL_Quit()`).
-    - **Verification:** Calling `Night.Engine.Run()` with a simple `IGameLogic` implementation initializes SDL, calls `Load()`, enters a loop, and then quits SDL. The `Night.SampleGame` can be launched using this.
+    - **Verification:** Calling `Night.Engine.Run()` with a simple `IGame` implementation initializes SDL, calls `Load()`, enters a loop, and then quits SDL. The `Night.SampleGame` can be launched using this.
 - [ ] **Task 6.2:** Implement Event Polling within the Game Loop
-    
+
     - [ ] Inside the main loop, use SDL3-CS functions to poll for SDL events (e.g., `while (SDL.SDL_PollEvent(out SDL_Event ev) != 0) { ... }`).
     - [ ] Handle `SDL_EVENT_QUIT`: If this event is received, set the internal flag that `Night.Window.IsOpen()` checks to `false` to terminate the game loop.
     - [ ] (Optional for initial prototype, can be basic) If pursuing event-based input handlers from Feature 4:
         - [ ] Based on `ev.type`, dispatch to relevant `gameLogic` methods (e.g., `gameLogic.KeyPressed(ev.key.keysym.sym, ...)`). This requires mapping SDL event data to `Night` API parameters.
     - **Verification:** The game loop correctly polls for events. The application closes cleanly when the window's close button is clicked (which generates an `SDL_EVENT_QUIT`). If basic event handlers are implemented, they are triggered.
 - [ ] **Task 6.3:** Implement Delta Time Calculation and Pass to `Update`
-    
+
     - [ ] Before the main loop, get initial timing values using SDL3-CS timing functions (e.g., `SDL.SDL_GetPerformanceCounter()` and `SDL.SDL_GetPerformanceFrequency()` for high-resolution timing, or `SDL.SDL_GetTicks()` for millisecond-based timing).
     - [ ] At the beginning of each loop iteration (or end), calculate the time elapsed since the last frame (`deltaTime`) in seconds (e.g., as a `double` or `float`).
     - [ ] Call `gameLogic.Update(deltaTime)` method, passing the calculated delta time.
     - **Verification:** The `gameLogic.Update()` method is called each frame and receives a `deltaTime` value that reasonably reflects the actual time elapsed per frame. Frame rate can be roughly monitored (e.g., by logging FPS) for stability.
 - [ ] **Task 6.4:** Integrate `gameLogic.Draw()` and Screen Presentation
-    
+
     - [ ] Inside the main loop, after `gameLogic.Update(deltaTime)`, call `gameLogic.Draw()`.
     - [ ] Immediately after `gameLogic.Draw()` completes, call the SDL function to present the renderer's back buffer to the window (e.g., `SDL.SDL_RenderPresent(rendererHandle)` using the renderer handle established in Epic 3/5).
     - **Verification:** The `gameLogic.Draw()` method is called each frame. Graphics drawn within this method (using `Night.Graphics` calls) are visible on the screen and update frame by frame.
 - [ ] **Task 6.5:** Basic Game Loop Error Handling and Robustness
-    
+
     - [ ] Wrap calls to user-provided `gameLogic` methods (`Load`, `Update`, `Draw`, event handlers) in `try-catch` blocks.
     - [ ] If an exception occurs in user code, log the exception (e.g., `Console.WriteLine`) and decide on a strategy:
         - For prototype: an unhandled exception in user code might gracefully terminate the engine loop and ensure SDL is shut down.
@@ -873,14 +873,14 @@ File: docs/epics/epic7.md
 **Goal:** Develop a simple platformer game using the "Night Engine." This sample game will serve as a comprehensive integration test, verifying that all core engine features (Window, Input, Graphics, Game Loop) function correctly and cohesively as defined in the PRD.
 
 - [ ] **Task 7.1:** Design Basic Platformer Game Mechanics for `Night.SampleGame`
-    
+
     - [ ] Define the player character: appearance (e.g., a simple colored rectangle or a basic sprite), size.
     - [ ] Define player actions: move left, move right, jump.
     - [ ] Define basic level elements: static platforms (rectangles) for the player to stand on and jump between.
     - [ ] Define a simple objective or success state for the prototype (e.g., navigate to a specific point, or simply demonstrate stable movement and interaction).
     - **Verification:** A minimal design document or sketch outlining the platformer's mechanics, player abilities, and level structure is created.
 - [ ] **Task 7.2:** Implement Player Character in `Night.SampleGame`
-    
+
     - [ ] Create a `Player` class within the `Night.SampleGame` project.
     - [ ] **Loading:** In a `Player.Load()` method (or equivalent called from `Game.Load()`), if using a sprite, load it using `Night.Graphics.NewImage()`. Initialize player position, size, and movement properties (e.g., speed, jump height, gravity).
     - [ ] **Updating:** In a `Player.Update(double deltaTime)` method:
@@ -891,16 +891,16 @@ File: docs/epics/epic7.md
     - [ ] **Drawing:** In a `Player.Draw()` method, render the player (rectangle or sprite) at its current position using `Night.Graphics.Draw()`.
     - **Verification:** The player character is displayed on the screen. It responds to left/right arrow key presses by moving horizontally. Pressing the jump key makes the player move upwards and then fall due to gravity.
 - [ ] **Task 7.3:** Implement Basic Level (Platforms) in `Night.SampleGame`
-    
+
     - [ ] Define platform data (e.g., an array or list of `Night.Rectangle` structs for position and size).
     - [ ] In `Game.Load()` or a `Level.Load()` method, initialize these platforms.
     - [ ] In `Game.Update()` or `Player.Update()`, implement simple Axis-Aligned Bounding Box (AABB) collision detection between the player and the platforms.
         - [ ] Resolve collisions by preventing the player from passing through platforms (e.g., stop downward movement when landing on top of a platform, block horizontal movement into the side of a platform).
     - [ ] In `Game.Draw()` or a `Level.Draw()` method, render the platforms (e.g., as filled rectangles using a conceptual `Night.Graphics.DrawRectangle()` if added, or by drawing placeholder sprites for each). _Self-correction: The PRD doesn't specify `DrawRectangle`. For the prototype, platforms can be represented by loaded sprites or this might highlight a small graphics primitive need for the sample._
     - **Verification:** Platforms are rendered on the screen. The player character can land on top of platforms and is appropriately stopped by them. The player does not fall through platforms.
-- [ ] **Task 7.4:** Implement Main Game Logic in `Game.cs` (integrating `IGameLogic`)
-    
-    - [ ] Ensure `Night.SampleGame.Game` class properly implements the `Night.IGameLogic` interface (from Epic 6).
+- [ ] **Task 7.4:** Implement Main Game Logic in `Game.cs` (integrating `IGame`)
+
+    - [ ] Ensure `Night.SampleGame.Game` class properly implements the `Night.IGame` interface (from Epic 6).
     - [ ] **`Game.Load()`:** Initialize the player object, platform data/level objects, and load any other necessary assets.
     - [ ] **`Game.Update(double deltaTime)`:** Call the `Player.Update(deltaTime)` method. Update any other game state logic (e.g., checking simple win/lose conditions if designed).
     - [ ] **`Game.Draw()`:**
@@ -908,7 +908,7 @@ File: docs/epics/epic7.md
         - [ ] Call draw methods for platforms and the player, ensuring correct layering if relevant.
     - **Verification:** The `Night.SampleGame` runs via `Night.Engine.Run(new Game())`. All game elements (player, platforms) are initialized, updated, and drawn correctly each frame, demonstrating the integrated use of `Night.Window`, `Night.Input`, `Night.Graphics`, and the `Night.Engine` game loop.
 - [ ] **Task 7.5:** End-to-End Feature Verification & Bug Fixing
-    
+
     - [ ] Play through the `Night.SampleGame` platformer, systematically testing all implemented `Night` engine features:
         - Window creation and title (`Night.Window`).
         - Keyboard input for player control (`Night.Keyboard`).
@@ -920,7 +920,7 @@ File: docs/epics/epic7.md
     - [ ] Document any bugs, unexpected behaviors, or deviations from the PRD.
     - [ ] Iterate on bug fixes within the `Night.Engine` or `Night.SampleGame` code until the prototype functions as intended for the defined features.
     - **Verification:** The sample platformer game is playable and all core `Night` engine features (PRD Features 1-4) are demonstrably working as expected. Any significant bugs identified during testing have been addressed.
-    
+
 
 
 ================================================

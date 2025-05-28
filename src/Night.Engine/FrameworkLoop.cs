@@ -14,122 +14,153 @@ namespace Night
   /// </summary>
   public static class Framework
   {
+    private static bool _isSdlInitialized = false;
+    private static SDL.InitFlags _initializedSubsystems = 0;
+
     /// <summary>
     /// A flag indicating whether the core SDL systems, particularly for input,
-    /// have been successfully initialized.
+    /// have been successfully initialized by this Framework's Run method.
     /// </summary>
     public static bool IsInputInitialized { get; private set; } = false;
 
     /// <summary>
     /// Runs the game instance.
     /// The game loop will internally call Load, Update, and Draw methods
-    /// on the provided game type.
+    /// on the provided game logic.
+    /// This method will initialize and shut down required SDL subsystems.
     /// </summary>
-    /// <typeparam name="TGame">The type of the game to run.
-    /// Must implement <see cref="Night.IGame"/> and have a parameterless constructor.</typeparam>
-    public static void Run<TGame>() where TGame : IGame, new()
+    /// <param name="gameLogic">The game interface to run. Must implement <see cref="Night.IGame"/>.</param>
+    public static void Run(IGame game)
     {
-      // It's good practice to ensure SDL is initialized before using its functions.
-      // Night.Window.SetMode handles SDL_InitSubSystem(SDL.InitFlags.Video).
-      // If other subsystems are needed by the engine globally, they should be initialized.
-      // NightSDL.Init(SDL.InitFlags.Events) might be useful here if not handled by Window.
-      // However, SDL.PollEvent will work if the video subsystem (which often initializes events) is up.
+      if (game == null)
+      {
+        Console.WriteLine("Night.Framework.Run: gameLogic cannot be null.");
+        return;
+      }
 
-      string sdlVersionString = NightSDL.GetVersion(); // Use our wrapper
-      Console.WriteLine($"Night Engine: v0.0.1"); // Placeholder version
+      string sdlVersionString = NightSDL.GetVersion();
+      Console.WriteLine($"Night Engine: v0.0.1");
       Console.WriteLine($"SDL: v{sdlVersionString}");
       Console.WriteLine($"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})");
       Console.WriteLine($"Framework: {RuntimeInformation.FrameworkDescription}");
 
-      // Engine.Run expects Night.Window.SetMode to have been called by the application (e.g., in Program.cs)
-      // *before* Engine.Run is invoked.
-
-      TGame game = new TGame();
-      game.Load();
-
-      ulong perfFrequency = SDL.GetPerformanceFrequency();
-      ulong lastCounter = SDL.GetPerformanceCounter();
-
-      // Ensure the window is open before starting the loop.
-      // Night.Window.SetMode should have been called by the user application before Engine.Run.
-      if (!Window.IsOpen())
+      try
       {
-        Console.WriteLine("Night.Engine.Run: Window is not open. Ensure Night.Window.SetMode() was called successfully before Run().");
-        // Potentially call NightSDL.Quit() here if Engine.Run was responsible for a global SDL_Init.
-        return;
-      }
-
-      // At this point, Window.IsOpen() is true, implying SetMode was successful
-      // and SDL.InitFlags.Video (which includes SDL.InitFlags.Events) has been initialized.
-      IsInputInitialized = true;
-
-      while (Window.IsOpen())
-      {
-        // Event Processing
-        while (SDL.PollEvent(out SDL.Event e)) // Updated to use SDL3.SDL
+        // Initialize SDL
+        _initializedSubsystems = SDL.InitFlags.Video | SDL.InitFlags.Events; // Removed Timer for now
+        if (!SDL.Init(_initializedSubsystems)) // SDL.Init returns bool in SDL3-CS
         {
-          if ((SDL.EventType)e.Type == SDL.EventType.Quit) // Updated to use SDL3.SDL.EventType and cast e.Type
-          {
-            Window.Close();
-          }
-          // Other event handling (keyboard, mouse) will be added in later tasks/epics.
-          // else if ((SDL.EventType)e.Type == SDL.EventType.KeyDown) { /* ... */ }
+          Console.WriteLine($"Night.Framework.Run: SDL_Init failed: {SDL.GetError()}");
+          return;
         }
+        _isSdlInitialized = true;
+        IsInputInitialized = (_initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
+        Console.WriteLine("Night.Framework.Run: SDL initialized successfully with Video and Events subsystems.");
 
-        // If Window.Close() was called due to an event, IsOpen() will now be false,
-        // and the outer loop should terminate.
+        // Load game content. This is where gameLogic should call Night.Window.SetMode()
+        Console.WriteLine("Night.Framework.Run: Calling gameLogic.Load().");
+        game.Load();
+        Console.WriteLine("Night.Framework.Run: gameLogic.Load() completed.");
+
+        // Now, ensure a window is open before proceeding.
         if (!Window.IsOpen())
         {
-          break;
+          Console.WriteLine("Night.Framework.Run: Window is not open after gameLogic.Load(). Ensure Night.Window.SetMode() was called successfully within Load().");
+          // SDL was initialized, so it needs to be quit.
+          CleanUpSDL();
+          return;
         }
 
-        // Calculate DeltaTime
-        ulong currentCounter = SDL.GetPerformanceCounter();
-        double deltaTime = (double)(currentCounter - lastCounter) / perfFrequency;
-        lastCounter = currentCounter;
+        ulong perfFrequency = SDL.GetPerformanceFrequency();
+        ulong lastCounter = SDL.GetPerformanceCounter();
 
-        // Clamp deltaTime to avoid large jumps if debugging or system lags
-        // A common practice, though the max value can be debated (e.g., 1/15th of a second)
-        if (deltaTime > 0.0666) // Approx 15 FPS
+        // Main game loop
+        while (Window.IsOpen())
         {
-          deltaTime = 0.0666;
-        }
+          // Event Processing
+          while (SDL.PollEvent(out SDL.Event e))
+          {
+            if ((SDL.EventType)e.Type == SDL.EventType.Quit)
+            {
+              Window.Close(); // This will set Window.IsOpen() to false
+            }
+            // TODO: Add other event handling (keyboard, mouse) for Task 6.2
+            // e.g., if (gameLogic is IKeyboardHandler keyboardHandler) { keyboardHandler.ProcessEvent(e); }
+          }
 
+          // If Window.Close() was called due to an event, IsOpen() will now be false,
+          // and the outer loop should terminate.
+          if (!Window.IsOpen())
+          {
+            break;
+          }
 
-        game.Update(deltaTime);
-        game.Draw();
+          // Calculate DeltaTime
+          ulong currentCounter = SDL.GetPerformanceCounter();
+          double deltaTime = (double)(currentCounter - lastCounter) / perfFrequency;
+          lastCounter = currentCounter;
 
-        try
-        {
-          // Graphics.Present might not be implemented yet, but the call should be here.
-          Graphics.Present();
-        }
-        catch (NotImplementedException)
-        {
-          // Silently ignore if Graphics.Present is not yet implemented.
-          // Or log once: Console.WriteLine("Night.Graphics.Present() is not yet implemented.");
-        }
-        catch (Exception ex)
-        {
-          Console.WriteLine($"Error during Graphics.Present(): {ex.Message}");
-          // Potentially break loop or handle more gracefully
-        }
+          // Clamp deltaTime to avoid large jumps
+          if (deltaTime > 0.0666) // Approx 15 FPS
+          {
+            deltaTime = 0.0666;
+          }
 
-        // A small delay can be added here if vsync is not enabled or to reduce CPU usage,
-        // but typically vsync (via renderer flags in SetMode) is preferred.
-        // SDL.Delay(1); // e.g., 1ms delay
+          game.Update(deltaTime);
+          game.Draw();
+
+          try
+          {
+            Graphics.Present();
+          }
+          catch (NotImplementedException)
+          {
+            // Silently ignore if Graphics.Present is not yet implemented for now.
+          }
+          catch (Exception ex)
+          {
+            Console.WriteLine($"Error during Graphics.Present(): {ex.Message}");
+            // Consider breaking the loop or handling more gracefully
+          }
+        }
+        Console.WriteLine("Night.Framework.Run: Game loop exited.");
       }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"Night.Framework.Run: An unexpected error occurred: {ex.Message}");
+        Console.WriteLine(ex.StackTrace);
+        // Ensure SDL is cleaned up even if an error occurs in Load, Update, or Draw.
+      }
+      finally
+      {
+        // TODO: Call gameLogic.Unload() if it's added to IGame.
 
-      // TODO: Call game.Unload() if it's added to IGame.
-      // TODO: Ensure proper SDL cleanup (NightSDL.Quit()), perhaps in a dedicated Engine.Shutdown()
-      // or if Engine.Run is the outermost layer that also did NightSDL.Init().
-      // For now, if Window.SetMode did SDL_InitSubSystem, a corresponding QuitSubSystem might be needed.
-      // Call the shutdown method in Night.Window to clean up renderer, window, and video subsystem.
-      Window.Shutdown();
-      // NightSDL.Quit(); // This would be too broad if other parts of app still use SDL.
-      // If a global SDL.Init() was called at the very start (outside of Window),
-      // then a global SDL.Quit() would be needed here.
-      // For now, Window.Shutdown handles its own SDL.QuitSubSystem(SDL.InitFlags.Video).
+        // Shutdown window and related resources (renderer, etc.)
+        // This should happen before SDL.QuitSubSystem for Video.
+        if (Window.IsOpen()) // Should ideally be closed by the loop, but as a safeguard
+        {
+          Console.WriteLine("Night.Framework.Run: Window was still open in finally block, attempting to close.");
+          Window.Close();
+        }
+        // Window.Shutdown() handles destroying window, renderer, and SDL.QuitSubSystem(SDL.InitFlags.Video)
+        Window.Shutdown();
+
+        CleanUpSDL();
+      }
+    }
+
+    private static void CleanUpSDL()
+    {
+      if (_isSdlInitialized)
+      {
+        // SDL.QuitSubSystem was already called for Video by Window.Shutdown().
+        // We only need to quit other subsystems explicitly initialized by Run if they weren't covered.
+        // However, SDL.Quit() handles all initialized subsystems.
+        SDL.Quit();
+        _isSdlInitialized = false;
+        IsInputInitialized = false;
+        _initializedSubsystems = 0;
+      }
     }
   }
 }
