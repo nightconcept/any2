@@ -9,6 +9,7 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 - [ ] `docfx` generation onto GitHub pages
 - [ ] Tests
 - [ ] Logo and icon
+- [ ] CI
 
 ### Modules
 
