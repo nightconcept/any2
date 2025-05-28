@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic; // Required for List<Rectangle>
 
 using Night;
 
@@ -9,119 +10,82 @@ namespace Night.SampleGame;
 
 public class Game : IGame
 {
-  private Sprite? _testSprite;
+  private Player _player;
+  private List<Night.Rectangle> _platforms;
+  private Sprite? _platformSprite;
+
+  public Game()
+  {
+    _player = new Player();
+    _platforms = new List<Night.Rectangle>();
+  }
 
   public void Load()
   {
     Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
-    Night.Window.SetTitle("Night Sample Game");
+    Night.Window.SetTitle("Night Platformer Sample"); // Updated title
 
-    // Test Night.Graphics.NewImage()
+    _player.Load();
+
+    // Load platform sprite
     string baseDirectory = AppContext.BaseDirectory;
-    string imageRelativePath = Path.Combine("assets", "images", "test_texture.png");
-    string imageFullPath = Path.Combine(baseDirectory, imageRelativePath);
-
-    System.Console.WriteLine($"Attempting to load image from: {imageFullPath}");
-
-    _testSprite = Night.Graphics.NewImage(imageFullPath);
-    if (_testSprite != null)
+    string platformImageRelativePath = Path.Combine("assets", "images", "pixel_green.png");
+    string platformImageFullPath = Path.Combine(baseDirectory, platformImageRelativePath);
+    _platformSprite = Graphics.NewImage(platformImageFullPath);
+    if (_platformSprite == null)
     {
-      System.Console.WriteLine(
-        $"Successfully loaded '{imageFullPath}'. " +
-        $"Width: {_testSprite.Width}, Height: {_testSprite.Height}, " +
-        $"TexturePtr: {_testSprite.Texture}"
-      );
+      Console.WriteLine($"Game.Load: Failed to load platform sprite at '{platformImageFullPath}'. Platforms will not be drawn.");
     }
-    else
-    {
-      System.Console.WriteLine($"Failed to load '{imageFullPath}'. Check console for SDL errors and ensure the file exists and is copied to output.");
-    }
+
+    // Initialize platforms (as per docs/epics/epic7-design.md)
+    _platforms.Add(new Night.Rectangle(50, 500, 700, 50));  // Platform 1 (Ground)
+    _platforms.Add(new Night.Rectangle(200, 400, 150, 30)); // Platform 2
+    _platforms.Add(new Night.Rectangle(450, 300, 100, 30)); // Platform 3
+    _platforms.Add(new Night.Rectangle(600, 200, 100, 30)); // Platform 4 (Goal)
   }
-
-  private float _rotationAngle = 0.0f; // Radians
-  private double _fpsTimer = 0.0;
-  private int _frameCount = 0;
 
   public void Update(double deltaTime)
   {
-    // Log deltaTime
-    // System.Console.WriteLine($"SampleGame: Update, DeltaTime: {deltaTime:F6}s");
-
-    // Calculate and log FPS
-    _frameCount++;
-    _fpsTimer += deltaTime;
-    if (_fpsTimer >= 1.0)
-    {
-      System.Console.WriteLine($"SampleGame: FPS: {_frameCount / _fpsTimer:F2}");
-      _frameCount = 0;
-      _fpsTimer -= 1.0; // Subtract 1.0 instead of resetting to 0 for more stable average
-    }
-
-    _rotationAngle += (float)(0.5 * deltaTime); // Rotate at 0.5 radians per second
-    if (_rotationAngle > 2 * Math.PI)
-    {
-      _rotationAngle -= (float)(2 * Math.PI);
-    }
+    _player.Update(deltaTime, _platforms);
+    // Player and Level update logic will go here in later tasks.
+    // For now, this can remain minimal.
   }
 
   public void Draw()
   {
-    Night.Graphics.Clear(Night.Color.Cyan); // Clear screen to Cyan for testing
+    Night.Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
 
-    if (_testSprite != null)
+    // Draw platforms
+    if (_platformSprite != null)
     {
-      // 1. Draw normally at a fixed position (top-left origin)
-      Night.Graphics.Draw(_testSprite, 50, 50);
-
-      // 2. Draw with rotation around its center
-      // offsetX and offsetY are relative to the sprite's top-left corner before scaling
-      float centerX = _testSprite.Width / 2.0f;
-      float centerY = _testSprite.Height / 2.0f;
-      Night.Graphics.Draw(_testSprite, 200, 150, _rotationAngle, 1, 1, centerX, centerY);
-
-      // 3. Draw scaled up, at a different position (top-left origin for transformations)
-      Night.Graphics.Draw(_testSprite, 400, 50, 0, 1.5f, 1.5f);
-
-      // 4. Draw scaled down, rotated, with offset origin (bottom-right of original sprite as pivot)
-      // and different position.
-      Night.Graphics.Draw(_testSprite, 500, 300, (float)(Math.PI / 4.0), 0.75f, 0.75f, _testSprite.Width, _testSprite.Height);
-
-      // 5. Draw with different X and Y scaling, and slight rotation, centered origin
-      Night.Graphics.Draw(_testSprite, 100, 350, (float)(Math.PI / 6.0), 1.2f, 0.8f, centerX, centerY);
-
-      // 6. Draw with negative scaling (flip) - ensure offset is adjusted if needed for visual centering
-      // For example, to flip horizontally and keep it visually centered around its original center:
-      // The offsetX for SDL is relative to the (potentially flipped) destination rectangle's corner.
-      // If we want the *original* center to be the pivot after flipping,
-      // and scaleX is -1, the new 'visual' left edge is where the original right edge was.
-      // So, if offsetX was originally sprite.Width/2, for a horizontal flip,
-      // the center.X for SDL.RenderTextureRotated should be (sprite.Width * scaleX) - (sprite.Width/2 * scaleX)
-      // which simplifies to -sprite.Width/2 if scaleX is -1.
-      // However, our Draw function's offsetX/Y are sprite-local *before* scaling.
-      // SDL's center point is relative to the top-left of the *final scaled destination rectangle*.
-      // Our current implementation: center.X = offsetX * scaleX.
-      // If offsetX = sprite.Width/2 and scaleX = -1, then center.X = -sprite.Width/2.
-      // This means the rotation point is to the left of the new top-left corner of the flipped image.
-      Night.Graphics.Draw(_testSprite, 600, 150, 0, -1, 1, centerX, centerY); // Flipped horizontally, rotating around original center
-      Night.Graphics.Draw(_testSprite, 700, 150, 0, 1, -1, centerX, centerY); // Flipped vertically, rotating around original center
-    }
-    else
-    {
-      // Optionally, draw some placeholder if sprite failed to load
-      // For now, just the black screen.
+      foreach (var platform in _platforms)
+      {
+        // Scale the 1x1 pixel sprite to the platform's dimensions
+        Graphics.Draw(
+            _platformSprite,
+            platform.X,
+            platform.Y,
+            0, // rotation
+            platform.Width,  // scaleX
+            platform.Height  // scaleY
+        );
+      }
     }
 
-    // Night.Graphics.Present() is called by the FrameworkLoop after this Draw method.
+    _player.Draw();
+    // Player and Level drawing logic will go here in later tasks.
   }
 
   public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
   {
-    Console.WriteLine($"SampleGame: KeyPressed - KeySymbol: {key}, Scancode: {scancode}, IsRepeat: {isRepeat}");
-    if (key == Night.KeySymbol.Escape) // Using 'key' (symbol) for the check
+    // Minimal key handling for now, primarily for closing the window.
+    // System.Console.WriteLine($"SampleGame: KeyPressed - KeySymbol: {key}, Scancode: {scancode}, IsRepeat: {isRepeat}");
+    if (key == Night.KeySymbol.Escape)
     {
-      Console.WriteLine("SampleGame: Escape key pressed, closing window.");
-      Night.Window.Close(); // Request to close the window
+      System.Console.WriteLine("SampleGame: Escape key pressed, closing window.");
+      Night.Window.Close();
     }
+    // Player input (movement, jump) will be handled in Player.Update using Night.Keyboard.IsDown().
   }
 }
 
@@ -129,7 +93,6 @@ public class Program
 {
   public static void Main()
   {
-    Game myGame = new Game();
-    Night.Framework.Run(myGame);
+    Night.Framework.Run(new Game());
   }
 }

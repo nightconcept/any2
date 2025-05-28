@@ -1,32 +1,36 @@
 
+**Status: In-Progress**
+
 **Epic 7: Sample Game & Integration Testing**
 
 **Goal:** Develop a simple platformer game using the "Night Engine." This sample game will serve as a comprehensive integration test, verifying that all core engine features (Window, Input, Graphics, Game Loop) function correctly and cohesively as defined in the PRD.
 
-- [ ] **Task 7.1:** Design Basic Platformer Game Mechanics for `Night.SampleGame`
-  - [ ] Define the player character: appearance (e.g., a simple colored rectangle or a basic sprite), size.
-  - [ ] Define player actions: move left, move right, jump.
-  - [ ] Define basic level elements: static platforms (rectangles) for the player to stand on and jump between.
-  - [ ] Define a simple objective or success state for the prototype (e.g., navigate to a specific point, or simply demonstrate stable movement and interaction).
+- [X] **Task 7.1:** Design Basic Platformer Game Mechanics for `Night.SampleGame`
+  - [x] Define the player character: appearance (e.g., a simple colored rectangle or a basic sprite), size.
+  - [x] Define player actions: move left, move right, jump.
+  - [x] Define basic level elements: static platforms (rectangles) for the player to stand on and jump between.
+  - [x] Define a simple objective or success state for the prototype (e.g., navigate to a specific point, or simply demonstrate stable movement and interaction).
   - **Verification:** A minimal design document or sketch outlining the platformer's mechanics, player abilities, and level structure is created.
 
-- [ ] **Task 7.2:** Implement Player Character in `Night.SampleGame`
-  - [ ] Create a `Player` class within the `Night.SampleGame` project.
-  - [ ] **Loading:** In a `Player.Load()` method (or equivalent called from `Game.Load()`), if using a sprite, load it using `Night.Graphics.NewImage()`. Initialize player position, size, and movement properties (e.g., speed, jump height, gravity).
-  - [ ] **Updating:** In a `Player.Update(double deltaTime)` method:
-    - [ ] Handle horizontal movement input using `Night.Keyboard.IsDown(Night.KeyCode.Left)` and `Night.Keyboard.IsDown(Night.KeyCode.Right)`.
-    - [ ] Implement jump logic (e.g., on `Night.Keyboard.IsDown(Night.KeyCode.Space)`), applying an upward velocity.
-    - [ ] Apply basic gravity to the player's vertical velocity.
-    - [ ] Update player position based on velocity and `deltaTime`.
-  - [ ] **Drawing:** In a `Player.Draw()` method, render the player (rectangle or sprite) at its current position using `Night.Graphics.Draw()`.
-  - **Verification:** The player character is displayed on the screen. It responds to left/right arrow key presses by moving horizontally. Pressing the jump key makes the player move upwards and then fall due to gravity.
+**Status: Review**
 
-- [ ] **Task 7.3:** Implement Basic Level (Platforms) in `Night.SampleGame`
-  - [ ] Define platform data (e.g., an array or list of `Night.Rectangle` structs for position and size).
-  - [ ] In `Game.Load()` or a `Level.Load()` method, initialize these platforms.
-  - [ ] In `Game.Update()` or `Player.Update()`, implement simple Axis-Aligned Bounding Box (AABB) collision detection between the player and the platforms.
-    - [ ] Resolve collisions by preventing the player from passing through platforms (e.g., stop downward movement when landing on top of a platform, block horizontal movement into the side of a platform).
-  - [ ] In `Game.Draw()` or a `Level.Draw()` method, render the platforms (e.g., as filled rectangles using a conceptual `Night.Graphics.DrawRectangle()` if added, or by drawing placeholder sprites for each). _Self-correction: The PRD doesn't specify `DrawRectangle`. For the prototype, platforms can be represented by loaded sprites or this might highlight a small graphics primitive need for the sample._
+- [X] **Task 7.2:** Implement Player Character in `Night.SampleGame`
+  - [X] Create a `Player` class within the `Night.SampleGame` project. (`src/Night.SampleGame/Player.cs`)
+  - [X] **Loading:** In a `Player.Load()` method (or equivalent called from `Game.Load()`), if using a sprite, load it using `Night.Graphics.NewImage()`. Initialize player position, size, and movement properties (e.g., speed, jump height, gravity). (Assumes `assets/images/player_sprite_blue_32x64.png` exists)
+  - [X] **Updating:** In a `Player.Update(double deltaTime)` method:
+    - [X] Handle horizontal movement input using `Night.Keyboard.IsDown(Night.KeyCode.Left)` and `Night.Keyboard.IsDown(Night.KeyCode.Right)`.
+    - [X] Implement jump logic (e.g., on `Night.Keyboard.IsDown(Night.KeyCode.Space)`), applying an upward velocity.
+    - [X] Apply basic gravity to the player's vertical velocity.
+    - [X] Update player position based on velocity and `deltaTime`. (Includes temporary floor collision)
+  - [X] **Drawing:** In a `Player.Draw()` method, render the player (rectangle or sprite) at its current position using `Night.Graphics.Draw()`.
+  - **Verification:** The player character is displayed on the screen. It responds to left/right arrow key presses by moving horizontally. Pressing the jump key makes the player move upwards and then fall due to gravity. (Requires `assets/images/player_sprite_blue_32x64.png` to be visible).
+**Status: In-Progress**
+- [X] **Task 7.3:** Implement Basic Level (Platforms) in `Night.SampleGame`
+  - [X] Define platform data (e.g., an array or list of `Night.Rectangle` structs for position and size).
+  - [X] In `Game.Load()` or a `Level.Load()` method, initialize these platforms.
+  - [X] In `Game.Update()` or `Player.Update()`, implement simple Axis-Aligned Bounding Box (AABB) collision detection between the player and the platforms.
+    - [X] Resolve collisions by preventing the player from passing through platforms (e.g., stop downward movement when landing on top of a platform, block horizontal movement into the side of a platform).
+  - [X] In `Game.Draw()` or a `Level.Draw()` method, render the platforms (e.g., as filled rectangles using a conceptual `Night.Graphics.DrawRectangle()` if added, or by drawing placeholder sprites for each). _Self-correction: The PRD doesn't specify `DrawRectangle`. For the prototype, platforms can be represented by loaded sprites or this might highlight a small graphics primitive need for the sample._
   - **Verification:** Platforms are rendered on the screen. The player character can land on top of platforms and is appropriately stopped by them. The player does not fall through platforms.
 
 - [ ] **Task 7.4:** Implement Main Game Logic in `Game.cs` (integrating `IGame`)
