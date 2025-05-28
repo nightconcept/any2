@@ -34,14 +34,24 @@
   - [X] In `Game.Draw()` or a `Level.Draw()` method, render the platforms (e.g., as filled rectangles using a conceptual `Night.Graphics.DrawRectangle()` if added, or by drawing placeholder sprites for each). _Self-correction: The PRD doesn't specify `DrawRectangle`. For the prototype, platforms can be represented by loaded sprites or this might highlight a small graphics primitive need for the sample._
   - **Verification:** Platforms are rendered on the screen. The player character can land on top of platforms and is appropriately stopped by them without jitter. The player does not fall through platforms.
 
-- [ ] **Task 7.4:** Implement Main Game Logic in `Game.cs` (integrating `IGame`)
-  - [ ] Ensure `Night.SampleGame.Game` class properly implements the `Night.IGame` interface (from Epic 6).
-  - [ ] **`Game.Load()`:** Initialize the player object, platform data/level objects, and load any other necessary assets.
-  - [ ] **`Game.Update(double deltaTime)`:** Call the `Player.Update(deltaTime)` method. Update any other game state logic (e.g., checking simple win/lose conditions if designed).
-  - [ ] **`Game.Draw()`:**
-    - [ ] Call `Night.Graphics.Clear(backgroundColor)` at the beginning.
-    - [ ] Call draw methods for platforms and the player, ensuring correct layering if relevant.
-  - **Verification:** The `Night.SampleGame` runs via `Night.Engine.Run(new Game())`. All game elements (player, platforms) are initialized, updated, and drawn correctly each frame, demonstrating the integrated use of `Night.Window`, `Night.Input`, `Night.Graphics`, and the `Night.Engine` game loop.
+- [X] **Task 7.4:** Implement Main Game Logic in `Program.cs` (integrating `IGame`)
+  - [X] Ensure `Night.SampleGame.Game` class properly implements the `Night.IGame` interface (from Epic 6). (Implemented within `Program.cs`)
+  - [X] **`Game.Load()`:** Initialize the player object, platform data/level objects, and load any other necessary assets. (Includes window setup, player load, platform data, and platform sprite loading)
+  - [X] **`Game.Update(double deltaTime)`:** Call the `Player.Update(deltaTime)` method. Update any other game state logic (e.g., checking simple win/lose conditions if designed). (Includes win condition check for reaching goal platform)
+  - [X] **`Game.Draw()`:**
+    - [X] Call `Night.Graphics.Clear(backgroundColor)` at the beginning.
+    - [X] Call draw methods for platforms and the player, ensuring correct layering if relevant.
+  - **Verification:** The `Night.SampleGame` runs via `Night.Framework.Run(new Game())`. All game elements (player, platforms) are initialized, updated, and drawn correctly each frame, demonstrating the integrated use of `Night.Window`, `Night.Input`, `Night.Graphics`, and the `Night.Engine` game loop. _Note: `Program.cs` uses `Night.Framework.Run` which aligns with PRD; epic mentions `Night.Engine.Run`._
+
+**Status: Review**
+
+**Log for Task 7.4 (2025-05-27):**
+- Confirmed `Game` class (within `Program.cs`) implements `IGame`.
+- `Game.Load()` now initializes player, platforms (including goal platform), loads platform sprite, and sets up window title/size.
+- `Game.Update()` calls `player.Update()` and includes a win condition check (console message on reaching goal platform).
+- `Game.Draw()` clears screen, draws platforms (using scaled sprite), and draws player.
+- `Game.KeyPressed()` handles Escape key for closing.
+- The `Game` class remains within `Program.cs` as per user clarification.
 
 - [ ] **Task 7.5:** End-to-End Feature Verification & Bug Fixing
   - [ ] Play through the `Night.SampleGame` platformer, systematically testing all implemented `Night` engine features:

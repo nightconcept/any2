@@ -87,11 +87,11 @@ namespace Night.SampleGame
 
       // 1. Handle Input & Apply Jump Impulse
       _velocityX = 0;
-      if (Night.Keyboard.IsDown(Night.KeyCode.Left))
+      if (Night.Keyboard.IsDown(Night.KeyCode.Left) || Night.Keyboard.IsDown(Night.KeyCode.A))
       {
         _velocityX = -HorizontalSpeed;
       }
-      if (Night.Keyboard.IsDown(Night.KeyCode.Right))
+      if (Night.Keyboard.IsDown(Night.KeyCode.Right) || Night.Keyboard.IsDown(Night.KeyCode.D))
       {
         _velocityX = HorizontalSpeed;
       }

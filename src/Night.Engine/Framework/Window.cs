@@ -138,6 +138,5 @@ public static class Window
       _isVideoInitialized = false;
     }
     _isWindowOpen = false;
-    Console.WriteLine("Night.Window: Shutdown complete.");
   }
 }

@@ -103,7 +103,7 @@ This section outlines the core modules and functionalities of **Night.Framework*
 |-- src/
     |-- Night.Engine/
     |   |-- Night.Engine.csproj
-    |   |-- Modules/
+    |   |-- Framework/
     |   |   |-- Window.cs
     |   |   |-- Graphics/
     |   |       |-- Graphics.cs
