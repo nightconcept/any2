@@ -100,6 +100,16 @@ public class Game : IGame
 
     // Night.Graphics.Present() is called by the FrameworkLoop after this Draw method.
   }
+
+  public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
+  {
+    Console.WriteLine($"SampleGame: KeyPressed - KeySymbol: {key}, Scancode: {scancode}, IsRepeat: {isRepeat}");
+    if (key == Night.KeySymbol.Escape) // Using 'key' (symbol) for the check
+    {
+      Console.WriteLine("SampleGame: Escape key pressed, closing window.");
+      Night.Window.Close(); // Request to close the window
+    }
+  }
 }
 
 public class Program

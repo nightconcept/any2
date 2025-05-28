@@ -15,12 +15,17 @@
     - [x] After the loop terminates, call appropriate SDL cleanup functions (e.g., destroy window, destroy renderer if not handled elsewhere, `SDL.SDL_QuitSubSystem(...)`, `SDL.SDL_Quit()`). (Verified: `Window.Shutdown()` and `SDL.Quit()` in `FrameworkLoop.cs`)
   - **Verification:** Calling `Night.Engine.Run()` with a simple `IGame` implementation initializes SDL, calls `Load()`, enters a loop, and then quits SDL. The `Night.SampleGame` can be launched using this. (Verified: `SampleGame/Program.cs` updated)
 
-- [ ] **Task 6.2:** Implement Event Polling within the Game Loop
-  - [ ] Inside the main loop, use SDL3-CS functions to poll for SDL events (e.g., `while (SDL.SDL_PollEvent(out SDL_Event ev) != 0) { ... }`).
-  - [ ] Handle `SDL_EVENT_QUIT`: If this event is received, set the internal flag that `Night.Window.IsOpen()` checks to `false` to terminate the game loop.
-  - [ ] (Optional for initial prototype, can be basic) If pursuing event-based input handlers from Feature 4:
-    - [ ] Based on `ev.type`, dispatch to relevant `gameLogic` methods (e.g., `gameLogic.KeyPressed(ev.key.keysym.sym, ...)`). This requires mapping SDL event data to `Night` API parameters.
-  - **Verification:** The game loop correctly polls for events. The application closes cleanly when the window's close button is clicked (which generates an `SDL_EVENT_QUIT`). If basic event handlers are implemented, they are triggered.
+- [x] **Task 6.2:** Implement Event Polling within the Game Loop `Status: Review`
+  - [x] Inside the main loop, use SDL3-CS functions to poll for SDL events (e.g., `while (SDL.SDL_PollEvent(out SDL_Event ev) != 0) { ... }`). (Verified: Implemented in `FrameworkLoop.cs`)
+  - [x] Handle `SDL_EVENT_QUIT`: If this event is received, set the internal flag that `Night.Window.IsOpen()` checks to `false` to terminate the game loop. (Verified: Implemented in `FrameworkLoop.cs` via `Window.Close()`)
+  - [x] **Task 6.2.1:** Implement `IGame.KeyPressed` callback `Status: Review`
+    - [x] Add `KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)` method to the `Night.IGame` interface. (Verified: Implemented in `Types.cs` with new `KeySymbol` enum)
+    - [x] In `FrameworkLoop.cs`, when an `SDL.EventType.KeyDown` event occurs, call `game.KeyPressed` with mapped parameters. (Verified: Implemented in `FrameworkLoop.cs` using `KeySymbol`)
+    - [x] Implement `KeyPressed` in `SampleGame` to demonstrate functionality (e.g., log key presses or quit on Escape). (Verified: Implemented in `SampleGame/Program.cs` using `KeySymbol`)
+    - **Verification:** Pressing keys in the `SampleGame` triggers the `KeyPressed` callback with correct parameters (correct `KeySymbol` and `KeyCode`), and the sample implementation (e.g., logging or quitting) works as expected.
+  - (Optional for initial prototype, can be basic) If pursuing event-based input handlers from Feature 4:
+    - [x] Based on `ev.type`, dispatch to relevant `gameLogic` methods (e.g., `gameLogic.KeyPressed(ev.key.keysym.sym, ...)`). This requires mapping SDL event data to `Night` API parameters. (Addressed by Task 6.2.1 with `KeySymbol`)
+  - **Verification:** The game loop correctly polls for events. The application closes cleanly when the window's close button is clicked (which generates an `SDL_EVENT_QUIT`). If basic event handlers are implemented, they are triggered. The `KeyPressed` callback is now a basic event handler with corrected key symbol reporting.
 
 - [ ] **Task 6.3:** Implement Delta Time Calculation and Pass to `Update`
   - [ ] Before the main loop, get initial timing values using SDL3-CS timing functions (e.g., `SDL.SDL_GetPerformanceCounter()` and `SDL.SDL_GetPerformanceFrequency()` for high-resolution timing, or `SDL.SDL_GetTicks()` for millisecond-based timing).

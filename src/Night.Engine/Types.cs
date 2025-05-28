@@ -5,6 +5,8 @@
 
 using System;
 
+using SDL3;
+
 namespace Night
 {
   /// <summary>
@@ -205,6 +207,128 @@ namespace Night
   }
 
   /// <summary>
+  /// Represents logical key symbols. Values correspond to SDL_Keycode.
+  /// </summary>
+  /// <remarks>
+  /// This enum maps to SDL_Keycode values, representing the symbol produced by a key press
+  /// under the current keyboard layout.
+  /// </remarks>
+  public enum KeySymbol : uint // Explicitly set underlying type to uint
+  {
+    Unknown = SDL.Keycode.Unknown,
+
+    // Letters (match SDL.Keycode values, which are ASCII for letters)
+    A = SDL.Keycode.A,
+    B = SDL.Keycode.B,
+    C = SDL.Keycode.C,
+    D = SDL.Keycode.D,
+    E = SDL.Keycode.E,
+    F = SDL.Keycode.F,
+    G = SDL.Keycode.G,
+    H = SDL.Keycode.H,
+    I = SDL.Keycode.I,
+    J = SDL.Keycode.J,
+    K = SDL.Keycode.K,
+    L = SDL.Keycode.L,
+    M = SDL.Keycode.M,
+    N = SDL.Keycode.N,
+    O = SDL.Keycode.O,
+    P = SDL.Keycode.P,
+    Q = SDL.Keycode.Q,
+    R = SDL.Keycode.R,
+    S = SDL.Keycode.S,
+    T = SDL.Keycode.T,
+    U = SDL.Keycode.U,
+    V = SDL.Keycode.V,
+    W = SDL.Keycode.W,
+    X = SDL.Keycode.X,
+    Y = SDL.Keycode.Y,
+    Z = SDL.Keycode.Z,
+
+    // Numbers (Top row - match SDL.Keycode values, which are ASCII for numbers)
+    Alpha0 = SDL.Keycode.Alpha0,
+    Alpha1 = SDL.Keycode.Alpha1,
+    Alpha2 = SDL.Keycode.Alpha2,
+    Alpha3 = SDL.Keycode.Alpha3,
+    Alpha4 = SDL.Keycode.Alpha4,
+    Alpha5 = SDL.Keycode.Alpha5,
+    Alpha6 = SDL.Keycode.Alpha6,
+    Alpha7 = SDL.Keycode.Alpha7,
+    Alpha8 = SDL.Keycode.Alpha8,
+    Alpha9 = SDL.Keycode.Alpha9,
+
+    // Common control keys
+    Return = SDL.Keycode.Return,
+    Escape = SDL.Keycode.Escape,
+    Backspace = SDL.Keycode.Backspace,
+    Tab = SDL.Keycode.Tab,
+    Space = SDL.Keycode.Space,
+
+    // Punctuation (example, more can be added)
+    Minus = SDL.Keycode.Minus,
+    Equals = SDL.Keycode.Equals,
+    Leftbracket = SDL.Keycode.LeftBracket, // Corrected PascalCase
+    Rightbracket = SDL.Keycode.RightBracket, // Corrected PascalCase
+    Backslash = SDL.Keycode.Backslash,
+    Semicolon = SDL.Keycode.Semicolon,
+    Apostrophe = SDL.Keycode.Apostrophe,
+    Grave = SDL.Keycode.Grave,
+    Comma = SDL.Keycode.Comma,
+    Period = SDL.Keycode.Period,
+    Slash = SDL.Keycode.Slash,
+
+    // Function keys
+    F1 = SDL.Keycode.F1,
+    F2 = SDL.Keycode.F2,
+    F3 = SDL.Keycode.F3,
+    F4 = SDL.Keycode.F4,
+    F5 = SDL.Keycode.F5,
+    F6 = SDL.Keycode.F6,
+    F7 = SDL.Keycode.F7,
+    F8 = SDL.Keycode.F8,
+    F9 = SDL.Keycode.F9,
+    F10 = SDL.Keycode.F10,
+    F11 = SDL.Keycode.F11,
+    F12 = SDL.Keycode.F12,
+
+    // Arrow keys
+    Right = SDL.Keycode.Right,
+    Left = SDL.Keycode.Left,
+    Down = SDL.Keycode.Down,
+    Up = SDL.Keycode.Up,
+
+    // Modifiers (Note: SDL.Keycode also has LCTRL, LSHIFT etc. These are distinct from Scancodes)
+    LCtrl = SDL.Keycode.LCtrl,
+    LShift = SDL.Keycode.LShift,
+    LAlt = SDL.Keycode.LAlt,
+    LGUI = SDL.Keycode.LGui, // Corrected to LGui (common SDL naming)
+    RCtrl = SDL.Keycode.RCtrl,
+    RShift = SDL.Keycode.RShift,
+    RAlt = SDL.Keycode.RAlt,
+    RGUI = SDL.Keycode.RGUI,
+
+    // Add more SDL.Keycode mappings as needed...
+    // For example:
+    // Capslock = SDL.Keycode.Capslock,
+    // Printscreen = SDL.Keycode.Printscreen,
+    // Scrolllock = SDL.Keycode.Scrolllock,
+    // Pause = SDL.Keycode.Pause,
+    // Insert = SDL.Keycode.Insert,
+    // Home = SDL.Keycode.Home,
+    // Pageup = SDL.Keycode.Pageup,
+    // Delete = SDL.Keycode.Delete,
+    // End = SDL.Keycode.End,
+    // Pagedown = SDL.Keycode.Pagedown,
+    // KpDivide = SDL.Keycode.KpDivide,
+    // KpMultiply = SDL.Keycode.KpMultiply,
+    // KpMinus = SDL.Keycode.KpMinus,
+    // KpPlus = SDL.Keycode.KpPlus,
+    // KpEnter = SDL.Keycode.KpEnter,
+    // Kp1 = SDL.Keycode.Kp1,
+    // ... and so on for keypad numbers
+  }
+
+  /// <summary>
   /// Represents mouse buttons. Values correspond to SDL_MouseButtonFlags/
   /// SDL3.SDL.Button* constants.
   /// (e.g., Left is 1, Middle is 2, etc.)
@@ -323,5 +447,13 @@ namespace Night
     /// Callback function used to draw on the screen every frame.
     /// </summary>
     void Draw();
+
+    /// <summary>
+    /// Callback function triggered when a key is pressed.
+    /// </summary>
+    /// <param name="key">The logical key symbol that was pressed.</param>
+    /// <param name="scancode">The physical key (scancode) that was pressed.</param>
+    /// <param name="isRepeat">True if this is a key repeat event, false otherwise.</param>
+    void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat);
   }
 }

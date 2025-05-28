@@ -80,12 +80,32 @@ namespace Night
           // Event Processing
           while (SDL.PollEvent(out SDL.Event e))
           {
-            if ((SDL.EventType)e.Type == SDL.EventType.Quit)
+            // Cast e.Type once to avoid repeated casting
+            var eventType = (SDL.EventType)e.Type;
+
+            if (eventType == SDL.EventType.Quit)
             {
               Window.Close(); // This will set Window.IsOpen() to false
             }
-            // TODO: Add other event handling (keyboard, mouse) for Task 6.2
-            // e.g., if (gameLogic is IKeyboardHandler keyboardHandler) { keyboardHandler.ProcessEvent(e); }
+            else if (eventType == SDL.EventType.KeyDown)
+            {
+              // The 'key' parameter for love.keypressed is the character of the pressed key (KeyConstant).
+              // SDL's e.key.keysym.sym is an SDL.Keycode, which represents the key symbol.
+              // The 'scancode' parameter for love.keypressed is the physical key (Scancode).
+              // SDL's e.key.keysym.scancode is an SDL.Scancode.
+              // Night.KeyCode is currently based on SDL.Scancode.
+              // For now, we will cast both sym and scancode to Night.KeyCode.
+              // Night.KeyCode is based on SDL.Scancode.
+              // e.Key.Key is SDL.Keycode (symbol).
+              // e.Key.Scancode is SDL.Scancode (physical).
+              // This mapping for 'key' might need refinement.
+              game.KeyPressed(
+                  (Night.KeySymbol)e.Key.Key,    // Cast SDL.Keycode to Night.KeySymbol
+                  (Night.KeyCode)e.Key.Scancode, // Cast SDL.Scancode to Night.KeyCode (Night.KeyCode is based on Scancode)
+                  e.Key.Repeat                 // This is already a bool
+              );
+            }
+            // TODO: Add other event handling (mouse, etc.) as per future tasks.
           }
 
           // If Window.Close() was called due to an event, IsOpen() will now be false,
