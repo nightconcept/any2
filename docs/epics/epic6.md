@@ -1,4 +1,4 @@
-**Epic 6: Game Loop Implementation**
+**Epic 6: Game Loop Implementation** `Status: In-Progress`
 
 **Goal:** Implement the `Night.Engine` class to manage the main game loop. This includes initializing and shutting down SDL, polling for events (especially quit events), calling the user-defined `Load`, `Update`, and `Draw` methods in the correct sequence, managing frame timing (delta time), and handling screen presentation.
 
@@ -33,14 +33,14 @@
   - [x] Call `gameLogic.Update(deltaTime)` method, passing the calculated delta time.
   - **Verification:** The `gameLogic.Update()` method is called each frame and receives a `deltaTime` value that reasonably reflects the actual time elapsed per frame. Frame rate can be roughly monitored (e.g., by logging FPS) for stability.
 
-- [ ] **Task 6.4:** Integrate `gameLogic.Draw()` and Screen Presentation
+- [x] **Task 6.4:** Integrate `gameLogic.Draw()` and Screen Presentation `Status: Review`
   - [ ] Inside the main loop, after `gameLogic.Update(deltaTime)`, call `gameLogic.Draw()`.
   - [ ] Immediately after `gameLogic.Draw()` completes, call the SDL function to present the renderer's back buffer to the window (e.g., `SDL.SDL_RenderPresent(rendererHandle)` using the renderer handle established in Epic 3/5).
   - **Verification:** The `gameLogic.Draw()` method is called each frame. Graphics drawn within this method (using `Night.Graphics` calls) are visible on the screen and update frame by frame.
 
-- [ ] **Task 6.5:** Basic Game Loop Error Handling and Robustness
-  - [ ] Wrap calls to user-provided `gameLogic` methods (`Load`, `Update`, `Draw`, event handlers) in `try-catch` blocks.
-  - [ ] If an exception occurs in user code, log the exception (e.g., `Console.WriteLine`) and decide on a strategy:
-    - For prototype: an unhandled exception in user code might gracefully terminate the engine loop and ensure SDL is shut down.
-  - [ ] Ensure SDL initialization and shutdown are robust (e.g., `SDL_Quit` is always called even if `Load` throws an error).
+- [x] **Task 6.5:** Basic Game Loop Error Handling and Robustness `Status: Review`
+  - [x] Wrap calls to user-provided `gameLogic` methods (`Load`, `Update`, `Draw`, event handlers) in `try-catch` blocks. (Verified: `Load` covered by main try-catch; `Update`, `Draw`, `KeyPressed` have specific try-catch blocks in `FrameworkLoop.cs`)
+  - [x] If an exception occurs in user code, log the exception (e.g., `Console.WriteLine`) and decide on a strategy: (Verified: Exceptions are logged, and `Window.Close()` is called to terminate loop gracefully for `Update`, `Draw`, `KeyPressed`. `Load` exceptions also lead to cleanup.)
+    - For prototype: an unhandled exception in user code might gracefully terminate the engine loop and ensure SDL is shut down. (Verified)
+  - [x] Ensure SDL initialization and shutdown are robust (e.g., `SDL_Quit` is always called even if `Load` throws an error). (Verified: Handled by the main `try-finally` block in `FrameworkLoop.cs`)
   - **Verification:** Unhandled exceptions within the `gameLogic` methods are caught by the `Night.Engine`, an error is logged, and the engine attempts to shut down SDL and exit cleanly rather than crashing without context.

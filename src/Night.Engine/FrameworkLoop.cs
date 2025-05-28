@@ -99,11 +99,19 @@ namespace Night
               // e.Key.Key is SDL.Keycode (symbol).
               // e.Key.Scancode is SDL.Scancode (physical).
               // This mapping for 'key' might need refinement.
-              game.KeyPressed(
-                  (Night.KeySymbol)e.Key.Key,    // Cast SDL.Keycode to Night.KeySymbol
-                  (Night.KeyCode)e.Key.Scancode, // Cast SDL.Scancode to Night.KeyCode (Night.KeyCode is based on Scancode)
-                  e.Key.Repeat                 // This is already a bool
-              );
+              try
+              {
+                game.KeyPressed(
+                    (Night.KeySymbol)e.Key.Key,    // Cast SDL.Keycode to Night.KeySymbol
+                    (Night.KeyCode)e.Key.Scancode, // Cast SDL.Scancode to Night.KeyCode (Night.KeyCode is based on Scancode)
+                    e.Key.Repeat                 // This is already a bool
+                );
+              }
+              catch (Exception exUser)
+              {
+                Console.WriteLine($"Night.Framework.Run: Error in game.KeyPressed: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
+                Window.Close(); // Signal loop termination
+              }
             }
             // TODO: Add other event handling (mouse, etc.) as per future tasks.
           }
@@ -126,8 +134,29 @@ namespace Night
             deltaTime = 0.0666;
           }
 
-          game.Update(deltaTime);
-          game.Draw();
+          try
+          {
+            game.Update(deltaTime);
+          }
+          catch (Exception exUser)
+          {
+            Console.WriteLine($"Night.Framework.Run: Error in game.Update: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
+            Window.Close(); // Signal loop termination
+            // Skip Draw and Present if Update failed and loop is closing
+            if (!Window.IsOpen()) continue;
+          }
+
+          try
+          {
+            game.Draw();
+          }
+          catch (Exception exUser)
+          {
+            Console.WriteLine($"Night.Framework.Run: Error in game.Draw: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
+            Window.Close(); // Signal loop termination
+            // Skip Present if Draw failed and loop is closing
+            if (!Window.IsOpen()) continue;
+          }
 
           try
           {
