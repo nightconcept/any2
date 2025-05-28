@@ -5,7 +5,7 @@ using Night;
 
 using SDL3;
 
-// Namespace for the public Framework API, consistent with Night.Window, Night.Graphics etc.
+// Namespace for the public Framework API.
 namespace Night
 {
   /// <summary>
@@ -29,7 +29,7 @@ namespace Night
     /// on the provided game logic.
     /// This method will initialize and shut down required SDL subsystems.
     /// </summary>
-    /// <param name="gameLogic">The game interface to run. Must implement <see cref="Night.IGame"/>.</param>
+    /// <param name="game">The game interface to run. Must implement <see cref="Night.IGame"/>.</param>
     public static void Run(IGame game)
     {
       if (game == null)
@@ -46,21 +46,16 @@ namespace Night
 
       try
       {
-        // Initialize SDL
-        _initializedSubsystems = SDL.InitFlags.Video | SDL.InitFlags.Events; // Removed Timer for now
-        if (!SDL.Init(_initializedSubsystems)) // SDL.Init returns bool in SDL3-CS
+        _initializedSubsystems = SDL.InitFlags.Video | SDL.InitFlags.Events;
+        if (!SDL.Init(_initializedSubsystems))
         {
           Console.WriteLine($"Night.Framework.Run: SDL_Init failed: {SDL.GetError()}");
           return;
         }
         _isSdlInitialized = true;
         IsInputInitialized = (_initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
-        Console.WriteLine("Night.Framework.Run: SDL initialized successfully with Video and Events subsystems.");
 
-        // Load game content. This is where gameLogic should call Night.Window.SetMode()
-        Console.WriteLine("Night.Framework.Run: Calling gameLogic.Load().");
         game.Load();
-        Console.WriteLine("Night.Framework.Run: gameLogic.Load() completed.");
 
         // Now, ensure a window is open before proceeding.
         if (!Window.IsOpen())
@@ -172,7 +167,6 @@ namespace Night
             // Consider breaking the loop or handling more gracefully
           }
         }
-        Console.WriteLine("Night.Framework.Run: Game loop exited.");
       }
       catch (Exception ex)
       {

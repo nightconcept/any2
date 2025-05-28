@@ -1,8 +1,8 @@
 using System;
-using System.IO; // For Path.Combine if used for assets
-using System.Collections.Generic; // For List
+using System.IO;
+using System.Collections.Generic;
 
-using Night; // For Night.Color, Night.KeyCode, Night.Sprite, Night.Graphics, Night.Keyboard
+using Night;
 
 namespace Night.SampleGame
 {
@@ -67,11 +67,7 @@ namespace Night.SampleGame
       }
       else
       {
-        // If the loaded sprite is not already 32x64, the Draw call will scale it.
-        // However, the design implies the player *is* 32x64.
-        // If _playerSprite.Width and _playerSprite.Height are different, scaling in Draw will be needed.
-        // For now, assume player_sprite_blue_32x64.png is indeed 32x64.
-        Console.WriteLine($"Player sprite '{imageFullPath}' loaded successfully.");
+
       }
       _isGrounded = false; // Player starts potentially in the air and falls to ground.
     }
