@@ -6,19 +6,19 @@ This project incorporates copyrighted material from the following third-party pr
 
 ### SDL
 
-- Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org> and contributors
+- Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 - License: zlib
 - Website: [https://www.libsdl.org/](https://www.libsdl.org/)
 
 ### SDL_image (SDL Image Library)
 
-- Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org> and contributors
+- Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 - License: zlib
 - Website: [https://github.com/libsdl-org/SDL_mixer](https://github.com/libsdl-org/SDL_mixer)
 
 ### SDL_mixer (SDL Audio Mixer Library)
 
-- Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org> and contributors
+- Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 - License: zlib
 - Website: [https://github.com/libsdl-org/SDL_mixer](https://github.com/libsdl-org/SDL_mixer)
 
@@ -32,6 +32,12 @@ This project incorporates copyrighted material from the following third-party pr
   - HarfBuzz licensed under the [MIT license](https://github.com/harfbuzz/harfbuzz/blob/main/COPYING)
   - PlutoSVG, licensed under the [MIT license](https://github.com/sammycage/plutosvg/blob/master/LICENSE)
   - PlutoVG, licensed under the [MIT license](https://github.com/sammycage/plutovg/blob/master/LICENSE)
+
+### SDL3# (SDL3 C# Bindings)
+
+- Copyright (C) 2024-2025 Eduard Gushchin <eduardgushchin@yandex.ru>
+- License: zlib
+- Website: [https://github.com/edwardgushchin/SDL3-CS](https://github.com/edwardgushchin/SDL3-CS)
 
 ## License Text
 

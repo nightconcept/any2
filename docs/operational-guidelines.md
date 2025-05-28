@@ -1,6 +1,6 @@
 # Operational Guidelines
 
-The "Night" engine project will adhere to the **Google C# Style Guide**. Key aspects of this guide, supplemented by project-specific interpretations, are outlined below. All developers are expected to familiarize themselves with the full guide.
+The "Night" engine project will ALWAYS adhere to the **Google C# Style Guide**. Key aspects of this guide, supplemented by project-specific interpretations, are outlined below.
 
 - **Formatting & Style:**
   - **Indentation:** 2 spaces, no tabs.

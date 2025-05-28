@@ -2,21 +2,29 @@
 
 A C# game engine built on top of SDL3.
 
-This project aims to provide a simple, Love2D-inspired API for C# developers to create games and multimedia applications using the power of SDL3.
+This project aims to provide a "batteries-included," in code editor experience to game development. A near-parity Love2D-inspired API for C# developers serves as the framework base. On top of this framework, there is an (optional) engine that will provide opinionated solutions for the engine so game designers can focus on building games.
 
-## Project Structure
+This project also intends to be AI friendly so that non-programmer game designers can build games faster.
 
-- `/Night.Engine`: The core engine library.
-- `/Night.SampleGame`: A sample game demonstrating engine features.
-- `/docs`: Project documentation (PRD, tasks, etc.).
-- `/scripts`: Utility scripts (e.g., for fetching SDL3).
+## Features
 
-## Getting Started
+### Project
+- [ ] Near-parity Love2D-inspired API
+- [ ] LLM friendly documentation automagically generated
+- [ ] Game samples
 
-(Instructions to be added once the engine is further developed)
-## macOS Development Notes
+### Engine-Specific Features
+- [ ] Manager system (Assets, Scenes, Joystick, etc.)
+- [ ] ECS
 
-### VS Code and `mise` for .NET SDK Versioning
+## Getting Started (Development)
+
+1. Ensure [mise](https://mise.jdx.dev/) is installed.
+2. Clone repository
+
+### macOS Development Notes
+
+#### VS Code and `mise` for .NET SDK Versioning
 
 If you are using `mise` to manage your .NET SDK versions on macOS, you might encounter issues where VS Code (when launched via its `.app` bundle, e.g., from Finder, Spotlight, or Raycast) does not correctly pick up the `mise`-activated .NET SDK. This can lead to:
 - Linter errors complaining about incorrect .NET versions or missing fundamental types.
@@ -53,3 +61,7 @@ To ensure VS Code launches with the correct `mise`-managed environment, you can 
 3.  **Configure your launcher** (e.g., Raycast, Alfred, or even a custom Dock icon) to execute this script instead of `Visual Studio Code.app` directly.
 
 This ensures that VS Code and its extensions (like the C# Dev Kit) inherit the correct PATH and use the .NET SDK version specified by `mise` for your project.
+
+## License
+
+This project is licensed under the zlib License. See [LICENSE](LICENSE) for details. Third-party library licences can be found in [NOTICE](docs/NOTICE.md).

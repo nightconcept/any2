@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 using Night;
@@ -23,6 +24,60 @@ namespace Night
     /// </summary>
     public static bool IsInputInitialized { get; private set; } = false;
 
+    private static string GetFormattedPlatformString()
+    {
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+      {
+        try
+        {
+          string macOSVersion = string.Empty;
+          string darwinVersion = string.Empty;
+
+          // Get macOS version
+          ProcessStartInfo swVersPsi = new ProcessStartInfo
+          {
+            FileName = "sw_vers",
+            Arguments = "-productVersion",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+          };
+          using (Process swVersProcess = Process.Start(swVersPsi)!)
+          {
+            macOSVersion = swVersProcess.StandardOutput.ReadToEnd().Trim();
+            swVersProcess.WaitForExit();
+          }
+
+          // Get Darwin kernel version
+          ProcessStartInfo unamePsi = new ProcessStartInfo
+          {
+            FileName = "uname",
+            Arguments = "-r",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+          };
+          using (Process unameProcess = Process.Start(unamePsi)!)
+          {
+            darwinVersion = unameProcess.StandardOutput.ReadToEnd().Trim();
+            unameProcess.WaitForExit();
+          }
+
+          if (!string.IsNullOrEmpty(macOSVersion) && !string.IsNullOrEmpty(darwinVersion))
+          {
+            return $"Platform: macOS {macOSVersion} (Darwin {darwinVersion})";
+          }
+        }
+        catch (Exception ex)
+        {
+          // Log the exception or handle it as needed, then fall back.
+          Console.WriteLine($"Night.Framework.Run: Could not retrieve detailed macOS version info: {ex.Message}");
+        }
+      }
+      // Fallback for non-macOS platforms or if macOS version retrieval fails
+      return $"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})";
+    }
+
     /// <summary>
     /// Runs the game instance.
     /// The game loop will internally call Load, Update, and Draw methods
@@ -41,7 +96,7 @@ namespace Night
       string sdlVersionString = NightSDL.GetVersion();
       Console.WriteLine($"Night Engine: v0.0.1");
       Console.WriteLine($"SDL: v{sdlVersionString}");
-      Console.WriteLine($"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})");
+      Console.WriteLine(GetFormattedPlatformString());
       Console.WriteLine($"Framework: {RuntimeInformation.FrameworkDescription}");
 
       try
@@ -61,7 +116,6 @@ namespace Night
         if (!Window.IsOpen())
         {
           Console.WriteLine("Night.Framework.Run: Window is not open after gameLogic.Load(). Ensure Night.Window.SetMode() was called successfully within Load().");
-          // SDL was initialized, so it needs to be quit.
           CleanUpSDL();
           return;
         }
@@ -75,7 +129,6 @@ namespace Night
           // Event Processing
           while (SDL.PollEvent(out SDL.Event e))
           {
-            // Cast e.Type once to avoid repeated casting
             var eventType = (SDL.EventType)e.Type;
 
             if (eventType == SDL.EventType.Quit)
@@ -84,21 +137,12 @@ namespace Night
             }
             else if (eventType == SDL.EventType.KeyDown)
             {
-              // The 'key' parameter for love.keypressed is the character of the pressed key (KeyConstant).
-              // SDL's e.key.keysym.sym is an SDL.Keycode, which represents the key symbol.
-              // The 'scancode' parameter for love.keypressed is the physical key (Scancode).
-              // SDL's e.key.keysym.scancode is an SDL.Scancode.
-              // Night.KeyCode is currently based on SDL.Scancode.
-              // For now, we will cast both sym and scancode to Night.KeyCode.
-              // Night.KeyCode is based on SDL.Scancode.
-              // e.Key.Key is SDL.Keycode (symbol).
-              // e.Key.Scancode is SDL.Scancode (physical).
-              // This mapping for 'key' might need refinement.
               try
               {
+                // TODO: Rename these to match love2d
                 game.KeyPressed(
-                    (Night.KeySymbol)e.Key.Key,    // Cast SDL.Keycode to Night.KeySymbol
-                    (Night.KeyCode)e.Key.Scancode, // Cast SDL.Scancode to Night.KeyCode (Night.KeyCode is based on Scancode)
+                    (Night.KeySymbol)e.Key.Key,
+                    (Night.KeyCode)e.Key.Scancode,
                     e.Key.Repeat                 // This is already a bool
                 );
               }

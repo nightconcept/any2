@@ -1,8 +1,3 @@
-// Copyright (c) 2025 Night Engine Contributors
-// Distributed under the MIT license. See LICENSE for details.
-
-// Night Engine Data Structures
-
 using System;
 
 using SDL3;
