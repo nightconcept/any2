@@ -171,7 +171,7 @@ namespace Night
 
             if (eventType == SDL.EventType.Quit)
             {
-              Window.Close(); // This will set Window.IsOpen() to false
+              Window.Close();
             }
             else if (eventType == SDL.EventType.KeyDown)
             {
@@ -179,9 +179,9 @@ namespace Night
               {
                 // TODO: Rename these to match love2d
                 game.KeyPressed(
-                    (KeySymbol)e.Key.Key, // Changed
-                    (KeyCode)e.Key.Scancode, // Changed
-                    e.Key.Repeat                 // This is already a bool
+                    (KeySymbol)e.Key.Key,
+                    (KeyCode)e.Key.Scancode,
+                    e.Key.Repeat
                 );
               }
               catch (Exception exUser)

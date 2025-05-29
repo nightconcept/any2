@@ -61,27 +61,23 @@
   - **Acceptance Criteria:** Rectangles, circles, and lines can be drawn with specified colors and modes. Sample game showcases this.
   - **Status:** Review
 
-- [ ] **Task 10.3: Implement `Night.Timer` Module**
-:start_line:65
-
--------
-
-- **Description:** Create the `Night.Timer` static class.
-- [x] Implement `GetFPS()` and `GetTime()` (time since game start in seconds). Refer to `docs/love2d-api/modules/timer.md`.
-- [x] `GetDeltaTime()` is already available implicitly via `IGame.Update()`, but should be renamed to `GetDelta()`. (Implemented as `Night.Timer.GetDelta()`)
-- [x] Implement `GetAverageDelta()`.
-- [x] Implement `Sleep()` to pause the current thread for the specified amount of time. This function causes the entire thread to pause for the duration of the sleep. Graphics will not draw, input events will not trigger, code will not run, and the window will be unresponsive if you use this as "wait()" in the main thread.
-- [x] Implement `Step()` to measures the time between two frames.
-- **Acceptance Criteria:** `Night.Timer.GetFPS()` returns current FPS. `Night.Timer.GetTime()` returns elapsed game time. Sample game can display these values.
-- **Status:** Done
+- [x] **Task 10.3: Implement `Night.Timer` Module**
+  - **Description:** Create the `Night.Timer` static class.
+  - [x] Implement `GetFPS()` and `GetTime()` (time since game start in seconds). Refer to `docs/love2d-api/modules/timer.md`.
+  - [x] `GetDeltaTime()` is already available implicitly via `IGame.Update()`, but should be renamed to `GetDelta()`. (Implemented as `Night.Timer.GetDelta()`)
+  - [x] Implement `GetAverageDelta()`.
+  - [x] Implement `Sleep()` to pause the current thread for the specified amount of time. This function causes the entire thread to pause for the duration of the sleep. Graphics will not draw, input events will not trigger, code will not run, and the window will be unresponsive if you use this as "wait()" in the main thread.
+  - [x] Implement `Step()` to measures the time between two frames.
+  - **Acceptance Criteria:** `Night.Timer.GetFPS()` returns current FPS. `Night.Timer.GetTime()` returns elapsed game time. Sample game can display these values.
+  - **Status:** Done
 
 - [ ] **Task 10.4: Implement Remaining Input Event Callbacks**
   - **Description:** Add remaining input event callbacks to handle keyboard and mouse interactions.
   - **Implementation:**
     - [ ] Add to `IGame` interface:
       - [ ] `KeyReleased(KeySymbol key, KeyCode scancode)`
-      - [ ] `MousePressed(int x, int y, MouseButton button, int presses)`
-      - [ ] `MouseReleased(int x, int y, MouseButton button)`
+      - [ ] `MousePressed(int x, int y, MouseButton button, bool istouch, int presses)`. Stub istouch for now as a TODO.
+      - [ ] `MouseReleased(int x, int y, MouseButton button,bool istouch, int presses)`. Stub istouch for now as a TODO.`
     - [ ] Update `FrameworkLoop.cs` to handle and dispatch:
       - [ ] `SDL.EventType.KeyUp` events
       - [ ] `SDL.EventType.MouseButtonDown` events
