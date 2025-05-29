@@ -339,6 +339,21 @@ namespace Night
   }
 
   /// <summary>
+  /// Specifies whether a shape should be drawn filled or as an outline.
+  /// </summary>
+  public enum DrawMode
+  {
+    /// <summary>
+    /// Draw the shape filled.
+    /// </summary>
+    Fill,
+
+    /// <summary>
+    /// Draw the shape as an outline.
+    /// </summary>
+    Line
+  }
+  /// <summary>
   /// Represents a color with Red, Green, Blue, and Alpha components.
   /// </summary>
   public struct Color
@@ -418,6 +433,20 @@ namespace Night
       Texture = texture;
       Width = width;
       Height = height;
+    }
+  }
+  /// <summary>
+  /// Represents a 2D point with floating-point coordinates.
+  /// </summary>
+  public struct PointF
+  {
+    public float X;
+    public float Y;
+
+    public PointF(float x, float y)
+    {
+      X = x;
+      Y = y;
     }
   }
 

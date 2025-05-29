@@ -45,6 +45,42 @@ public class Game : IGame
     _platforms.Add(new Night.Rectangle(450, 300, 100, 30)); // Platform 3
     _goalPlatform = new Night.Rectangle(600, 200, 100, 30); // Platform 4 (Goal)
     _platforms.Add(_goalPlatform);
+
+    // Demonstrate Night.Filesystem
+    string sampleFilePathRelative = Path.Combine("assets", "data", "sample.txt");
+    string sampleFilePathFull = Path.Combine(baseDirectory, sampleFilePathRelative);
+
+    Console.WriteLine($"\n--- Night.Filesystem Demo ---");
+    Console.WriteLine($"Checking path: {sampleFilePathFull}");
+
+    bool exists = Night.Filesystem.Exists(sampleFilePathFull);
+    Console.WriteLine($"Night.Filesystem.Exists: {exists}");
+
+    if (exists)
+    {
+      bool isFile = Night.Filesystem.IsFile(sampleFilePathFull);
+      Console.WriteLine($"Night.Filesystem.IsFile: {isFile}");
+
+      bool isDirectory = Night.Filesystem.IsDirectory(sampleFilePathFull);
+      Console.WriteLine($"Night.Filesystem.IsDirectory: {isDirectory}");
+
+      if (isFile)
+      {
+        try
+        {
+          string content = Night.Filesystem.ReadText(sampleFilePathFull);
+          Console.WriteLine($"Night.Filesystem.ReadText content:\n{content}");
+
+          byte[] bytes = Night.Filesystem.ReadBytes(sampleFilePathFull);
+          Console.WriteLine($"Night.Filesystem.ReadBytes length: {bytes.Length} bytes");
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine($"Error reading file with Night.Filesystem: {e.Message}");
+        }
+      }
+    }
+    Console.WriteLine($"--- End Night.Filesystem Demo ---\n");
   }
 
   // Helper for collision detection (AABB)
@@ -98,6 +134,63 @@ public class Game : IGame
     }
 
     _player.Draw();
+    // --- Graphics Shape Drawing Demonstration ---
+    // Rectangle Demo
+    Night.Graphics.SetColor(Night.Color.Red);
+    Night.Graphics.Rectangle(Night.DrawMode.Fill, 50, 50, 100, 50); // Filled Red Rectangle
+    Night.Graphics.SetColor(Night.Color.Black);
+    Night.Graphics.Rectangle(Night.DrawMode.Line, 50, 50, 100, 50); // Black outline for Red Rectangle
+
+    Night.Graphics.SetColor(0, 0, 255, 128); // Semi-transparent Blue
+    Night.Graphics.Rectangle(Night.DrawMode.Line, 160, 50, 80, 60); // Outlined Blue Rectangle
+
+    // Circle Demo
+    Night.Graphics.SetColor(Night.Color.Green);
+    Night.Graphics.Circle(Night.DrawMode.Fill, 300, 80, 30); // Filled Green Circle
+    Night.Graphics.SetColor(Night.Color.Black);
+    Night.Graphics.Circle(Night.DrawMode.Line, 300, 80, 30, 24); // Black outline, 24 segments
+
+    Night.Graphics.SetColor(Night.Color.Yellow);
+    Night.Graphics.Circle(Night.DrawMode.Line, 400, 80, 25, 6); // 6-segment "circle" (hexagon) outline
+
+    // Line Demo
+    Night.Graphics.SetColor(Night.Color.Magenta);
+    Night.Graphics.Line(50, 120, 250, 150); // Single Magenta Line
+
+    Night.PointF[] linePoints = new Night.PointF[]
+    {
+      new Night.PointF(280, 120),
+      new Night.PointF(320, 160),
+      new Night.PointF(360, 120),
+      new Night.PointF(400, 160),
+      new Night.PointF(440, 120)
+    };
+    Night.Graphics.SetColor(Night.Color.Cyan);
+    Night.Graphics.Line(Night.DrawMode.Line, linePoints); // Polyline in Cyan
+
+    // Polygon Demo
+    Night.PointF[] triangleVertices = new Night.PointF[]
+    {
+      new Night.PointF(500, 50),
+      new Night.PointF(550, 100),
+      new Night.PointF(450, 100)
+    };
+    Night.Graphics.SetColor(new Night.Color(255, 165, 0)); // Orange
+    Night.Graphics.Polygon(Night.DrawMode.Fill, triangleVertices); // Filled Orange Triangle
+    Night.Graphics.SetColor(Night.Color.Black);
+    Night.Graphics.Polygon(Night.DrawMode.Line, triangleVertices); // Black outline for Triangle
+
+    Night.PointF[] pentagonVertices = new Night.PointF[]
+    {
+        new Night.PointF(600, 80),
+        new Night.PointF(630, 60),
+        new Night.PointF(650, 90),
+        new Night.PointF(620, 110),
+        new Night.PointF(580, 100)
+    };
+    Night.Graphics.SetColor(new Night.Color(75, 0, 130)); // Indigo
+    Night.Graphics.Polygon(Night.DrawMode.Line, pentagonVertices); // Outlined Indigo Pentagon
+    // --- End Graphics Shape Drawing Demonstration ---
     // Player and Level drawing logic will go here in later tasks.
   }
 

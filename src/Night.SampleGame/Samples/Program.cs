@@ -108,7 +108,7 @@ public class Platformer : IGame
 
 public class PlatformerGame
 {
-  public static void Main()
+  public static void PlatformerGameMain()
   {
     Night.Framework.Run(new Platformer());
   }
