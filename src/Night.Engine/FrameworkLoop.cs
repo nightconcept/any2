@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 using Night;
+using Night.Configuration; // Added for configuration management
 
 using SDL3;
 
@@ -102,6 +103,9 @@ namespace Night
         return;
       }
 
+      ConfigurationManager.LoadConfig();
+      var windowConfig = ConfigurationManager.CurrentConfig.Window;
+
       string sdlVersionString = NightSDL.GetVersion();
       Console.WriteLine($"Night Engine: v0.0.1");
       Console.WriteLine($"SDL: v{sdlVersionString}");
@@ -119,32 +123,77 @@ namespace Night
         _isSdlInitialized = true;
         IsInputInitialized = (_initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
 
+        // Setup initial window based on configuration BEFORE game.Load()
+        Console.WriteLine("Night.Framework.Run: Initializing window with config/default settings before game.Load().");
+        SDL.WindowFlags sdlFlags = (SDL.WindowFlags)0;
+        if (windowConfig.Resizable) sdlFlags |= SDL.WindowFlags.Resizable;
+        if (windowConfig.Borderless) sdlFlags |= SDL.WindowFlags.Borderless;
+        if (windowConfig.HighDPI) sdlFlags |= SDL.WindowFlags.HighPixelDensity;
+
+        bool modeSet = Window.SetMode(windowConfig.Width, windowConfig.Height, sdlFlags);
+        if (!modeSet)
+        {
+          Console.WriteLine($"Night.Framework.Run: Failed to set initial window mode from configuration: {SDL.GetError()}");
+          CleanUpSDL();
+          return;
+        }
+
+        Window.SetTitle(windowConfig.Title);
+
+        if (windowConfig.Fullscreen)
+        {
+          FullscreenType fsType = windowConfig.FullscreenType.ToLowerInvariant() == "exclusive"
+                                    ? FullscreenType.Exclusive
+                                    : FullscreenType.Desktop;
+          if (!Window.SetFullscreen(true, fsType))
+          {
+            Console.WriteLine($"Night.Framework.Run: Failed to set initial fullscreen mode from configuration: {SDL.GetError()}");
+          }
+        }
+
+        if (Window.RendererPtr != nint.Zero)
+        {
+          if (!SDL.SetRenderVSync(Window.RendererPtr, windowConfig.VSync))
+          {
+            Console.WriteLine($"Night.Framework.Run: Failed to set initial VSync mode from configuration: {SDL.GetError()}");
+          }
+        }
+
+        if (windowConfig.X.HasValue && windowConfig.Y.HasValue && Window.Handle != nint.Zero)
+        {
+          SDL.SetWindowPosition(Window.Handle, windowConfig.X.Value, windowConfig.Y.Value);
+        }
+        // End of initial window setup
+
         try
         {
-          game.Load();
+          game.Load(); // game.Load() can now use Graphics.NewImage(), and can also call Window.SetMode again to override.
         }
         catch (Exception e)
         {
           HandleGameException(e, game);
           if (_inErrorState)
           {
-            // If DefaultErrorHandler entered its loop, we might not want to proceed further here
-            // or it might have already exited.
-            // For now, assume if HandleGameException (and default handler) ran, we cleanup and exit.
             CleanUpSDLAndWindow();
             return;
           }
         }
 
-        // Now, ensure a window is open before proceeding.
+        // After game.Load(), check if window is still open. 
+        // If game.Load() called Window.Close() or failed to maintain a window, we should not continue.
         if (!Window.IsOpen())
         {
-          Console.WriteLine("Night.Framework.Run: Window is not open after gameLogic.Load(). Ensure Night.Window.SetMode() was called successfully within Load().");
-          CleanUpSDL();
+          Console.WriteLine("Night.Framework.Run: Window is not open after game.Load(). Exiting.");
+          CleanUpSDLAndWindow(); // Ensure cleanup if window was closed by game.Load()
           return;
         }
+        // If game.Load() *did* change window settings (e.g. VSync via a new SetMode call),
+        // we don't re-apply config VSync here unless we have a way to know it wasn't touched by game.
+        // The current Window.SetMode creates a new renderer, so VSync would be reset anyway if game called SetMode.
+        // So, if game called SetMode, it's responsible for its own VSync if it differs from config default for new renderer.
+        // If game didn't call SetMode, our initial VSync setting stands.
 
-        Night.Timer.Initialize(); // Initialize Timer performance frequency and last step time
+        Night.Timer.Initialize();
 
         _frameCount = 0;
         _fpsTimeAccumulator = 0.0;
@@ -256,49 +305,49 @@ namespace Night
             // TODO: Add other event handling (mouse, etc.) as per future tasks.
           }
 
-          // If Window.Close() was called due to an event or error, IsOpen() will now be false,
-          // and the outer loop should terminate.
-          if (!Window.IsOpen() || _inErrorState)
+          if (_inErrorState) // Check if error occurred during event processing
           {
+            // Error handler (Default or custom) should have run.
+            // Default handler enters its own loop or prepares for exit.
+            // If it was a custom handler, it might have cleared _inErrorState or decided to continue.
+            // If _inErrorState is still true, we break the main loop.
             break;
           }
 
-          try
+          // Update
+          if (!_inErrorState) // Do not update if an error has occurred and is being handled
           {
-            game.Update((float)deltaTime);
+            try
+            {
+              game.Update((float)deltaTime);
+            }
+            catch (Exception exUser)
+            {
+              HandleGameException(exUser, game);
+              if (_inErrorState) break; // Exit main loop if error sets state
+            }
           }
-          catch (Exception exUser)
-          {
-            HandleGameException(exUser, game);
-            if (_inErrorState) break; // Exit loop if error handler took over
-          }
-          if (!Window.IsOpen() || _inErrorState) continue;
 
+          // Draw
+          if (!_inErrorState) // Do not draw if an error has occurred and is being handled
+          {
+            try
+            {
+              // Graphics.BeginFrame() / Clear etc. should be called by game.Draw() or a higher level abstraction.
+              // For now, FrameworkLoop does not manage the render target clearing directly.
+              // It's assumed game.Draw() handles everything from clear to present.
+              game.Draw();
 
-          try
-          {
-            game.Draw();
-          }
-          catch (Exception exUser)
-          {
-            HandleGameException(exUser, game);
-            if (_inErrorState) break; // Exit loop if error handler took over
-          }
-          if (!Window.IsOpen() || _inErrorState) continue;
-
-
-          try
-          {
-            Graphics.Present();
-          }
-          catch (NotImplementedException)
-          {
-            // Silently ignore if Graphics.Present is not yet implemented for now.
-          }
-          catch (Exception ex)
-          {
-            Console.WriteLine($"Error during Graphics.Present(): {ex.Message}");
-            // Consider breaking the loop or handling more gracefully
+              // Present the drawn frame to the screen
+              Night.Graphics.Present(); 
+            }
+            catch (Exception exUser)
+            {
+              HandleGameException(exUser, game);
+              // If Draw fails, we typically still want to try and finish the frame/loop iteration
+              // unless _inErrorState is set by the handler to signal a desire to stop.
+              if (_inErrorState) break;
+            }
           }
         }
       }

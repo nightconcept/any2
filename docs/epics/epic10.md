@@ -256,11 +256,27 @@ end
 - **Status:** Done
 
 - [ ] **Task 10.7: Basic Game Configuration File Support**
-  - **Description:** Implement functionality to load basic game settings from a configuration file (e.g., `config.json` or `config.ini`) at startup.
+  - **Description:** Implement functionality to load basic game settings from a configuration file (e.g., `config.json`) at startup.
   - Focus on settings like default window width, height, title, vsync toggle.
   - `Night.Framework.Run` or `IGame.Load` could access these.
-  - **Acceptance Criteria:** The sample game can have its initial window settings overridden by a `config.json` file.
-  - **Status:** To Do
+  - **Implementation:**
+    - [x] Create `Night.Configuration.GameConfig` class with nested `WindowConfig`, `AudioConfig`, `ModulesConfig` to define configuration structure and defaults. (`src/Night.Engine/Framework/Configuration/GameConfig.cs`)
+    - [x] Create `Night.Configuration.ConfigurationManager` static class to load `config.json` and provide access to `GameConfig`. (`src/Night.Engine/Framework/Configuration/ConfigurationManager.cs`)
+    - [x] Modify `Night.FrameworkLoop.Run()` to call `ConfigurationManager.LoadConfig()` before `game.Load()`.
+    - [x] Modify `Night.FrameworkLoop.Run()` to initialize the window using `ConfigurationManager.CurrentConfig.Window` settings if `game.Load()` does not create a window. This includes:
+      - Window dimensions (width, height)
+      - Window title
+      - Window flags (Resizable, Borderless, HighDPI)
+      - Fullscreen mode (Fullscreen, FullscreenType)
+      - VSync
+      - Initial window position (X, Y)
+    - [x] Update `Night.SampleGame` to demonstrate overriding initial window settings via `config.json`.
+    - [ ] TODO: Add handling for `t.window.icon` (requires `Night.Window.SetIcon` to be implemented first, which is out of scope for 0.1.0 according to Task 10.10 notes, but config option should exist).
+    - [ ] TODO: Add console message for `t.console = true` on Windows (actual console attachment is a larger task).
+    - [ ] TODO: Consider `t.identity` and `t.appendidentity` for `Night.Filesystem` initialization.
+    - [ ] TODO: Implement logic for `t.modules.*` flags to actually enable/disable modules (currently placeholder flags).
+  - **Acceptance Criteria:** The engine loads `config.json`. If `game.Load()` doesn't open a window, the engine uses `config.json` values (or defaults) for window width, height, title, resizable, borderless, fullscreen, fullscreen type, VSync, and initial position. The sample game can have its initial window settings overridden by a `config.json` file (once sample game is updated).
+  - **Status:** In-Progress
 
 - [ ] **Task 10.8: Setup `docfx` Documentation Generation**
   - **Description:** Integrate `docfx` into the project. Configure it to generate API documentation from C# XML comments for `Night.Engine`. Setup a GitHub Actions workflow to build and deploy this documentation to GitHub Pages.
@@ -280,7 +296,7 @@ end
 - [ ] **Task 10.11: Establish Basic CI Workflow**
   - **Description:** Review deactivated CI workflows. Create a new, active GitHub Actions workflow that, at a minimum, builds `Night.Engine` and `Night.SampleGame` on push/PR to main branch for Windows, Linux, and macOS. Run any automated tests established in Task 10.9.
   - **Acceptance Criteria:** CI workflow successfully builds and (if applicable) tests the project on all target OS upon code changes.
-  - **Status:** To Do
+  - **Status:** In-Progress
 
 - [x] **Task 10.12: Create API Documentation Script**
   - **Description:** Write a new Python script `scripts/get_api.py`. This script will parse all C# files in `src/Night.Engine/Framework` and its subdirectories. It will generate a markdown file listing all public static classes and their public static functions (including overloads). The script should attempt to derive an equivalent Love2D API call for each function.

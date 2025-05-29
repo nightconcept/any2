@@ -24,8 +24,9 @@ public class Game : IGame
 
   public void Load()
   {
-    _ = Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
-    Window.SetTitle("Night Platformer Sample");
+    // _ = Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
+    // Window.SetTitle("Night Platformer Sample");
+    // Window settings will now be driven by config.json (or defaults if not present/configured)
 
     _player.Load();
 

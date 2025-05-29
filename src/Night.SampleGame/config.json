@@ -1,0 +1,13 @@
+{
+  "window": {
+    "title": "Configured by JSON!",
+    "width": 1024,
+    "height": 768,
+    "resizable": true,
+    "vsync": 0,
+    "fullscreen": false,
+    "borderless": true,
+    "x": 100,
+    "y": 100
+  }
+} 
