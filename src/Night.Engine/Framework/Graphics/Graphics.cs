@@ -117,7 +117,7 @@ namespace Night
 
       SDL.FRect rect = new SDL.FRect { X = x, Y = y, W = width, H = height };
 
-      bool success = false;
+      bool success;
       if (mode == DrawMode.Fill)
       {
         success = SDL.RenderFillRect(rendererPtr, rect);
@@ -233,7 +233,7 @@ namespace Night
         SDL.FColor[] vertexColors = new SDL.FColor[vertices.Length];
 
         byte r, g, b, a;
-        SDL.GetRenderDrawColor(rendererPtr, out r, out g, out b, out a);
+        _ = SDL.GetRenderDrawColor(rendererPtr, out r, out g, out b, out a);
         SDL.FColor drawColor = new SDL.FColor { R = r / 255f, G = g / 255f, B = b / 255f, A = a / 255f };
 
         for (int i = 0; i < vertices.Length; i++)
@@ -251,15 +251,36 @@ namespace Night
           indices[i * 3 + 2] = (byte)(i + 2);
         }
 
-        if (!SDL.RenderGeometryRaw(rendererPtr, IntPtr.Zero,
-                                   xy, 0,
-                                   vertexColors, 0,
-                                   null, 0,
-                                   vertices.Length,
-                                   indices, indices.Length, sizeof(byte)))
+        GCHandle xyHandle = default;
+        GCHandle colorsHandle = default;
+        GCHandle indicesHandle = default;
+
+        try
         {
-          string sdlError = SDL.GetError();
-          Console.WriteLine($"Error in Graphics.Polygon (Fill Mode - RenderGeometryRaw): {sdlError}");
+          xyHandle = GCHandle.Alloc(xy, GCHandleType.Pinned);
+          colorsHandle = GCHandle.Alloc(vertexColors, GCHandleType.Pinned);
+          indicesHandle = GCHandle.Alloc(indices, GCHandleType.Pinned);
+
+          IntPtr xyPtr = xyHandle.AddrOfPinnedObject();
+          IntPtr colorsPtr = colorsHandle.AddrOfPinnedObject();
+          IntPtr indicesPtr = indicesHandle.AddrOfPinnedObject();
+
+          if (!SDL.RenderGeometryRaw(rendererPtr, IntPtr.Zero, // texture
+                                     xyPtr, sizeof(float) * 2, // xy, xy_stride
+                                     colorsPtr, Marshal.SizeOf<SDL.FColor>(), // colors, color_stride
+                                     IntPtr.Zero, 0, // tex_coords, tex_coord_stride
+                                     vertices.Length, // num_vertices
+                                     indicesPtr, indices.Length, sizeof(byte))) // indices, num_indices, index_type (sizeof(byte) for byte indices)
+          {
+            string sdlError = SDL.GetError();
+            Console.WriteLine($"Error in Graphics.Polygon (Fill Mode - RenderGeometryRaw): {sdlError}");
+          }
+        }
+        finally
+        {
+          if (xyHandle.IsAllocated) xyHandle.Free();
+          if (colorsHandle.IsAllocated) colorsHandle.Free();
+          if (indicesHandle.IsAllocated) indicesHandle.Free();
         }
       }
     }

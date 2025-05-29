@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic; // Required for List<Rectangle>
+using System.IO;
 
 using Night;
 
@@ -48,7 +48,7 @@ public class Game : IGame
 
     // Demonstrate Night.Filesystem
     string sampleFilePathRelative = Path.Combine("assets", "data", "sample.txt");
-    string sampleFilePathFull = Path.Combine(baseDirectory, sampleFilePathRelative);
+    _ = Path.Combine(baseDirectory, sampleFilePathRelative);
   }
 
   // Helper for collision detection (AABB)
@@ -159,10 +159,6 @@ public class Game : IGame
     Graphics.SetColor(new Night.Color(75, 0, 130)); // Indigo
     Graphics.Polygon(Night.DrawMode.Line, pentagonVertices);
   }
-
-  private double _lastTimerPrintTime = 0;
-  private const double TimerPrintInterval = 1.0; // Print every 1 second
-
 
   public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
   {

@@ -78,6 +78,18 @@
 
 - MouseButton
 
+## Timer
+
+### Functions (Timer)
+
+- GetAverageDelta() - love.timer.getAverageDelta
+- GetDelta() - love.timer.getDelta
+- GetFPS() - love.timer.getFPS
+- GetTime() - love.timer.getTime
+- Sleep() - love.timer.sleep
+  - Sleep(double seconds)
+- Step() - love.timer.step
+
 ## Window
 
 ### Functions (Window)

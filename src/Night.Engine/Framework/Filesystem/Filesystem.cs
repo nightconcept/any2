@@ -26,10 +26,9 @@ namespace Night
         return null;
       }
 
-      FileType type = FileType.None;
       long? size = null;
-      long? modTime = null;
-
+      FileType type;
+      long? modTime;
       try
       {
         if (File.Exists(path))
