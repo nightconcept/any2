@@ -286,7 +286,7 @@ end
 - [ ] **Task 10.9: Formalize Basic Test Suite**
   - **Description:** Review current testing strategy (`Night.SampleGame` as integration test [cite: 209]). Establish a basic structure for more formal tests if deemed necessary (e.g., a separate test project). Add minimal unit tests for any new complex, non-SDL-dependent logic introduced in this epic (e.g., utility functions in `Night.Filesystem` or `Night.Timer`).
   - **Acceptance Criteria:** A clear testing strategy for 0.1.0 is in place. Any new critical utility functions have basic unit tests.
-  - **Status:** To Do
+  - **Status:** In-Progress
 
 - [ ] **Task 10.10: Create Project Logo and Icon**
   - **Description:** Design or procure a logo for Night Engine. Prepare application icon files (e.g., .ico, .icns) and integrate them so the `Night.SampleGame` window uses the icon. `Night.Window.SetIcon()` would be needed if not already planned. (Roadmap `love.window` has `setIcon` [cite: 1291, 1327] as out of scope, may need to be scoped in for this).
