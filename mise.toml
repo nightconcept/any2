@@ -40,5 +40,9 @@ run = [
 description = "Update tools."
 run = [
   "git submodule update --remote lib/SDL3-CS",
-  "python scripts/sync_sdl3.py",
+  "python scripts/update_tools.py",
 ]
+
+[tasks.update-api-doc]
+description = "Update API docs."
+run = ["python scripts/update_api_doc.py"]

@@ -15,19 +15,18 @@ MANIFEST_FILE_PATH = os.path.join("tools", "manifest.json")
 
 PLATFORM_IDENTIFIERS = {
     "linux": "linux",
-    "macos": "macos", # GitHub actions often use 'macos' for runners
+    "macos": "macos",
     "windows": "windows"
 }
 
 def ensure_dir_exists(path):
     """Ensures that a directory exists, creating it if necessary."""
     if not os.path.exists(path):
-        # print(f"Creating directory: {path}") # Reduced verbosity
         os.makedirs(path, exist_ok=True)
 
 def load_manifest():
     """Loads the manifest file."""
-    ensure_dir_exists(os.path.dirname(MANIFEST_FILE_PATH)) # Ensure 'tools' dir exists
+    ensure_dir_exists(os.path.dirname(MANIFEST_FILE_PATH))
     if not os.path.exists(MANIFEST_FILE_PATH):
         return {}
     try:
@@ -151,10 +150,6 @@ def main():
                     assets_processed_count += 1
                 processed_for_platform = True
                 break # Asset matched a platform
-
-        # if not processed_for_platform:
-            # print(f"  Skipping asset (unrecognized platform or type): {asset.get('name')}")
-
 
     if all_successful_this_run and assets_processed_count > 0:
         manifest_data[TOOL_NAME] = {"version": latest_version}

@@ -1,4 +1,12 @@
-## filesystem
+# Night / Love2D API
+
+## Filesystem
+
+### Types (Filesystem)
+
+- FileSystemInfo
+
+### Functions (Filesystem)
 
 - GetInfo() - love.filesystem.getInfo
   - GetInfo(string path, FileSystemInfo info)
@@ -9,7 +17,18 @@
 - ReadText() - love.filesystem.readText
   - ReadText(string path)
 
-## graphics
+### Enums (Filesystem)
+
+- FileMode
+- FileType
+
+## Graphics
+
+### Types (Graphics)
+
+- Sprite
+
+### Functions (Graphics)
 
 - Circle() - love.graphics.circle
   - Circle(DrawMode mode, float x, float y, float radius, int segments)
@@ -31,23 +50,37 @@
   - SetColor(Color color)
   - SetColor(byte r, byte g, byte b, byte a)
 
-## keyboard
+### Enums (Graphics)
+
+- DrawMode
+
+## Keyboard
+
+### Functions (Keyboard)
 
 - IsDown() - love.keyboard.isDown
   - IsDown(KeyCode key)
 
-## mouse
+### Enums (Keyboard)
+
+- KeyCode
+- KeySymbol
+
+## Mouse
+
+### Functions (Mouse)
 
 - GetPosition() - love.mouse.getPosition
 - IsDown() - love.mouse.isDown
   - IsDown(MouseButton button)
 
-## nightsdl
+### Enums (Mouse)
 
-- GetError() - love.nightsdl.getError
-- GetVersion() - love.nightsdl.getVersion
+- MouseButton
 
-## window
+## Window
+
+### Functions (Window)
 
 - Close() - love.window.close
 - IsOpen() - love.window.isOpen
