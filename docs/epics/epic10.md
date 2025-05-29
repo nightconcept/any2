@@ -107,10 +107,17 @@
 
 ### Phase 2: Project Infrastructure & Polish
 
-- [ ] **Task 10.6: Implement User-Definable Error Handler**
+- [x] **Task 10.6: Implement User-Definable Error Handler**
   - **Description:** Design and implement a mechanism similar to `love.errorhandler`. Allow the user to register a custom error handling function/delegate that `FrameworkLoop.cs` will call when an unhandled exception occurs in `IGame.Load`, `IGame.Update`, `IGame.Draw`, or input callbacks.
   - The handler should receive error details (exception object, message, stack trace).
   - If no custom handler is set, implement the following equivalent from Love2D as the default error handling.
+  - **Notes:**
+    - The default error handler logs to console, ensures the window is open (or attempts to reopen to 800x600), clears it to a blue color, and resets mouse state (visible, not grabbed, not relative).
+    - It then enters a loop allowing the user to quit (Esc key or closing the window) or copy the full error message and stack trace to the clipboard (Ctrl+C).
+    - Clipboard functionality uses `Night.System.SetClipboardText(string)`.
+    - Due to `Night.Font` not being part of the 0.1.0 scope, the default error handler does *not* render the error text directly into the game window. Users must check the console for the detailed error message.
+    - Implemented `Night.Error.SetHandler(ErrorHandlerDelegate)` for users to provide their custom delegate.
+    - Added `Night.Mouse.SetVisible(bool)`, `Night.Mouse.SetGrabbed(bool)`, and `Night.Mouse.SetRelativeMode(bool)`.
 
 ```lua
 local utf8 = require("utf8")
@@ -246,7 +253,7 @@ end
 ```
 
 - **Acceptance Criteria:** A user can provide a custom function to `Night.Framework` that gets called on unhandled game code exceptions, allowing custom display or logging.
-- **Status:** To Do
+- **Status:** Done
 
 - [ ] **Task 10.7: Basic Game Configuration File Support**
   - **Description:** Implement functionality to load basic game settings from a configuration file (e.g., `config.json` or `config.ini`) at startup.

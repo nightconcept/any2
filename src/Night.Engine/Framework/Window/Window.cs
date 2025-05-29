@@ -278,6 +278,7 @@ namespace Night
     {
       if (!_isVideoInitialized) { EnsureVideoInitialized(); }
       var modesList = new List<(int Width, int Height)>();
+      var uniqueModes = new HashSet<(int Width, int Height)>(); // Keep track of unique modes
 
       uint[]? actualDisplayIDs = SDL.GetDisplays(out int displayCount);
       if (actualDisplayIDs == null || displayCount <= 0 || displayIndex < 0 || displayIndex >= displayCount)
@@ -295,7 +296,11 @@ namespace Night
 
       foreach (var mode in displayModes)
       {
-        modesList.Add((mode.W, mode.H));
+        var currentModeTuple = (mode.W, mode.H);
+        if (uniqueModes.Add(currentModeTuple)) // Add returns true if the item was added (i.e., it was unique)
+        {
+          modesList.Add(currentModeTuple);
+        }
       }
       return modesList;
     }

@@ -99,7 +99,7 @@ public class Platformer : IGame
     // System.Console.WriteLine($"SampleGame: KeyPressed - KeySymbol: {key}, Scancode: {scancode}, IsRepeat: {isRepeat}");
     if (key == KeySymbol.Escape)
     {
-      System.Console.WriteLine("SampleGame: Escape key pressed, closing window.");
+      Console.WriteLine("SampleGame: Escape key pressed, closing window.");
       Window.Close();
     }
     // Player input (movement, jump) will be handled in Player.Update using Night.Keyboard.IsDown().

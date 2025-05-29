@@ -69,5 +69,43 @@ namespace Night
       _ = SDL.GetMouseState(out mouseX, out mouseY);
       return ((int)mouseX, (int)mouseY);
     }
+
+    /// <summary>
+    /// Sets the visibility of the mouse cursor.
+    /// </summary>
+    /// <param name="visible">True to show the cursor, false to hide it.</param>
+    public static void SetVisible(bool visible)
+    {
+      if (!Framework.IsInputInitialized) return;
+      if (visible)
+      {
+        _ = SDL.ShowCursor();
+      }
+      else
+      {
+        _ = SDL.HideCursor();
+      }
+    }
+
+    /// <summary>
+    /// Grabs the mouse, confining it to the window.
+    /// </summary>
+    /// <param name="grabbed">True to grab the mouse, false to release it.</param>
+    public static void SetGrabbed(bool grabbed)
+    {
+      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero) return;
+      _ = SDL.SetWindowMouseGrab(Window.Handle, grabbed);
+    }
+
+    /// <summary>
+    /// Sets whether relative mouse mode is enabled for the current window.
+    /// In relative mode, the cursor is hidden and mouse motion is reported as relative to the last position.
+    /// </summary>
+    /// <param name="enabled">True to enable relative mode, false to disable it.</param>
+    public static void SetRelativeMode(bool enabled)
+    {
+      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero) return;
+      _ = SDL.SetWindowRelativeMouseMode(Window.Handle, enabled);
+    }
   }
 }

@@ -73,10 +73,24 @@
 - GetPosition() - love.mouse.getPosition
 - IsDown() - love.mouse.isDown
   - IsDown(MouseButton button)
+- SetGrabbed() - love.mouse.setGrabbed
+  - SetGrabbed(bool grabbed)
+- SetRelativeMode() - love.mouse.setRelativeMode
+  - SetRelativeMode(bool enabled)
+- SetVisible() - love.mouse.setVisible
+  - SetVisible(bool visible)
 
 ### Enums (Mouse)
 
 - MouseButton
+
+## System
+
+### Functions (System)
+
+- GetClipboardText() - love.system.getClipboardText
+- SetClipboardText() - love.system.setClipboardText
+  - SetClipboardText(string text)
 
 ## Timer
 

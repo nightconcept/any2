@@ -25,6 +25,7 @@ namespace Night
     private static List<double> _deltaHistory = new List<double>();
     private const int MaxDeltaHistorySamples = 60; // Store up to 1 second of deltas at 60fps
 
+    private static bool _inErrorState = false;
 
     /// <summary>
     /// A flag indicating whether the core SDL systems, particularly for input,
@@ -118,7 +119,22 @@ namespace Night
         _isSdlInitialized = true;
         IsInputInitialized = (_initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
 
-        game.Load();
+        try
+        {
+          game.Load();
+        }
+        catch (Exception e)
+        {
+          HandleGameException(e, game);
+          if (_inErrorState)
+          {
+            // If DefaultErrorHandler entered its loop, we might not want to proceed further here
+            // or it might have already exited.
+            // For now, assume if HandleGameException (and default handler) ran, we cleanup and exit.
+            CleanUpSDLAndWindow();
+            return;
+          }
+        }
 
         // Now, ensure a window is open before proceeding.
         if (!Window.IsOpen())
@@ -136,7 +152,7 @@ namespace Night
 
 
         // Main game loop
-        while (Window.IsOpen())
+        while (Window.IsOpen() && !_inErrorState)
         {
 
           // Calculate DeltaTime by calling Night.Timer.Step()
@@ -165,7 +181,7 @@ namespace Night
 
 
           // Event Processing
-          while (SDL.PollEvent(out SDL.Event e))
+          while (SDL.PollEvent(out SDL.Event e) && !_inErrorState)
           {
             var eventType = (SDL.EventType)e.Type;
 
@@ -186,8 +202,7 @@ namespace Night
               }
               catch (Exception exUser)
               {
-                Console.WriteLine($"Night.Framework.Run: Error in game.KeyPressed: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
-                Window.Close(); // Signal loop termination
+                HandleGameException(exUser, game);
               }
             }
             else if (eventType == SDL.EventType.KeyUp)
@@ -201,8 +216,7 @@ namespace Night
               }
               catch (Exception exUser)
               {
-                Console.WriteLine($"Night.Framework.Run: Error in game.KeyReleased: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
-                Window.Close(); // Signal loop termination
+                HandleGameException(exUser, game);
               }
             }
             else if (eventType == SDL.EventType.MouseButtonDown)
@@ -219,8 +233,7 @@ namespace Night
               }
               catch (Exception exUser)
               {
-                Console.WriteLine($"Night.Framework.Run: Error in game.MousePressed: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
-                Window.Close(); // Signal loop termination
+                HandleGameException(exUser, game);
               }
             }
             else if (eventType == SDL.EventType.MouseButtonUp)
@@ -237,16 +250,15 @@ namespace Night
               }
               catch (Exception exUser)
               {
-                Console.WriteLine($"Night.Framework.Run: Error in game.MouseReleased: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
-                Window.Close(); // Signal loop termination
+                HandleGameException(exUser, game);
               }
             }
             // TODO: Add other event handling (mouse, etc.) as per future tasks.
           }
 
-          // If Window.Close() was called due to an event, IsOpen() will now be false,
+          // If Window.Close() was called due to an event or error, IsOpen() will now be false,
           // and the outer loop should terminate.
-          if (!Window.IsOpen())
+          if (!Window.IsOpen() || _inErrorState)
           {
             break;
           }
@@ -257,11 +269,11 @@ namespace Night
           }
           catch (Exception exUser)
           {
-            Console.WriteLine($"Night.Framework.Run: Error in game.Update: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
-            Window.Close();
-            // Skip Draw and Present if Update failed and loop is closing
-            if (!Window.IsOpen()) continue;
+            HandleGameException(exUser, game);
+            if (_inErrorState) break; // Exit loop if error handler took over
           }
+          if (!Window.IsOpen() || _inErrorState) continue;
+
 
           try
           {
@@ -269,11 +281,11 @@ namespace Night
           }
           catch (Exception exUser)
           {
-            Console.WriteLine($"Night.Framework.Run: Error in game.Draw: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
-            Window.Close();
-            // Skip Present if Draw failed and loop is closing
-            if (!Window.IsOpen()) continue;
+            HandleGameException(exUser, game);
+            if (_inErrorState) break; // Exit loop if error handler took over
           }
+          if (!Window.IsOpen() || _inErrorState) continue;
+
 
           try
           {
@@ -292,26 +304,194 @@ namespace Night
       }
       catch (Exception ex)
       {
-        Console.WriteLine($"Night.Framework.Run: An unexpected error occurred: {ex.Message}");
-        Console.WriteLine(ex.StackTrace);
-        // Ensure SDL is cleaned up even if an error occurs in Load, Update, or Draw.
+        // This is for errors within Framework.Run itself, not game code.
+        Console.WriteLine($"Night.Framework.Run: An UNEXPECTED FRAMEWORK error occurred: {ex.ToString()}");
+        // Attempt to call default error handler for framework errors too, but without game instance.
+        HandleGameException(ex, null);
       }
       finally
       {
         // TODO: Call gameLogic.Quit() if it's added to IGame.
 
-        // Shutdown window and related resources (renderer, etc.)
-        // This should happen before SDL.QuitSubSystem for Video.
-        if (Window.IsOpen()) // Should ideally be closed by the loop, but as a safeguard
-        {
-          Console.WriteLine("Night.Framework.Run: Window was still open in finally block, attempting to close.");
-          Window.Close();
-        }
-        // Window.Shutdown() handles destroying window, renderer, and SDL.QuitSubSystem(SDL.InitFlags.Video)
-        Window.Shutdown();
-
-        CleanUpSDL();
+        CleanUpSDLAndWindow();
       }
+    }
+
+    private static void HandleGameException(Exception e, IGame? gameInstance)
+    {
+      _inErrorState = true; // Signal that we are now in an error state.
+
+      var customHandler = Night.Error.GetHandler();
+      if (customHandler != null)
+      {
+        try
+        {
+          customHandler(e);
+          // If custom handler returns, we assume it handled the error
+          // and the game might want to continue or has already quit.
+          // For now, we'll still close the window to be safe, unless custom handler re-opens it.
+          // This behavior might need refinement.
+          if (Window.IsOpen()) Window.Close();
+        }
+        catch (Exception exHandler)
+        {
+          // Error in the custom error handler itself!
+          Console.WriteLine($"Night.Framework.Run: CRITICAL: Exception in custom error handler: {exHandler.ToString()}");
+          // Fallback to a very minimal default behavior
+          Console.WriteLine($"Night.Framework.Run: Original game error: {e.ToString()}");
+          if (Window.IsOpen()) Window.Close(); // Ensure shutdown
+        }
+      }
+      else
+      {
+        DefaultErrorHandler(e, gameInstance);
+      }
+    }
+
+    private static void DefaultErrorHandler(Exception e, IGame? gameInstance)
+    {
+      Console.Error.WriteLine("--- Night Engine: Default Error Handler ---");
+      Console.Error.WriteLine($"An error occurred in the game: {e.GetType().Name}");
+      Console.Error.WriteLine($"Message: {e.Message}");
+      Console.Error.WriteLine("Stack Trace:");
+      Console.Error.WriteLine(e.StackTrace);
+      Console.Error.WriteLine("-------------------------------------------");
+
+      bool canDrawError = false;
+      try
+      {
+        if (!Window.IsOpen() || (Window.RendererPtr == nint.Zero)) // Assuming Graphics.RendererPtr is a good check for active graphics
+        {
+          Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window or Graphics not initialized. Attempting to set mode...");
+          // Attempt to set a basic window mode if not already open.
+          // Use a default size. WindowFlags can be minimal or Resizable.
+          if (Window.SetMode(800, 600, SDL.WindowFlags.Resizable))
+          {
+            Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window mode set to 800x600.");
+            canDrawError = (Window.RendererPtr != nint.Zero);
+          }
+          else
+          {
+            Console.WriteLine($"Night.Framework.Run (DefaultErrorHandler): Failed to set window mode. SDL Error: {SDL.GetError()}");
+          }
+        }
+        else
+        {
+          canDrawError = true;
+        }
+
+        // Reset input state
+        if (IsInputInitialized) // Check if input was ever initialized
+        {
+          Mouse.SetVisible(true);
+          Mouse.SetGrabbed(false);
+          Mouse.SetRelativeMode(false);
+          // Mouse.SetCursor() - Skipped as per plan if complex; SDL default cursor should apply.
+        }
+      }
+      catch (Exception resetEx)
+      {
+        Console.Error.WriteLine($"Night.Framework.Run (DefaultErrorHandler): Exception during state reset: {resetEx.ToString()}");
+        canDrawError = false; // If reset fails, drawing might be unsafe.
+      }
+
+
+      if (canDrawError)
+      {
+        try
+        {
+          // Simple error display loop
+          string fullErrorText = $"Error: {e.Message}\n\n{e.StackTrace}";
+          // Shorten for display if too long, or make it scrollable if we had font rendering
+          // For now, just display what fits or make user copy.
+
+          Window.SetTitle($"Error - {gameInstance?.GetType().Name ?? "Night Game"}");
+
+          bool runningErrorLoop = true;
+          while (runningErrorLoop && Window.IsOpen())
+          {
+            while (SDL.PollEvent(out SDL.Event ev))
+            {
+              if (ev.Type == (uint)SDL.EventType.Quit)
+              {
+                runningErrorLoop = false;
+                Window.Close();
+                break;
+              }
+              if (ev.Type == (uint)SDL.EventType.KeyDown)
+              {
+                if (ev.Key.Key == SDL.Keycode.Escape)
+                {
+                  runningErrorLoop = false;
+                  Window.Close();
+                  break;
+                }
+                // Check for Ctrl+C - SDL.Keymod.Ctrl is a flag
+                if (ev.Key.Key == SDL.Keycode.C && ((SDL.GetModState() & SDL.Keymod.Ctrl) != 0))
+                {
+                  try
+                  {
+                    if (Night.System.SetClipboardText(fullErrorText))
+                    {
+                      Console.WriteLine("(Error copied to clipboard)");
+                    }
+                    else
+                    {
+                      Console.WriteLine($"(Failed to copy error to clipboard: {SDL.GetError()})");
+                    }
+                  }
+                  catch (Exception clipEx)
+                  {
+                    Console.WriteLine($"(Exception trying to copy to clipboard: {clipEx.Message})");
+                  }
+                }
+              }
+            }
+            if (!runningErrorLoop) break;
+
+            Graphics.Clear(new Color(89, 157, 220, 255)); // Blue background
+            // Graphics.Print functionality is NOT available.
+            // We will just show a blue screen and title. User must check console.
+            // If Night.Font was available:
+            // Graphics.SetColor(Night.Color.Black);
+            // Graphics.Print($"Error: {e.Message}", 10, 10, Window.GetWidth() - 20);
+            // Graphics.Print($"Press ESC to quit. Ctrl+C to copy.", 10, Window.GetHeight() - 30);
+
+
+            Graphics.Present();
+            Timer.Sleep(0.01f); // Sleep for 10ms
+          }
+        }
+        catch (Exception drawEx)
+        {
+          Console.Error.WriteLine($"Night.Framework.Run (DefaultErrorHandler): Exception during error display loop: {drawEx.ToString()}");
+        }
+      }
+      else
+      {
+        Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Cannot display visual error. Check console. Press Ctrl+C in console to quit if frozen.");
+        // Loop to keep process alive for a bit for console reading, or just exit.
+        // For now, just let it fall through to finally block.
+      }
+      // Ensure the main loop knows to terminate
+      if (Window.IsOpen()) Window.Close();
+    }
+
+    private static void CleanUpSDLAndWindow()
+    {
+      // Shutdown window and related resources (renderer, etc.)
+      // This should happen before SDL.QuitSubSystem for Video.
+      if (Window.IsOpen())
+      {
+        // This case should ideally not be hit if _inErrorState or loop conditions were managed correctly
+        Console.WriteLine("Night.Framework.Run (CleanUpSDLAndWindow): Window was still open, attempting to close.");
+        Window.Close(); // This will set _isWindowOpen to false
+      }
+      // Window.Shutdown() handles destroying window, renderer, and SDL.QuitSubSystem(SDL.InitFlags.Video)
+      // It's important that Shutdown is called AFTER the error handler's visual loop might have used the window/renderer.
+      Window.Shutdown();
+
+      CleanUpSDL();
     }
 
     private static void CleanUpSDL()

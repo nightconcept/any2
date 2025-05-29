@@ -27,30 +27,6 @@ public class Game : IGame
     _ = Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     Window.SetTitle("Night Platformer Sample");
 
-    // --- Night.Window Demo ---
-    /* Commenting out verbose initial info dump
-    Console.WriteLine("--- Night.Window Info ---");
-    Console.WriteLine($"Display Count: {Window.GetDisplayCount()}");
-    var (desktopW, desktopH) = Window.GetDesktopDimensions();
-    Console.WriteLine($"Primary Desktop Dimensions: {desktopW}x{desktopH}");
-    var currentMode = Window.GetMode();
-    Console.WriteLine($"Initial Window Mode: {currentMode.Width}x{currentMode.Height}, Fullscreen: {currentMode.Fullscreen}, Type: {currentMode.FullscreenType}, Borderless: {currentMode.Borderless}");
-    Console.WriteLine($"Initial DPI Scale: {Window.GetDPIScale()}");
-    Console.WriteLine("Press F11 to toggle fullscreen (Desktop mode).");
-    Console.WriteLine("Press F10 to toggle fullscreen (Exclusive mode).");
-    Console.WriteLine("Available Fullscreen Modes (Primary Display):");
-    var fsModes = Window.GetFullscreenModes();
-    foreach(var mode in fsModes)
-    {
-        Console.WriteLine($"  {mode.Width}x{mode.Height}");
-    }
-    Console.WriteLine("-------------------------");
-    */
-    // Retain keybinding info if desired, or remove these too if all startup messages should go.
-    Console.WriteLine("Press F11 to toggle fullscreen (Desktop mode).");
-    Console.WriteLine("Press F10 to toggle fullscreen (Exclusive mode).");
-    // --- End Night.Window Demo ---
-
     _player.Load();
 
     // Load platform sprite
@@ -69,10 +45,6 @@ public class Game : IGame
     _platforms.Add(new Night.Rectangle(450, 300, 100, 30));
     _goalPlatform = new Night.Rectangle(600, 200, 100, 30);
     _platforms.Add(_goalPlatform);
-
-    // Demonstrate Night.Filesystem
-    string sampleFilePathRelative = Path.Combine("assets", "data", "sample.txt");
-    _ = Path.Combine(baseDirectory, sampleFilePathRelative);
   }
 
   // Helper for collision detection (AABB)
@@ -187,10 +159,15 @@ public class Game : IGame
   public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
   {
     // Minimal key handling for now, primarily for closing the window.
-    // System.Console.WriteLine($"SampleGame: KeyPressed - KeySymbol: {key}, Scancode: {scancode}, IsRepeat: {isRepeat}");
     if (key == Night.KeySymbol.Escape)
     {
-      Window.Close(); // Window class will be in Night.Framework
+      Window.Close();
+    }
+
+    // Test error triggering
+    if (key == Night.KeySymbol.E && !isRepeat)
+    {
+      throw new InvalidOperationException("Test error triggered by pressing 'E' in SampleGame!");
     }
 
     // --- Night.Window Demo: Toggle Fullscreen ---
