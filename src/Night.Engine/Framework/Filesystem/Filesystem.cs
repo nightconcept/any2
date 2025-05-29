@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 
+using Night;
+
 namespace Night
 {
   /// <summary>
@@ -24,7 +26,7 @@ namespace Night
         return null;
       }
 
-      Night.FileType type = Night.FileType.None;
+      FileType type = FileType.None;
       long? size = null;
       long? modTime = null;
 
@@ -35,16 +37,11 @@ namespace Night
           var fileInfo = new FileInfo(path);
           if ((fileInfo.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
           {
-            // Basic symlink check for files. More robust detection might be needed.
-            // For now, treat as Symlink if it's a reparse point, otherwise File.
-            // True symlink resolution (target type) is complex and platform-dependent.
-            type = Night.FileType.Symlink; // Could be a symlink to a file or directory
-                                           // To determine target type, one might need to resolve it,
-                                           // but for now, just identifying it as a symlink.
+            type = FileType.Symlink;
           }
           else
           {
-            type = Night.FileType.File;
+            type = FileType.File;
           }
           size = fileInfo.Length;
           modTime = ((DateTimeOffset)fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
@@ -54,31 +51,26 @@ namespace Night
           var dirInfo = new DirectoryInfo(path);
           if ((dirInfo.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
           {
-            type = Night.FileType.Symlink; // Could be a symlink to a directory
+            type = FileType.Symlink;
           }
           else
           {
-            type = Night.FileType.Directory;
+            type = FileType.Directory;
           }
-          // Size is typically not applicable or consistently defined for directories in this context.
           modTime = ((DateTimeOffset)dirInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
         }
         else
         {
-          return null; // Path does not exist
+          return null;
         }
       }
-      catch (Exception) // IOException, UnauthorizedAccessException, etc.
+      catch (Exception)
       {
-        return null; // Error accessing path
+        return null;
       }
 
       if (filterType.HasValue && type != filterType.Value)
       {
-        // If a filter is provided and the determined type doesn't match, return null.
-        // Exception: if the actual type is Symlink, and filter is File or Directory,
-        // a more advanced check would be needed to see if the symlink *points* to
-        // the filtered type. For 0.1.0, a direct type match is required.
         return null;
       }
 
@@ -93,7 +85,7 @@ namespace Night
     /// <returns>The FileSystemInfo object given as an argument, filled with information, or null if nothing exists at the path.</returns>
     public static FileSystemInfo? GetInfo(string path, FileSystemInfo info)
     {
-      if (info == null) return null; // Or throw ArgumentNullException, depending on desired strictness
+      if (info == null) return null;
 
       var newInfo = GetInfo(path);
       if (newInfo != null)

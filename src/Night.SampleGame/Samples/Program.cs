@@ -93,14 +93,14 @@ public class Platformer : IGame
     // Player and Level drawing logic will go here in later tasks.
   }
 
-  public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
+  public void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
   {
     // Minimal key handling for now, primarily for closing the window.
     // System.Console.WriteLine($"SampleGame: KeyPressed - KeySymbol: {key}, Scancode: {scancode}, IsRepeat: {isRepeat}");
-    if (key == Night.KeySymbol.Escape)
+    if (key == KeySymbol.Escape)
     {
       System.Console.WriteLine("SampleGame: Escape key pressed, closing window.");
-      Night.Window.Close();
+      Window.Close();
     }
     // Player input (movement, jump) will be handled in Player.Update using Night.Keyboard.IsDown().
   }

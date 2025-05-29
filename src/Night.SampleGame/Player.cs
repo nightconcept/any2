@@ -22,7 +22,7 @@ namespace Night.SampleGame
 
     private bool _isGrounded;
 
-    private Sprite? _playerSprite; // To hold the blue rectangle sprite
+    private Night.Sprite? _playerSprite; // To hold the blue rectangle sprite
 
     public Player()
     {
@@ -60,10 +60,6 @@ namespace Night.SampleGame
       if (_playerSprite == null)
       {
         Console.WriteLine($"Player.Load: Failed to load player sprite at '{imageFullPath}'. A blue rectangle will not be drawn.");
-        // Fallback: if sprite fails, player will be invisible.
-        // Alternative: could try to create a 1x1 white pixel and draw it scaled,
-        // but without tinting it would be a white rectangle.
-        // For now, we rely on the pre-colored asset.
       }
       else
       {
@@ -72,7 +68,7 @@ namespace Night.SampleGame
       _isGrounded = false; // Player starts potentially in the air and falls to ground.
     }
 
-    private static bool CheckAABBCollision(Rectangle rect1, Rectangle rect2)
+    private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
     {
       // True if the rectangles are overlapping
       return rect1.X < rect2.X + rect2.Width &&
@@ -81,22 +77,22 @@ namespace Night.SampleGame
              rect1.Y + rect1.Height > rect2.Y;
     }
 
-    public void Update(double deltaTime, List<Rectangle> platforms)
+    public void Update(double deltaTime, List<Night.Rectangle> platforms)
     {
       float dt = (float)deltaTime;
 
       // 1. Handle Input & Apply Jump Impulse
       _velocityX = 0;
-      if (Night.Keyboard.IsDown(Night.KeyCode.Left) || Night.Keyboard.IsDown(Night.KeyCode.A))
+      if (Keyboard.IsDown(KeyCode.Left) || Keyboard.IsDown(KeyCode.A))
       {
         _velocityX = -HorizontalSpeed;
       }
-      if (Night.Keyboard.IsDown(Night.KeyCode.Right) || Night.Keyboard.IsDown(Night.KeyCode.D))
+      if (Keyboard.IsDown(KeyCode.Right) || Keyboard.IsDown(KeyCode.D))
       {
         _velocityX = HorizontalSpeed;
       }
 
-      bool tryingToJump = Night.Keyboard.IsDown(Night.KeyCode.Space);
+      bool tryingToJump = Keyboard.IsDown(KeyCode.Space);
       if (tryingToJump && _isGrounded)
       {
         _velocityY = JumpStrength;
@@ -111,7 +107,7 @@ namespace Night.SampleGame
 
       // 3. Horizontal Movement and Collision
       X += _velocityX * dt;
-      Rectangle playerBoundingBox = new Rectangle((int)X, (int)Y, Width, Height);
+      Night.Rectangle playerBoundingBox = new Night.Rectangle((int)X, (int)Y, Width, Height);
 
       foreach (var platform in platforms)
       {
@@ -119,7 +115,7 @@ namespace Night.SampleGame
         playerBoundingBox.X = (int)X;
         playerBoundingBox.Y = (int)Y; // Keep Y fixed for horizontal check pass
 
-        if (CheckAABBCollision(new Rectangle((int)X, (int)Y, Width, Height), platform))
+        if (CheckAABBCollision(new Night.Rectangle((int)X, (int)Y, Width, Height), platform))
         {
           if (_velocityX > 0) // Moving right, collided with left edge of platform
           {

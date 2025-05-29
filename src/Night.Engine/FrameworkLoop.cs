@@ -141,8 +141,8 @@ namespace Night
               {
                 // TODO: Rename these to match love2d
                 game.KeyPressed(
-                    (Night.KeySymbol)e.Key.Key,
-                    (Night.KeyCode)e.Key.Scancode,
+                    (KeySymbol)e.Key.Key, // Changed
+                    (KeyCode)e.Key.Scancode, // Changed
                     e.Key.Repeat                 // This is already a bool
                 );
               }

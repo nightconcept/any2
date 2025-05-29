@@ -12,8 +12,8 @@ public class Game : IGame
 {
   private Player _player;
   private List<Night.Rectangle> _platforms;
-  private Sprite? _platformSprite;
-  private Night.Rectangle _goalPlatform; // To store the goal platform details
+  private Night.Sprite? _platformSprite;
+  private Night.Rectangle _goalPlatform;
   private bool _goalReachedMessageShown = false; // To ensure message prints only once
 
   public Game()
@@ -24,8 +24,8 @@ public class Game : IGame
 
   public void Load()
   {
-    Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
-    Night.Window.SetTitle("Night Platformer Sample"); // Updated title
+    Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
+    Window.SetTitle("Night Platformer Sample");
 
     _player.Load();
 
@@ -33,17 +33,17 @@ public class Game : IGame
     string baseDirectory = AppContext.BaseDirectory;
     string platformImageRelativePath = Path.Combine("assets", "images", "pixel_green.png");
     string platformImageFullPath = Path.Combine(baseDirectory, platformImageRelativePath);
-    _platformSprite = Graphics.NewImage(platformImageFullPath);
+    _platformSprite = Graphics.NewImage(platformImageFullPath); // Graphics class will be in Night.Framework
     if (_platformSprite == null)
     {
       Console.WriteLine($"Game.Load: Failed to load platform sprite at '{platformImageFullPath}'. Platforms will not be drawn.");
     }
 
     // Initialize platforms (as per docs/epics/epic7-design.md)
-    _platforms.Add(new Night.Rectangle(50, 500, 700, 50));  // Platform 1 (Ground)
-    _platforms.Add(new Night.Rectangle(200, 400, 150, 30)); // Platform 2
-    _platforms.Add(new Night.Rectangle(450, 300, 100, 30)); // Platform 3
-    _goalPlatform = new Night.Rectangle(600, 200, 100, 30); // Platform 4 (Goal)
+    _platforms.Add(new Night.Rectangle(50, 500, 700, 50));
+    _platforms.Add(new Night.Rectangle(200, 400, 150, 30));
+    _platforms.Add(new Night.Rectangle(450, 300, 100, 30));
+    _goalPlatform = new Night.Rectangle(600, 200, 100, 30);
     _platforms.Add(_goalPlatform);
 
     // Demonstrate Night.Filesystem
@@ -53,8 +53,10 @@ public class Game : IGame
     Console.WriteLine($"\n--- Night.Filesystem Demo ---");
     Console.WriteLine($"Checking path: {sampleFilePathFull}");
 
-    Night.FileSystemInfo? info = Night.Filesystem.GetInfo(sampleFilePathFull);
-    Console.WriteLine($"Night.Filesystem.GetInfo called for: {sampleFilePathFull}");
+    // Filesystem class will be in Night.Framework
+    // FileSystemInfo and FileType will be in Night.Framework.FilesystemTypes
+    Night.FileSystemInfo? info = Filesystem.GetInfo(sampleFilePathFull);
+    Console.WriteLine($"Filesystem.GetInfo called for: {sampleFilePathFull}");
 
     if (info != null)
     {
@@ -69,7 +71,7 @@ public class Game : IGame
       Console.WriteLine($"Is a directory: {isDirectory}");
 
       // Example of using filterType
-      Night.FileSystemInfo? fileInfoOnly = Night.Filesystem.GetInfo(sampleFilePathFull, Night.FileType.File);
+      Night.FileSystemInfo? fileInfoOnly = Filesystem.GetInfo(sampleFilePathFull, Night.FileType.File);
       Console.WriteLine($"GetInfo with FileType.File filter was null: {fileInfoOnly == null}");
 
 
@@ -77,11 +79,11 @@ public class Game : IGame
       {
         try
         {
-          string content = Night.Filesystem.ReadText(sampleFilePathFull);
-          Console.WriteLine($"Night.Filesystem.ReadText content:\n{content}");
+          string content = Filesystem.ReadText(sampleFilePathFull);
+          Console.WriteLine($"Filesystem.ReadText content:\n{content}");
 
-          byte[] bytes = Night.Filesystem.ReadBytes(sampleFilePathFull);
-          Console.WriteLine($"Night.Filesystem.ReadBytes length: {bytes.Length} bytes");
+          byte[] bytes = Filesystem.ReadBytes(sampleFilePathFull);
+          Console.WriteLine($"Filesystem.ReadBytes length: {bytes.Length} bytes");
         }
         catch (Exception e)
         {
@@ -117,13 +119,15 @@ public class Game : IGame
       Console.WriteLine("Congratulations! Goal Reached!");
       _goalReachedMessageShown = true; // Set flag so it doesn't print again
       // Optionally, could close the game or trigger another action:
-      // Night.Window.Close();
+      // Window.Close(); // Window class will be in Night.Framework
     }
   }
 
   public void Draw()
   {
-    Night.Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
+    // Graphics class will be in Night.Framework
+    // Color, DrawMode, PointF will be in Night.Framework.GraphicsTypes
+    Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
 
     // Draw platforms
     if (_platformSprite != null)
@@ -145,26 +149,26 @@ public class Game : IGame
     _player.Draw();
     // --- Graphics Shape Drawing Demonstration ---
     // Rectangle Demo
-    Night.Graphics.SetColor(Night.Color.Red);
-    Night.Graphics.Rectangle(Night.DrawMode.Fill, 50, 50, 100, 50); // Filled Red Rectangle
-    Night.Graphics.SetColor(Night.Color.Black);
-    Night.Graphics.Rectangle(Night.DrawMode.Line, 50, 50, 100, 50); // Black outline for Red Rectangle
+    Graphics.SetColor(Night.Color.Red);
+    Graphics.Rectangle(Night.DrawMode.Fill, 50, 50, 100, 50); // Filled Red Rectangle
+    Graphics.SetColor(Night.Color.Black);
+    Graphics.Rectangle(Night.DrawMode.Line, 50, 50, 100, 50); // Black outline for Red Rectangle
 
-    Night.Graphics.SetColor(0, 0, 255, 128); // Semi-transparent Blue
-    Night.Graphics.Rectangle(Night.DrawMode.Line, 160, 50, 80, 60); // Outlined Blue Rectangle
+    Graphics.SetColor(0, 0, 255, 128); // Semi-transparent Blue
+    Graphics.Rectangle(Night.DrawMode.Line, 160, 50, 80, 60); // Outlined Blue Rectangle
 
     // Circle Demo
-    Night.Graphics.SetColor(Night.Color.Green);
-    Night.Graphics.Circle(Night.DrawMode.Fill, 300, 80, 30); // Filled Green Circle
-    Night.Graphics.SetColor(Night.Color.Black);
-    Night.Graphics.Circle(Night.DrawMode.Line, 300, 80, 30, 24); // Black outline, 24 segments
+    Graphics.SetColor(Night.Color.Green);
+    Graphics.Circle(Night.DrawMode.Fill, 300, 80, 30); // Filled Green Circle
+    Graphics.SetColor(Night.Color.Black);
+    Graphics.Circle(Night.DrawMode.Line, 300, 80, 30, 24); // Black outline, 24 segments
 
-    Night.Graphics.SetColor(Night.Color.Yellow);
-    Night.Graphics.Circle(Night.DrawMode.Line, 400, 80, 25, 6); // 6-segment "circle" (hexagon) outline
+    Graphics.SetColor(Night.Color.Yellow);
+    Graphics.Circle(Night.DrawMode.Line, 400, 80, 25, 6); // 6-segment "circle" (hexagon) outline
 
     // Line Demo
-    Night.Graphics.SetColor(Night.Color.Magenta);
-    Night.Graphics.Line(50, 120, 250, 150); // Single Magenta Line
+    Graphics.SetColor(Night.Color.Magenta);
+    Graphics.Line(50, 120, 250, 150); // Single Magenta Line
 
     Night.PointF[] linePoints = new Night.PointF[]
     {
@@ -174,8 +178,8 @@ public class Game : IGame
       new Night.PointF(400, 160),
       new Night.PointF(440, 120)
     };
-    Night.Graphics.SetColor(Night.Color.Cyan);
-    Night.Graphics.Line(Night.DrawMode.Line, linePoints); // Polyline in Cyan
+    Graphics.SetColor(Night.Color.Cyan);
+    Graphics.Line(Night.DrawMode.Line, linePoints); // Polyline in Cyan
 
     // Polygon Demo
     Night.PointF[] triangleVertices = new Night.PointF[]
@@ -184,10 +188,10 @@ public class Game : IGame
       new Night.PointF(550, 100),
       new Night.PointF(450, 100)
     };
-    Night.Graphics.SetColor(new Night.Color(255, 165, 0)); // Orange
-    Night.Graphics.Polygon(Night.DrawMode.Fill, triangleVertices); // Filled Orange Triangle
-    Night.Graphics.SetColor(Night.Color.Black);
-    Night.Graphics.Polygon(Night.DrawMode.Line, triangleVertices); // Black outline for Triangle
+    Graphics.SetColor(new Night.Color(255, 165, 0)); // Orange
+    Graphics.Polygon(Night.DrawMode.Fill, triangleVertices); // Filled Orange Triangle
+    Graphics.SetColor(Night.Color.Black);
+    Graphics.Polygon(Night.DrawMode.Line, triangleVertices); // Black outline for Triangle
 
     Night.PointF[] pentagonVertices = new Night.PointF[]
     {
@@ -197,8 +201,8 @@ public class Game : IGame
         new Night.PointF(620, 110),
         new Night.PointF(580, 100)
     };
-    Night.Graphics.SetColor(new Night.Color(75, 0, 130)); // Indigo
-    Night.Graphics.Polygon(Night.DrawMode.Line, pentagonVertices); // Outlined Indigo Pentagon
+    Graphics.SetColor(new Night.Color(75, 0, 130)); // Indigo
+    Graphics.Polygon(Night.DrawMode.Line, pentagonVertices); // Outlined Indigo Pentagon
     // --- End Graphics Shape Drawing Demonstration ---
     // Player and Level drawing logic will go here in later tasks.
   }
@@ -210,9 +214,9 @@ public class Game : IGame
     if (key == Night.KeySymbol.Escape)
     {
       System.Console.WriteLine("SampleGame: Escape key pressed, closing window.");
-      Night.Window.Close();
+      Window.Close(); // Window class will be in Night.Framework
     }
-    // Player input (movement, jump) will be handled in Player.Update using Night.Keyboard.IsDown().
+    // Player input (movement, jump) will be handled in Player.Update using Keyboard.IsDown() (Keyboard class in Night.Framework)
   }
 }
 
@@ -220,6 +224,6 @@ public class Program
 {
   public static void Main()
   {
-    Night.Framework.Run(new Game());
+    Framework.Run(new Game()); // Framework class is in Night.Framework
   }
 }
