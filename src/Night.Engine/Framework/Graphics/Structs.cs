@@ -3,7 +3,9 @@ using System;
 namespace Night
 {
   /// <summary>
-  /// Represents a color with Red, Green, Blue, and Alpha components.
+  /// Represents a color with Red, Green, Blue, and Alpha components. Implements Love2D's RGBA color table.
+  /// Each component is a byte value ranging from 0 to 255.
+  /// The Alpha component controls the transparency of the color, where 0 is fully transparent and 255 is fully opaque.
   /// </summary>
   public struct Color
   {
