@@ -62,14 +62,18 @@
   - **Status:** Review
 
 - [ ] **Task 10.3: Implement `Night.Timer` Module**
-  - **Description:** Create the `Night.Timer` static class.
-  - [ ] Implement `GetFPS()` and `GetTime()` (time since game start in seconds). Refer to `docs/love2d-api/modules/timer.md`.
-  - [ ] `GetDeltaTime()` is already available implicitly via `IGame.Update()`, but should be renamed to `GetDelta()`.
-  - [ ] Implement `GetAverageDelta()`.
-  - [ ] Implement `Sleep()` to pause the current thread for the specified amount of time. This function causes the entire thread to pause for the duration of the sleep. Graphics will not draw, input events will not trigger, code will not run, and the window will be unresponsive if you use this as "wait()" in the main thread.
-  - [ ] Implement `Step()` to measures the time between two frames.
-  - **Acceptance Criteria:** `Night.Timer.GetFPS()` returns current FPS. `Night.Timer.GetTime()` returns elapsed game time. Sample game can display these values.
-  - **Status:** To Do
+:start_line:65
+
+-------
+
+- **Description:** Create the `Night.Timer` static class.
+- [x] Implement `GetFPS()` and `GetTime()` (time since game start in seconds). Refer to `docs/love2d-api/modules/timer.md`.
+- [x] `GetDeltaTime()` is already available implicitly via `IGame.Update()`, but should be renamed to `GetDelta()`. (Implemented as `Night.Timer.GetDelta()`)
+- [x] Implement `GetAverageDelta()`.
+- [x] Implement `Sleep()` to pause the current thread for the specified amount of time. This function causes the entire thread to pause for the duration of the sleep. Graphics will not draw, input events will not trigger, code will not run, and the window will be unresponsive if you use this as "wait()" in the main thread.
+- [x] Implement `Step()` to measures the time between two frames.
+- **Acceptance Criteria:** `Night.Timer.GetFPS()` returns current FPS. `Night.Timer.GetTime()` returns elapsed game time. Sample game can display these values.
+- **Status:** Done
 
 - [ ] **Task 10.4: Implement Remaining Input Event Callbacks**
   - **Description:** Add remaining input event callbacks to handle keyboard and mouse interactions.

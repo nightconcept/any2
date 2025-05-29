@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Linq;
 
 using Night;
 
@@ -17,6 +19,12 @@ namespace Night
   {
     private static bool _isSdlInitialized = false;
     private static SDL.InitFlags _initializedSubsystems = 0;
+
+    private static int _frameCount = 0;
+    private static double _fpsTimeAccumulator = 0.0;
+    private static List<double> _deltaHistory = new List<double>();
+    private const int MaxDeltaHistorySamples = 60; // Store up to 1 second of deltas at 60fps
+
 
     /// <summary>
     /// A flag indicating whether the core SDL systems, particularly for input,
@@ -120,12 +128,42 @@ namespace Night
           return;
         }
 
-        ulong perfFrequency = SDL.GetPerformanceFrequency();
-        ulong lastCounter = SDL.GetPerformanceCounter();
+        Night.Timer.Initialize(); // Initialize Timer performance frequency and last step time
+
+        _frameCount = 0;
+        _fpsTimeAccumulator = 0.0;
+        _deltaHistory.Clear();
+
 
         // Main game loop
         while (Window.IsOpen())
         {
+
+          // Calculate DeltaTime by calling Night.Timer.Step()
+          double deltaTime = Night.Timer.Step();
+
+          // FPS Calculation
+          _frameCount++;
+          _fpsTimeAccumulator += deltaTime;
+          if (_fpsTimeAccumulator >= 1.0)
+          {
+            Night.Timer.CurrentFPS = _frameCount;
+            _frameCount = 0;
+            _fpsTimeAccumulator -= 1.0; // Subtract 1 second, keep remainder for accuracy
+          }
+
+          // Average Delta Calculation
+          _deltaHistory.Add(deltaTime);
+          if (_deltaHistory.Count > MaxDeltaHistorySamples)
+          {
+            _deltaHistory.RemoveAt(0); // Keep the list size bounded
+          }
+          if (_deltaHistory.Count > 0)
+          {
+            Night.Timer.CurrentAverageDelta = _deltaHistory.Average();
+          }
+
+
           // Event Processing
           while (SDL.PollEvent(out SDL.Event e))
           {
@@ -162,20 +200,9 @@ namespace Night
             break;
           }
 
-          // Calculate DeltaTime
-          ulong currentCounter = SDL.GetPerformanceCounter();
-          double deltaTime = (double)(currentCounter - lastCounter) / perfFrequency;
-          lastCounter = currentCounter;
-
-          // Clamp deltaTime to avoid large jumps
-          if (deltaTime > 0.0666) // Approx 15 FPS
-          {
-            deltaTime = 0.0666;
-          }
-
           try
           {
-            game.Update(deltaTime);
+            game.Update((float)deltaTime); // Pass float deltaTime as per IGame interface
           }
           catch (Exception exUser)
           {

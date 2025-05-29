@@ -49,49 +49,6 @@ public class Game : IGame
     // Demonstrate Night.Filesystem
     string sampleFilePathRelative = Path.Combine("assets", "data", "sample.txt");
     string sampleFilePathFull = Path.Combine(baseDirectory, sampleFilePathRelative);
-
-    Console.WriteLine($"\n--- Night.Filesystem Demo ---");
-    Console.WriteLine($"Checking path: {sampleFilePathFull}");
-
-    // Filesystem class will be in Night.Framework
-    // FileSystemInfo and FileType will be in Night.Framework.FilesystemTypes
-    Night.FileSystemInfo? info = Filesystem.GetInfo(sampleFilePathFull);
-    Console.WriteLine($"Filesystem.GetInfo called for: {sampleFilePathFull}");
-
-    if (info != null)
-    {
-      Console.WriteLine($"  Info.Type: {info.Type}");
-      Console.WriteLine($"  Info.Size: {info.Size?.ToString() ?? "N/A"} bytes");
-      Console.WriteLine($"  Info.ModTime: {info.ModTime?.ToString() ?? "N/A"} (Unix Timestamp)");
-
-      bool isFile = info.Type == Night.FileType.File;
-      Console.WriteLine($"Is a file: {isFile}");
-
-      bool isDirectory = info.Type == Night.FileType.Directory;
-      Console.WriteLine($"Is a directory: {isDirectory}");
-
-      // Example of using filterType
-      Night.FileSystemInfo? fileInfoOnly = Filesystem.GetInfo(sampleFilePathFull, Night.FileType.File);
-      Console.WriteLine($"GetInfo with FileType.File filter was null: {fileInfoOnly == null}");
-
-
-      if (info.Type == Night.FileType.File)
-      {
-        try
-        {
-          string content = Filesystem.ReadText(sampleFilePathFull);
-          Console.WriteLine($"Filesystem.ReadText content:\n{content}");
-
-          byte[] bytes = Filesystem.ReadBytes(sampleFilePathFull);
-          Console.WriteLine($"Filesystem.ReadBytes length: {bytes.Length} bytes");
-        }
-        catch (Exception e)
-        {
-          Console.WriteLine($"Error reading file with Night.Filesystem: {e.Message}");
-        }
-      }
-    }
-    Console.WriteLine($"--- End Night.Filesystem Demo ---\n");
   }
 
   // Helper for collision detection (AABB)
@@ -125,8 +82,6 @@ public class Game : IGame
 
   public void Draw()
   {
-    // Graphics class will be in Night.Framework
-    // Color, DrawMode, PointF will be in Night.Framework.GraphicsTypes
     Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
 
     // Draw platforms
@@ -139,9 +94,9 @@ public class Game : IGame
             _platformSprite,
             platform.X,
             platform.Y,
-            0, // rotation
-            platform.Width,  // scaleX
-            platform.Height  // scaleY
+            0,
+            platform.Width,
+            platform.Height
         );
       }
     }
@@ -202,10 +157,12 @@ public class Game : IGame
         new Night.PointF(580, 100)
     };
     Graphics.SetColor(new Night.Color(75, 0, 130)); // Indigo
-    Graphics.Polygon(Night.DrawMode.Line, pentagonVertices); // Outlined Indigo Pentagon
-    // --- End Graphics Shape Drawing Demonstration ---
-    // Player and Level drawing logic will go here in later tasks.
+    Graphics.Polygon(Night.DrawMode.Line, pentagonVertices);
   }
+
+  private double _lastTimerPrintTime = 0;
+  private const double TimerPrintInterval = 1.0; // Print every 1 second
+
 
   public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
   {
@@ -213,10 +170,8 @@ public class Game : IGame
     // System.Console.WriteLine($"SampleGame: KeyPressed - KeySymbol: {key}, Scancode: {scancode}, IsRepeat: {isRepeat}");
     if (key == Night.KeySymbol.Escape)
     {
-      System.Console.WriteLine("SampleGame: Escape key pressed, closing window.");
       Window.Close(); // Window class will be in Night.Framework
     }
-    // Player input (movement, jump) will be handled in Player.Update using Keyboard.IsDown() (Keyboard class in Night.Framework)
   }
 }
 
@@ -224,6 +179,6 @@ public class Program
 {
   public static void Main()
   {
-    Framework.Run(new Game()); // Framework class is in Night.Framework
+    Framework.Run(new Game());
   }
 }
