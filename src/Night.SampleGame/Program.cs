@@ -53,18 +53,27 @@ public class Game : IGame
     Console.WriteLine($"\n--- Night.Filesystem Demo ---");
     Console.WriteLine($"Checking path: {sampleFilePathFull}");
 
-    bool exists = Night.Filesystem.Exists(sampleFilePathFull);
-    Console.WriteLine($"Night.Filesystem.Exists: {exists}");
+    Night.FileSystemInfo? info = Night.Filesystem.GetInfo(sampleFilePathFull);
+    Console.WriteLine($"Night.Filesystem.GetInfo called for: {sampleFilePathFull}");
 
-    if (exists)
+    if (info != null)
     {
-      bool isFile = Night.Filesystem.IsFile(sampleFilePathFull);
-      Console.WriteLine($"Night.Filesystem.IsFile: {isFile}");
+      Console.WriteLine($"  Info.Type: {info.Type}");
+      Console.WriteLine($"  Info.Size: {info.Size?.ToString() ?? "N/A"} bytes");
+      Console.WriteLine($"  Info.ModTime: {info.ModTime?.ToString() ?? "N/A"} (Unix Timestamp)");
 
-      bool isDirectory = Night.Filesystem.IsDirectory(sampleFilePathFull);
-      Console.WriteLine($"Night.Filesystem.IsDirectory: {isDirectory}");
+      bool isFile = info.Type == Night.FileType.File;
+      Console.WriteLine($"Is a file: {isFile}");
 
-      if (isFile)
+      bool isDirectory = info.Type == Night.FileType.Directory;
+      Console.WriteLine($"Is a directory: {isDirectory}");
+
+      // Example of using filterType
+      Night.FileSystemInfo? fileInfoOnly = Night.Filesystem.GetInfo(sampleFilePathFull, Night.FileType.File);
+      Console.WriteLine($"GetInfo with FileType.File filter was null: {fileInfoOnly == null}");
+
+
+      if (info.Type == Night.FileType.File)
       {
         try
         {

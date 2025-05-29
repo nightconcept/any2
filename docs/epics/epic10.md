@@ -24,13 +24,25 @@
   - **Description:** Create the `Night.Filesystem` static class. Implement core functions needed for 0.1.0, focusing on reading files (e.g., for `Graphics.NewImage`), checking file/directory existence. Refer to `docs/love2d-api/modules/filesystem.md` for API inspiration, but scope to essential read operations.
   - **Implementation:**
     - [x] Create `Night.Filesystem` static class
-    - [x] Implement `Exists(string path)` - Check if a file or directory exists
-    - [x] Implement `IsFile(string path)` - Check if path is a file
-    - [x] Implement `IsDirectory(string path)` - Check if path is a directory
+    - [-] ~~Implement `Exists(string path)` - Check if a file or directory exists~~ (Replaced by `GetInfo`)
+    - [-] ~~Implement `IsFile(string path)` - Check if path is a file~~ (Replaced by `GetInfo`)
+    - [-] ~~Implement `IsDirectory(string path)` - Check if path is a directory~~ (Replaced by `GetInfo`)
     - [x] Implement `ReadBytes(string path)` - Read file as byte array
     - [x] Implement `ReadText(string path)` - Read file as text
+    - [x] **Task 10.1.1: Refactor File/Directory Checks to `GetInfo`**
+      - **Description:** Replace `Exists`, `IsFile`, and `IsDirectory` with a new `GetInfo(string path, FileType? filterType = null, FileSystemInfo? existingInfo = null)` function, based on `love.filesystem.getInfo`. This new function will provide comprehensive file/directory attributes.
+      - **Implementation:**
+        - [x] Define `Night.FileType` enum (`File`, `Directory`, `Symlink`, `Other`, `None`).
+        - [x] Define `Night.FileSystemInfo` class (with `Type`, `Size`, `ModTime`).
+        - [x] Remove `Night.Filesystem.Exists(string path)`.
+        - [x] Remove `Night.Filesystem.IsFile(string path)`.
+        - [x] Remove `Night.Filesystem.IsDirectory(string path)`.
+        - [x] Implement `Night.Filesystem.GetInfo(...)` and its overloads.
+        - [x] Update `Night.SampleGame` to use `GetInfo` instead of the removed methods.
+      - **Acceptance Criteria:** `Night.Filesystem.GetInfo` correctly returns information for files and directories. `Night.SampleGame` is updated and functions correctly with the new API. The old methods are removed.
+      - **Status:** Done
   - **Acceptance Criteria:** Basic file operations are available and usable by other modules (e.g., `Night.Graphics.NewImage` can use it). Sample game can demonstrate reading a simple text file.
-  - **Status:** Done
+  - **Status:** In-Progress
 
 - [ ] **Task 10.2: Extend `Night.Graphics` with Basic Shape Drawing**
   - **Description:** Add methods to `Night.Graphics` for drawing 2D primitives.

@@ -480,4 +480,71 @@ namespace Night
     /// <param name="isRepeat">True if this is a key repeat event, false otherwise.</param>
     void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat);
   }
+
+  /// <summary>
+  /// Represents the type of a file system object.
+  /// </summary>
+  public enum FileType
+  {
+    /// <summary>
+    /// A regular file.
+    /// </summary>
+    File,
+    /// <summary>
+    /// A directory.
+    /// </summary>
+    Directory,
+    /// <summary>
+    /// A symbolic link.
+    /// </summary>
+    Symlink,
+    /// <summary>
+    /// Other type (e.g., device, pipe).
+    /// </summary>
+    Other,
+    /// <summary>
+    /// The path does not exist or its type cannot be determined.
+    /// </summary>
+    None
+  }
+
+  /// <summary>
+  /// Contains information about a file or directory.
+  /// </summary>
+  public class FileSystemInfo
+  {
+    /// <summary>
+    /// The type of the object at the path (file, directory, symlink, etc.).
+    /// Default is None.
+    /// </summary>
+    public FileType Type { get; set; } = FileType.None;
+
+    /// <summary>
+    /// The size in bytes of the file, or null if it can't be determined or not applicable (e.g. for a directory).
+    /// </summary>
+    public long? Size { get; set; }
+
+    /// <summary>
+    /// The file's last modification time in seconds since the Unix epoch, or null if it can't be determined.
+    /// </summary>
+    public long? ModTime { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileSystemInfo"/> class.
+    /// </summary>
+    public FileSystemInfo() { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileSystemInfo"/> class with specified values.
+    /// </summary>
+    /// <param name="type">The type of the file system object.</param>
+    /// <param name="size">The size of the file in bytes.</param>
+    /// <param name="modTime">The last modification time in Unix epoch seconds.</param>
+    public FileSystemInfo(FileType type, long? size, long? modTime)
+    {
+      Type = type;
+      Size = size;
+      ModTime = modTime;
+    }
+  }
 }
