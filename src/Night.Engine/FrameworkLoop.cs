@@ -190,6 +190,57 @@ namespace Night
                 Window.Close(); // Signal loop termination
               }
             }
+            else if (eventType == SDL.EventType.KeyUp)
+            {
+              try
+              {
+                game.KeyReleased(
+                    (KeySymbol)e.Key.Key,
+                    (KeyCode)e.Key.Scancode
+                );
+              }
+              catch (Exception exUser)
+              {
+                Console.WriteLine($"Night.Framework.Run: Error in game.KeyReleased: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
+                Window.Close(); // Signal loop termination
+              }
+            }
+            else if (eventType == SDL.EventType.MouseButtonDown)
+            {
+              try
+              {
+                game.MousePressed(
+                    (int)e.Button.X,
+                    (int)e.Button.Y,
+                    (MouseButton)e.Button.Button,
+                    e.Button.Which == SDL.TouchMouseID, // istouch
+                    e.Button.Clicks
+                );
+              }
+              catch (Exception exUser)
+              {
+                Console.WriteLine($"Night.Framework.Run: Error in game.MousePressed: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
+                Window.Close(); // Signal loop termination
+              }
+            }
+            else if (eventType == SDL.EventType.MouseButtonUp)
+            {
+              try
+              {
+                game.MouseReleased(
+                    (int)e.Button.X,
+                    (int)e.Button.Y,
+                    (MouseButton)e.Button.Button,
+                    e.Button.Which == SDL.TouchMouseID, // istouch
+                    e.Button.Clicks
+                );
+              }
+              catch (Exception exUser)
+              {
+                Console.WriteLine($"Night.Framework.Run: Error in game.MouseReleased: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
+                Window.Close(); // Signal loop termination
+              }
+            }
             // TODO: Add other event handling (mouse, etc.) as per future tasks.
           }
 
@@ -202,12 +253,12 @@ namespace Night
 
           try
           {
-            game.Update((float)deltaTime); // Pass float deltaTime as per IGame interface
+            game.Update((float)deltaTime);
           }
           catch (Exception exUser)
           {
             Console.WriteLine($"Night.Framework.Run: Error in game.Update: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
-            Window.Close(); // Signal loop termination
+            Window.Close();
             // Skip Draw and Present if Update failed and loop is closing
             if (!Window.IsOpen()) continue;
           }
@@ -219,7 +270,7 @@ namespace Night
           catch (Exception exUser)
           {
             Console.WriteLine($"Night.Framework.Run: Error in game.Draw: {exUser.Message}{Environment.NewLine}{exUser.StackTrace}");
-            Window.Close(); // Signal loop termination
+            Window.Close();
             // Skip Present if Draw failed and loop is closing
             if (!Window.IsOpen()) continue;
           }
@@ -247,7 +298,7 @@ namespace Night
       }
       finally
       {
-        // TODO: Call gameLogic.Unload() if it's added to IGame.
+        // TODO: Call gameLogic.Quit() if it's added to IGame.
 
         // Shutdown window and related resources (renderer, etc.)
         // This should happen before SDL.QuitSubSystem for Video.

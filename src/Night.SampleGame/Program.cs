@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic; // Required for List<Rectangle>
+using System.Collections.Generic;
 using System.IO;
 
 using Night;

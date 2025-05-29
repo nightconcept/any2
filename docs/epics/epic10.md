@@ -74,16 +74,16 @@
 - [ ] **Task 10.4: Implement Remaining Input Event Callbacks**
   - **Description:** Add remaining input event callbacks to handle keyboard and mouse interactions.
   - **Implementation:**
-    - [ ] Add to `IGame` interface:
-      - [ ] `KeyReleased(KeySymbol key, KeyCode scancode)`
-      - [ ] `MousePressed(int x, int y, MouseButton button, bool istouch, int presses)`. Stub istouch for now as a TODO.
-      - [ ] `MouseReleased(int x, int y, MouseButton button,bool istouch, int presses)`. Stub istouch for now as a TODO.`
-    - [ ] Update `FrameworkLoop.cs` to handle and dispatch:
-      - [ ] `SDL.EventType.KeyUp` events
-      - [ ] `SDL.EventType.MouseButtonDown` events
-      - [ ] `SDL.EventType.MouseButtonUp` events
+    - [x] Add to `IGame` interface:
+      - [x] `KeyReleased(KeySymbol key, KeyCode scancode)`
+      - [x] `MousePressed(int x, int y, MouseButton button, bool istouch, int presses)`. Stub istouch for now as a TODO.
+      - [x] `MouseReleased(int x, int y, MouseButton button,bool istouch, int presses)`. Stub istouch for now as a TODO.`
+    - [x] Update `FrameworkLoop.cs` to handle and dispatch:
+      - [x] `SDL.EventType.KeyUp` events
+      - [x] `SDL.EventType.MouseButtonDown` events
+      - [x] `SDL.EventType.MouseButtonUp` events
   - **Acceptance Criteria:** Sample game can react to key releases, mouse button presses, and mouse button releases, triggering the appropriate `IGame` callbacks.
-  - **Status:** To Do
+  - **Status:** Done
 
 - [ ] **Task 10.5: Extend `Night.Window` Functionality**
   - **Description:** Implement window management functionality based on `docs/love2d-api/modules/window.md` "In Scope" items.
