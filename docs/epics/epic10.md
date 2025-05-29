@@ -89,21 +89,19 @@
   - **Description:** Implement window management functionality based on `docs/love2d-api/modules/window.md` "In Scope" items.
   - **Implementation:**
     - [ ] Core Methods:
-      - [ ] `GetDimensions()` - Get window dimensions [cite: 1282]
       - [ ] `GetDesktopDimensions(int displayIndex = 0)` - Get desktop dimensions [cite: 1280]
       - [ ] `GetDisplayCount()` - Get number of displays [cite: 1283]
     - [ ] Fullscreen Management:
-      - [ ] `IsFullscreen()` - Check if window is fullscreen
-      - [ ] `SetFullscreen(bool fullscreen, FullscreenType type = Desktop)` - Toggle fullscreen [cite: 1286, 1325]
-      - [ ] `GetFullscreenModes(int displayIndex = 0)` - Get available fullscreen modes [cite: 1288]
-      - [ ] Define `Night.FullscreenMode` struct/class
+      - [ ] `GetFullscreen()` - Check if window is fullscreen. Returns bool fullscreen and FullscreenType fstype. FullscreenType is enumeration `desktop` and `exclusive`. `desktop` is sometimes known as borderless fullscreen windowed mode. A borderless screen-sized window is created which sits on top of all desktop UI elements. The window is automatically resized to match the dimensions of the desktop, and its size cannot be changed. `exclusive` is standard exclusive-fullscreen mode. Changes the display mode (actual resolution) of the monitor.
+      - [ ] `SetFullscreen(bool fullscreen, FullscreenType type = Desktop)` - Toggle fullscreen. Returns bool success.
+      - [ ] `GetFullscreenModes(int displayIndex = 0)` - Get available fullscreen modes. Returns table modes. A table of width/height pairs. (Note that this may not be in order.)
+      - [ ] Define `Night.FullscreenType` struct/class
     - [ ] Window State:
       - [ ] `GetMode()` - Get current window mode (width, height, flags) [cite: 1295]
     - [ ] (Optional Stretch) High DPI Support:
-      - [ ] `FromPixels`
-      - [ ] `ToPixels`
-      - [ ] `GetPixelDimensions`
-      - [ ] `GetPixelScale`
+      - [ ] `FromPixels` - Converts a number from pixels to density-independent units.
+      - [ ] `ToPixels` - Converts a number from density-independent units to pixels.
+      - [ ] `GetDPIScale` - Gets the DPI scale factor associated with the window.
   - **Acceptance Criteria:** Window dimension and mode queries work. Fullscreen can be toggled. Sample game can demonstrate some of these (e.g., printing dimensions).
   - **Status:** To Do
 
