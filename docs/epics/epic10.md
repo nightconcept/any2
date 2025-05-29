@@ -138,6 +138,25 @@
   - **Acceptance Criteria:** CI workflow successfully builds and (if applicable) tests the project on all target OS upon code changes.
   - **Status:** To Do
 
+- [ ] **Task 10.12: Create API Documentation Script**
+  - **Description:** Write a new Python script `scripts/get_api.py`. This script will parse all C# files in `src/Night.Engine/Framework` and its subdirectories. It will generate a markdown file listing all public static classes and their public static functions (including overloads). The script should attempt to derive an equivalent Love2D API call for each function.
+  - **Output Format:**
+    - Modules (classes) should be Header Level 2.
+    - Functions should be an unordered list item: `FunctionName() - love.module.functionName`
+    - Overloaded functions should have a nested unordered list detailing each overload with parameters:
+      - `FunctionName(paramType1 paramName1, paramType2 paramName2)`
+  - **Example:**
+
+    ```markdown
+    ## filesystem
+    - GetInfo() - love.filesystem.getInfo
+      - GetInfo(string path, FileSystemInfo info)
+      - GetInfo(string path, FileType filterType, FileSystemInfo info)
+    ```
+
+  - **Acceptance Criteria:** The script `scripts/get_api.py` is created and generates a markdown file as specified. The markdown file accurately reflects the public API of `src/Night.Engine/Framework`.
+  - **Status:** To Do
+
 ## Workflow Diagram for Epic 10
 
 ```mermaid
@@ -169,3 +188,4 @@ graph TD
     T10_8 --> T10_9;
     T10_9 --> T10_10;
     T10_10 --> T10_11;
+    T10_11 --> T10_12["Task 10.12: Create API Documentation Script"];
