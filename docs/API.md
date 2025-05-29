@@ -95,8 +95,26 @@
 ### Functions (Window)
 
 - Close() - love.window.close
+- FromPixels() - love.window.fromPixels
+  - FromPixels(float value)
+- GetDPIScale() - love.window.getDPIScale
+- GetDesktopDimensions() - love.window.getDesktopDimensions
+  - GetDesktopDimensions(int displayIndex)
+- GetDisplayCount() - love.window.getDisplayCount
+- GetFullscreen() - love.window.getFullscreen
+- GetFullscreenModes() - love.window.getFullscreenModes
+  - GetFullscreenModes(int displayIndex)
+- GetMode() - love.window.getMode
 - IsOpen() - love.window.isOpen
+- SetFullscreen() - love.window.setFullscreen
+  - SetFullscreen(bool fullscreen, FullscreenType fsType)
 - SetMode() - love.window.setMode
   - SetMode(int width, int height, SDL.WindowFlags flags)
 - SetTitle() - love.window.setTitle
   - SetTitle(string title)
+- ToPixels() - love.window.toPixels
+  - ToPixels(float value)
+
+### Enums (Window)
+
+- FullscreenType

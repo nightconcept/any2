@@ -24,8 +24,32 @@ public class Game : IGame
 
   public void Load()
   {
-    Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
+    _ = Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     Window.SetTitle("Night Platformer Sample");
+
+    // --- Night.Window Demo ---
+    /* Commenting out verbose initial info dump
+    Console.WriteLine("--- Night.Window Info ---");
+    Console.WriteLine($"Display Count: {Window.GetDisplayCount()}");
+    var (desktopW, desktopH) = Window.GetDesktopDimensions();
+    Console.WriteLine($"Primary Desktop Dimensions: {desktopW}x{desktopH}");
+    var currentMode = Window.GetMode();
+    Console.WriteLine($"Initial Window Mode: {currentMode.Width}x{currentMode.Height}, Fullscreen: {currentMode.Fullscreen}, Type: {currentMode.FullscreenType}, Borderless: {currentMode.Borderless}");
+    Console.WriteLine($"Initial DPI Scale: {Window.GetDPIScale()}");
+    Console.WriteLine("Press F11 to toggle fullscreen (Desktop mode).");
+    Console.WriteLine("Press F10 to toggle fullscreen (Exclusive mode).");
+    Console.WriteLine("Available Fullscreen Modes (Primary Display):");
+    var fsModes = Window.GetFullscreenModes();
+    foreach(var mode in fsModes)
+    {
+        Console.WriteLine($"  {mode.Width}x{mode.Height}");
+    }
+    Console.WriteLine("-------------------------");
+    */
+    // Retain keybinding info if desired, or remove these too if all startup messages should go.
+    Console.WriteLine("Press F11 to toggle fullscreen (Desktop mode).");
+    Console.WriteLine("Press F10 to toggle fullscreen (Exclusive mode).");
+    // --- End Night.Window Demo ---
 
     _player.Load();
 
@@ -168,6 +192,25 @@ public class Game : IGame
     {
       Window.Close(); // Window class will be in Night.Framework
     }
+
+    // --- Night.Window Demo: Toggle Fullscreen ---
+    if (key == Night.KeySymbol.F11)
+    {
+      var (isFullscreen, _) = Window.GetFullscreen();
+      bool success = Window.SetFullscreen(!isFullscreen, Night.FullscreenType.Desktop);
+      Console.WriteLine($"SetFullscreen to {!isFullscreen} (Desktop) attempt: {(success ? "Success" : "Failed")}");
+      var newMode = Window.GetMode();
+      Console.WriteLine($"New Window Mode: {newMode.Width}x{newMode.Height}, Fullscreen: {newMode.Fullscreen}, Type: {newMode.FullscreenType}, Borderless: {newMode.Borderless}");
+    }
+    if (key == Night.KeySymbol.F10)
+    {
+      var (isFullscreen, _) = Window.GetFullscreen();
+      bool success = Window.SetFullscreen(!isFullscreen, Night.FullscreenType.Exclusive);
+      Console.WriteLine($"SetFullscreen to {!isFullscreen} (Exclusive) attempt: {(success ? "Success" : "Failed")}");
+      var newMode = Window.GetMode();
+      Console.WriteLine($"New Window Mode: {newMode.Width}x{newMode.Height}, Fullscreen: {newMode.Fullscreen}, Type: {newMode.FullscreenType}, Borderless: {newMode.Borderless}");
+    }
+    // --- End Night.Window Demo ---
   }
 }
 

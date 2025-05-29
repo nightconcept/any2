@@ -24,7 +24,7 @@ public class Platformer : IGame
 
   public void Load()
   {
-    Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
+    _ = Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     Night.Window.SetTitle("Night Platformer Sample");
 
     _player.Load();

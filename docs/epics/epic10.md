@@ -85,34 +85,168 @@
   - **Acceptance Criteria:** Sample game can react to key releases, mouse button presses, and mouse button releases, triggering the appropriate `IGame` callbacks.
   - **Status:** Done
 
-- [ ] **Task 10.5: Extend `Night.Window` Functionality**
+- [x] **Task 10.5: Extend `Night.Window` Functionality**
   - **Description:** Implement window management functionality based on `docs/love2d-api/modules/window.md` "In Scope" items.
   - **Implementation:**
-    - [ ] Core Methods:
-      - [ ] `GetDesktopDimensions(int displayIndex = 0)` - Get desktop dimensions [cite: 1280]
-      - [ ] `GetDisplayCount()` - Get number of displays [cite: 1283]
-    - [ ] Fullscreen Management:
-      - [ ] `GetFullscreen()` - Check if window is fullscreen. Returns bool fullscreen and FullscreenType fstype. FullscreenType is enumeration `desktop` and `exclusive`. `desktop` is sometimes known as borderless fullscreen windowed mode. A borderless screen-sized window is created which sits on top of all desktop UI elements. The window is automatically resized to match the dimensions of the desktop, and its size cannot be changed. `exclusive` is standard exclusive-fullscreen mode. Changes the display mode (actual resolution) of the monitor.
-      - [ ] `SetFullscreen(bool fullscreen, FullscreenType type = Desktop)` - Toggle fullscreen. Returns bool success.
-      - [ ] `GetFullscreenModes(int displayIndex = 0)` - Get available fullscreen modes. Returns table modes. A table of width/height pairs. (Note that this may not be in order.)
-      - [ ] Define `Night.FullscreenType` struct/class
-    - [ ] Window State:
-      - [ ] `GetMode()` - Get current window mode (width, height, flags) [cite: 1295]
-    - [ ] (Optional Stretch) High DPI Support:
-      - [ ] `FromPixels` - Converts a number from pixels to density-independent units.
-      - [ ] `ToPixels` - Converts a number from density-independent units to pixels.
-      - [ ] `GetDPIScale` - Gets the DPI scale factor associated with the window.
+    - [x] Core Methods:
+      - [x] `GetDesktopDimensions(int displayIndex = 0)` - Get desktop dimensions [cite: 1280]
+      - [x] `GetDisplayCount()` - Get number of displays [cite: 1283]
+    - [x] Fullscreen Management:
+      - [x] `GetFullscreen()` - Check if window is fullscreen. Returns bool fullscreen and FullscreenType fstype. FullscreenType is enumeration `desktop` and `exclusive`. `desktop` is sometimes known as borderless fullscreen windowed mode. A borderless screen-sized window is created which sits on top of all desktop UI elements. The window is automatically resized to match the dimensions of the desktop, and its size cannot be changed. `exclusive` is standard exclusive-fullscreen mode. Changes the display mode (actual resolution) of the monitor.
+      - [x] `SetFullscreen(bool fullscreen, FullscreenType type = Desktop)` - Toggle fullscreen. Returns bool success.
+      - [x] `GetFullscreenModes(int displayIndex = 0)` - Get available fullscreen modes. Returns table modes. A table of width/height pairs. (Note that this may not be in order.)
+      - [x] Define `Night.FullscreenType` struct/class
+    - [x] Window State:
+      - [x] `GetMode()` - Get current window mode (width, height, flags) [cite: 1295]
+    - [x] (Optional Stretch) High DPI Support:
+      - [x] `FromPixels` - Converts a number from pixels to density-independent units.
+      - [x] `ToPixels` - Converts a number from density-independent units to pixels.
+      - [x] `GetDPIScale` - Gets the DPI scale factor associated with the window.
   - **Acceptance Criteria:** Window dimension and mode queries work. Fullscreen can be toggled. Sample game can demonstrate some of these (e.g., printing dimensions).
-  - **Status:** To Do
+  - **Status:** Review
 
 ### Phase 2: Project Infrastructure & Polish
 
 - [ ] **Task 10.6: Implement User-Definable Error Handler**
   - **Description:** Design and implement a mechanism similar to `love.errorhandler`. Allow the user to register a custom error handling function/delegate that `FrameworkLoop.cs` will call when an unhandled exception occurs in `IGame.Load`, `IGame.Update`, `IGame.Draw`, or input callbacks.
   - The handler should receive error details (exception object, message, stack trace).
-  - If no custom handler is set, maintain current behavior (log to console, attempt graceful shutdown).
-  - **Acceptance Criteria:** A user can provide a custom function to `Night.Framework` that gets called on unhandled game code exceptions, allowing custom display or logging.
-  - **Status:** To Do
+  - If no custom handler is set, implement the following equivalent from Love2D as the default error handling.
+
+```lua
+local utf8 = require("utf8")
+
+local function error_printer(msg, layer)
+ print((debug.traceback("Error: " .. tostring(msg), 1+(layer or 1)):gsub("\n[^\n]+$", "")))
+end
+
+function love.errorhandler(msg)
+ msg = tostring(msg)
+
+ error_printer(msg, 2)
+
+ if not love.window or not love.graphics or not love.event then
+  return
+ end
+
+ if not love.graphics.isCreated() or not love.window.isOpen() then
+  local success, status = pcall(love.window.setMode, 800, 600)
+  if not success or not status then
+   return
+  end
+ end
+
+ -- Reset state.
+ if love.mouse then
+  love.mouse.setVisible(true)
+  love.mouse.setGrabbed(false)
+  love.mouse.setRelativeMode(false)
+  if love.mouse.isCursorSupported() then
+   love.mouse.setCursor()
+  end
+ end
+ if love.joystick then
+  -- Stop all joystick vibrations.
+  for i,v in ipairs(love.joystick.getJoysticks()) do
+   v:setVibration()
+  end
+ end
+ if love.audio then love.audio.stop() end
+
+ love.graphics.reset()
+ local font = love.graphics.setNewFont(14)
+
+ love.graphics.setColor(1, 1, 1)
+
+ local trace = debug.traceback()
+
+ love.graphics.origin()
+
+ local sanitizedmsg = {}
+ for char in msg:gmatch(utf8.charpattern) do
+  table.insert(sanitizedmsg, char)
+ end
+ sanitizedmsg = table.concat(sanitizedmsg)
+
+ local err = {}
+
+ table.insert(err, "Error\n")
+ table.insert(err, sanitizedmsg)
+
+ if #sanitizedmsg ~= #msg then
+  table.insert(err, "Invalid UTF-8 string in error message.")
+ end
+
+ table.insert(err, "\n")
+
+ for l in trace:gmatch("(.-)\n") do
+  if not l:match("boot.lua") then
+   l = l:gsub("stack traceback:", "Traceback\n")
+   table.insert(err, l)
+  end
+ end
+
+ local p = table.concat(err, "\n")
+
+ p = p:gsub("\t", "")
+ p = p:gsub("%[string \"(.-)\"%]", "%1")
+
+ local function draw()
+  if not love.graphics.isActive() then return end
+  local pos = 70
+  love.graphics.clear(89/255, 157/255, 220/255)
+  love.graphics.printf(p, pos, pos, love.graphics.getWidth() - pos)
+  love.graphics.present()
+ end
+
+ local fullErrorText = p
+ local function copyToClipboard()
+  if not love.system then return end
+  love.system.setClipboardText(fullErrorText)
+  p = p .. "\nCopied to clipboard!"
+ end
+
+ if love.system then
+  p = p .. "\n\nPress Ctrl+C or tap to copy this error"
+ end
+
+ return function()
+  love.event.pump()
+
+  for e, a, b, c in love.event.poll() do
+   if e == "quit" then
+    return 1
+   elseif e == "keypressed" and a == "escape" then
+    return 1
+   elseif e == "keypressed" and a == "c" and love.keyboard.isDown("lctrl", "rctrl") then
+    copyToClipboard()
+   elseif e == "touchpressed" then
+    local name = love.window.getTitle()
+    if #name == 0 or name == "Untitled" then name = "Game" end
+    local buttons = {"OK", "Cancel"}
+    if love.system then
+     buttons[3] = "Copy to clipboard"
+    end
+    local pressed = love.window.showMessageBox("Quit "..name.."?", "", buttons)
+    if pressed == 1 then
+     return 1
+    elseif pressed == 3 then
+     copyToClipboard()
+    end
+   end
+  end
+
+  draw()
+
+  if love.timer then
+   love.timer.sleep(0.1)
+  end
+ end
+
+end
+```
+
+- **Acceptance Criteria:** A user can provide a custom function to `Night.Framework` that gets called on unhandled game code exceptions, allowing custom display or logging.
+- **Status:** To Do
 
 - [ ] **Task 10.7: Basic Game Configuration File Support**
   - **Description:** Implement functionality to load basic game settings from a configuration file (e.g., `config.json` or `config.ini`) at startup.
@@ -141,7 +275,7 @@
   - **Acceptance Criteria:** CI workflow successfully builds and (if applicable) tests the project on all target OS upon code changes.
   - **Status:** To Do
 
-- [ ] **Task 10.12: Create API Documentation Script**
+- [x] **Task 10.12: Create API Documentation Script**
   - **Description:** Write a new Python script `scripts/get_api.py`. This script will parse all C# files in `src/Night.Engine/Framework` and its subdirectories. It will generate a markdown file listing all public static classes and their public static functions (including overloads). The script should attempt to derive an equivalent Love2D API call for each function.
   - **Output Format:**
     - Modules (classes) should be Header Level 2.
@@ -159,36 +293,3 @@
 
   - **Acceptance Criteria:** The script `scripts/get_api.py` is created and generates a markdown file as specified. The markdown file accurately reflects the public API of `src/Night.Engine/Framework`.
   - **Status:** To Do
-
-## Workflow Diagram for Epic 10
-
-```mermaid
-graph TD
-    subgraph "Phase 1: Core Framework Enhancements"
-        T10_1["Task 10.1: Night.Filesystem (Basic)"]
-        T10_2["Task 10.2: Graphics - Shape Drawing"]
-        T10_3["Task 10.3: Night.Timer Module"]
-        T10_4["Task 10.4: Input Event Callbacks (KeyReleased, MousePressed, MouseReleased)"]
-        T10_5["Task 10.5: Night.Window Extensions"]
-    end
-
-    subgraph "Phase 2: Project Infrastructure & Polish"
-        T10_6["Task 10.6: User Error Handler"]
-        T10_7["Task 10.7: Basic Config File Support"]
-        T10_8["Task 10.8: docfx Documentation"]
-        T10_9["Task 10.9: Formalize Test Suite"]
-        T10_10["Task 10.10: Logo and Icon"]
-        T10_11["Task 10.11: Basic CI Workflow"]
-    end
-
-    T10_1 --> T10_2;
-    T10_2 --> T10_3;
-    T10_3 --> T10_4;
-    T10_4 --> T10_5;
-    T10_5 --> T10_6;
-    T10_6 --> T10_7;
-    T10_7 --> T10_8;
-    T10_8 --> T10_9;
-    T10_9 --> T10_10;
-    T10_10 --> T10_11;
-    T10_11 --> T10_12["Task 10.12: Create API Documentation Script"];
