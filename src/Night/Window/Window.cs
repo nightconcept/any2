@@ -2,13 +2,14 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
+using SDL3;
+
 namespace Night
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Runtime.InteropServices;
-
-  using SDL3;
 
   /// <summary>
   /// Provides an interface for modifying and retrieving information about the program's window.

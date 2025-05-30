@@ -2,10 +2,11 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+using System.IO;
+
 namespace Night
 {
-  using System;
-
   /// <summary>
   /// Defines the delegate for handling unhandled exceptions from game code.
   /// </summary>

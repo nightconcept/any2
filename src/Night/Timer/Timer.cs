@@ -2,20 +2,20 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+using System.Threading;
+
+using SDL3;
+
 namespace Night
 {
-  using System;
-  using System.Threading;
-
-  using SDL3;
-
   /// <summary>
   /// Provides high-resolution timing functionality.
   /// </summary>
   public static class Timer
   {
     // _timerStartTime is initialized when the Timer class is first loaded.
-    private static readonly ulong timerStartTime = SDL.GetPerformanceCounter();
+    private static readonly ulong TimerStartTime = SDL.GetPerformanceCounter();
 
     // These are updated by FrameworkLoop.cs or by Timer methods themselves
     internal static int CurrentFPS { get; set; } = 0;
@@ -59,7 +59,7 @@ namespace Night
       }
 
       ulong currentTimeCounter = SDL.GetPerformanceCounter();
-      return (double)(currentTimeCounter - timerStartTime) / PerformanceFrequency;
+      return (double)(currentTimeCounter - TimerStartTime) / PerformanceFrequency;
     }
 
     /// <summary>

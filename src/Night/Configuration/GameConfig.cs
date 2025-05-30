@@ -2,9 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System.Text.Json.Serialization;
+
 namespace Night.Configuration
 {
-  using System.Text.Json.Serialization;
 
   public class GameConfig
   {

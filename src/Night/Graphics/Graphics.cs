@@ -2,15 +2,16 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+
+using Night;
+
+using SDL3;
+
 namespace Night
 {
-  using System;
-  using System.IO;
-  using System.Runtime.InteropServices;
-
-  using Night;
-  using SDL3;
-
   /// <summary>
   /// Provides functionality for drawing graphics.
   /// Mimics Love2D's love.graphics module.

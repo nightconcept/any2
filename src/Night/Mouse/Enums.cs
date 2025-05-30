@@ -2,10 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Night
 {
-  using System;
-
   /// <summary>
   /// Represents mouse buttons. Values correspond to SDL_MouseButtonFlags/
   /// SDL3.SDL.Button* constants.

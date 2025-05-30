@@ -2,10 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Night
 {
-  using System;
-
   /// <summary>
   /// Represents a color with Red, Green, Blue, and Alpha components. Implements Love2D's RGBA color table.
   /// Each component is a byte value ranging from 0 to 255.

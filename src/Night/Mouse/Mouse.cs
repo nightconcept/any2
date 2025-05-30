@@ -2,13 +2,14 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+
+using Night;
+
+using SDL3;
+
 namespace Night
 {
-  using System;
-
-  using Night;
-  using SDL3;
-
   /// <summary>
   /// Provides an interface to the user's mouse.
   /// </summary>

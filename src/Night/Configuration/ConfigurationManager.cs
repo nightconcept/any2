@@ -2,12 +2,12 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+using System.IO;
+using System.Text.Json;
+
 namespace Night
 {
-  using System;
-  using System.IO;
-  using System.Text.Json;
-
   using Night;
   using Night.Configuration;
 

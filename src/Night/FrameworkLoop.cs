@@ -1,15 +1,20 @@
+// <copyright file="FrameworkLoop.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+
+using Night;
+using Night.Configuration; // Added for configuration management
+
+using SDL3;
+
 namespace Night
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Diagnostics;
-  using System.Linq;
-  using System.Runtime.InteropServices;
-
-  using Night;
-  using Night.Configuration; // Added for configuration management
-  using SDL3;
-
   /// <summary>
   /// Manages the main game loop and coordination of game states.
   /// Provides the main entry point to run a game.

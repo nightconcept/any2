@@ -328,16 +328,14 @@ Directory structure:
     │   ├── copilot-instructions.md
     │   ├── dependabot.yml
     │   ├── deactivated/
-    │   │   ├── build-sdl3.yml
-    │   │   ├── ci.yml
-    │   │   ├── codeql.yml
-    │   │   ├── dependency-review.yml
-    │   │   ├── release.yml
-    │   │   └── scorecard.yml
+    │   │   └── release.yml
     │   ├── scripts/
     │   │   └── determine_next_version.py
     │   └── workflows/
-    │       └── ci.yml
+    │       ├── ci.yml
+    │       ├── codeql-analysis.yml
+    │       ├── dependency-review.yml
+    │       └── scorecard.yml
     ├── .roo/
     └── .windsurf/
 
@@ -355,6 +353,7 @@ This project also intends to be AI friendly so that non-programmer game designer
 ## Library Structure
 
 The core of the project is the `Night.dll` library. This assembly contains:
+
 - The `Night` namespace: Provides the Love2D-inspired framework API for low-level game development tasks.
 - The `Night.Engine` namespace: Will house higher-level, more opinionated game engine components (e.g., Scene Management, ECS) built upon the `Night` framework.
 
@@ -547,7 +546,7 @@ indent_size = 2
 csharp_max_line_length = 100
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = true
-csharp_preferred_using_directive_placement = outside_namespace:suggestion
+csharp_preferred_using_directive_placement = outside_namespace:error
 
 # Style - Naming Conventions
 dotnet_diagnostic.IDE1006.severity = error # Naming rule violation (covers PascalCase, camelCase, _camelCase based on symbols)
@@ -1914,9 +1913,9 @@ end
   - **Status:** To Do
 
 - [ ] **Task 10.11: Establish Basic CI Workflow**
-  - **Description:** Review deactivated CI workflows. Create a new, active GitHub Actions workflow that, at a minimum, builds `Night.Engine` and `Night.SampleGame` on push/PR to main branch for Windows, Linux, and macOS. Run any automated tests established in Task 10.9.
+  - **Description:** Review deactivated CI workflows. Create a new, active GitHub Actions workflow that, at a minimum, builds `Night` and `SampleGame` on push/PR to main branch for Windows, Linux, and macOS. Run any automated tests established in Task 10.9.
   - **Acceptance Criteria:** CI workflow successfully builds and (if applicable) tests the project on all target OS upon code changes.
-  - **Status:** In-Progress
+  - **Status:** Done (Basic requirements met by existing `.github/workflows/ci.yml`. Further enhancements can be added.)
 
 - [x] **Task 10.12: Create API Documentation Script**
   - **Description:** Write a new Python script `scripts/get_api.py`. This script will parse all C# files in `src/Night.Engine/Framework` and its subdirectories. It will generate a markdown file listing all public static classes and their public static functions (including overloads). The script should attempt to derive an equivalent Love2D API call for each function.
@@ -1937,8 +1936,7 @@ end
   - **Acceptance Criteria:** The script `scripts/get_api.py` is created and generates a markdown file as specified. The markdown file accurately reflects the public API of `src/Night.Engine/Framework`.
   - **Status:** To Do
 
-
-[ ] **Task 10.13: Refactor Project Structure, Naming, and Documentation**
+[x] **Task 10.13: Refactor Project Structure, Naming, and Documentation**
 
 - **Description:** Restructure the project's directories and C# project files to align with the "Night" and "Night.Engine" namespace strategy. Update all relevant documentation to reflect these changes. The goal is to have a primary assembly named `Night.dll` which contains both the `Night` (framework) and `Night.Engine` (engine extensions) namespaces.
 
@@ -4511,7 +4509,12 @@ if __name__ == "__main__":
 ================================================
 File: src/Night/ErrorHandler.cs
 ================================================
+// <copyright file="ErrorHandler.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
+using System.IO;
 
 namespace Night
 {
@@ -4549,6 +4552,10 @@ namespace Night
 ================================================
 File: src/Night/FrameworkLoop.cs
 ================================================
+// <copyright file="FrameworkLoop.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -4560,7 +4567,6 @@ using Night.Configuration; // Added for configuration management
 
 using SDL3;
 
-// Namespace for the public Framework API.
 namespace Night
 {
   /// <summary>
@@ -4569,18 +4575,18 @@ namespace Night
   /// </summary>
   public static class Framework
   {
-    private static bool _isSdlInitialized = false;
-    private static SDL.InitFlags _initializedSubsystems = 0;
+    private static bool isSdlInitialized = false;
+    private static SDL.InitFlags initializedSubsystems = 0;
 
-    private static int _frameCount = 0;
-    private static double _fpsTimeAccumulator = 0.0;
-    private static List<double> _deltaHistory = new List<double>();
+    private static int frameCount = 0;
+    private static double fpsTimeAccumulator = 0.0;
+    private static List<double> deltaHistory = new List<double>();
     private const int MaxDeltaHistorySamples = 60; // Store up to 1 second of deltas at 60fps
 
-    private static bool _inErrorState = false;
+    private static bool inErrorState = false;
 
     /// <summary>
-    /// A flag indicating whether the core SDL systems, particularly for input,
+    /// Gets a value indicating whether a flag indicating whether the core SDL systems, particularly for input,
     /// have been successfully initialized by this Framework's Run method.
     /// </summary>
     public static bool IsInputInitialized { get; private set; } = false;
@@ -4601,7 +4607,7 @@ namespace Night
             Arguments = "-productVersion",
             RedirectStandardOutput = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
           };
           using (Process swVersProcess = Process.Start(swVersPsi)!)
           {
@@ -4616,7 +4622,7 @@ namespace Night
             Arguments = "-r",
             RedirectStandardOutput = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
           };
           using (Process unameProcess = Process.Start(unamePsi)!)
           {
@@ -4635,6 +4641,7 @@ namespace Night
           Console.WriteLine($"Night.Framework.Run: Could not retrieve detailed macOS version info: {ex.Message}");
         }
       }
+
       // Fallback for non-macOS platforms or if macOS version retrieval fails
       return $"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})";
     }
@@ -4665,21 +4672,33 @@ namespace Night
 
       try
       {
-        _initializedSubsystems = SDL.InitFlags.Video | SDL.InitFlags.Events;
-        if (!SDL.Init(_initializedSubsystems))
+        initializedSubsystems = SDL.InitFlags.Video | SDL.InitFlags.Events;
+        if (!SDL.Init(initializedSubsystems))
         {
           Console.WriteLine($"Night.Framework.Run: SDL_Init failed: {SDL.GetError()}");
           return;
         }
-        _isSdlInitialized = true;
-        IsInputInitialized = (_initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
+
+        isSdlInitialized = true;
+        IsInputInitialized = (initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
 
         // Setup initial window based on configuration BEFORE game.Load()
         Console.WriteLine("Night.Framework.Run: Initializing window with config/default settings before game.Load().");
         SDL.WindowFlags sdlFlags = (SDL.WindowFlags)0;
-        if (windowConfig.Resizable) sdlFlags |= SDL.WindowFlags.Resizable;
-        if (windowConfig.Borderless) sdlFlags |= SDL.WindowFlags.Borderless;
-        if (windowConfig.HighDPI) sdlFlags |= SDL.WindowFlags.HighPixelDensity;
+        if (windowConfig.Resizable)
+        {
+          sdlFlags |= SDL.WindowFlags.Resizable;
+        }
+
+        if (windowConfig.Borderless)
+        {
+          sdlFlags |= SDL.WindowFlags.Borderless;
+        }
+
+        if (windowConfig.HighDPI)
+        {
+          sdlFlags |= SDL.WindowFlags.HighPixelDensity;
+        }
 
         bool modeSet = Window.SetMode(windowConfig.Width, windowConfig.Height, sdlFlags);
         if (!modeSet)
@@ -4714,8 +4733,8 @@ namespace Night
         {
           _ = SDL.SetWindowPosition(Window.Handle, windowConfig.X.Value, windowConfig.Y.Value);
         }
-        // End of initial window setup
 
+        // End of initial window setup
         try
         {
           game.Load(); // game.Load() can now use Graphics.NewImage(), and can also call Window.SetMode again to override.
@@ -4723,14 +4742,14 @@ namespace Night
         catch (Exception e)
         {
           HandleGameException(e, game);
-          if (_inErrorState)
+          if (inErrorState)
           {
             CleanUpSDLAndWindow();
             return;
           }
         }
 
-        // After game.Load(), check if window is still open. 
+        // After game.Load(), check if window is still open.
         // If game.Load() called Window.Close() or failed to maintain a window, we should not continue.
         if (!Window.IsOpen())
         {
@@ -4738,50 +4757,48 @@ namespace Night
           CleanUpSDLAndWindow(); // Ensure cleanup if window was closed by game.Load()
           return;
         }
+
         // If game.Load() *did* change window settings (e.g. VSync via a new SetMode call),
         // we don't re-apply config VSync here unless we have a way to know it wasn't touched by game.
         // The current Window.SetMode creates a new renderer, so VSync would be reset anyway if game called SetMode.
         // So, if game called SetMode, it's responsible for its own VSync if it differs from config default for new renderer.
         // If game didn't call SetMode, our initial VSync setting stands.
-
         Night.Timer.Initialize();
 
-        _frameCount = 0;
-        _fpsTimeAccumulator = 0.0;
-        _deltaHistory.Clear();
-
+        frameCount = 0;
+        fpsTimeAccumulator = 0.0;
+        deltaHistory.Clear();
 
         // Main game loop
-        while (Window.IsOpen() && !_inErrorState)
+        while (Window.IsOpen() && !inErrorState)
         {
-
           // Calculate DeltaTime by calling Night.Timer.Step()
           double deltaTime = Night.Timer.Step();
 
           // FPS Calculation
-          _frameCount++;
-          _fpsTimeAccumulator += deltaTime;
-          if (_fpsTimeAccumulator >= 1.0)
+          frameCount++;
+          fpsTimeAccumulator += deltaTime;
+          if (fpsTimeAccumulator >= 1.0)
           {
-            Night.Timer.CurrentFPS = _frameCount;
-            _frameCount = 0;
-            _fpsTimeAccumulator -= 1.0; // Subtract 1 second, keep remainder for accuracy
+            Night.Timer.CurrentFPS = frameCount;
+            frameCount = 0;
+            fpsTimeAccumulator -= 1.0; // Subtract 1 second, keep remainder for accuracy
           }
 
           // Average Delta Calculation
-          _deltaHistory.Add(deltaTime);
-          if (_deltaHistory.Count > MaxDeltaHistorySamples)
+          deltaHistory.Add(deltaTime);
+          if (deltaHistory.Count > MaxDeltaHistorySamples)
           {
-            _deltaHistory.RemoveAt(0); // Keep the list size bounded
-          }
-          if (_deltaHistory.Count > 0)
-          {
-            Night.Timer.CurrentAverageDelta = _deltaHistory.Average();
+            deltaHistory.RemoveAt(0); // Keep the list size bounded
           }
 
+          if (deltaHistory.Count > 0)
+          {
+            Night.Timer.CurrentAverageDelta = deltaHistory.Average();
+          }
 
           // Event Processing
-          while (SDL.PollEvent(out SDL.Event e) && !_inErrorState)
+          while (SDL.PollEvent(out SDL.Event e) && !inErrorState)
           {
             var eventType = (SDL.EventType)e.Type;
 
@@ -4797,8 +4814,7 @@ namespace Night
                 game.KeyPressed(
                     (KeySymbol)e.Key.Key,
                     (KeyCode)e.Key.Scancode,
-                    e.Key.Repeat
-                );
+                    e.Key.Repeat);
               }
               catch (Exception exUser)
               {
@@ -4811,8 +4827,7 @@ namespace Night
               {
                 game.KeyReleased(
                     (KeySymbol)e.Key.Key,
-                    (KeyCode)e.Key.Scancode
-                );
+                    (KeyCode)e.Key.Scancode);
               }
               catch (Exception exUser)
               {
@@ -4828,8 +4843,7 @@ namespace Night
                     (int)e.Button.Y,
                     (MouseButton)e.Button.Button,
                     e.Button.Which == SDL.TouchMouseID, // istouch
-                    e.Button.Clicks
-                );
+                    e.Button.Clicks);
               }
               catch (Exception exUser)
               {
@@ -4845,18 +4859,18 @@ namespace Night
                     (int)e.Button.Y,
                     (MouseButton)e.Button.Button,
                     e.Button.Which == SDL.TouchMouseID, // istouch
-                    e.Button.Clicks
-                );
+                    e.Button.Clicks);
               }
               catch (Exception exUser)
               {
                 HandleGameException(exUser, game);
               }
             }
+
             // TODO: Add other event handling (mouse, etc.) as per future tasks.
           }
 
-          if (_inErrorState) // Check if error occurred during event processing
+          if (inErrorState) // Check if error occurred during event processing
           {
             // Error handler (Default or custom) should have run.
             // Default handler enters its own loop or prepares for exit.
@@ -4866,7 +4880,7 @@ namespace Night
           }
 
           // Update
-          if (!_inErrorState) // Do not update if an error has occurred and is being handled
+          if (!inErrorState) // Do not update if an error has occurred and is being handled
           {
             try
             {
@@ -4875,12 +4889,15 @@ namespace Night
             catch (Exception exUser)
             {
               HandleGameException(exUser, game);
-              if (_inErrorState) break; // Exit main loop if error sets state
+              if (inErrorState)
+              {
+                break; // Exit main loop if error sets state
+              }
             }
           }
 
           // Draw
-          if (!_inErrorState) // Do not draw if an error has occurred and is being handled
+          if (!inErrorState) // Do not draw if an error has occurred and is being handled
           {
             try
             {
@@ -4895,9 +4912,13 @@ namespace Night
             catch (Exception exUser)
             {
               HandleGameException(exUser, game);
+
               // If Draw fails, we typically still want to try and finish the frame/loop iteration
               // unless _inErrorState is set by the handler to signal a desire to stop.
-              if (_inErrorState) break;
+              if (inErrorState)
+              {
+                break;
+              }
             }
           }
         }
@@ -4906,20 +4927,20 @@ namespace Night
       {
         // This is for errors within Framework.Run itself, not game code.
         Console.WriteLine($"Night.Framework.Run: An UNEXPECTED FRAMEWORK error occurred: {ex.ToString()}");
+
         // Attempt to call default error handler for framework errors too, but without game instance.
         HandleGameException(ex, null);
       }
       finally
       {
         // TODO: Call gameLogic.Quit() if it's added to IGame.
-
         CleanUpSDLAndWindow();
       }
     }
 
     private static void HandleGameException(Exception e, IGame? gameInstance)
     {
-      _inErrorState = true; // Signal that we are now in an error state.
+      inErrorState = true; // Signal that we are now in an error state.
 
       var customHandler = Night.Error.GetHandler();
       if (customHandler != null)
@@ -4927,19 +4948,27 @@ namespace Night
         try
         {
           customHandler(e);
+
           // If custom handler returns, we assume it handled the error
           // and the game might want to continue or has already quit.
           // For now, we'll still close the window to be safe, unless custom handler re-opens it.
           // This behavior might need refinement.
-          if (Window.IsOpen()) Window.Close();
+          if (Window.IsOpen())
+          {
+            Window.Close();
+          }
         }
         catch (Exception exHandler)
         {
           // Error in the custom error handler itself!
           Console.WriteLine($"Night.Framework.Run: CRITICAL: Exception in custom error handler: {exHandler.ToString()}");
+
           // Fallback to a very minimal default behavior
           Console.WriteLine($"Night.Framework.Run: Original game error: {e.ToString()}");
-          if (Window.IsOpen()) Window.Close(); // Ensure shutdown
+          if (Window.IsOpen())
+          {
+            Window.Close(); // Ensure shutdown
+          }
         }
       }
       else
@@ -4963,12 +4992,13 @@ namespace Night
         if (!Window.IsOpen() || (Window.RendererPtr == nint.Zero)) // Assuming Graphics.RendererPtr is a good check for active graphics
         {
           Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window or Graphics not initialized. Attempting to set mode...");
+
           // Attempt to set a basic window mode if not already open.
           // Use a default size. WindowFlags can be minimal or Resizable.
           if (Window.SetMode(800, 600, SDL.WindowFlags.Resizable))
           {
             Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window mode set to 800x600.");
-            canDrawError = (Window.RendererPtr != nint.Zero);
+            canDrawError = Window.RendererPtr != nint.Zero;
           }
           else
           {
@@ -4986,6 +5016,7 @@ namespace Night
           Mouse.SetVisible(true);
           Mouse.SetGrabbed(false);
           Mouse.SetRelativeMode(false);
+
           // Mouse.SetCursor() - Skipped as per plan if complex; SDL default cursor should apply.
         }
       }
@@ -4995,16 +5026,15 @@ namespace Night
         canDrawError = false; // If reset fails, drawing might be unsafe.
       }
 
-
       if (canDrawError)
       {
         try
         {
           // Simple error display loop
           string fullErrorText = $"Error: {e.Message}\n\n{e.StackTrace}";
+
           // Shorten for display if too long, or make it scrollable if we had font rendering
           // For now, just display what fits or make user copy.
-
           Window.SetTitle($"Error - {gameInstance?.GetType().Name ?? "Night Game"}");
 
           bool runningErrorLoop = true;
@@ -5018,6 +5048,7 @@ namespace Night
                 Window.Close();
                 break;
               }
+
               if (ev.Type == (uint)SDL.EventType.KeyDown)
               {
                 if (ev.Key.Key == SDL.Keycode.Escape)
@@ -5026,6 +5057,7 @@ namespace Night
                   Window.Close();
                   break;
                 }
+
                 // Check for Ctrl+C - SDL.Keymod.Ctrl is a flag
                 if (ev.Key.Key == SDL.Keycode.C && ((SDL.GetModState() & SDL.Keymod.Ctrl) != 0))
                 {
@@ -5047,17 +5079,20 @@ namespace Night
                 }
               }
             }
-            if (!runningErrorLoop) break;
+
+            if (!runningErrorLoop)
+            {
+              break;
+            }
 
             Graphics.Clear(new Color(89, 157, 220, 255)); // Blue background
+
             // Graphics.Print functionality is NOT available.
             // We will just show a blue screen and title. User must check console.
             // If Night.Font was available:
             // Graphics.SetColor(Night.Color.Black);
             // Graphics.Print($"Error: {e.Message}", 10, 10, Window.GetWidth() - 20);
             // Graphics.Print($"Press ESC to quit. Ctrl+C to copy.", 10, Window.GetHeight() - 30);
-
-
             Graphics.Present();
             Timer.Sleep(0.01f); // Sleep for 10ms
           }
@@ -5070,11 +5105,16 @@ namespace Night
       else
       {
         Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Cannot display visual error. Check console. Press Ctrl+C in console to quit if frozen.");
+
         // Loop to keep process alive for a bit for console reading, or just exit.
         // For now, just let it fall through to finally block.
       }
+
       // Ensure the main loop knows to terminate
-      if (Window.IsOpen()) Window.Close();
+      if (Window.IsOpen())
+      {
+        Window.Close();
+      }
     }
 
     private static void CleanUpSDLAndWindow()
@@ -5087,6 +5127,7 @@ namespace Night
         Console.WriteLine("Night.Framework.Run (CleanUpSDLAndWindow): Window was still open, attempting to close.");
         Window.Close(); // This will set _isWindowOpen to false
       }
+
       // Window.Shutdown() handles destroying window, renderer, and SDL.QuitSubSystem(SDL.InitFlags.Video)
       // It's important that Shutdown is called AFTER the error handler's visual loop might have used the window/renderer.
       Window.Shutdown();
@@ -5096,15 +5137,15 @@ namespace Night
 
     private static void CleanUpSDL()
     {
-      if (_isSdlInitialized)
+      if (isSdlInitialized)
       {
         // SDL.QuitSubSystem was already called for Video by Window.Shutdown().
         // We only need to quit other subsystems explicitly initialized by Run if they weren't covered.
         // However, SDL.Quit() handles all initialized subsystems.
         SDL.Quit();
-        _isSdlInitialized = false;
+        isSdlInitialized = false;
         IsInputInitialized = false;
-        _initializedSubsystems = 0;
+        initializedSubsystems = 0;
       }
     }
   }
@@ -5137,15 +5178,14 @@ File: src/Night/Night.csproj
 ================================================
 File: src/Night/Types.cs
 ================================================
+// <copyright file="Types.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
-// SDL3 using is not strictly necessary here anymore as KeySymbol/KeyCode are now fully qualified in IGame
-// However, if other SDL types were used directly by IGame, it would be.
 
 namespace Night
 {
-  // Only IGame interface remains here.
-  // All other enums, structs, and classes have been moved to module-specific files.
-
   /// <summary>
   /// Interface for a game that can be run by the Night Engine.
   /// Game developers will implement this interface in their main game class.
@@ -5181,7 +5221,9 @@ namespace Night
     /// </summary>
     /// <param name="key">The logical key symbol that was released.</param>
     /// <param name="scancode">The physical key (scancode) that was released.</param>
-    void KeyReleased(KeySymbol key, KeyCode scancode) { /* Optional: Default empty implementation */ }
+    void KeyReleased(KeySymbol key, KeyCode scancode)
+    { /* Optional: Default empty implementation */
+    }
 
     /// <summary>
     /// Callback function triggered when a mouse button is pressed.
@@ -5191,7 +5233,9 @@ namespace Night
     /// <param name="button">The mouse button that was pressed.</param>
     /// <param name="istouch">True if the event was generated by a touch input device, false otherwise.</param>
     /// <param name="presses">The number of clicks (1 for single-click, 2 for double-click, etc.).</param>
-    void MousePressed(int x, int y, MouseButton button, bool istouch, int presses) { /* Optional: Default empty implementation */ }
+    void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
+    { /* Optional: Default empty implementation */
+    }
 
     /// <summary>
     /// Callback function triggered when a mouse button is released.
@@ -5201,9 +5245,10 @@ namespace Night
     /// <param name="button">The mouse button that was released.</param>
     /// <param name="istouch">True if the event was generated by a touch input device, false otherwise.</param>
     /// <param name="presses">The number of clicks (typically 1 for release, but may vary).</param>
-    void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses) { /* Optional: Default empty implementation */ }
+    void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses)
+    { /* Optional: Default empty implementation */
+    }
   }
-
 }
 
 
@@ -5211,27 +5256,35 @@ namespace Night
 ================================================
 File: src/Night/Configuration/ConfigurationManager.cs
 ================================================
+// <copyright file="ConfigurationManager.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.IO;
 using System.Text.Json;
 
-using Night;
-using Night.Configuration;
-
 namespace Night
 {
+  using Night;
+  using Night.Configuration;
+
   public static class ConfigurationManager
   {
     private static readonly string ConfigFileName = "config.json";
-    private static Night.Configuration.GameConfig _currentConfig = new Night.Configuration.GameConfig();
-    private static bool _isLoaded = false;
+    private static Night.Configuration.GameConfig currentConfig = new Night.Configuration.GameConfig();
+    private static bool isLoaded = false;
 
-    public static Night.Configuration.GameConfig CurrentConfig => _currentConfig;
-    public static bool IsLoaded => _isLoaded;
+    public static Night.Configuration.GameConfig CurrentConfig => currentConfig;
+
+    public static bool IsLoaded => isLoaded;
 
     public static void LoadConfig(string? gameDirectory = null)
     {
-      if (_isLoaded) return;
+      if (isLoaded)
+      {
+        return;
+      }
 
       string effectiveGameDirectory = gameDirectory ?? AppContext.BaseDirectory;
       string configFilePath = Path.Combine(effectiveGameDirectory, ConfigFileName);
@@ -5247,12 +5300,12 @@ namespace Night
             {
               PropertyNameCaseInsensitive = true,
               AllowTrailingCommas = true,
-              ReadCommentHandling = JsonCommentHandling.Skip
+              ReadCommentHandling = JsonCommentHandling.Skip,
             };
             Night.Configuration.GameConfig? loadedConfig = JsonSerializer.Deserialize<Night.Configuration.GameConfig>(jsonContent, options);
             if (loadedConfig != null)
             {
-              _currentConfig = loadedConfig;
+              currentConfig = loadedConfig;
               Console.WriteLine($"Info: Successfully loaded '{ConfigFileName}' from '{configFilePath}'.");
             }
             else
@@ -5278,7 +5331,8 @@ namespace Night
       {
         Console.WriteLine($"Info: '{ConfigFileName}' not found at '{configFilePath}'. Using default configuration.");
       }
-      _isLoaded = true;
+
+      isLoaded = true;
     }
   }
 }
@@ -5288,10 +5342,15 @@ namespace Night
 ================================================
 File: src/Night/Configuration/GameConfig.cs
 ================================================
+// <copyright file="GameConfig.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System.Text.Json.Serialization;
 
 namespace Night.Configuration
 {
+
   public class GameConfig
   {
     [JsonPropertyName("identity")]
@@ -5399,7 +5458,6 @@ namespace Night.Configuration
     // TODO: Implement actual module enabling/disabling based on these flags.
     // For now, they are just placeholders. love.filesystem, love.data, and love (Night core) are mandatory.
     // love.graphics needs love.window.
-
     [JsonPropertyName("audio")]
     public bool Audio { get; set; } = true;
 
@@ -5467,6 +5525,10 @@ File: src/Night/Engine/.gitkeep
 ================================================
 File: src/Night/Filesystem/Enums.cs
 ================================================
+// <copyright file="Enums.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 namespace Night
@@ -5480,22 +5542,26 @@ namespace Night
     /// A regular file.
     /// </summary>
     File,
+
     /// <summary>
     /// A directory.
     /// </summary>
     Directory,
+
     /// <summary>
     /// A symbolic link.
     /// </summary>
     Symlink,
+
     /// <summary>
     /// Other type (e.g., device, pipe).
     /// </summary>
     Other,
+
     /// <summary>
     /// The path does not exist or its type cannot be determined.
     /// </summary>
-    None
+    None,
   }
 
   /// <summary>
@@ -5507,34 +5573,41 @@ namespace Night
     /// Open a file for read.
     /// </summary>
     Read,
+
     /// <summary>
     /// Open a file for write.
     /// </summary>
     Write,
+
     /// <summary>
     /// Open a file for append.
     /// </summary>
     Append,
+
     /// <summary>
     /// Do not open a file (represents a closed file.)
     /// </summary>
     Close,
+
     /// <summary>
     /// Open a file for write.
     /// </summary>
-    w = Write,
+    W = Write,
+
     /// <summary>
     /// Open a file for read.
     /// </summary>
-    r = Read,
+    R = Read,
+
     /// <summary>
     /// Open a file for append.
     /// </summary>
-    a = Append,
+    A = Append,
+
     /// <summary>
     /// Do not open a file (represents a closed file.)
     /// </summary>
-    c = Close
+    C = Close,
   }
 }
 
@@ -5543,10 +5616,12 @@ namespace Night
 ================================================
 File: src/Night/Filesystem/Filesystem.cs
 ================================================
+// <copyright file="Filesystem.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.IO;
-
-using Night;
 
 namespace Night
 {
@@ -5587,6 +5662,7 @@ namespace Night
           {
             type = FileType.File;
           }
+
           size = fileInfo.Length;
           modTime = ((DateTimeOffset)fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
         }
@@ -5601,6 +5677,7 @@ namespace Night
           {
             type = FileType.Directory;
           }
+
           modTime = ((DateTimeOffset)dirInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
         }
         else
@@ -5629,7 +5706,10 @@ namespace Night
     /// <returns>The FileSystemInfo object given as an argument, filled with information, or null if nothing exists at the path.</returns>
     public static FileSystemInfo? GetInfo(string path, FileSystemInfo info)
     {
-      if (info == null) return null;
+      if (info == null)
+      {
+        return null;
+      }
 
       var newInfo = GetInfo(path);
       if (newInfo != null)
@@ -5639,6 +5719,7 @@ namespace Night
         info.ModTime = newInfo.ModTime;
         return info;
       }
+
       return null;
     }
 
@@ -5651,7 +5732,10 @@ namespace Night
     /// <returns>The FileSystemInfo object given as an argument, filled with information, or null if nothing exists at the path or if it doesn't match the filterType.</returns>
     public static FileSystemInfo? GetInfo(string path, FileType filterType, FileSystemInfo info)
     {
-      if (info == null) return null;
+      if (info == null)
+      {
+        return null;
+      }
 
       var newInfo = GetInfo(path, filterType);
       if (newInfo != null)
@@ -5661,6 +5745,7 @@ namespace Night
         info.ModTime = newInfo.ModTime;
         return info;
       }
+
       return null;
     }
 
@@ -5693,6 +5778,10 @@ namespace Night
 ================================================
 File: src/Night/Filesystem/Types.cs
 ================================================
+// <copyright file="Types.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 namespace Night
@@ -5703,25 +5792,27 @@ namespace Night
   public class FileSystemInfo
   {
     /// <summary>
-    /// The type of the object at the path (file, directory, symlink, etc.).
+    /// Gets or sets the type of the object at the path (file, directory, symlink, etc.).
     /// Default is None.
     /// </summary>
     public FileType Type { get; set; } = FileType.None;
 
     /// <summary>
-    /// The size in bytes of the file, or null if it can't be determined or not applicable (e.g. for a directory).
+    /// Gets or sets the size in bytes of the file, or null if it can't be determined or not applicable (e.g. for a directory).
     /// </summary>
     public long? Size { get; set; }
 
     /// <summary>
-    /// The file's last modification time in seconds since the Unix epoch, or null if it can't be determined.
+    /// Gets or sets the file's last modification time in seconds since the Unix epoch, or null if it can't be determined.
     /// </summary>
     public long? ModTime { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FileSystemInfo"/> class.
     /// </summary>
-    public FileSystemInfo() { }
+    public FileSystemInfo()
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FileSystemInfo"/> class with specified values.
@@ -5731,9 +5822,9 @@ namespace Night
     /// <param name="modTime">The last modification time in Unix epoch seconds.</param>
     public FileSystemInfo(FileType type, long? size, long? modTime)
     {
-      Type = type;
-      Size = size;
-      ModTime = modTime;
+      this.Type = type;
+      this.Size = size;
+      this.ModTime = modTime;
     }
   }
 }
@@ -5743,6 +5834,10 @@ namespace Night
 ================================================
 File: src/Night/Graphics/Enums.cs
 ================================================
+// <copyright file="Enums.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 namespace Night
@@ -5760,7 +5855,7 @@ namespace Night
     /// <summary>
     /// Draw the shape as an outline.
     /// </summary>
-    Line
+    Line,
   }
 }
 
@@ -5769,6 +5864,10 @@ namespace Night
 ================================================
 File: src/Night/Graphics/Graphics.cs
 ================================================
+// <copyright file="Graphics.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -5834,6 +5933,7 @@ namespace Night
         Console.WriteLine($"Error in Graphics.NewImage: Failed to create texture from surface for '{filePath}'. SDL Error: {sdlError}");
         return null;
       }
+
       return new Sprite(texturePtr, width, height);
     }
 
@@ -5988,6 +6088,7 @@ namespace Night
         {
           lineVertices[i] = new SDL.FPoint { X = vertices[i].X, Y = vertices[i].Y };
         }
+
         lineVertices[vertices.Length] = new SDL.FPoint { X = vertices[0].X, Y = vertices[0].Y }; // Close the polygon
 
         if (!SDL.RenderLines(rendererPtr, lineVertices, lineVertices.Length))
@@ -5998,7 +6099,10 @@ namespace Night
       }
       else // GraphicsTypes.DrawMode.Fill
       {
-        if (vertices.Length < 3) return;
+        if (vertices.Length < 3)
+        {
+          return;
+        }
 
         float[] xy = new float[vertices.Length * 2];
         SDL.FColor[] vertexColors = new SDL.FColor[vertices.Length];
@@ -6010,7 +6114,7 @@ namespace Night
         for (int i = 0; i < vertices.Length; i++)
         {
           xy[i * 2] = vertices[i].X;
-          xy[i * 2 + 1] = vertices[i].Y;
+          xy[(i * 2) + 1] = vertices[i].Y;
           vertexColors[i] = drawColor;
         }
 
@@ -6018,8 +6122,8 @@ namespace Night
         for (int i = 0; i < vertices.Length - 2; i++)
         {
           indices[i * 3] = 0;
-          indices[i * 3 + 1] = (byte)(i + 1);
-          indices[i * 3 + 2] = (byte)(i + 2);
+          indices[(i * 3) + 1] = (byte)(i + 1);
+          indices[(i * 3) + 2] = (byte)(i + 2);
         }
 
         GCHandle xyHandle = default;
@@ -6049,9 +6153,20 @@ namespace Night
         }
         finally
         {
-          if (xyHandle.IsAllocated) xyHandle.Free();
-          if (colorsHandle.IsAllocated) colorsHandle.Free();
-          if (indicesHandle.IsAllocated) indicesHandle.Free();
+          if (xyHandle.IsAllocated)
+          {
+            xyHandle.Free();
+          }
+
+          if (colorsHandle.IsAllocated)
+          {
+            colorsHandle.Free();
+          }
+
+          if (indicesHandle.IsAllocated)
+          {
+            indicesHandle.Free();
+          }
         }
       }
     }
@@ -6071,6 +6186,7 @@ namespace Night
         Console.WriteLine("Error in Graphics.Circle: Radius must be positive.");
         return;
       }
+
       if (segments < 3)
       {
         Console.WriteLine("Error in Graphics.Circle: Segments must be 3 or greater.");
@@ -6083,8 +6199,8 @@ namespace Night
       for (int i = 0; i < segments; i++)
       {
         double currentAngle = i * angleStep;
-        float vertX = x + radius * (float)Math.Cos(currentAngle);
-        float vertY = y + radius * (float)Math.Sin(currentAngle);
+        float vertX = x + (radius * (float)Math.Cos(currentAngle));
+        float vertY = y + (radius * (float)Math.Sin(currentAngle));
         circleVertices[i] = new PointF(vertX, vertY);
       }
 
@@ -6130,13 +6246,13 @@ namespace Night
         X = x,
         Y = y,
         W = sprite.Width * scaleX,
-        H = sprite.Height * scaleY
+        H = sprite.Height * scaleY,
       };
 
       SDL.FPoint centerPointStruct = new SDL.FPoint
       {
         X = offsetX * scaleX,
-        Y = offsetY * scaleY
+        Y = offsetY * scaleY,
       };
 
       double angleInDegrees = rotation * (180.0 / Math.PI);
@@ -6164,6 +6280,7 @@ namespace Night
         {
           Marshal.FreeHGlobal(dstRectPtr);
         }
+
         if (centerPointPtr != IntPtr.Zero)
         {
           Marshal.FreeHGlobal(centerPointPtr);
@@ -6223,6 +6340,10 @@ namespace Night
 ================================================
 File: src/Night/Graphics/Structs.cs
 ================================================
+// <copyright file="Structs.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 namespace Night
@@ -6241,10 +6362,10 @@ namespace Night
 
     public Color(byte r, byte g, byte b, byte a = 255)
     {
-      R = r;
-      G = g;
-      B = b;
-      A = a;
+      this.R = r;
+      this.G = g;
+      this.B = b;
+      this.A = a;
     }
 
     // Common color presets
@@ -6271,10 +6392,10 @@ namespace Night
 
     public Rectangle(int x, int y, int width, int height)
     {
-      X = x;
-      Y = y;
-      Width = width;
-      Height = height;
+      this.X = x;
+      this.Y = y;
+      this.Width = width;
+      this.Height = height;
     }
   }
 
@@ -6288,8 +6409,8 @@ namespace Night
 
     public PointF(float x, float y)
     {
-      X = x;
-      Y = y;
+      this.X = x;
+      this.Y = y;
     }
   }
 }
@@ -6299,6 +6420,10 @@ namespace Night
 ================================================
 File: src/Night/Graphics/Types.cs
 ================================================
+// <copyright file="Types.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 namespace Night
@@ -6331,9 +6456,9 @@ namespace Night
     /// <param name="height">The height of the texture.</param>
     public Sprite(IntPtr texture, int width, int height)
     {
-      Texture = texture;
-      Width = width;
-      Height = height;
+      this.Texture = texture;
+      this.Width = width;
+      this.Height = height;
     }
   }
 }
@@ -6343,6 +6468,10 @@ namespace Night
 ================================================
 File: src/Night/Keyboard/Enums.cs
 ================================================
+// <copyright file="Enums.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 using SDL3;
@@ -6409,7 +6538,7 @@ namespace Night
     Minus = 45,       // SDL.Scancode.Minus
     Equals = 46,      // SDL.Scancode.Equals
     Leftbracket = 47, // SDL.Scancode.Leftbracket
-    Rightbracket = 48,// SDL.Scancode.Rightbracket
+    Rightbracket = 48, // SDL.Scancode.Rightbracket
     Backslash = 49,   // SDL.Scancode.Backslash
     NonUshash = 50,   // SDL.Scancode.NonUshash
     Semicolon = 51,   // SDL.Scancode.Semicolon
@@ -6648,6 +6777,10 @@ namespace Night
 ================================================
 File: src/Night/Keyboard/Keyboard.cs
 ================================================
+// <copyright file="Keyboard.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -6657,6 +6790,7 @@ using SDL3;
 
 namespace Night
 {
+
   /// <summary>
   /// Provides an interface to the user's keyboard.
   /// </summary>
@@ -6695,6 +6829,7 @@ namespace Night
         Console.WriteLine($"Warning: Scancode {(int)sdlScancode} is out of bounds (numKeys: {keyboardState.Length}).");
         return false;
       }
+
       return keyboardState[(int)sdlScancode];
     }
   }
@@ -6705,6 +6840,10 @@ namespace Night
 ================================================
 File: src/Night/Mouse/Enums.cs
 ================================================
+// <copyright file="Enums.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 namespace Night
@@ -6721,7 +6860,7 @@ namespace Night
     Middle = 2,  // Corresponds to SDL.ButtonMiddle
     Right = 3,   // Corresponds to SDL.ButtonRight
     X1 = 4,      // Corresponds to SDL.ButtonX1 (Typically "back")
-    X2 = 5       // Corresponds to SDL.ButtonX2 (Typically "forward")
+    X2 = 5,       // Corresponds to SDL.ButtonX2 (Typically "forward")
   }
 }
 
@@ -6730,6 +6869,10 @@ namespace Night
 ================================================
 File: src/Night/Mouse/Mouse.cs
 ================================================
+// <copyright file="Mouse.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 using Night;
@@ -6808,7 +6951,11 @@ namespace Night
     /// <param name="visible">True to show the cursor, false to hide it.</param>
     public static void SetVisible(bool visible)
     {
-      if (!Framework.IsInputInitialized) return;
+      if (!Framework.IsInputInitialized)
+      {
+        return;
+      }
+
       if (visible)
       {
         _ = SDL.ShowCursor();
@@ -6825,7 +6972,11 @@ namespace Night
     /// <param name="grabbed">True to grab the mouse, false to release it.</param>
     public static void SetGrabbed(bool grabbed)
     {
-      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero) return;
+      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero)
+      {
+        return;
+      }
+
       _ = SDL.SetWindowMouseGrab(Window.Handle, grabbed);
     }
 
@@ -6836,7 +6987,11 @@ namespace Night
     /// <param name="enabled">True to enable relative mode, false to disable it.</param>
     public static void SetRelativeMode(bool enabled)
     {
-      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero) return;
+      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero)
+      {
+        return;
+      }
+
       _ = SDL.SetWindowRelativeMouseMode(Window.Handle, enabled);
     }
   }
@@ -6847,6 +7002,10 @@ namespace Night
 ================================================
 File: src/Night/SDL/NightSDL.cs
 ================================================
+// <copyright file="NightSDL.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 using SDL3;
@@ -6861,14 +7020,14 @@ namespace Night
     /// <summary>
     /// Get the version of SDL that is linked against the Night Engine.
     /// Calls the SDL3-CS binding for SDL_GetVersion() and returns a packed int.
-    /// https://wiki.libsdl.org/SDL3/SDL_GetVersion
+    /// https://wiki.libsdl.org/SDL3/SDL_GetVersion.
     /// </summary>
     /// <returns>A string representing the SDL version "major.minor.patch".</returns>
     public static string GetVersion()
     {
       int sdl_version = SDL.GetVersion();
       int major = sdl_version / 1000000;
-      int minor = sdl_version / 1000 % 1000;
+      int minor = (sdl_version / 1000) % 1000;
       int patch = sdl_version % 1000;
       return $"{major}.{minor}.{patch}";
     }
@@ -6876,7 +7035,7 @@ namespace Night
     /// <summary>
     /// Retrieve a message about the last error that occurred on the current thread.
     /// Calls the SDL3-CS binding for SDL_GetError() and returns a string.
-    /// https://wiki.libsdl.org/SDL3/SDL_GetError
+    /// https://wiki.libsdl.org/SDL3/SDL_GetError.
     /// </summary>
     /// <returns>Returns a message with information about the specific error that occurred, or an empty string if there hasn't been an error message set since the last call to SDL_ClearError().</returns>
     public static string GetError()
@@ -6891,10 +7050,14 @@ namespace Night
 ================================================
 File: src/Night/System/System.cs
 ================================================
-using SDL3;
+// <copyright file="System.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using SDL3;
+
   /// <summary>
   /// Provides access to system-level information and functions.
   /// </summary>
@@ -6923,6 +7086,10 @@ namespace Night
 ================================================
 File: src/Night/Timer/Timer.cs
 ================================================
+// <copyright file="Timer.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.Threading;
 
@@ -6936,13 +7103,17 @@ namespace Night
   public static class Timer
   {
     // _timerStartTime is initialized when the Timer class is first loaded.
-    private static readonly ulong _timerStartTime = SDL.GetPerformanceCounter();
+    private static readonly ulong TimerStartTime = SDL.GetPerformanceCounter();
 
     // These are updated by FrameworkLoop.cs or by Timer methods themselves
     internal static int CurrentFPS { get; set; } = 0;
+
     internal static float CurrentDelta { get; set; } = 0.0f;
+
     internal static double CurrentAverageDelta { get; set; } = 0.0;
+
     internal static ulong LastStepTime { get; set; } = 0; // Initialized by Initialize()
+
     internal static ulong PerformanceFrequency { get; private set; } = 1; // Initialized by Initialize(), made private set
 
     /// <summary>
@@ -6952,8 +7123,13 @@ namespace Night
     internal static void Initialize()
     {
       PerformanceFrequency = SDL.GetPerformanceFrequency();
-      if (PerformanceFrequency == 0) PerformanceFrequency = 1; // Avoid division by zero, though SDL should provide valid freq.
+      if (PerformanceFrequency == 0)
+      {
+        PerformanceFrequency = 1; // Avoid division by zero, though SDL should provide valid freq.
+      }
+
       LastStepTime = SDL.GetPerformanceCounter(); // Initialize for the first call to Step()
+
       // _timerStartTime is already initialized at class load (line 14) and should remain as such
       // to reflect "time since module loaded" for GetTime().
       // Do not re-assign _timerStartTime here.
@@ -6965,9 +7141,13 @@ namespace Night
     /// <returns>The time in seconds. Given as a decimal, accurate to the microsecond.</returns>
     public static double GetTime()
     {
-      if (PerformanceFrequency == 0) return 0.0;
+      if (PerformanceFrequency == 0)
+      {
+        return 0.0;
+      }
+
       ulong currentTimeCounter = SDL.GetPerformanceCounter();
-      return (double)(currentTimeCounter - _timerStartTime) / PerformanceFrequency;
+      return (double)(currentTimeCounter - TimerStartTime) / PerformanceFrequency;
     }
 
     /// <summary>
@@ -6981,7 +7161,7 @@ namespace Night
 
     /// <summary>
     /// Gets the time elapsed since the last frame, in seconds.
-    /// This is the same value passed to <code>IGame.Update(float deltaTime)</code>.
+    /// This is the same value passed to. <code>IGame.Update(float deltaTime)</code>.
     /// </summary>
     /// <returns>The delta time in seconds.</returns>
     public static float GetDelta()
@@ -7011,6 +7191,7 @@ namespace Night
       {
         return;
       }
+
       Thread.Sleep(TimeSpan.FromSeconds(seconds));
     }
 
@@ -7030,6 +7211,7 @@ namespace Night
         ulong elapsedTicks = now - LastStepTime;
         deltaTimeSeconds = (double)elapsedTicks / PerformanceFrequency;
       }
+
       // Clamp deltaTime to avoid large jumps
       if (deltaTimeSeconds > 0.0666) // Approx 15 FPS, or 66.6ms
       {
@@ -7055,6 +7237,10 @@ File: src/Night/Utilities/.gitkeep
 ================================================
 File: src/Night/Window/Enums.cs
 ================================================
+// <copyright file="Enums.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 namespace Night
@@ -7068,11 +7254,12 @@ namespace Night
     /// Standard exclusive-fullscreen mode. Changes the display mode (actual resolution) of the monitor.
     /// </summary>
     Exclusive,
+
     /// <summary>
     /// Borderless fullscreen windowed mode. A borderless screen-sized window is created which sits on top of all desktop UI elements.
     /// The window is automatically resized to match the dimensions of the desktop, and its size cannot be changed.
     /// </summary>
-    Desktop
+    Desktop,
   }
 }
 
@@ -7081,6 +7268,10 @@ namespace Night
 ================================================
 File: src/Night/Window/Structs.cs
 ================================================
+// <copyright file="Structs.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 
 namespace Night
@@ -7094,14 +7285,17 @@ namespace Night
     /// Window width.
     /// </summary>
     public int Width;
+
     /// <summary>
     /// Window height.
     /// </summary>
     public int Height;
+
     /// <summary>
     /// Fullscreen (true), or windowed (false).
     /// </summary>
     public bool Fullscreen;
+
     /// <summary>
     /// The type of fullscreen mode used.
     /// </summary>
@@ -7170,6 +7364,10 @@ namespace Night
 ================================================
 File: src/Night/Window/Window.cs
 ================================================
+// <copyright file="Window.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -7178,26 +7376,27 @@ using SDL3;
 
 namespace Night
 {
+
   /// <summary>
   /// Provides an interface for modifying and retrieving information about the program's window.
   /// </summary>
   public static class Window
   {
-    private static nint _window = nint.Zero;
-    private static nint _renderer = nint.Zero;
-    private static bool _isVideoInitialized = false;
-    private static bool _isWindowOpen = false;
-    private static FullscreenType _currentFullscreenType = FullscreenType.Desktop;
+    private static nint window = nint.Zero;
+    private static nint renderer = nint.Zero;
+    private static bool isVideoInitialized = false;
+    private static bool isWindowOpen = false;
+    private static FullscreenType currentFullscreenType = FullscreenType.Desktop;
 
     // Internal accessor for the renderer, to be used by Night.Graphics
-    internal static nint RendererPtr => _renderer;
+    internal static nint RendererPtr => renderer;
+
     // Internal accessor for the window handle, to be used by other Night modules if needed
     // And for the methods within this class that need the handle, which is now _window.
-    internal static nint Handle => _window;
-
+    internal static nint Handle => window;
 
     /// <summary>
-    ///  	Sets the display mode and properties of the window.
+    ///     Sets the display mode and properties of the window.
     /// </summary>
     /// <param name="width">The width of the window.</param>
     /// <param name="height">The height of the window.</param>
@@ -7205,43 +7404,46 @@ namespace Night
     /// <returns>True if the mode was set successfully, false otherwise.</returns>
     public static bool SetMode(int width, int height, SDL.WindowFlags flags)
     {
-      if (!_isVideoInitialized)
+      if (!isVideoInitialized)
       {
         if (!SDL.InitSubSystem(SDL.InitFlags.Video))
         {
           return false;
         }
-        _isVideoInitialized = true;
+
+        isVideoInitialized = true;
       }
 
-      if (_window != nint.Zero) // Clean up existing window and renderer
+      if (window != nint.Zero) // Clean up existing window and renderer
       {
-        if (_renderer != nint.Zero)
+        if (renderer != nint.Zero)
         {
-          SDL.DestroyRenderer(_renderer);
-          _renderer = nint.Zero;
+          SDL.DestroyRenderer(renderer);
+          renderer = nint.Zero;
         }
-        SDL.DestroyWindow(_window);
-        _window = nint.Zero;
-        _isWindowOpen = false;
+
+        SDL.DestroyWindow(window);
+        window = nint.Zero;
+        isWindowOpen = false;
       }
 
-      _window = SDL.CreateWindow("Night Engine", width, height, flags);
-      if (_window == nint.Zero)
+      window = SDL.CreateWindow("Night Engine", width, height, flags);
+      if (window == nint.Zero)
       {
-        _isWindowOpen = false;
+        isWindowOpen = false;
         return false;
       }
 
-      _renderer = SDL.CreateRenderer(_window, null);
-      if (_renderer == nint.Zero)
+      renderer = SDL.CreateRenderer(window, null);
+      if (renderer == nint.Zero)
       {
-        SDL.DestroyWindow(_window);
-        _window = nint.Zero;
-        _isWindowOpen = false;
+        SDL.DestroyWindow(window);
+        window = nint.Zero;
+        isWindowOpen = false;
         return false;
       }
-      _isWindowOpen = true;
+
+      isWindowOpen = true;
       return true;
     }
 
@@ -7251,12 +7453,13 @@ namespace Night
     /// <param name="title">The new window title.</param>
     public static void SetTitle(string title)
     {
-      if (_window == nint.Zero)
+      if (window == nint.Zero)
       {
         string errorMsg = "Error in Night.Window.SetTitle: Window handle is null. Was SetMode called successfully?";
         throw new InvalidOperationException(errorMsg);
       }
-      if (!SDL.SetWindowTitle(_window, title))
+
+      if (!SDL.SetWindowTitle(window, title))
       {
         string sdlError = SDL.GetError();
         throw new Exception($"SDL Error in Night.Window.SetTitle: {sdlError}");
@@ -7269,17 +7472,17 @@ namespace Night
     /// <returns>True if the window is open, false otherwise.</returns>
     public static bool IsOpen()
     {
-      return _isWindowOpen && _window != nint.Zero;
+      return isWindowOpen && window != nint.Zero;
     }
 
     /// <summary>
     /// Signals that the window should close.
     /// This is typically called by the engine when a quit event is received.
-    /// TODO: Does this need to align with Love2D more? https://love2d.org/wiki/love.window.close
+    /// TODO: Does this need to align with Love2D more? https://love2d.org/wiki/love.window.close.
     /// </summary>
     public static void Close()
     {
-      _isWindowOpen = false;
+      isWindowOpen = false;
     }
 
     /// <summary>
@@ -7288,22 +7491,25 @@ namespace Night
     /// </summary>
     internal static void Shutdown()
     {
-      if (_renderer != nint.Zero)
+      if (renderer != nint.Zero)
       {
-        SDL.DestroyRenderer(_renderer);
-        _renderer = nint.Zero;
+        SDL.DestroyRenderer(renderer);
+        renderer = nint.Zero;
       }
-      if (_window != nint.Zero)
+
+      if (window != nint.Zero)
       {
-        SDL.DestroyWindow(_window);
-        _window = nint.Zero;
+        SDL.DestroyWindow(window);
+        window = nint.Zero;
       }
-      if (_isVideoInitialized)
+
+      if (isVideoInitialized)
       {
         SDL.QuitSubSystem(SDL.InitFlags.Video);
-        _isVideoInitialized = false;
+        isVideoInitialized = false;
       }
-      _isWindowOpen = false;
+
+      isWindowOpen = false;
     }
 
     /// <summary>
@@ -7312,12 +7518,17 @@ namespace Night
     /// <returns>The number of currently connected displays.</returns>
     public static int GetDisplayCount()
     {
-      if (!_isVideoInitialized) { EnsureVideoInitialized(); }
+      if (!isVideoInitialized)
+      {
+        EnsureVideoInitialized();
+      }
+
       uint[]? displays = SDL.GetDisplays(out int count);
       if (displays == null || count < 0)
       {
         return 0;
       }
+
       return count;
     }
 
@@ -7328,13 +7539,17 @@ namespace Night
     /// <returns>A tuple containing the width and height of the desktop, or (0,0) if an error occurs.</returns>
     public static (int Width, int Height) GetDesktopDimensions(int displayIndex = 0)
     {
-      if (!_isVideoInitialized) { EnsureVideoInitialized(); }
+      if (!isVideoInitialized)
+      {
+        EnsureVideoInitialized();
+      }
 
       uint[]? actualDisplayIDs = SDL.GetDisplays(out int displayCount);
       if (actualDisplayIDs == null || displayCount <= 0 || displayIndex < 0 || displayIndex >= displayCount)
       {
         return (0, 0);
       }
+
       uint targetDisplayID = actualDisplayIDs[displayIndex];
 
       SDL.DisplayMode? mode = SDL.GetDesktopDisplayMode(targetDisplayID);
@@ -7342,6 +7557,7 @@ namespace Night
       {
         return (0, 0);
       }
+
       return (mode.Value.W, mode.Value.H);
     }
 
@@ -7353,13 +7569,18 @@ namespace Night
     /// fsType indicates the type of fullscreen mode used.</returns>
     public static (bool isFullscreen, FullscreenType fsType) GetFullscreen()
     {
-      if (_window == nint.Zero) return (false, _currentFullscreenType);
-      var flags = SDL.GetWindowFlags(_window);
+      if (window == nint.Zero)
+      {
+        return (false, currentFullscreenType);
+      }
+
+      var flags = SDL.GetWindowFlags(window);
       if ((flags & SDL.WindowFlags.Fullscreen) != 0)
       {
-        return (true, _currentFullscreenType);
+        return (true, currentFullscreenType);
       }
-      return (false, _currentFullscreenType);
+
+      return (false, currentFullscreenType);
     }
 
     /// <summary>
@@ -7371,22 +7592,26 @@ namespace Night
     /// <returns>True if the operation was successful, false otherwise.</returns>
     public static bool SetFullscreen(bool fullscreen, FullscreenType fsType = FullscreenType.Desktop)
     {
-      if (_window == nint.Zero) return false;
+      if (window == nint.Zero)
+      {
+        return false;
+      }
 
       if (fullscreen)
       {
-        _currentFullscreenType = fsType;
+        currentFullscreenType = fsType;
         if (fsType == FullscreenType.Exclusive)
         {
-          uint displayID = SDL.GetDisplayForWindow(_window);
+          uint displayID = SDL.GetDisplayForWindow(window);
           if (displayID == 0 && SDL.GetError() != null && SDL.GetError().Length > 0)
           {
             return false;
           }
+
           SDL.DisplayMode? dm = SDL.GetDesktopDisplayMode(displayID);
           if (dm.HasValue)
           {
-            if (!SDL.SetWindowFullscreenMode(_window, dm.Value))
+            if (!SDL.SetWindowFullscreenMode(window, dm.Value))
             {
               return false;
             }
@@ -7398,24 +7623,26 @@ namespace Night
         }
         else // FullscreenType.Desktop
         {
-          if (!SDL.SetWindowFullscreenMode(_window, nint.Zero))
+          if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
           {
           }
-          if (!SDL.SetWindowBordered(_window, false))
+
+          if (!SDL.SetWindowBordered(window, false))
           {
             return false;
           }
 
-          uint displayID = SDL.GetDisplayForWindow(_window);
+          uint displayID = SDL.GetDisplayForWindow(window);
           if (displayID == 0 && SDL.GetError() != null && SDL.GetError().Length > 0)
           {
             return false;
           }
+
           var (desktopW, desktopH) = GetDesktopDimensionsForDisplayID(displayID);
           if (desktopW > 0 && desktopH > 0)
           {
-            _ = SDL.SetWindowPosition(_window, 0, 0);
-            if (!SDL.SetWindowSize(_window, desktopW, desktopH))
+            _ = SDL.SetWindowPosition(window, 0, 0);
+            if (!SDL.SetWindowSize(window, desktopW, desktopH))
             {
               return false;
             }
@@ -7428,16 +7655,19 @@ namespace Night
       }
       else // Not fullscreen (go windowed)
       {
-        _currentFullscreenType = FullscreenType.Desktop;
-        if (!SDL.SetWindowFullscreenMode(_window, nint.Zero))
+        currentFullscreenType = FullscreenType.Desktop;
+        if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
         {
         }
-        if (!SDL.SetWindowBordered(_window, true))
+
+        if (!SDL.SetWindowBordered(window, true))
         {
           return false;
         }
-        _ = SDL.RestoreWindow(_window);
+
+        _ = SDL.RestoreWindow(window);
       }
+
       return true;
     }
 
@@ -7448,7 +7678,11 @@ namespace Night
     /// <returns>A list of (Width, Height) tuples representing available modes, or an empty list on error.</returns>
     public static List<(int Width, int Height)> GetFullscreenModes(int displayIndex = 0)
     {
-      if (!_isVideoInitialized) { EnsureVideoInitialized(); }
+      if (!isVideoInitialized)
+      {
+        EnsureVideoInitialized();
+      }
+
       var modesList = new List<(int Width, int Height)>();
       var uniqueModes = new HashSet<(int Width, int Height)>(); // Keep track of unique modes
 
@@ -7457,6 +7691,7 @@ namespace Night
       {
         return modesList;
       }
+
       uint targetDisplayID = actualDisplayIDs[displayIndex];
 
       SDL.DisplayMode[]? displayModes = SDL.GetFullscreenDisplayModes(targetDisplayID, out int count);
@@ -7474,9 +7709,9 @@ namespace Night
           modesList.Add(currentModeTuple);
         }
       }
+
       return modesList;
     }
-
 
     /// <summary>
     /// Gets the current window mode (width, height, and flags).
@@ -7484,18 +7719,17 @@ namespace Night
     /// <returns>A WindowMode struct containing width, height, and current flags.</returns>
     public static WindowMode GetMode()
     {
-      if (_window == nint.Zero)
+      if (window == nint.Zero)
       {
-        return new WindowMode { Width = 0, Height = 0, Fullscreen = false, FullscreenType = _currentFullscreenType, Borderless = false };
+        return new WindowMode { Width = 0, Height = 0, Fullscreen = false, FullscreenType = currentFullscreenType, Borderless = false };
       }
 
-      _ = SDL.GetWindowSize(_window, out int w, out int h);
-      var flags = SDL.GetWindowFlags(_window);
+      _ = SDL.GetWindowSize(window, out int w, out int h);
+      var flags = SDL.GetWindowFlags(window);
 
       bool isSdlExclusiveFullscreen = (flags & SDL.WindowFlags.Fullscreen) != 0;
       bool isSdlBorderless = (flags & SDL.WindowFlags.Borderless) != 0;
-      FullscreenType reportedFsType = _currentFullscreenType;
-
+      FullscreenType reportedFsType = currentFullscreenType;
 
       bool actualReportedFullscreenState;
       if (isSdlExclusiveFullscreen)
@@ -7505,9 +7739,9 @@ namespace Night
       }
       else if (isSdlBorderless)
       {
-        if (_currentFullscreenType == FullscreenType.Desktop)
+        if (currentFullscreenType == FullscreenType.Desktop)
         {
-          uint currentDisplayID = SDL.GetDisplayForWindow(_window);
+          uint currentDisplayID = SDL.GetDisplayForWindow(window);
           if (currentDisplayID != 0)
           {
             var (desktopW, desktopH) = GetDesktopDimensionsForDisplayID(currentDisplayID);
@@ -7541,7 +7775,7 @@ namespace Night
         Height = h,
         Fullscreen = actualReportedFullscreenState,
         FullscreenType = reportedFsType,
-        Borderless = isSdlBorderless
+        Borderless = isSdlBorderless,
       };
     }
 
@@ -7551,12 +7785,17 @@ namespace Night
     /// <returns>The DPI scale factor, or 1.0f on error or if not applicable.</returns>
     public static float GetDPIScale()
     {
-      if (_window == nint.Zero) return 1.0f;
-      float dpiScale = SDL.GetWindowDisplayScale(_window);
+      if (window == nint.Zero)
+      {
+        return 1.0f;
+      }
+
+      float dpiScale = SDL.GetWindowDisplayScale(window);
       if (dpiScale <= 0f)
       {
         return 1.0f;
       }
+
       return dpiScale;
     }
 
@@ -7578,7 +7817,11 @@ namespace Night
     public static float FromPixels(float value)
     {
       float dpiScale = GetDPIScale();
-      if (dpiScale == 0) return value;
+      if (dpiScale == 0)
+      {
+        return value;
+      }
+
       return value / dpiScale;
     }
 
@@ -7587,14 +7830,15 @@ namespace Night
     /// </summary>
     private static void EnsureVideoInitialized()
     {
-      if (!_isVideoInitialized)
+      if (!isVideoInitialized)
       {
         if (!SDL.InitSubSystem(SDL.InitFlags.Video))
         {
           string sdlError = SDL.GetError();
           throw new Exception($"SDL Error initializing video subsystem: {sdlError}");
         }
-        _isVideoInitialized = true;
+
+        isVideoInitialized = true;
       }
     }
 
@@ -7605,12 +7849,17 @@ namespace Night
     /// <returns>A tuple containing the width and height of the desktop, or (0,0) if an error occurs.</returns>
     private static (int Width, int Height) GetDesktopDimensionsForDisplayID(uint displayID)
     {
-      if (!_isVideoInitialized) { EnsureVideoInitialized(); }
+      if (!isVideoInitialized)
+      {
+        EnsureVideoInitialized();
+      }
+
       SDL.DisplayMode? mode = SDL.GetDesktopDisplayMode(displayID);
       if (mode == null)
       {
         return (0, 0);
       }
+
       return (mode.Value.W, mode.Value.H);
     }
   }
@@ -8122,7 +8371,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9199592ee1287114365d11edda2ee4a27d5a98c0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+48b9dc11efbd5f7a52c62c25b74135fb975c0d43")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -8135,7 +8384,7 @@ using System.Reflection;
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.AssemblyInfoInputs.cache
 ================================================
-4ab685db8edf5a38d26f473007d5bb6f5b40ab51c89ce93656bf50a7fecd31fa
+7f995fa9528b2055111fcfe8efcaaec4a29f044b8e1998238ef336b6f71d4ea3
 
 
 
@@ -8291,7 +8540,7 @@ f32a73ea633a4d3c831f8cace97823abf4ddc3c7865006221d13961a2b48d5de
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.sourcelink.json
 ================================================
-{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9199592ee1287114365d11edda2ee4a27d5a98c0/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/48b9dc11efbd5f7a52c62c25b74135fb975c0d43/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -9652,7 +9901,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9199592ee1287114365d11edda2ee4a27d5a98c0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+48b9dc11efbd5f7a52c62c25b74135fb975c0d43")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -9665,7 +9914,7 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
 ================================================
-06b7233248f21c0f76b40d0daa076e868e60410027c22040dd5143c7c119ab13
+b194dcb1ffde8634c49ca6eab860d0c282ceceb9e37d592429181f428686da95
 
 
 
@@ -9733,7 +9982,7 @@ File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.genruntimeconfig.cache
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
 ================================================
-{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9199592ee1287114365d11edda2ee4a27d5a98c0/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/48b9dc11efbd5f7a52c62c25b74135fb975c0d43/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -13448,7 +13697,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9199592ee1287114365d11edda2ee4a27d5a98c0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+48b9dc11efbd5f7a52c62c25b74135fb975c0d43")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -13461,7 +13710,7 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.AssemblyInfoInputs.cache
 ================================================
-de2834d6948f5892ff166e4a235fd09e364dcafc636ed7730fbf1c8ccded9eaa
+b1e89e2e398984967f41b71d554fb8a9e7bfbce0c8941910cb8055c0f0138fd3
 
 
 
@@ -13530,7 +13779,7 @@ d53d785cd13fe8861eda2a994b895aa112ff854516c6173e0a310886392f409f
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.sourcelink.json
 ================================================
-{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9199592ee1287114365d11edda2ee4a27d5a98c0/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/48b9dc11efbd5f7a52c62c25b74135fb975c0d43/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -13996,281 +14245,6 @@ updates:
 
 
 ================================================
-File: .github/deactivated/build-sdl3.yml
-================================================
-name: Build Night.Platform + SDL3
-
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - 'main'
-    paths:
-      - 'Platform/**'
-      - '!Platform/libs/**'
-  pull_request:
-    paths:
-      - 'Platform/**'
-      - '!Platform/libs/**'
-jobs:
-  Build:
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            arch: x64
-            target: win-x64
-            ext: .dll
-          - os: macos-latest
-            arch: x64-arm64
-            target: osx
-            ext: .dylib
-          - os: ubuntu-latest
-            arch: x64
-            target: linux-x64
-            ext: .so
-    runs-on: ${{matrix.os}}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Get CMake
-        uses: lukka/get-cmake@v3.29.4
-      - name: Setup Linux dependencies
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install build-essential git make \
-            pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
-            libaudio-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
-            libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev \
-            libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
-            libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev
-      - name: CMake Configure
-        run: cmake -B build -S Platform -DNIGHT_OVERRIDE_TARGET=${{matrix.target}} -D CMAKE_SYSTEM_VERSION=10.0.26100.0
-      - name: CMake Build
-        run: cmake --build build --config Release
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{matrix.os}}-${{matrix.arch}}-build
-          path: Platform/libs/${{matrix.target}}/*${{matrix.ext}}*
-  UpdateLibs:
-    if: github.ref == 'refs/heads/main'
-    needs: [Build]
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Download windows x64 libs
-        uses: actions/download-artifact@v4
-        with:
-          name: windows-latest-x64-build
-          path: Platform/libs/win-x64
-      - name: Download macos libs
-        uses: actions/download-artifact@v4
-        with:
-          name: macos-latest-x64-arm64-build
-          path: Platform/libs/osx
-      - name: Download ubuntu libs
-        uses: actions/download-artifact@v4
-        with:
-          name: ubuntu-latest-x64-build
-          path: Platform/libs/linux-x64
-      - name: Display structure of libs
-        run: ls -R
-        working-directory: Platform/libs
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v9.1.3
-        with:
-          message: Updated platform libs
-          committer_name: GitHub Actions
-          committer_email: actions@github.com
-
-
-
-================================================
-File: .github/deactivated/ci.yml
-================================================
-name: Go CI
-permissions:
-  contents: read
-  security-events: write
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  test:
-    name: Test on Go ${{ matrix.go-version }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [ '1.24' ]
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          fetch-depth: 2
-
-      - name: Set up Go
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
-        with:
-          go-version: ${{ matrix.go-version }}
-
-      - name: Install Go tools
-        run: |
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-          go install github.com/mattn/goveralls@latest
-
-      - name: Download Go modules
-        run: |
-          go mod download
-          go mod verify
-
-      - name: Run govulncheck
-        uses: golang/govulncheck-action@b625fbe08f3bccbe446d94fbf87fcc875a4f50ee # v1.0.4
-
-      - name: Lint source
-        run: golangci-lint run ./...
-
-      - name: Run tests with coverage
-        run: go test -v ./... -race -coverprofile=coverage.out -covermode=atomic
-
-      - name: Upload coverage to Coveralls
-        if: matrix.go-version == '1.24' # Only upload from one Go version
-        env:
-          COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: |
-          goveralls -coverprofile=coverage.out -service=github -repotoken $COVERALLS_TOKEN
-
-
-
-================================================
-File: .github/deactivated/codeql.yml
-================================================
-# For most projects, this workflow file will not need changing; you simply need
-# to commit it to your repository.
-#
-# You may wish to alter this file to override the set of languages analyzed,
-# or to provide custom queries or build logic.
-#
-# ******** NOTE ********
-# We have attempted to detect the languages in your repository. Please check
-# the `language` matrix defined below to confirm you have the correct set of
-# supported CodeQL languages.
-#
-name: "CodeQL"
-
-on:
-  push:
-    branches: ["main"]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: ["main"]
-  schedule:
-    - cron: "0 0 * * 1"
-
-permissions:
-  contents: read
-
-jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ["go"]
-        # CodeQL supports [ $supported-codeql-languages ]
-        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
-
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      # Initializes the CodeQL tools for scanning.
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
-        with:
-          languages: ${{ matrix.language }}
-          # If you wish to specify custom queries, you can do so here or in a config file.
-          # By default, queries listed here will override any specified in a config file.
-          # Prefix the list here with "+" to use these queries and those in the config file.
-
-      # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-      # If this step fails, then you should remove it and run the build manually (see below)
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
-
-      # ℹ️ Command-line programs to run using the OS shell.
-      # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
-
-      #   If the Autobuild fails above, remove it and uncomment the following three lines.
-      #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
-
-      # - run: |
-      #   echo "Run, Build Application using script"
-      #   ./location_of_script_within_repo/buildscript.sh
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
-        with:
-          category: "/language:${{matrix.language}}"
-
-
-
-================================================
-File: .github/deactivated/dependency-review.yml
-================================================
-# Dependency Review Action
-#
-# This Action will scan dependency manifest files that change as part of a Pull Request,
-# surfacing known-vulnerable versions of the packages declared or updated in the PR.
-# Once installed, if the workflow run is marked as required,
-# PRs introducing known-vulnerable packages will be blocked from merging.
-#
-# Source repository: https://github.com/actions/dependency-review-action
-name: 'Dependency Review'
-on: [pull_request]
-
-permissions:
-  contents: read
-
-jobs:
-  dependency-review:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
-        with:
-          egress-policy: audit
-
-      - name: 'Checkout Repository'
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: 'Dependency Review'
-        uses: actions/dependency-review-action@38ecb5b593bf0eb19e335c03f97670f792489a8b # v4.7.0
-
-
-
-================================================
 File: .github/deactivated/release.yml
 ================================================
 name: Create Release
@@ -14460,95 +14434,6 @@ jobs:
             release-artifacts/almd-binaries-windows-amd64/*.zip
             release-artifacts/almd-binaries-darwin-amd64/*.tar.gz
             release-artifacts/almd-binaries-darwin-arm64/*.tar.gz
-
-
-
-================================================
-File: .github/deactivated/scorecard.yml
-================================================
-# This workflow uses actions that are not certified by GitHub. They are provided
-# by a third-party and are governed by separate terms of service, privacy
-# policy, and support documentation.
-
-name: Scorecard supply-chain security
-on:
-  # For Branch-Protection check. Only the default branch is supported. See
-  # https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection
-  branch_protection_rule:
-  # To guarantee Maintained check is occasionally updated. See
-  # https://github.com/ossf/scorecard/blob/main/docs/checks.md#maintained
-  schedule:
-    - cron: '26 19 * * 2'
-  push:
-    branches: [ "main" ]
-
-# Declare default permissions as read only.
-permissions: read-all
-
-jobs:
-  analysis:
-    name: Scorecard analysis
-    runs-on: ubuntu-latest
-    # `publish_results: true` only works when run from the default branch. conditional can be removed if disabled.
-    if: github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request'
-    permissions:
-      # Needed to upload the results to code-scanning dashboard.
-      security-events: write
-      # Needed to publish results and get a badge (see publish_results below).
-      id-token: write
-      # Uncomment the permissions below if installing in a private repository.
-      # contents: read
-      # actions: read
-
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
-        with:
-          egress-policy: audit
-
-      - name: "Checkout code"
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-
-      - name: "Run analysis"
-        uses: ossf/scorecard-action@f49aabe0b5af0936a0987cfb85d86b75731b0186 # v2.4.1
-        with:
-          results_file: results.sarif
-          results_format: sarif
-          # (Optional) "write" PAT token. Uncomment the `repo_token` line below if:
-          # - you want to enable the Branch-Protection check on a *public* repository, or
-          # - you are installing Scorecard on a *private* repository
-          # To create the PAT, follow the steps in https://github.com/ossf/scorecard-action?tab=readme-ov-file#authentication-with-fine-grained-pat-optional.
-          # repo_token: ${{ secrets.SCORECARD_TOKEN }}
-
-          # Public repositories:
-          #   - Publish results to OpenSSF REST API for easy access by consumers
-          #   - Allows the repository to include the Scorecard badge.
-          #   - See https://github.com/ossf/scorecard-action#publishing-results.
-          # For private repositories:
-          #   - `publish_results` will always be set to `false`, regardless
-          #     of the value entered here.
-          publish_results: true
-
-          # (Optional) Uncomment file_mode if you have a .gitattributes with files marked export-ignore
-          # file_mode: git
-
-      # Upload the results as artifacts (optional). Commenting out will disable uploads of run results in SARIF
-      # format to the repository Actions tab.
-      - name: "Upload artifact"
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: SARIF file
-          path: results.sarif
-          retention-days: 5
-
-      # Upload the results to GitHub's code scanning dashboard (optional).
-      # Commenting out will disable upload of results to your repo's Code Scanning dashboard
-      - name: "Upload to code-scanning"
-        uses: github/codeql-action/upload-sarif@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
-        with:
-          sarif_file: results.sarif
 
 
 
@@ -14743,6 +14628,9 @@ jobs:
         dotnet-version: | # Specify SDK versions if particular ones are needed, or remove for latest
           9.0.x
 
+    - name: Check Formatting
+      run: dotnet format --verify-no-changes --verbosity diagnostic Night.sln
+
     - name: Restore dependencies
       run: dotnet restore Night.sln
 
@@ -14753,6 +14641,200 @@ jobs:
       run: dotnet test tests/Night.Tests/Night.Tests.csproj --no-build --configuration Release # Adjust path if needed
 
     # - name: Run Tests (Night.SampleGame.Tests) # Placeholder for sample game integration tests (if any)
+
+
+
+================================================
+File: .github/workflows/codeql-analysis.yml
+================================================
+name: "CodeQL C# Analysis"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze C#
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["csharp"]
+        # CodeQL supports [ csharp, cpp, go, java, javascript, python, ruby ]
+        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # We must fetch all history for CodeQL to correctly analyze commits
+          fetch-depth: 0
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
+        with:
+          languages: ${{ matrix.language }}
+          # If you wish to specify custom queries, you can do so here or in a config file.
+          # By default, queries listed here will override any specified in a config file.
+          # Prefix the list here with "+" to use these queries and those in the config file.
+
+      # Autobuild attempts to build any compiled languages (C/C++, C#, or Java).
+      # If this step fails, then you should remove it and run the build manually.
+      # For .NET Core, ensure that the .NET SDK is available.
+      # You might need to add a setup-dotnet step if not using a GitHub-hosted runner with it pre-installed.
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: |
+            9.0.x # Should match the version used in your ci.yml
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
+        with:
+          category: "/language:${{matrix.language}}"
+
+
+
+================================================
+File: .github/workflows/dependency-review.yml
+================================================
+# Dependency Review Action
+#
+# This Action will scan dependency manifest files that change as part of a Pull Request,
+# surfacing known-vulnerable versions of the packages declared or updated in the PR.
+# Once installed, if the workflow run is marked as required,
+# PRs introducing known-vulnerable packages will be blocked from merging.
+#
+# Source repository: https://github.com/actions/dependency-review-action
+name: 'Dependency Review'
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: 'Checkout Repository'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@38ecb5b593bf0eb19e335c03f97670f792489a8b # v4.7.0
+
+
+
+================================================
+File: .github/workflows/scorecard.yml
+================================================
+# This workflow uses actions that are not certified by GitHub. They are provided
+# by a third-party and are governed by separate terms of service, privacy
+# policy, and support documentation.
+
+name: Scorecard supply-chain security
+on:
+  # For Branch-Protection check. Only the default branch is supported. See
+  # https://github.com/ossf/scorecard/blob/main/docs/checks.md#branch-protection
+  branch_protection_rule:
+  # To guarantee Maintained check is occasionally updated. See
+  # https://github.com/ossf/scorecard/blob/main/docs/checks.md#maintained
+  schedule:
+    - cron: '26 19 * * 2'
+  push:
+    branches: [ "main" ]
+
+# Declare default permissions as read only.
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    # `publish_results: true` only works when run from the default branch. conditional can be removed if disabled.
+    if: github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request'
+    permissions:
+      # Needed to upload the results to code-scanning dashboard.
+      security-events: write
+      # Needed to publish results and get a badge (see publish_results below).
+      id-token: write
+      # Uncomment the permissions below if installing in a private repository.
+      # contents: read
+      # actions: read
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
+      - name: "Checkout code"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: "Run analysis"
+        uses: ossf/scorecard-action@f49aabe0b5af0936a0987cfb85d86b75731b0186 # v2.4.1
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          # (Optional) "write" PAT token. Uncomment the `repo_token` line below if:
+          # - you want to enable the Branch-Protection check on a *public* repository, or
+          # - you are installing Scorecard on a *private* repository
+          # To create the PAT, follow the steps in https://github.com/ossf/scorecard-action?tab=readme-ov-file#authentication-with-fine-grained-pat-optional.
+          # repo_token: ${{ secrets.SCORECARD_TOKEN }}
+
+          # Public repositories:
+          #   - Publish results to OpenSSF REST API for easy access by consumers
+          #   - Allows the repository to include the Scorecard badge.
+          #   - See https://github.com/ossf/scorecard-action#publishing-results.
+          # For private repositories:
+          #   - `publish_results` will always be set to `false`, regardless
+          #     of the value entered here.
+          publish_results: true
+
+          # (Optional) Uncomment file_mode if you have a .gitattributes with files marked export-ignore
+          # file_mode: git
+
+      # Upload the results as artifacts (optional). Commenting out will disable uploads of run results in SARIF
+      # format to the repository Actions tab.
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: SARIF file
+          path: results.sarif
+          retention-days: 5
+
+      # Upload the results to GitHub's code scanning dashboard (optional).
+      # Commenting out will disable upload of results to your repo's Code Scanning dashboard
+      - name: "Upload to code-scanning"
+        uses: github/codeql-action/upload-sarif@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
+        with:
+          sarif_file: results.sarif
 
 
 

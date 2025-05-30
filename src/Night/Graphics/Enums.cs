@@ -2,10 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Night
 {
-  using System;
-
   /// <summary>
   /// Specifies whether a shape should be drawn filled or as an outline.
   /// </summary>

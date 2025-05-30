@@ -2,12 +2,12 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+
+using SDL3;
+
 namespace Night
 {
-  using System;
-
-  using SDL3;
-
   /// <summary>
   /// Represents keyboard keys. Values correspond to SDL_Scancode.
   /// </summary>

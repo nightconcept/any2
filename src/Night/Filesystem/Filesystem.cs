@@ -2,13 +2,11 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+using System.IO;
+
 namespace Night
 {
-  using System;
-  using System.IO;
-
-  using Night;
-
   /// <summary>
   /// Provides basic file system operations.
   /// Inspired by Love2D's love.filesystem module.

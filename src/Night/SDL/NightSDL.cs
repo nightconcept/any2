@@ -2,12 +2,12 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+
+using SDL3;
+
 namespace Night
 {
-  using System;
-
-  using SDL3;
-
   /// <summary>
   /// Provides direct access to some SDL3 functions using SDL3-CS bindings.
   /// </summary>

@@ -2,10 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Night
 {
-  using System;
-
   /// <summary>
   /// Represents the display mode of a window, including width, height, and other properties.
   /// </summary>

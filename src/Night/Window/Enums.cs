@@ -2,10 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Night
 {
-  using System;
-
   /// <summary>
   /// Types of fullscreen modes.
   /// </summary>

@@ -2,15 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-// SDL3 using is not strictly necessary here anymore as KeySymbol/KeyCode are now fully qualified in IGame
-// However, if other SDL types were used directly by IGame, it would be.
+using System;
+
 namespace Night
 {
-  using System;
-
-  // Only IGame interface remains here.
-  // All other enums, structs, and classes have been moved to module-specific files.
-
   /// <summary>
   /// Interface for a game that can be run by the Night Engine.
   /// Game developers will implement this interface in their main game class.
