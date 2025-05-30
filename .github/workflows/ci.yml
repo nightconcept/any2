@@ -29,8 +29,7 @@ jobs:
     - name: Build Solution
       run: dotnet build Night.sln --configuration Release --no-restore
 
-    # - name: Run Tests (Night.Engine.Tests) # Placeholder for engine unit tests
-    #   run: dotnet test Night.Engine.Tests/Night.Engine.Tests.csproj --no-build --configuration Release # Adjust path if needed
+    - name: Run Tests (Night.Tests) # Placeholder for engine unit tests
+      run: dotnet test tests/Night.Tests/Night.Tests.csproj --no-build --configuration Release # Adjust path if needed
 
     # - name: Run Tests (Night.SampleGame.Tests) # Placeholder for sample game integration tests (if any)
-    #   run: dotnet test Night.SampleGame.Tests/Night.SampleGame.Tests.csproj --no-build --configuration Release # Adjust path if needed

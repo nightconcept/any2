@@ -100,17 +100,17 @@ These are planned features for the higher-level engine, to be built upon `Night.
 
 - **Deployment Target:**
 
-  - `Night.Engine` (containing `Night.Framework`) is a C# class library (DLL).
+  - `Night` (containing `Night.Framework` and `Night.Engine`) is a C# class library (DLL named `Night.dll`).
 
-  - `Night.SampleGame` is a C# console application that consumes `Night.Engine`.
+  - `Night.SampleGame` is a C# console application that consumes `Night`.
 
 - **Target Platforms:** Current focus on Windows, macOS, Linux. Long-term goals include iOS and Android. Console support is a distant stretch goal.
 
 - **High-Level Architectural Approach:**
 
-  - **Night.Framework:** A C# library providing a static API, stylistically similar to Love2D, over the SDL3 native library (via SDL3-CS). Public API primarily within the `Night` C# namespace.
+  - **Night.Framework:** A C# library providing a static API, stylistically similar to Love2D, over the SDL3 native library (via SDL3-CS). Public API primarily within the `Night` C# namespace. This is part of the `Night.dll`.
 
-  - **Night.Engine:** (Future) A C# library providing opinionated game development constructs (e.g., ECS, scene management), using `Night.Framework` for low-level operations.
+  - **Night.Engine:** (Future) A C# library providing opinionated game development constructs (e.g., ECS, scene management), using `Night.Framework` for low-level operations. This will also be part of `Night.dll` under the `Night.Engine` namespace.
 
 - **Critical Technical Decisions/Constraints:**
 
@@ -178,18 +178,16 @@ graph TD
 
     J --> J1(sync_sdl3.py);
 
-    K --> K1(Night.Engine);
+    K --> K1(src/Night);
     K1 --> K1_1(FrameworkLoop.cs);
-    K1 --> K1_2(Night.Engine.csproj);
+    K1 --> K1_2(Night.csproj);
     K1 --> K1_3(Types.cs);
     K1 --> K1_4(Engine);
     K1_4 --> K1_4_1(.gitkeep);
-    K1 --> K1_5(Framework);
-    K1_5 --> K1_5_1(Graphics.cs);
-    K1_5 --> K1_5_2(Keyboard.cs);
-    K1_5 --> K1_5_3(Mouse.cs);
-    K1_5 --> K1_5_4(SDL.cs);
-    K1_5 --> K1_5_5(Window.cs);
+    K1 --> K1_M_Graphics(Graphics/);
+    K1_M_Graphics --> K1_M_G_Graphics_cs(Graphics.cs);
+    K1 --> K1_M_Window(Window/);
+    K1_M_Window --> K1_M_W_Window_cs(Window.cs);
     K1 --> K1_6(Utilities);
     K1_6 --> K1_6_1(.gitkeep);
     K1 --> K1_7(bin);
@@ -230,23 +228,23 @@ graph TD
 
 - `/src`: Contains all C# source code.
 
-  - `/src/Night.Engine`: C# class library project for `Night.Framework` and future `Night.Engine` components. This project references the `SDL3-CS` NuGet package.
+  - `/src/Night`: C# class library project for `Night.Framework` and future `Night.Engine` components. This project references the `SDL3-CS` NuGet package and produces `Night.dll`.
 
-    - `Night.Engine.csproj`: MSBuild project file.
+    - `Night.csproj`: MSBuild project file.
 
     - `FrameworkLoop.cs`: Manages the main game loop (`Night.Framework.Run()`) and event polling.
 
     - `Types.cs`: Defines core data types and interfaces (e.g., `Night.Color`, `Night.KeyCode`, `Night.KeySymbol`, `Night.Sprite`, `Night.IGame`, `Night.MouseButton`, `Night.Rectangle`).
 
-    - `/Framework/`: Directory containing individual C# files for each Love2D-like framework module (e.g., `Window.cs`, `Graphics.cs`, `Keyboard.cs`, `Mouse.cs`, `SDL.cs`). These primarily contain static classes within the `Night` namespace.
+    - Module directories (e.g., `/Graphics/`, `/Window/`): Contain individual C# files for each Love2D-like framework module (e.g., `Graphics.cs`, `Window.cs`). These primarily contain static classes within the `Night` namespace or sub-namespaces like `Night.Graphics`.
 
-    - `/Engine/`: Placeholder for future high-level engine components. Contains `.gitkeep`.
+    - `/Engine/`: Directory for future high-level engine components, which will reside in the `Night.Engine` namespace. Contains `.gitkeep`.
 
     - `/Utilities/`: Placeholder for utility classes. Contains `.gitkeep`.
 
   - `/src/Night.SampleGame`: C# console application project demonstrating the use of `Night.Framework`.
 
-    - `Night.SampleGame.csproj`: MSBuild project file. References `Night.Engine` and includes native SDL binary deployment logic.
+    - `Night.SampleGame.csproj`: MSBuild project file. References `Night` (the `Night.dll`) and includes native SDL binary deployment logic.
 
     - `Program.cs`: Main entry point and `IGame` implementation for the sample game.
 
@@ -268,9 +266,9 @@ graph TD
 
 - **`Night.sln`**: Visual Studio Solution file grouping `Night.Engine` and `Night.SampleGame` projects. Defines project paths and configurations.
 
-- **`src/Night.Engine/Night.Engine.csproj`**: MSBuild project file for the `Night.Engine` library (encompassing `Night.Framework`). Defines .NET 9, C# 13, and references the `SDL3-CS` NuGet package.
+- **`src/Night/Night.csproj`**: The MSBuild project file for the main `Night` C# class library. This library, `Night.dll`, includes the `Night` namespace (for the Love2D-like framework) and the `Night.Engine` namespace (for future higher-level engine features).
 
-- **`src/Night.SampleGame/Night.SampleGame.csproj`**: MSBuild project file for the sample game application. References `Night.Engine` and includes steps to copy native SDL3 binaries (from `lib/SDL3-Prebuilt/`) to the output directory.
+- **`src/Night.SampleGame/Night.SampleGame.csproj`**: MSBuild project file for the sample game application. References `Night` (the `Night.dll`) and includes steps to copy native SDL3 binaries (from `lib/SDL3-Prebuilt/`) to the output directory.
 
 ## 6. Future Considerations (Post Version 0.1.0)
 

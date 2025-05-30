@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>Night.Tests</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Night.Engine\Night.Engine.csproj" />
+    <ProjectReference Include="..\..\src\Night\Night.csproj" />
   </ItemGroup>
 
   <ItemGroup>

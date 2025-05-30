@@ -199,7 +199,7 @@ def generate_markdown(all_module_data, output_file):
         print(f"Error writing markdown file {output_file}: {e}")
 
 def main():
-    framework_dir = os.path.join("src", "Night.Engine", "Framework")
+    framework_dir = os.path.join("src", "Night")
     output_md_file = os.path.join("docs", "API.md")
 
     all_module_data = defaultdict(lambda: {"functions": {}, "enums": [], "types": []})

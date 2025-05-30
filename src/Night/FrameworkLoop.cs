@@ -161,7 +161,7 @@ namespace Night
 
         if (windowConfig.X.HasValue && windowConfig.Y.HasValue && Window.Handle != nint.Zero)
         {
-          SDL.SetWindowPosition(Window.Handle, windowConfig.X.Value, windowConfig.Y.Value);
+          _ = SDL.SetWindowPosition(Window.Handle, windowConfig.X.Value, windowConfig.Y.Value);
         }
         // End of initial window setup
 
@@ -339,7 +339,7 @@ namespace Night
               game.Draw();
 
               // Present the drawn frame to the screen
-              Night.Graphics.Present(); 
+              Night.Graphics.Present();
             }
             catch (Exception exUser)
             {

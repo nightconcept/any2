@@ -6,6 +6,13 @@ This project aims to provide a "batteries-included," in code editor experience t
 
 This project also intends to be AI friendly so that non-programmer game designers can build games faster.
 
+## Library Structure
+
+The core of the project is the `Night.dll` library. This assembly contains:
+
+- The `Night` namespace: Provides the Love2D-inspired framework API for low-level game development tasks.
+- The `Night.Engine` namespace: Will house higher-level, more opinionated game engine components (e.g., Scene Management, ECS) built upon the `Night` framework.
+
 ## Features
 
 ### Project

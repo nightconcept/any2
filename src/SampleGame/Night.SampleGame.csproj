@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Night.Engine\Night.Engine.csproj" />
+    <ProjectReference Include="..\Night\Night.csproj" />
   </ItemGroup>
 
   <ItemGroup>
