@@ -60,3 +60,7 @@ secrets.json
 appsettings.Development.json
 
 .venv
+
+# DocFX generated files
+site/_site/
+site/api/

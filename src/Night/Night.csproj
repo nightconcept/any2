@@ -10,7 +10,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Night.xml</DocumentationFile>
+    <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/Night.xml</DocumentationFile>
     <WarningsAsErrors>$(WarningsAsErrors);SA1633</WarningsAsErrors>
   </PropertyGroup>
 

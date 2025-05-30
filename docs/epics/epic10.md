@@ -279,9 +279,9 @@ end
   - **Status:** In-Progress
 
 - [ ] **Task 10.8: Setup `docfx` Documentation Generation**
-  - **Description:** Integrate `docfx` into the project. Configure it to generate API documentation from C# XML comments for `Night.Engine`. Setup a GitHub Actions workflow to build and deploy this documentation to GitHub Pages.
+  - **Description:** Integrate `docfx` into the project. Configure it to generate API documentation from C# XML comments for `Night`. Setup a GitHub Actions workflow to build and deploy this documentation to GitHub Pages.
   - **Acceptance Criteria:** API documentation is automatically generated and published to a GitHub Pages site.
-  - **Status:** To Do
+  - **Status:** Review
 
 - [ ] **Task 10.9: Formalize Basic Test Suite**
   - **Description:** Review current testing strategy (`Night.SampleGame` as integration test [cite: 209]). Establish a basic structure for more formal tests if deemed necessary (e.g., a separate test project). Add minimal unit tests for any new complex, non-SDL-dependent logic introduced in this epic (e.g., utility functions in `Night.Filesystem` or `Night.Timer`).
