@@ -3,6 +3,7 @@ Directory structure:
     ├── README.md
     ├── LICENSE
     ├── Night.sln
+    ├── stylecop.json
     ├── .editorconfig
     ├── .pre-commit-config.yaml
     ├── docs/
@@ -118,12 +119,14 @@ Directory structure:
     │   │               ├── ref/
     │   │               └── refint/
     │   └── SampleGame/
+    │       ├── Game.cs
     │       ├── Night.SampleGame.csproj
     │       ├── Player.cs
     │       ├── Program.cs
     │       ├── config.json
     │       ├── Samples/
-    │       │   └── Program.cs
+    │       │   ├── Platformer.cs
+    │       │   └── PlatformerGame.cs
     │       ├── assets/
     │       │   ├── data/
     │       │   └── images/
@@ -429,6 +432,24 @@ EndGlobal
 
 
 ================================================
+File: stylecop.json
+================================================
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Night Circle",
+      "copyrightText": "Copyright (c) {copyrightYears} Danny Solivan and {companyName}\n\nThis software is provided 'as-is', without any express or implied\nwarranty. In no event will the authors be held liable for any damages\narising from the use of this software.\n\nPermission is granted to anyone to use this software for any purpose,\nincluding commercial applications, and to alter it and redistribute it\nfreely, subject to the following restrictions:\n\n1. The origin of this software must not be misrepresented; you must not\n   claim that you wrote the original software. If you use this software\n   in a product, an acknowledgment in the product documentation would be\n   appreciated but is not required.\n2. Altered source versions must be plainly marked as such, and must not be\n   misrepresented as being the original software.\n3. This notice may not be removed or altered from any source distribution.",
+      "variables": {
+        "copyrightYears": "2025"
+      }
+    }
+  }
+}
+
+
+
+================================================
 File: .editorconfig
 ================================================
 # top-most EditorConfig file
@@ -490,6 +511,10 @@ dotnet_diagnostic.SA1200.severity = none
 
 # Disable StyleCop's opinion on file name matching type name
 dotnet_diagnostic.SA1649.severity = none
+
+# StyleCop Analyzer SA1633: The file header is missing or not located at the top of the file.
+# Set to warning or error to ensure it's reported.
+dotnet_diagnostic.SA1633.severity = warning
 
 # use 2-spaces for csproj
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,nativeproj,locproj}]
@@ -5191,6 +5216,7 @@ File: src/Night/Night.csproj
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Night.xml</DocumentationFile>
+    <WarningsAsErrors>$(WarningsAsErrors);SA1633</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11012,7 +11038,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+afbc42ecd5c280d3fd40f25836ea13204e758291")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0117cd0f73b4801d36870b0c1ab5cf9739ba4190")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -11025,7 +11051,7 @@ using System.Reflection;
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.AssemblyInfoInputs.cache
 ================================================
-75c3da71bb44de919258e18ea65a8c289aab077fa055f6f3b243b2a7680fe4d1
+c08ffc56d917fc066b17d35ecf87a8851967abfb6a3701017fdde110e61daa2c
 
 
 
@@ -11086,7 +11112,7 @@ f4b58ce18ba7cef5595c058422ff25b7df1016252895ea6c66a06882ae7c79c6
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/afbc42ecd5c280d3fd40f25836ea13204e758291/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0117cd0f73b4801d36870b0c1ab5cf9739ba4190/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -11098,6 +11124,213 @@ using System.Reflection;
 [assembly: global::System.Runtime.Versioning.TargetFrameworkAttribute(".NETCoreApp,Version=v9.0", FrameworkDisplayName = ".NET 9.0")]
 
 
+
+
+
+================================================
+File: src/SampleGame/Game.cs
+================================================
+// <copyright file="Game.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+using Night;
+
+using SDL3;
+
+namespace Night.SampleGame;
+
+public class Game : IGame
+{
+  private Player player;
+  private List<Night.Rectangle> platforms;
+  private Night.Sprite? platformSprite;
+  private Night.Rectangle goalPlatform;
+  private bool goalReachedMessageShown = false; // To ensure message prints only once
+
+  public Game()
+  {
+    this.player = new Player();
+    this.platforms = new List<Night.Rectangle>();
+  }
+
+  public void Load()
+  {
+    // _ = Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
+    // Window.SetTitle("Night Platformer Sample");
+    // Window settings will now be driven by config.json (or defaults if not present/configured)
+    this.player.Load();
+
+    // Load platform sprite
+    string baseDirectory = AppContext.BaseDirectory;
+    string platformImageRelativePath = Path.Combine("assets", "images", "pixel_green.png");
+    string platformImageFullPath = Path.Combine(baseDirectory, platformImageRelativePath);
+    this.platformSprite = Graphics.NewImage(platformImageFullPath); // Graphics class will be in Night.Framework
+    if (this.platformSprite == null)
+    {
+      Console.WriteLine($"Game.Load: Failed to load platform sprite at '{platformImageFullPath}'. Platforms will not be drawn.");
+    }
+
+    // Initialize platforms (as per docs/epics/epic7-design.md)
+    this.platforms.Add(new Night.Rectangle(50, 500, 700, 50));
+    this.platforms.Add(new Night.Rectangle(200, 400, 150, 30));
+    this.platforms.Add(new Night.Rectangle(450, 300, 100, 30));
+    this.goalPlatform = new Night.Rectangle(600, 200, 100, 30);
+    this.platforms.Add(this.goalPlatform);
+  }
+
+  public void Update(double deltaTime)
+  {
+    this.player.Update(deltaTime, this.platforms);
+
+    // Check if player reached the goal platform
+    // Adjust playerBounds slightly for the goal check to ensure "touching" counts,
+    // as player might be perfectly aligned on top.
+    Night.Rectangle playerBoundsForGoalCheck = new Night.Rectangle((int)this.player.X, (int)this.player.Y, this.player.Width, this.player.Height + 1);
+    if (CheckAABBCollision(playerBoundsForGoalCheck, this.goalPlatform) && !this.goalReachedMessageShown)
+    {
+      // Simple win condition: print a message.
+      // A real game might change state, show a UI, etc.
+      Console.WriteLine("Congratulations! Goal Reached!");
+      this.goalReachedMessageShown = true; // Set flag so it doesn't print again
+
+      // Optionally, could close the game or trigger another action:
+      // Window.Close(); // Window class will be in Night.Framework
+    }
+  }
+
+  public void Draw()
+  {
+    Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
+
+    // Draw platforms
+    if (this.platformSprite != null)
+    {
+      foreach (var platform in this.platforms)
+      {
+        // Scale the 1x1 pixel sprite to the platform's dimensions
+        Graphics.Draw(
+            this.platformSprite,
+            platform.X,
+            platform.Y,
+            0,
+            platform.Width,
+            platform.Height);
+      }
+    }
+
+    this.player.Draw();
+
+    // --- Graphics Shape Drawing Demonstration ---
+    // Rectangle Demo
+    Graphics.SetColor(Night.Color.Red);
+    Graphics.Rectangle(Night.DrawMode.Fill, 50, 50, 100, 50); // Filled Red Rectangle
+    Graphics.SetColor(Night.Color.Black);
+    Graphics.Rectangle(Night.DrawMode.Line, 50, 50, 100, 50); // Black outline for Red Rectangle
+
+    Graphics.SetColor(0, 0, 255, 128); // Semi-transparent Blue
+    Graphics.Rectangle(Night.DrawMode.Line, 160, 50, 80, 60); // Outlined Blue Rectangle
+
+    // Circle Demo
+    Graphics.SetColor(Night.Color.Green);
+    Graphics.Circle(Night.DrawMode.Fill, 300, 80, 30); // Filled Green Circle
+    Graphics.SetColor(Night.Color.Black);
+    Graphics.Circle(Night.DrawMode.Line, 300, 80, 30, 24); // Black outline, 24 segments
+
+    Graphics.SetColor(Night.Color.Yellow);
+    Graphics.Circle(Night.DrawMode.Line, 400, 80, 25, 6); // 6-segment "circle" (hexagon) outline
+
+    // Line Demo
+    Graphics.SetColor(Night.Color.Magenta);
+    Graphics.Line(50, 120, 250, 150); // Single Magenta Line
+
+    Night.PointF[] linePoints = new Night.PointF[]
+    {
+      new Night.PointF(280, 120),
+      new Night.PointF(320, 160),
+      new Night.PointF(360, 120),
+      new Night.PointF(400, 160),
+      new Night.PointF(440, 120),
+    };
+    Graphics.SetColor(Night.Color.Cyan);
+    Graphics.Line(linePoints); // Polyline in Cyan
+
+    // Polygon Demo
+    Night.PointF[] triangleVertices = new Night.PointF[]
+    {
+      new Night.PointF(500, 50),
+      new Night.PointF(550, 100),
+      new Night.PointF(450, 100),
+    };
+    Graphics.SetColor(new Night.Color(255, 165, 0)); // Orange
+    Graphics.Polygon(Night.DrawMode.Fill, triangleVertices); // Filled Orange Triangle
+    Graphics.SetColor(Night.Color.Black);
+    Graphics.Polygon(Night.DrawMode.Line, triangleVertices); // Black outline for Triangle
+
+    Night.PointF[] pentagonVertices = new Night.PointF[]
+    {
+        new Night.PointF(600, 80),
+        new Night.PointF(630, 60),
+        new Night.PointF(650, 90),
+        new Night.PointF(620, 110),
+        new Night.PointF(580, 100),
+    };
+    Graphics.SetColor(new Night.Color(75, 0, 130)); // Indigo
+    Graphics.Polygon(Night.DrawMode.Line, pentagonVertices);
+  }
+
+  public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
+  {
+    // Minimal key handling for now, primarily for closing the window.
+    if (key == Night.KeySymbol.Escape)
+    {
+      Window.Close();
+    }
+
+    // Test error triggering
+    if (key == Night.KeySymbol.E && !isRepeat)
+    {
+      throw new InvalidOperationException("Test error triggered by pressing 'E' in SampleGame!");
+    }
+
+    // --- Night.Window Demo: Toggle Fullscreen ---
+    if (key == Night.KeySymbol.F11)
+    {
+      var (isFullscreen, _) = Window.GetFullscreen();
+      bool success = Window.SetFullscreen(!isFullscreen, Night.FullscreenType.Desktop);
+      Console.WriteLine($"SetFullscreen to {!isFullscreen} (Desktop) attempt: {(success ? "Success" : "Failed")}");
+      var newMode = Window.GetMode();
+      Console.WriteLine($"New Window Mode: {newMode.Width}x{newMode.Height}, Fullscreen: {newMode.Fullscreen}, Type: {newMode.FullscreenType}, Borderless: {newMode.Borderless}");
+    }
+
+    if (key == Night.KeySymbol.F10)
+    {
+      var (isFullscreen, _) = Window.GetFullscreen();
+      bool success = Window.SetFullscreen(!isFullscreen, Night.FullscreenType.Exclusive);
+      Console.WriteLine($"SetFullscreen to {!isFullscreen} (Exclusive) attempt: {(success ? "Success" : "Failed")}");
+      var newMode = Window.GetMode();
+      Console.WriteLine($"New Window Mode: {newMode.Width}x{newMode.Height}, Fullscreen: {newMode.Fullscreen}, Type: {newMode.FullscreenType}, Borderless: {newMode.Borderless}");
+    }
+
+    // --- End Night.Window Demo ---
+  }
+
+  // Helper for collision detection (AABB)
+  private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
+  {
+    // True if the rectangles are overlapping
+    return rect1.X < rect2.X + rect2.Width &&
+           rect1.X + rect1.Width > rect2.X &&
+           rect1.Y < rect2.Y + rect2.Height &&
+           rect1.Y + rect1.Height > rect2.Y;
+  }
+}
+
+// Program class removed from here, will be in Program.cs
 
 
 
@@ -11156,6 +11389,13 @@ File: src/SampleGame/Night.SampleGame.csproj
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>
 
 
@@ -11163,6 +11403,10 @@ File: src/SampleGame/Night.SampleGame.csproj
 ================================================
 File: src/SampleGame/Player.cs
 ================================================
+// <copyright file="Player.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11173,42 +11417,43 @@ namespace Night.SampleGame
 {
   public class Player
   {
-    public float X { get; private set; }
-    public float Y { get; private set; }
-    public int Width { get; private set; }
-    public int Height { get; private set; }
-
-    private float _velocityX;
-    private float _velocityY;
-
     private const float HorizontalSpeed = 200f; // Pixels per second
     private const float JumpStrength = -450f;  // Initial upward velocity
     private const float Gravity = 1000f;       // Pixels per second squared
 
-    private bool _isGrounded;
-
-    private Night.Sprite? _playerSprite; // To hold the blue rectangle sprite
+    private float velocityX;
+    private float velocityY;
+    private bool isGrounded;
+    private Night.Sprite? playerSprite; // To hold the blue rectangle sprite
 
     public Player()
     {
       // Initialize properties in Load()
-      _isGrounded = false; // Start in the air or assume Load sets initial grounded state
+      this.isGrounded = false; // Start in the air or assume Load sets initial grounded state
     }
+
+    public float X { get; private set; }
+
+    public float Y { get; private set; }
+
+    public int Width { get; private set; }
+
+    public int Height { get; private set; }
 
     public void Load()
     {
-      Width = 32;
-      Height = 64;
+      this.Width = 32;
+      this.Height = 64;
 
       // Initial position: Centered horizontally, resting on the first platform (Y=500, H=50).
       // Player's top-left Y = PlatformTopY - PlayerHeight = 500 - 64 = 436.
       // Player's top-left X = (WindowWidth / 2) - (PlayerWidth / 2) = (800 / 2) - (32 / 2) = 400 - 16 = 384.
       // Assuming window width is 800 as per Game.cs Load()
-      X = 384f;
-      Y = 436f; // This will be adjusted by gravity until grounded on a floor/platform
+      this.X = 384f;
+      this.Y = 436f; // This will be adjusted by gravity until grounded on a floor/platform
 
-      _velocityX = 0f;
-      _velocityY = 0f;
+      this.velocityX = 0f;
+      this.velocityY = 0f;
 
       // Attempt to load a pre-made blue image for the player.
       // This file needs to exist: "assets/images/player_sprite_blue_32x64.png"
@@ -11216,30 +11461,22 @@ namespace Night.SampleGame
       // For simplicity with current Draw method (no tinting), let's assume a 32x64 blue sprite.
       // If we used a 1x1 pixel_blue.png, scaleX would be Width, scaleY would be Height.
       string baseDirectory = AppContext.BaseDirectory;
+
       // Using a specific asset name as discussed due to lack of tinting.
       // This asset would be a 32x64 solid blue rectangle image.
       string imageRelativePath = Path.Combine("assets", "images", "player_sprite_blue_32x64.png");
       string imageFullPath = Path.Combine(baseDirectory, imageRelativePath);
 
-      _playerSprite = Graphics.NewImage(imageFullPath);
-      if (_playerSprite == null)
+      this.playerSprite = Graphics.NewImage(imageFullPath);
+      if (this.playerSprite == null)
       {
         Console.WriteLine($"Player.Load: Failed to load player sprite at '{imageFullPath}'. A blue rectangle will not be drawn.");
       }
       else
       {
-
       }
-      _isGrounded = false; // Player starts potentially in the air and falls to ground.
-    }
 
-    private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
-    {
-      // True if the rectangles are overlapping
-      return rect1.X < rect2.X + rect2.Width &&
-             rect1.X + rect1.Width > rect2.X &&
-             rect1.Y < rect2.Y + rect2.Height &&
-             rect1.Y + rect1.Height > rect2.Y;
+      this.isGrounded = false; // Player starts potentially in the air and falls to ground.
     }
 
     public void Update(double deltaTime, List<Night.Rectangle> platforms)
@@ -11247,59 +11484,67 @@ namespace Night.SampleGame
       float dt = (float)deltaTime;
 
       // 1. Handle Input & Apply Jump Impulse
-      _velocityX = 0;
+      this.velocityX = 0;
       if (Keyboard.IsDown(KeyCode.Left) || Keyboard.IsDown(KeyCode.A))
       {
-        _velocityX = -HorizontalSpeed;
+        this.velocityX = -HorizontalSpeed;
       }
+
       if (Keyboard.IsDown(KeyCode.Right) || Keyboard.IsDown(KeyCode.D))
       {
-        _velocityX = HorizontalSpeed;
+        this.velocityX = HorizontalSpeed;
       }
 
       bool tryingToJump = Keyboard.IsDown(KeyCode.Space);
-      if (tryingToJump && _isGrounded)
+      if (tryingToJump && this.isGrounded)
       {
-        _velocityY = JumpStrength;
-        _isGrounded = false; // Explicitly set to false when jump starts
+        this.velocityY = JumpStrength;
+        this.isGrounded = false; // Explicitly set to false when jump starts
       }
 
       // 2. Apply Gravity
-      if (!_isGrounded)
+      if (!this.isGrounded)
       {
-        _velocityY += Gravity * dt;
+        this.velocityY += Gravity * dt;
       }
 
       // 3. Horizontal Movement and Collision
-      X += _velocityX * dt;
-      Night.Rectangle playerBoundingBox = new Night.Rectangle((int)X, (int)Y, Width, Height);
+      this.X += this.velocityX * dt;
+      Night.Rectangle playerBoundingBox = new Night.Rectangle((int)this.X, (int)this.Y, this.Width, this.Height);
 
       foreach (var platform in platforms)
       {
         // Update playerBoundingBox X for current position before check
-        playerBoundingBox.X = (int)X;
-        playerBoundingBox.Y = (int)Y; // Keep Y fixed for horizontal check pass
+        playerBoundingBox.X = (int)this.X;
 
-        if (CheckAABBCollision(new Night.Rectangle((int)X, (int)Y, Width, Height), platform))
+        // Keep Y fixed for horizontal check pass
+        playerBoundingBox.Y = (int)this.Y;
+
+        if (CheckAABBCollision(new Night.Rectangle((int)this.X, (int)this.Y, this.Width, this.Height), platform))
         {
-          if (_velocityX > 0) // Moving right, collided with left edge of platform
+          // Moving right, collided with left edge of platform
+          if (this.velocityX > 0)
           {
-            X = platform.X - Width;
+            this.X = platform.X - this.Width;
           }
-          else if (_velocityX < 0) // Moving left, collided with right edge of platform
+
+          // Moving left, collided with right edge of platform
+          else if (this.velocityX < 0)
           {
-            X = platform.X + platform.Width;
+            this.X = platform.X + platform.Width;
           }
-          _velocityX = 0; // Stop horizontal movement on collision
+
+          // Stop horizontal movement on collision
+          this.velocityX = 0;
         }
       }
 
       // 4. Vertical Movement and Collision
-      Y += _velocityY * dt;
+      this.Y += this.velocityY * dt;
 
       // Update playerBoundingBox for vertical check using potentially corrected X and new Y
-      playerBoundingBox.X = (int)X;
-      playerBoundingBox.Y = (int)Y;
+      playerBoundingBox.X = (int)this.X;
+      playerBoundingBox.Y = (int)this.Y;
 
       // Before checking collisions, assume player is not grounded unless a collision proves otherwise.
       // This flag will be set if any interaction during the platform loop results in grounding.
@@ -11308,35 +11553,41 @@ namespace Night.SampleGame
       foreach (var platform in platforms)
       {
         // Horizontal overlap check (using player's float X for precision against integer platform.X)
-        bool horizontalOverlap = (X + Width > platform.X && X < platform.X + platform.Width);
+        bool horizontalOverlap = this.X + this.Width > platform.X && this.X < platform.X + platform.Width;
 
         if (horizontalOverlap)
         {
-          float playerFloatTop = Y;
-          float playerFloatBottom = Y + Height;
+          float playerFloatTop = this.Y;
+          float playerFloatBottom = this.Y + this.Height;
 
           float platformTop = platform.Y;
           float platformBottom = platform.Y + platform.Height;
 
-          if (_velocityY > 0) // Player is moving downwards
+          // Player is moving downwards
+          if (this.velocityY > 0)
           {
             // Check if player's bottom has landed on or passed through the platform's top surface,
             // and the player's top was above the platform's top (i.e., not starting from inside/below).
             if (playerFloatBottom >= platformTop && playerFloatTop < platformTop)
             {
-              Y = platformTop - Height; // Snap player's bottom to platform's top
-              _velocityY = 0f;
+              // Snap player's bottom to platform's top
+              this.Y = platformTop - this.Height;
+              this.velocityY = 0f;
               newIsGroundedThisFrame = true;
             }
           }
-          else if (_velocityY < 0) // Player is moving upwards
+
+          // Player is moving upwards
+          else if (this.velocityY < 0)
           {
             // Check if player's top has hit or passed through the platform's bottom surface,
             // and the player's bottom was below the platform's bottom (i.e., not starting from inside/above).
             if (playerFloatTop <= platformBottom && playerFloatBottom > platformBottom)
             {
-              Y = platformBottom; // Snap player's top to platform's bottom
-              _velocityY = 0f;
+              // Snap player's top to platform's bottom
+              this.Y = platformBottom;
+              this.velocityY = 0f;
+
               // Hitting head does not make player grounded
             }
           }
@@ -11344,48 +11595,61 @@ namespace Night.SampleGame
           // Additional check for stable grounding if player is (almost) stationary vertically.
           // This handles cases where player is already on the platform, slid onto it, or just landed.
           // It's important this runs even if _velocityY became 0 in this frame due to landing.
-          if (Math.Abs(_velocityY) < 0.1f) // If effectively stationary vertically
+          // If effectively stationary vertically
+          if (Math.Abs(this.velocityY) < 0.1f)
           {
             // Check if player's bottom is at or very slightly through the platform's top,
             // and player's head is above the platform's top.
             // The (platformTop + 1.0f) allows for a small 1px penetration to still count as grounded.
             if (playerFloatBottom >= platformTop && playerFloatBottom < (platformTop + 1.0f) && playerFloatTop < platformTop)
             {
-              Y = platformTop - Height; // Snap firmly
-              _velocityY = 0f;          // Ensure velocity is zeroed
+              // Snap firmly
+              this.Y = platformTop - this.Height;
+
+              // Ensure velocity is zeroed
+              this.velocityY = 0f;
               newIsGroundedThisFrame = true;
             }
           }
         }
       }
-      _isGrounded = newIsGroundedThisFrame;
+
+      this.isGrounded = newIsGroundedThisFrame;
 
       // If a jump was initiated and _isGrounded became false,
       // and player is still moving upwards (_velocityY < 0), they are not grounded.
       // This ensures that if a jump starts, _isGrounded remains false until landing.
-      if (tryingToJump && _velocityY < 0)
-      { // Check if jump was initiated *this frame*
-        _isGrounded = false;
+      // Check if jump was initiated *this frame*
+      if (tryingToJump && this.velocityY < 0)
+      {
+        this.isGrounded = false;
       }
-
 
       // Prevent player from going off-screen left/right (simple boundary)
       // These values should ideally come from Window.GetWidth/Height if game resizes
       float gameWindowWidth = 800;
-      if (X < 0) X = 0;
-      if (X + Width > gameWindowWidth) X = gameWindowWidth - Width;
+      if (this.X < 0)
+      {
+        this.X = 0;
+      }
+
+      if (this.X + this.Width > gameWindowWidth)
+      {
+        this.X = gameWindowWidth - this.Width;
+      }
+
       // Top boundary (optional, could allow jumping off screen top)
       // if (Y < 0) { Y = 0; if (_velocityY < 0) _velocityY = 0; }
     }
 
     public void Draw()
     {
-      if (_playerSprite != null)
+      if (this.playerSprite != null)
       {
         // If player_sprite_blue_32x64.png is exactly 32x64, scaleX and scaleY are 1.
         // If it was a 1x1 pixel_blue.png, then scaleX=Width, scaleY=Height.
         // Assuming the loaded sprite is already the correct size (32x64):
-        Graphics.Draw(_playerSprite, X, Y);
+        Graphics.Draw(this.playerSprite, this.X, this.Y);
       }
       else
       {
@@ -11397,6 +11661,15 @@ namespace Night.SampleGame
         // }
       }
     }
+
+    private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
+    {
+      // True if the rectangles are overlapping
+      return rect1.X < rect2.X + rect2.Width &&
+             rect1.X + rect1.Width > rect2.X &&
+             rect1.Y < rect2.Y + rect2.Height &&
+             rect1.Y + rect1.Height > rect2.Y;
+    }
   }
 }
 
@@ -11405,205 +11678,18 @@ namespace Night.SampleGame
 ================================================
 File: src/SampleGame/Program.cs
 ================================================
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+// <copyright file="Program.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-using Night;
-
-using SDL3;
-
-namespace Night.SampleGame;
-
-public class Game : IGame
+namespace Night.SampleGame
 {
-  private Player _player;
-  private List<Night.Rectangle> _platforms;
-  private Night.Sprite? _platformSprite;
-  private Night.Rectangle _goalPlatform;
-  private bool _goalReachedMessageShown = false; // To ensure message prints only once
-
-  public Game()
+  public class Program
   {
-    _player = new Player();
-    _platforms = new List<Night.Rectangle>();
-  }
-
-  public void Load()
-  {
-    // _ = Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
-    // Window.SetTitle("Night Platformer Sample");
-    // Window settings will now be driven by config.json (or defaults if not present/configured)
-
-    _player.Load();
-
-    // Load platform sprite
-    string baseDirectory = AppContext.BaseDirectory;
-    string platformImageRelativePath = Path.Combine("assets", "images", "pixel_green.png");
-    string platformImageFullPath = Path.Combine(baseDirectory, platformImageRelativePath);
-    _platformSprite = Graphics.NewImage(platformImageFullPath); // Graphics class will be in Night.Framework
-    if (_platformSprite == null)
+    public static void Main()
     {
-      Console.WriteLine($"Game.Load: Failed to load platform sprite at '{platformImageFullPath}'. Platforms will not be drawn.");
+      Framework.Run(new Game());
     }
-
-    // Initialize platforms (as per docs/epics/epic7-design.md)
-    _platforms.Add(new Night.Rectangle(50, 500, 700, 50));
-    _platforms.Add(new Night.Rectangle(200, 400, 150, 30));
-    _platforms.Add(new Night.Rectangle(450, 300, 100, 30));
-    _goalPlatform = new Night.Rectangle(600, 200, 100, 30);
-    _platforms.Add(_goalPlatform);
-  }
-
-  // Helper for collision detection (AABB)
-  private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
-  {
-    // True if the rectangles are overlapping
-    return rect1.X < rect2.X + rect2.Width &&
-           rect1.X + rect1.Width > rect2.X &&
-           rect1.Y < rect2.Y + rect2.Height &&
-           rect1.Y + rect1.Height > rect2.Y;
-  }
-
-  public void Update(double deltaTime)
-  {
-    _player.Update(deltaTime, _platforms);
-
-    // Check if player reached the goal platform
-    // Adjust playerBounds slightly for the goal check to ensure "touching" counts,
-    // as player might be perfectly aligned on top.
-    Night.Rectangle playerBoundsForGoalCheck = new Night.Rectangle((int)_player.X, (int)_player.Y, _player.Width, _player.Height + 1);
-    if (CheckAABBCollision(playerBoundsForGoalCheck, _goalPlatform) && !_goalReachedMessageShown)
-    {
-      // Simple win condition: print a message.
-      // A real game might change state, show a UI, etc.
-      Console.WriteLine("Congratulations! Goal Reached!");
-      _goalReachedMessageShown = true; // Set flag so it doesn't print again
-      // Optionally, could close the game or trigger another action:
-      // Window.Close(); // Window class will be in Night.Framework
-    }
-  }
-
-  public void Draw()
-  {
-    Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
-
-    // Draw platforms
-    if (_platformSprite != null)
-    {
-      foreach (var platform in _platforms)
-      {
-        // Scale the 1x1 pixel sprite to the platform's dimensions
-        Graphics.Draw(
-            _platformSprite,
-            platform.X,
-            platform.Y,
-            0,
-            platform.Width,
-            platform.Height
-        );
-      }
-    }
-
-    _player.Draw();
-    // --- Graphics Shape Drawing Demonstration ---
-    // Rectangle Demo
-    Graphics.SetColor(Night.Color.Red);
-    Graphics.Rectangle(Night.DrawMode.Fill, 50, 50, 100, 50); // Filled Red Rectangle
-    Graphics.SetColor(Night.Color.Black);
-    Graphics.Rectangle(Night.DrawMode.Line, 50, 50, 100, 50); // Black outline for Red Rectangle
-
-    Graphics.SetColor(0, 0, 255, 128); // Semi-transparent Blue
-    Graphics.Rectangle(Night.DrawMode.Line, 160, 50, 80, 60); // Outlined Blue Rectangle
-
-    // Circle Demo
-    Graphics.SetColor(Night.Color.Green);
-    Graphics.Circle(Night.DrawMode.Fill, 300, 80, 30); // Filled Green Circle
-    Graphics.SetColor(Night.Color.Black);
-    Graphics.Circle(Night.DrawMode.Line, 300, 80, 30, 24); // Black outline, 24 segments
-
-    Graphics.SetColor(Night.Color.Yellow);
-    Graphics.Circle(Night.DrawMode.Line, 400, 80, 25, 6); // 6-segment "circle" (hexagon) outline
-
-    // Line Demo
-    Graphics.SetColor(Night.Color.Magenta);
-    Graphics.Line(50, 120, 250, 150); // Single Magenta Line
-
-    Night.PointF[] linePoints = new Night.PointF[]
-    {
-      new Night.PointF(280, 120),
-      new Night.PointF(320, 160),
-      new Night.PointF(360, 120),
-      new Night.PointF(400, 160),
-      new Night.PointF(440, 120)
-    };
-    Graphics.SetColor(Night.Color.Cyan);
-    Graphics.Line(linePoints); // Polyline in Cyan
-
-    // Polygon Demo
-    Night.PointF[] triangleVertices = new Night.PointF[]
-    {
-      new Night.PointF(500, 50),
-      new Night.PointF(550, 100),
-      new Night.PointF(450, 100)
-    };
-    Graphics.SetColor(new Night.Color(255, 165, 0)); // Orange
-    Graphics.Polygon(Night.DrawMode.Fill, triangleVertices); // Filled Orange Triangle
-    Graphics.SetColor(Night.Color.Black);
-    Graphics.Polygon(Night.DrawMode.Line, triangleVertices); // Black outline for Triangle
-
-    Night.PointF[] pentagonVertices = new Night.PointF[]
-    {
-        new Night.PointF(600, 80),
-        new Night.PointF(630, 60),
-        new Night.PointF(650, 90),
-        new Night.PointF(620, 110),
-        new Night.PointF(580, 100)
-    };
-    Graphics.SetColor(new Night.Color(75, 0, 130)); // Indigo
-    Graphics.Polygon(Night.DrawMode.Line, pentagonVertices);
-  }
-
-  public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
-  {
-    // Minimal key handling for now, primarily for closing the window.
-    if (key == Night.KeySymbol.Escape)
-    {
-      Window.Close();
-    }
-
-    // Test error triggering
-    if (key == Night.KeySymbol.E && !isRepeat)
-    {
-      throw new InvalidOperationException("Test error triggered by pressing 'E' in SampleGame!");
-    }
-
-    // --- Night.Window Demo: Toggle Fullscreen ---
-    if (key == Night.KeySymbol.F11)
-    {
-      var (isFullscreen, _) = Window.GetFullscreen();
-      bool success = Window.SetFullscreen(!isFullscreen, Night.FullscreenType.Desktop);
-      Console.WriteLine($"SetFullscreen to {!isFullscreen} (Desktop) attempt: {(success ? "Success" : "Failed")}");
-      var newMode = Window.GetMode();
-      Console.WriteLine($"New Window Mode: {newMode.Width}x{newMode.Height}, Fullscreen: {newMode.Fullscreen}, Type: {newMode.FullscreenType}, Borderless: {newMode.Borderless}");
-    }
-    if (key == Night.KeySymbol.F10)
-    {
-      var (isFullscreen, _) = Window.GetFullscreen();
-      bool success = Window.SetFullscreen(!isFullscreen, Night.FullscreenType.Exclusive);
-      Console.WriteLine($"SetFullscreen to {!isFullscreen} (Exclusive) attempt: {(success ? "Success" : "Failed")}");
-      var newMode = Window.GetMode();
-      Console.WriteLine($"New Window Mode: {newMode.Width}x{newMode.Height}, Fullscreen: {newMode.Fullscreen}, Type: {newMode.FullscreenType}, Borderless: {newMode.Borderless}");
-    }
-    // --- End Night.Window Demo ---
-  }
-}
-
-public class Program
-{
-  public static void Main()
-  {
-    Framework.Run(new Game());
   }
 }
 
@@ -11628,9 +11714,13 @@ File: src/SampleGame/config.json
 
 
 ================================================
-File: src/SampleGame/Samples/Program.cs
+File: src/SampleGame/Samples/Platformer.cs
 ================================================
-﻿using System;
+// <copyright file="Platformer.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -11642,16 +11732,16 @@ namespace Night.SampleGame;
 
 public class Platformer : IGame
 {
-  private Player _player;
-  private List<Night.Rectangle> _platforms;
-  private Sprite? _platformSprite;
-  private Night.Rectangle _goalPlatform;
-  private bool _goalReachedMessageShown = false;
+  private Player player;
+  private List<Night.Rectangle> platforms;
+  private Sprite? platformSprite;
+  private Night.Rectangle goalPlatform;
+  private bool goalReachedMessageShown = false;
 
   public Platformer()
   {
-    _player = new Player();
-    _platforms = new List<Night.Rectangle>();
+    this.player = new Player();
+    this.platforms = new List<Night.Rectangle>();
   }
 
   public void Load()
@@ -11659,44 +11749,34 @@ public class Platformer : IGame
     _ = Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     Night.Window.SetTitle("Night Platformer Sample");
 
-    _player.Load();
+    this.player.Load();
 
     string baseDirectory = AppContext.BaseDirectory;
     string platformImageRelativePath = Path.Combine("assets", "images", "pixel_green.png");
     string platformImageFullPath = Path.Combine(baseDirectory, platformImageRelativePath);
-    _platformSprite = Graphics.NewImage(platformImageFullPath);
-    if (_platformSprite == null)
+    this.platformSprite = Graphics.NewImage(platformImageFullPath);
+    if (this.platformSprite == null)
     {
       Console.WriteLine($"Game.Load: Failed to load platform sprite at '{platformImageFullPath}'. Platforms will not be drawn.");
     }
 
-    _platforms.Add(new Night.Rectangle(50, 500, 700, 50));
-    _platforms.Add(new Night.Rectangle(200, 400, 150, 30));
-    _platforms.Add(new Night.Rectangle(450, 300, 100, 30));
-    _goalPlatform = new Night.Rectangle(600, 200, 100, 30);
-    _platforms.Add(_goalPlatform);
-  }
-
-  // Helper for collision detection (AABB)
-  private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
-  {
-    // True if the rectangles are overlapping
-    return rect1.X < rect2.X + rect2.Width &&
-           rect1.X + rect1.Width > rect2.X &&
-           rect1.Y < rect2.Y + rect2.Height &&
-           rect1.Y + rect1.Height > rect2.Y;
+    this.platforms.Add(new Night.Rectangle(50, 500, 700, 50));
+    this.platforms.Add(new Night.Rectangle(200, 400, 150, 30));
+    this.platforms.Add(new Night.Rectangle(450, 300, 100, 30));
+    this.goalPlatform = new Night.Rectangle(600, 200, 100, 30);
+    this.platforms.Add(this.goalPlatform);
   }
 
   public void Update(double deltaTime)
   {
-    _player.Update(deltaTime, _platforms);
+    this.player.Update(deltaTime, this.platforms);
 
-    Night.Rectangle playerBoundsForGoalCheck = new Night.Rectangle((int)_player.X, (int)_player.Y, _player.Width, _player.Height + 1);
-    if (CheckAABBCollision(playerBoundsForGoalCheck, _goalPlatform) && !_goalReachedMessageShown)
+    Night.Rectangle playerBoundsForGoalCheck = new Night.Rectangle((int)this.player.X, (int)this.player.Y, this.player.Width, this.player.Height + 1);
+    if (CheckAABBCollision(playerBoundsForGoalCheck, this.goalPlatform) && !this.goalReachedMessageShown)
     {
       // Simple win condition: print a message.
       Console.WriteLine("Congratulations! Goal Reached!");
-      _goalReachedMessageShown = true;
+      this.goalReachedMessageShown = true;
     }
   }
 
@@ -11705,23 +11785,23 @@ public class Platformer : IGame
     Night.Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
 
     // Draw platforms
-    if (_platformSprite != null)
+    if (this.platformSprite != null)
     {
-      foreach (var platform in _platforms)
+      foreach (var platform in this.platforms)
       {
         // Scale the 1x1 pixel sprite to the platform's dimensions
         Graphics.Draw(
-            sprite: _platformSprite,
+            sprite: this.platformSprite,
             x: platform.X,
             y: platform.Y,
             rotation: 0,
             scaleX: platform.Width,
-            scaleY: platform.Height
-        );
+            scaleY: platform.Height);
       }
     }
 
-    _player.Draw();
+    this.player.Draw();
+
     // Player and Level drawing logic will go here in later tasks.
   }
 
@@ -11734,9 +11814,33 @@ public class Platformer : IGame
       Console.WriteLine("SampleGame: Escape key pressed, closing window.");
       Window.Close();
     }
+
     // Player input (movement, jump) will be handled in Player.Update using Night.Keyboard.IsDown().
   }
+
+  // Helper for collision detection (AABB)
+  private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
+  {
+    // True if the rectangles are overlapping
+    return rect1.X < rect2.X + rect2.Width &&
+           rect1.X + rect1.Width > rect2.X &&
+           rect1.Y < rect2.Y + rect2.Height &&
+           rect1.Y + rect1.Height > rect2.Y;
+  }
 }
+
+
+
+================================================
+File: src/SampleGame/Samples/PlatformerGame.cs
+================================================
+// <copyright file="PlatformerGame.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using Night;
+
+namespace Night.SampleGame;
 
 public class PlatformerGame
 {
@@ -11780,7 +11884,8 @@ File: src/SampleGame/bin/Debug/net9.0/Night.SampleGame.deps.json
     ".NETCoreApp,Version=v9.0": {
       "Night.SampleGame/1.0.0": {
         "dependencies": {
-          "Night": "1.0.0"
+          "Night": "1.0.0",
+          "StyleCop.Analyzers.Unstable": "1.2.0.556"
         },
         "runtime": {
           "Night.SampleGame.dll": {}
@@ -11794,6 +11899,7 @@ File: src/SampleGame/bin/Debug/net9.0/Night.SampleGame.deps.json
           }
         }
       },
+      "StyleCop.Analyzers.Unstable/1.2.0.556": {},
       "Night/1.0.0": {
         "dependencies": {
           "SDL3-CS": "3.2.14.2"
@@ -11819,6 +11925,13 @@ File: src/SampleGame/bin/Debug/net9.0/Night.SampleGame.deps.json
       "sha512": "sha512-wqWjIm2EP7PmXRQfwSxY4YJDSrXZ0QmolJMCJcs9KY4b3vYBdlwo0U4/olPMdBx6yRzqhN1nGJjmeC9OJT6L1g==",
       "path": "sdl3-cs/3.2.14.2",
       "hashPath": "sdl3-cs.3.2.14.2.nupkg.sha512"
+    },
+    "StyleCop.Analyzers.Unstable/1.2.0.556": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zvn9Mqs/ox/83cpYPignI8hJEM2A93s2HkHs8HYMOAQW0PkampyoErAiIyKxgTLqbbad29HX/shv/6LGSjPJNQ==",
+      "path": "stylecop.analyzers.unstable/1.2.0.556",
+      "hashPath": "stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512"
     },
     "Night/1.0.0": {
       "type": "project",
@@ -13962,6 +14075,14 @@ File: src/SampleGame/obj/Night.SampleGame.csproj.nuget.dgspec.json
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "StyleCop.Analyzers.Unstable": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.2.0.556, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -14003,6 +14124,9 @@ File: src/SampleGame/obj/Night.SampleGame.csproj.nuget.g.props
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <SourceRoot Include="/home/danny/.nuget/packages/" />
   </ItemGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgStyleCop_Analyzers_Unstable Condition=" '$(PkgStyleCop_Analyzers_Unstable)' == '' ">/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556</PkgStyleCop_Analyzers_Unstable>
+  </PropertyGroup>
 </Project>
 
 
@@ -14032,6 +14156,9 @@ File: src/SampleGame/obj/project.assets.json
             "related": ".xml"
           }
         }
+      },
+      "StyleCop.Analyzers.Unstable/1.2.0.556": {
+        "type": "package"
       },
       "Night/1.0.0": {
         "type": "project",
@@ -14072,6 +14199,32 @@ File: src/SampleGame/obj/project.assets.json
         "sdl3-cs.nuspec"
       ]
     },
+    "StyleCop.Analyzers.Unstable/1.2.0.556": {
+      "sha512": "zvn9Mqs/ox/83cpYPignI8hJEM2A93s2HkHs8HYMOAQW0PkampyoErAiIyKxgTLqbbad29HX/shv/6LGSjPJNQ==",
+      "type": "package",
+      "path": "stylecop.analyzers.unstable/1.2.0.556",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "THIRD-PARTY-NOTICES.txt",
+        "analyzers/dotnet/cs/StyleCop.Analyzers.CodeFixes.dll",
+        "analyzers/dotnet/cs/StyleCop.Analyzers.dll",
+        "analyzers/dotnet/cs/de-DE/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/en-GB/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/es-MX/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/fr-FR/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/pl-PL/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/pt-BR/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/ru-RU/StyleCop.Analyzers.resources.dll",
+        "rulesets/StyleCopAnalyzersDefault.ruleset",
+        "stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512",
+        "stylecop.analyzers.unstable.nuspec",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
     "Night/1.0.0": {
       "type": "project",
       "path": "../Night/Night.csproj",
@@ -14080,7 +14233,8 @@ File: src/SampleGame/obj/project.assets.json
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "Night >= 1.0.0"
+      "Night >= 1.0.0",
+      "StyleCop.Analyzers.Unstable >= 1.2.0.556"
     ]
   },
   "packageFolders": {
@@ -14129,6 +14283,14 @@ File: src/SampleGame/obj/project.assets.json
     "frameworks": {
       "net9.0": {
         "targetAlias": "net9.0",
+        "dependencies": {
+          "StyleCop.Analyzers.Unstable": {
+            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[1.2.0.556, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",
@@ -14157,11 +14319,12 @@ File: src/SampleGame/obj/project.nuget.cache
 ================================================
 {
   "version": 2,
-  "dgSpecHash": "eMSh4kzzghQ=",
+  "dgSpecHash": "Zt2hkP+7aII=",
   "success": true,
   "projectFilePath": "/home/danny/git/any2/src/SampleGame/Night.SampleGame.csproj",
   "expectedPackageFiles": [
-    "/home/danny/.nuget/packages/sdl3-cs/3.2.14.2/sdl3-cs.3.2.14.2.nupkg.sha512"
+    "/home/danny/.nuget/packages/sdl3-cs/3.2.14.2/sdl3-cs.3.2.14.2.nupkg.sha512",
+    "/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556/stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512"
   ],
   "logs": []
 }
@@ -14191,7 +14354,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+afbc42ecd5c280d3fd40f25836ea13204e758291")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0117cd0f73b4801d36870b0c1ab5cf9739ba4190")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -14204,7 +14367,7 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
 ================================================
-51c2626c6240ed4540675d223118102c70ebdf56b10acf10d0ad16cffd524a92
+7c3419c761f25bca68e9da6c78a154cb3c9b83369334c8909de741185491b426
 
 
 
@@ -14258,7 +14421,7 @@ File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.csproj.AssemblyReference.
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.csproj.CoreCompileInputs.cache
 ================================================
-40a675710048616e9ebe3cc1ca61c3510b0c9f84cfd8fad5e5d55c4fc11cacfa
+a7b82f992a79431d5b9355433118ee37e3172a5637bd2caed35459a2804e25f8
 
 
 
@@ -14272,7 +14435,7 @@ dc347d346712591e5aae675a5692bedfe675e498f7c55e8de100f6e2ee179134
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/afbc42ecd5c280d3fd40f25836ea13204e758291/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0117cd0f73b4801d36870b0c1ab5cf9739ba4190/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -14296,6 +14459,10 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/FilesystemTests.cs
 ================================================
+// <copyright file="FilesystemTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.IO;
 using System.Text;
@@ -14309,12 +14476,11 @@ public class FilesystemTests : IDisposable
   private const string TestDir = "test_filesystem_temp";
   private const string TestFile = "test_file.txt";
   private const string TestSubDir = "test_subdir";
-  private readonly string _testFilePath;
-  private readonly string _testDirPath;
-  private readonly string _testSubDirPath;
-  private readonly string _testSymlinkFilePath;
-  private readonly string _testSymlinkDirPath;
-
+  private readonly string testFilePath;
+  private readonly string testDirPath;
+  private readonly string testSubDirPath;
+  private readonly string testSymlinkFilePath;
+  private readonly string testSymlinkDirPath;
 
   public FilesystemTests()
   {
@@ -14323,39 +14489,39 @@ public class FilesystemTests : IDisposable
     var testDirFullPath = Path.Combine(executionPath!, TestDir);
     _ = Directory.CreateDirectory(testDirFullPath);
 
-    _testFilePath = Path.Combine(testDirFullPath, TestFile);
-    _testDirPath = Path.Combine(testDirFullPath, "actual_dir_for_symlink");
-    _testSubDirPath = Path.Combine(testDirFullPath, TestSubDir);
-    _testSymlinkFilePath = Path.Combine(testDirFullPath, "symlink_file.txt");
-    _testSymlinkDirPath = Path.Combine(testDirFullPath, "symlink_dir");
+    this.testFilePath = Path.Combine(testDirFullPath, TestFile);
+    this.testDirPath = Path.Combine(testDirFullPath, "actual_dir_for_symlink");
+    this.testSubDirPath = Path.Combine(testDirFullPath, TestSubDir);
+    this.testSymlinkFilePath = Path.Combine(testDirFullPath, "symlink_file.txt");
+    this.testSymlinkDirPath = Path.Combine(testDirFullPath, "symlink_dir");
 
-
-    File.WriteAllText(_testFilePath, "Hello Night Engine!");
-    _ = Directory.CreateDirectory(_testDirPath);
-    _ = Directory.CreateDirectory(_testSubDirPath);
+    File.WriteAllText(this.testFilePath, "Hello Night Engine!");
+    _ = Directory.CreateDirectory(this.testDirPath);
+    _ = Directory.CreateDirectory(this.testSubDirPath);
 
     // Create symlinks if supported (Windows requires admin rights or dev mode)
     try
     {
-      _ = File.CreateSymbolicLink(_testSymlinkFilePath, _testFilePath);
+      _ = File.CreateSymbolicLink(this.testSymlinkFilePath, this.testFilePath);
     }
-    catch (IOException ex) // More specific exception for symlink creation issues
+    catch (IOException ex)
     {
       Console.WriteLine($"Could not create file symlink: {ex.Message}. This test might be skipped or fail if symlinks are essential.");
     }
-    catch (Exception ex) // Catch other potential exceptions
+    catch (Exception ex)
     {
       Console.WriteLine($"An unexpected error occurred during file symlink creation: {ex.Message}");
     }
+
     try
     {
-      _ = Directory.CreateSymbolicLink(_testSymlinkDirPath, _testDirPath);
+      _ = Directory.CreateSymbolicLink(this.testSymlinkDirPath, this.testDirPath);
     }
-    catch (IOException ex) // More specific exception for symlink creation issues
+    catch (IOException ex)
     {
       Console.WriteLine($"Could not create directory symlink: {ex.Message}. This test might be skipped or fail if symlinks are essential.");
     }
-    catch (Exception ex) // Catch other potential exceptions
+    catch (Exception ex)
     {
       Console.WriteLine($"An unexpected error occurred during directory symlink creation: {ex.Message}");
     }
@@ -14381,7 +14547,7 @@ public class FilesystemTests : IDisposable
   [Fact]
   public void GetInfo_EmptyPath_ReturnsNull()
   {
-    Assert.Null(Night.Filesystem.GetInfo(""));
+    Assert.Null(Night.Filesystem.GetInfo(string.Empty));
   }
 
   [Fact]
@@ -14395,17 +14561,17 @@ public class FilesystemTests : IDisposable
   [Fact]
   public void GetInfo_ExistingFile_ReturnsFileInfo()
   {
-    var info = Night.Filesystem.GetInfo(_testFilePath);
+    var info = Night.Filesystem.GetInfo(this.testFilePath);
     Assert.NotNull(info);
     Assert.Equal(Night.FileType.File, info.Type);
-    Assert.Equal(new FileInfo(_testFilePath).Length, info.Size);
+    Assert.Equal(new FileInfo(this.testFilePath).Length, info.Size);
     _ = Assert.NotNull(info.ModTime);
   }
 
   [Fact]
   public void GetInfo_ExistingFile_WithFilterTypeFile_ReturnsFileInfo()
   {
-    var info = Night.Filesystem.GetInfo(_testFilePath, Night.FileType.File);
+    var info = Night.Filesystem.GetInfo(this.testFilePath, Night.FileType.File);
     Assert.NotNull(info);
     Assert.Equal(Night.FileType.File, info.Type);
   }
@@ -14413,14 +14579,14 @@ public class FilesystemTests : IDisposable
   [Fact]
   public void GetInfo_ExistingFile_WithFilterTypeDirectory_ReturnsNull()
   {
-    var info = Night.Filesystem.GetInfo(_testFilePath, Night.FileType.Directory);
+    var info = Night.Filesystem.GetInfo(this.testFilePath, Night.FileType.Directory);
     Assert.Null(info);
   }
 
   [Fact]
   public void GetInfo_ExistingDirectory_ReturnsDirectoryInfo()
   {
-    var info = Night.Filesystem.GetInfo(_testSubDirPath);
+    var info = Night.Filesystem.GetInfo(this.testSubDirPath);
     Assert.NotNull(info);
     Assert.Equal(Night.FileType.Directory, info.Type);
     Assert.Null(info.Size); // Size is null for directories in our implementation
@@ -14430,7 +14596,7 @@ public class FilesystemTests : IDisposable
   [Fact]
   public void GetInfo_ExistingDirectory_WithFilterTypeDirectory_ReturnsDirectoryInfo()
   {
-    var info = Night.Filesystem.GetInfo(_testSubDirPath, Night.FileType.Directory);
+    var info = Night.Filesystem.GetInfo(this.testSubDirPath, Night.FileType.Directory);
     Assert.NotNull(info);
     Assert.Equal(Night.FileType.Directory, info.Type);
   }
@@ -14438,20 +14604,21 @@ public class FilesystemTests : IDisposable
   [Fact]
   public void GetInfo_ExistingDirectory_WithFilterTypeFile_ReturnsNull()
   {
-    var info = Night.Filesystem.GetInfo(_testSubDirPath, Night.FileType.File);
+    var info = Night.Filesystem.GetInfo(this.testSubDirPath, Night.FileType.File);
     Assert.Null(info);
   }
 
   [Fact]
   public void GetInfo_FileSymlink_ReturnsSymlinkInfo()
   {
-    if (!File.Exists(_testSymlinkFilePath) && !Directory.Exists(_testSymlinkFilePath) /* Symlink could point to dir or file, check both just in case File.Exists is tricky with broken file symlinks */)
+    if (!File.Exists(this.testSymlinkFilePath) && !Directory.Exists(this.testSymlinkFilePath) /* Symlink could point to dir or file, check both just in case File.Exists is tricky with broken file symlinks */)
     {
       // Skip if symlink creation failed (e.g. permissions on Windows or if it points to a now-deleted item and File.Exists returns false)
-      Console.WriteLine($"Skipping symlink test for file: {_testSymlinkFilePath} as it does not exist or could not be verified.");
+      Console.WriteLine($"Skipping symlink test for file: {this.testSymlinkFilePath} as it does not exist or could not be verified.");
       return;
     }
-    var info = Night.Filesystem.GetInfo(_testSymlinkFilePath);
+
+    var info = Night.Filesystem.GetInfo(this.testSymlinkFilePath);
     Assert.NotNull(info);
     Assert.Equal(Night.FileType.Symlink, info.Type);
   }
@@ -14459,13 +14626,14 @@ public class FilesystemTests : IDisposable
   [Fact]
   public void GetInfo_DirectorySymlink_ReturnsSymlinkInfo()
   {
-    if (!Directory.Exists(_testSymlinkDirPath)) // Directory.Exists should work for directory symlinks
+    if (!Directory.Exists(this.testSymlinkDirPath))
     {
       // Skip if symlink creation failed (e.g. permissions on Windows)
-      Console.WriteLine($"Skipping symlink test for directory: {_testSymlinkDirPath} as it does not exist or could not be verified.");
+      Console.WriteLine($"Skipping symlink test for directory: {this.testSymlinkDirPath} as it does not exist or could not be verified.");
       return;
     }
-    var info = Night.Filesystem.GetInfo(_testSymlinkDirPath);
+
+    var info = Night.Filesystem.GetInfo(this.testSymlinkDirPath);
     Assert.NotNull(info);
     Assert.Equal(Night.FileType.Symlink, info.Type);
   }
@@ -14474,12 +14642,12 @@ public class FilesystemTests : IDisposable
   public void GetInfo_PopulatesExistingObject_ValidPath()
   {
     var existingInfo = new Night.FileSystemInfo(Night.FileType.File, 0, 0); // Dummy initial values
-    var result = Night.Filesystem.GetInfo(_testFilePath, existingInfo);
+    var result = Night.Filesystem.GetInfo(this.testFilePath, existingInfo);
 
     Assert.NotNull(result);
     Assert.Same(existingInfo, result);
     Assert.Equal(Night.FileType.File, existingInfo.Type);
-    Assert.Equal(new FileInfo(_testFilePath).Length, existingInfo.Size);
+    Assert.Equal(new FileInfo(this.testFilePath).Length, existingInfo.Size);
   }
 
   [Fact]
@@ -14495,6 +14663,7 @@ public class FilesystemTests : IDisposable
     var result = Night.Filesystem.GetInfo(Path.Combine(testDirFullPath, "non_existent_file.txt"), existingInfo);
 
     Assert.Null(result);
+
     // Check that the original object was not modified
     Assert.Equal(originalType, existingInfo.Type);
     Assert.Equal(originalSize, existingInfo.Size);
@@ -14505,7 +14674,7 @@ public class FilesystemTests : IDisposable
   public void GetInfo_PopulatesExistingObjectWithFilter_ValidPathAndType()
   {
     var existingInfo = new Night.FileSystemInfo(Night.FileType.Directory, 0, 0); // Dummy initial values
-    var result = Night.Filesystem.GetInfo(_testFilePath, Night.FileType.File, existingInfo);
+    var result = Night.Filesystem.GetInfo(this.testFilePath, Night.FileType.File, existingInfo);
 
     Assert.NotNull(result);
     Assert.Same(existingInfo, result);
@@ -14517,18 +14686,17 @@ public class FilesystemTests : IDisposable
   {
     var originalType = Night.FileType.Other;
     var existingInfo = new Night.FileSystemInfo(originalType, null, null);
-    var result = Night.Filesystem.GetInfo(_testFilePath, Night.FileType.Directory, existingInfo); // File exists, but asking for Directory type
+    var result = Night.Filesystem.GetInfo(this.testFilePath, Night.FileType.Directory, existingInfo); // File exists, but asking for Directory type
 
     Assert.Null(result);
     Assert.Equal(originalType, existingInfo.Type); // Should not have been modified
   }
 
-
   [Fact]
   public void ReadBytes_ExistingFile_ReturnsCorrectBytes()
   {
     var expectedBytes = Encoding.UTF8.GetBytes("Hello Night Engine!");
-    var actualBytes = Night.Filesystem.ReadBytes(_testFilePath);
+    var actualBytes = Night.Filesystem.ReadBytes(this.testFilePath);
     Assert.Equal(expectedBytes, actualBytes);
   }
 
@@ -14544,7 +14712,7 @@ public class FilesystemTests : IDisposable
   public void ReadText_ExistingFile_ReturnsCorrectText()
   {
     var expectedText = "Hello Night Engine!";
-    var actualText = Night.Filesystem.ReadText(_testFilePath);
+    var actualText = Night.Filesystem.ReadText(this.testFilePath);
     Assert.Equal(expectedText, actualText);
   }
 
@@ -14584,6 +14752,13 @@ File: tests/Night.Tests/Night.Tests.csproj
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
@@ -14594,14 +14769,17 @@ File: tests/Night.Tests/Night.Tests.csproj
 ================================================
 File: tests/Night.Tests/UnitTest1.cs
 ================================================
-﻿namespace Night.Engine.Tests;
+﻿// <copyright file="UnitTest1.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace Night.Engine.Tests;
 
 public class UnitTest1
 {
   [Fact]
   public void Test1()
   {
-
   }
 }
 
@@ -14628,6 +14806,7 @@ File: tests/Night.Tests/bin/Debug/net9.0/Night.Tests.deps.json
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "17.12.0",
           "Night": "1.0.0",
+          "StyleCop.Analyzers.Unstable": "1.2.0.556",
           "coverlet.collector": "6.0.2",
           "xunit": "2.9.2",
           "xunit.runner.visualstudio": "2.8.2"
@@ -14913,6 +15092,7 @@ File: tests/Night.Tests/bin/Debug/net9.0/Night.Tests.deps.json
           }
         }
       },
+      "StyleCop.Analyzers.Unstable/1.2.0.556": {},
       "System.Reflection.Metadata/1.6.0": {},
       "xunit/2.9.2": {
         "dependencies": {
@@ -15034,6 +15214,13 @@ File: tests/Night.Tests/bin/Debug/net9.0/Night.Tests.deps.json
       "sha512": "sha512-wqWjIm2EP7PmXRQfwSxY4YJDSrXZ0QmolJMCJcs9KY4b3vYBdlwo0U4/olPMdBx6yRzqhN1nGJjmeC9OJT6L1g==",
       "path": "sdl3-cs/3.2.14.2",
       "hashPath": "sdl3-cs.3.2.14.2.nupkg.sha512"
+    },
+    "StyleCop.Analyzers.Unstable/1.2.0.556": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zvn9Mqs/ox/83cpYPignI8hJEM2A93s2HkHs8HYMOAQW0PkampyoErAiIyKxgTLqbbad29HX/shv/6LGSjPJNQ==",
+      "path": "stylecop.analyzers.unstable/1.2.0.556",
+      "hashPath": "stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512"
     },
     "System.Reflection.Metadata/1.6.0": {
       "type": "package",
@@ -17233,6 +17420,12 @@ File: tests/Night.Tests/obj/Night.Tests.csproj.nuget.dgspec.json
               "target": "Package",
               "version": "[17.12.0, )"
             },
+            "StyleCop.Analyzers.Unstable": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.2.0.556, )"
+            },
             "coverlet.collector": {
               "target": "Package",
               "version": "[6.0.2, )"
@@ -17296,6 +17489,7 @@ File: tests/Night.Tests/obj/Night.Tests.csproj.nuget.g.props
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <Pkgxunit_analyzers Condition=" '$(Pkgxunit_analyzers)' == '' ">/home/danny/.nuget/packages/xunit.analyzers/1.16.0</Pkgxunit_analyzers>
+    <PkgStyleCop_Analyzers_Unstable Condition=" '$(PkgStyleCop_Analyzers_Unstable)' == '' ">/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556</PkgStyleCop_Analyzers_Unstable>
   </PropertyGroup>
 </Project>
 
@@ -17634,6 +17828,9 @@ File: tests/Night.Tests/obj/project.assets.json
             "related": ".xml"
           }
         }
+      },
+      "StyleCop.Analyzers.Unstable/1.2.0.556": {
+        "type": "package"
       },
       "System.Reflection.Metadata/1.6.0": {
         "type": "package",
@@ -18136,6 +18333,32 @@ File: tests/Night.Tests/obj/project.assets.json
         "sdl3-cs.nuspec"
       ]
     },
+    "StyleCop.Analyzers.Unstable/1.2.0.556": {
+      "sha512": "zvn9Mqs/ox/83cpYPignI8hJEM2A93s2HkHs8HYMOAQW0PkampyoErAiIyKxgTLqbbad29HX/shv/6LGSjPJNQ==",
+      "type": "package",
+      "path": "stylecop.analyzers.unstable/1.2.0.556",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "THIRD-PARTY-NOTICES.txt",
+        "analyzers/dotnet/cs/StyleCop.Analyzers.CodeFixes.dll",
+        "analyzers/dotnet/cs/StyleCop.Analyzers.dll",
+        "analyzers/dotnet/cs/de-DE/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/en-GB/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/es-MX/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/fr-FR/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/pl-PL/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/pt-BR/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/ru-RU/StyleCop.Analyzers.resources.dll",
+        "rulesets/StyleCopAnalyzersDefault.ruleset",
+        "stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512",
+        "stylecop.analyzers.unstable.nuspec",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
     "System.Reflection.Metadata/1.6.0": {
       "sha512": "COC1aiAJjCoA5GBF+QKL2uLqEBew4JsCkQmoHKbN3TlOZKa2fKLz5CpiRQKDz0RsAOEGsVKqOD5bomsXq/4STQ==",
       "type": "package",
@@ -18311,6 +18534,7 @@ File: tests/Night.Tests/obj/project.assets.json
     "net9.0": [
       "Microsoft.NET.Test.Sdk >= 17.12.0",
       "Night >= 1.0.0",
+      "StyleCop.Analyzers.Unstable >= 1.2.0.556",
       "coverlet.collector >= 6.0.2",
       "xunit >= 2.9.2",
       "xunit.runner.visualstudio >= 2.8.2"
@@ -18367,6 +18591,12 @@ File: tests/Night.Tests/obj/project.assets.json
             "target": "Package",
             "version": "[17.12.0, )"
           },
+          "StyleCop.Analyzers.Unstable": {
+            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[1.2.0.556, )"
+          },
           "coverlet.collector": {
             "target": "Package",
             "version": "[6.0.2, )"
@@ -18408,7 +18638,7 @@ File: tests/Night.Tests/obj/project.nuget.cache
 ================================================
 {
   "version": 2,
-  "dgSpecHash": "kIi2pGuRoS4=",
+  "dgSpecHash": "R6fQv26aUGs=",
   "success": true,
   "projectFilePath": "/home/danny/git/any2/tests/Night.Tests/Night.Tests.csproj",
   "expectedPackageFiles": [
@@ -18419,6 +18649,7 @@ File: tests/Night.Tests/obj/project.nuget.cache
     "/home/danny/.nuget/packages/microsoft.testplatform.testhost/17.12.0/microsoft.testplatform.testhost.17.12.0.nupkg.sha512",
     "/home/danny/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
     "/home/danny/.nuget/packages/sdl3-cs/3.2.14.2/sdl3-cs.3.2.14.2.nupkg.sha512",
+    "/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556/stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512",
     "/home/danny/.nuget/packages/system.reflection.metadata/1.6.0/system.reflection.metadata.1.6.0.nupkg.sha512",
     "/home/danny/.nuget/packages/xunit/2.9.2/xunit.2.9.2.nupkg.sha512",
     "/home/danny/.nuget/packages/xunit.abstractions/2.0.3/xunit.abstractions.2.0.3.nupkg.sha512",
@@ -18457,7 +18688,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+afbc42ecd5c280d3fd40f25836ea13204e758291")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0117cd0f73b4801d36870b0c1ab5cf9739ba4190")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -18470,7 +18701,7 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.AssemblyInfoInputs.cache
 ================================================
-f0e7440431590008183c0e81f546cc0b3a2f717b5b516f7fe464bb46ccb0cd22
+ca3e70e2f0e083a118699e0dccbda844f3c5260ae5aedc7fe42cd5035db1831a
 
 
 
@@ -18539,7 +18770,7 @@ File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.genruntimeconfig.cache
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/afbc42ecd5c280d3fd40f25836ea13204e758291/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0117cd0f73b4801d36870b0c1ab5cf9739ba4190/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================

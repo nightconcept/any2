@@ -1,3 +1,7 @@
+// <copyright file="Player.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,42 +12,43 @@ namespace Night.SampleGame
 {
   public class Player
   {
-    public float X { get; private set; }
-    public float Y { get; private set; }
-    public int Width { get; private set; }
-    public int Height { get; private set; }
-
-    private float _velocityX;
-    private float _velocityY;
-
     private const float HorizontalSpeed = 200f; // Pixels per second
     private const float JumpStrength = -450f;  // Initial upward velocity
     private const float Gravity = 1000f;       // Pixels per second squared
 
-    private bool _isGrounded;
-
-    private Night.Sprite? _playerSprite; // To hold the blue rectangle sprite
+    private float velocityX;
+    private float velocityY;
+    private bool isGrounded;
+    private Night.Sprite? playerSprite; // To hold the blue rectangle sprite
 
     public Player()
     {
       // Initialize properties in Load()
-      _isGrounded = false; // Start in the air or assume Load sets initial grounded state
+      this.isGrounded = false; // Start in the air or assume Load sets initial grounded state
     }
+
+    public float X { get; private set; }
+
+    public float Y { get; private set; }
+
+    public int Width { get; private set; }
+
+    public int Height { get; private set; }
 
     public void Load()
     {
-      Width = 32;
-      Height = 64;
+      this.Width = 32;
+      this.Height = 64;
 
       // Initial position: Centered horizontally, resting on the first platform (Y=500, H=50).
       // Player's top-left Y = PlatformTopY - PlayerHeight = 500 - 64 = 436.
       // Player's top-left X = (WindowWidth / 2) - (PlayerWidth / 2) = (800 / 2) - (32 / 2) = 400 - 16 = 384.
       // Assuming window width is 800 as per Game.cs Load()
-      X = 384f;
-      Y = 436f; // This will be adjusted by gravity until grounded on a floor/platform
+      this.X = 384f;
+      this.Y = 436f; // This will be adjusted by gravity until grounded on a floor/platform
 
-      _velocityX = 0f;
-      _velocityY = 0f;
+      this.velocityX = 0f;
+      this.velocityY = 0f;
 
       // Attempt to load a pre-made blue image for the player.
       // This file needs to exist: "assets/images/player_sprite_blue_32x64.png"
@@ -51,30 +56,22 @@ namespace Night.SampleGame
       // For simplicity with current Draw method (no tinting), let's assume a 32x64 blue sprite.
       // If we used a 1x1 pixel_blue.png, scaleX would be Width, scaleY would be Height.
       string baseDirectory = AppContext.BaseDirectory;
+
       // Using a specific asset name as discussed due to lack of tinting.
       // This asset would be a 32x64 solid blue rectangle image.
       string imageRelativePath = Path.Combine("assets", "images", "player_sprite_blue_32x64.png");
       string imageFullPath = Path.Combine(baseDirectory, imageRelativePath);
 
-      _playerSprite = Graphics.NewImage(imageFullPath);
-      if (_playerSprite == null)
+      this.playerSprite = Graphics.NewImage(imageFullPath);
+      if (this.playerSprite == null)
       {
         Console.WriteLine($"Player.Load: Failed to load player sprite at '{imageFullPath}'. A blue rectangle will not be drawn.");
       }
       else
       {
-
       }
-      _isGrounded = false; // Player starts potentially in the air and falls to ground.
-    }
 
-    private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
-    {
-      // True if the rectangles are overlapping
-      return rect1.X < rect2.X + rect2.Width &&
-             rect1.X + rect1.Width > rect2.X &&
-             rect1.Y < rect2.Y + rect2.Height &&
-             rect1.Y + rect1.Height > rect2.Y;
+      this.isGrounded = false; // Player starts potentially in the air and falls to ground.
     }
 
     public void Update(double deltaTime, List<Night.Rectangle> platforms)
@@ -82,59 +79,67 @@ namespace Night.SampleGame
       float dt = (float)deltaTime;
 
       // 1. Handle Input & Apply Jump Impulse
-      _velocityX = 0;
+      this.velocityX = 0;
       if (Keyboard.IsDown(KeyCode.Left) || Keyboard.IsDown(KeyCode.A))
       {
-        _velocityX = -HorizontalSpeed;
+        this.velocityX = -HorizontalSpeed;
       }
+
       if (Keyboard.IsDown(KeyCode.Right) || Keyboard.IsDown(KeyCode.D))
       {
-        _velocityX = HorizontalSpeed;
+        this.velocityX = HorizontalSpeed;
       }
 
       bool tryingToJump = Keyboard.IsDown(KeyCode.Space);
-      if (tryingToJump && _isGrounded)
+      if (tryingToJump && this.isGrounded)
       {
-        _velocityY = JumpStrength;
-        _isGrounded = false; // Explicitly set to false when jump starts
+        this.velocityY = JumpStrength;
+        this.isGrounded = false; // Explicitly set to false when jump starts
       }
 
       // 2. Apply Gravity
-      if (!_isGrounded)
+      if (!this.isGrounded)
       {
-        _velocityY += Gravity * dt;
+        this.velocityY += Gravity * dt;
       }
 
       // 3. Horizontal Movement and Collision
-      X += _velocityX * dt;
-      Night.Rectangle playerBoundingBox = new Night.Rectangle((int)X, (int)Y, Width, Height);
+      this.X += this.velocityX * dt;
+      Night.Rectangle playerBoundingBox = new Night.Rectangle((int)this.X, (int)this.Y, this.Width, this.Height);
 
       foreach (var platform in platforms)
       {
         // Update playerBoundingBox X for current position before check
-        playerBoundingBox.X = (int)X;
-        playerBoundingBox.Y = (int)Y; // Keep Y fixed for horizontal check pass
+        playerBoundingBox.X = (int)this.X;
 
-        if (CheckAABBCollision(new Night.Rectangle((int)X, (int)Y, Width, Height), platform))
+        // Keep Y fixed for horizontal check pass
+        playerBoundingBox.Y = (int)this.Y;
+
+        if (CheckAABBCollision(new Night.Rectangle((int)this.X, (int)this.Y, this.Width, this.Height), platform))
         {
-          if (_velocityX > 0) // Moving right, collided with left edge of platform
+          // Moving right, collided with left edge of platform
+          if (this.velocityX > 0)
           {
-            X = platform.X - Width;
+            this.X = platform.X - this.Width;
           }
-          else if (_velocityX < 0) // Moving left, collided with right edge of platform
+
+          // Moving left, collided with right edge of platform
+          else if (this.velocityX < 0)
           {
-            X = platform.X + platform.Width;
+            this.X = platform.X + platform.Width;
           }
-          _velocityX = 0; // Stop horizontal movement on collision
+
+          // Stop horizontal movement on collision
+          this.velocityX = 0;
         }
       }
 
       // 4. Vertical Movement and Collision
-      Y += _velocityY * dt;
+      this.Y += this.velocityY * dt;
 
       // Update playerBoundingBox for vertical check using potentially corrected X and new Y
-      playerBoundingBox.X = (int)X;
-      playerBoundingBox.Y = (int)Y;
+      playerBoundingBox.X = (int)this.X;
+      playerBoundingBox.Y = (int)this.Y;
 
       // Before checking collisions, assume player is not grounded unless a collision proves otherwise.
       // This flag will be set if any interaction during the platform loop results in grounding.
@@ -143,35 +148,41 @@ namespace Night.SampleGame
       foreach (var platform in platforms)
       {
         // Horizontal overlap check (using player's float X for precision against integer platform.X)
-        bool horizontalOverlap = (X + Width > platform.X && X < platform.X + platform.Width);
+        bool horizontalOverlap = this.X + this.Width > platform.X && this.X < platform.X + platform.Width;
 
         if (horizontalOverlap)
         {
-          float playerFloatTop = Y;
-          float playerFloatBottom = Y + Height;
+          float playerFloatTop = this.Y;
+          float playerFloatBottom = this.Y + this.Height;
 
           float platformTop = platform.Y;
           float platformBottom = platform.Y + platform.Height;
 
-          if (_velocityY > 0) // Player is moving downwards
+          // Player is moving downwards
+          if (this.velocityY > 0)
           {
             // Check if player's bottom has landed on or passed through the platform's top surface,
             // and the player's top was above the platform's top (i.e., not starting from inside/below).
             if (playerFloatBottom >= platformTop && playerFloatTop < platformTop)
             {
-              Y = platformTop - Height; // Snap player's bottom to platform's top
-              _velocityY = 0f;
+              // Snap player's bottom to platform's top
+              this.Y = platformTop - this.Height;
+              this.velocityY = 0f;
               newIsGroundedThisFrame = true;
             }
           }
-          else if (_velocityY < 0) // Player is moving upwards
+
+          // Player is moving upwards
+          else if (this.velocityY < 0)
           {
             // Check if player's top has hit or passed through the platform's bottom surface,
             // and the player's bottom was below the platform's bottom (i.e., not starting from inside/above).
             if (playerFloatTop <= platformBottom && playerFloatBottom > platformBottom)
             {
-              Y = platformBottom; // Snap player's top to platform's bottom
-              _velocityY = 0f;
+              // Snap player's top to platform's bottom
+              this.Y = platformBottom;
+              this.velocityY = 0f;
+
               // Hitting head does not make player grounded
             }
           }
@@ -179,48 +190,61 @@ namespace Night.SampleGame
           // Additional check for stable grounding if player is (almost) stationary vertically.
           // This handles cases where player is already on the platform, slid onto it, or just landed.
           // It's important this runs even if _velocityY became 0 in this frame due to landing.
-          if (Math.Abs(_velocityY) < 0.1f) // If effectively stationary vertically
+          // If effectively stationary vertically
+          if (Math.Abs(this.velocityY) < 0.1f)
           {
             // Check if player's bottom is at or very slightly through the platform's top,
             // and player's head is above the platform's top.
             // The (platformTop + 1.0f) allows for a small 1px penetration to still count as grounded.
             if (playerFloatBottom >= platformTop && playerFloatBottom < (platformTop + 1.0f) && playerFloatTop < platformTop)
             {
-              Y = platformTop - Height; // Snap firmly
-              _velocityY = 0f;          // Ensure velocity is zeroed
+              // Snap firmly
+              this.Y = platformTop - this.Height;
+
+              // Ensure velocity is zeroed
+              this.velocityY = 0f;
               newIsGroundedThisFrame = true;
             }
           }
         }
       }
-      _isGrounded = newIsGroundedThisFrame;
+
+      this.isGrounded = newIsGroundedThisFrame;
 
       // If a jump was initiated and _isGrounded became false,
       // and player is still moving upwards (_velocityY < 0), they are not grounded.
       // This ensures that if a jump starts, _isGrounded remains false until landing.
-      if (tryingToJump && _velocityY < 0)
-      { // Check if jump was initiated *this frame*
-        _isGrounded = false;
+      // Check if jump was initiated *this frame*
+      if (tryingToJump && this.velocityY < 0)
+      {
+        this.isGrounded = false;
       }
-
 
       // Prevent player from going off-screen left/right (simple boundary)
       // These values should ideally come from Window.GetWidth/Height if game resizes
       float gameWindowWidth = 800;
-      if (X < 0) X = 0;
-      if (X + Width > gameWindowWidth) X = gameWindowWidth - Width;
+      if (this.X < 0)
+      {
+        this.X = 0;
+      }
+
+      if (this.X + this.Width > gameWindowWidth)
+      {
+        this.X = gameWindowWidth - this.Width;
+      }
+
       // Top boundary (optional, could allow jumping off screen top)
       // if (Y < 0) { Y = 0; if (_velocityY < 0) _velocityY = 0; }
     }
 
     public void Draw()
     {
-      if (_playerSprite != null)
+      if (this.playerSprite != null)
       {
         // If player_sprite_blue_32x64.png is exactly 32x64, scaleX and scaleY are 1.
         // If it was a 1x1 pixel_blue.png, then scaleX=Width, scaleY=Height.
         // Assuming the loaded sprite is already the correct size (32x64):
-        Graphics.Draw(_playerSprite, X, Y);
+        Graphics.Draw(this.playerSprite, this.X, this.Y);
       }
       else
       {
@@ -231,6 +255,15 @@ namespace Night.SampleGame
         //    Graphics.Draw(_fallbackWhitePixelSprite, X, Y, 0, Width, Height);
         // }
       }
+    }
+
+    private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
+    {
+      // True if the rectangles are overlapping
+      return rect1.X < rect2.X + rect2.Width &&
+             rect1.X + rect1.Width > rect2.X &&
+             rect1.Y < rect2.Y + rect2.Height &&
+             rect1.Y + rect1.Height > rect2.Y;
     }
   }
 }

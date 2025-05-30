@@ -1,4 +1,8 @@
-﻿using System;
+// <copyright file="Platformer.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -10,16 +14,16 @@ namespace Night.SampleGame;
 
 public class Platformer : IGame
 {
-  private Player _player;
-  private List<Night.Rectangle> _platforms;
-  private Sprite? _platformSprite;
-  private Night.Rectangle _goalPlatform;
-  private bool _goalReachedMessageShown = false;
+  private Player player;
+  private List<Night.Rectangle> platforms;
+  private Sprite? platformSprite;
+  private Night.Rectangle goalPlatform;
+  private bool goalReachedMessageShown = false;
 
   public Platformer()
   {
-    _player = new Player();
-    _platforms = new List<Night.Rectangle>();
+    this.player = new Player();
+    this.platforms = new List<Night.Rectangle>();
   }
 
   public void Load()
@@ -27,44 +31,34 @@ public class Platformer : IGame
     _ = Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     Night.Window.SetTitle("Night Platformer Sample");
 
-    _player.Load();
+    this.player.Load();
 
     string baseDirectory = AppContext.BaseDirectory;
     string platformImageRelativePath = Path.Combine("assets", "images", "pixel_green.png");
     string platformImageFullPath = Path.Combine(baseDirectory, platformImageRelativePath);
-    _platformSprite = Graphics.NewImage(platformImageFullPath);
-    if (_platformSprite == null)
+    this.platformSprite = Graphics.NewImage(platformImageFullPath);
+    if (this.platformSprite == null)
     {
       Console.WriteLine($"Game.Load: Failed to load platform sprite at '{platformImageFullPath}'. Platforms will not be drawn.");
     }
 
-    _platforms.Add(new Night.Rectangle(50, 500, 700, 50));
-    _platforms.Add(new Night.Rectangle(200, 400, 150, 30));
-    _platforms.Add(new Night.Rectangle(450, 300, 100, 30));
-    _goalPlatform = new Night.Rectangle(600, 200, 100, 30);
-    _platforms.Add(_goalPlatform);
-  }
-
-  // Helper for collision detection (AABB)
-  private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
-  {
-    // True if the rectangles are overlapping
-    return rect1.X < rect2.X + rect2.Width &&
-           rect1.X + rect1.Width > rect2.X &&
-           rect1.Y < rect2.Y + rect2.Height &&
-           rect1.Y + rect1.Height > rect2.Y;
+    this.platforms.Add(new Night.Rectangle(50, 500, 700, 50));
+    this.platforms.Add(new Night.Rectangle(200, 400, 150, 30));
+    this.platforms.Add(new Night.Rectangle(450, 300, 100, 30));
+    this.goalPlatform = new Night.Rectangle(600, 200, 100, 30);
+    this.platforms.Add(this.goalPlatform);
   }
 
   public void Update(double deltaTime)
   {
-    _player.Update(deltaTime, _platforms);
+    this.player.Update(deltaTime, this.platforms);
 
-    Night.Rectangle playerBoundsForGoalCheck = new Night.Rectangle((int)_player.X, (int)_player.Y, _player.Width, _player.Height + 1);
-    if (CheckAABBCollision(playerBoundsForGoalCheck, _goalPlatform) && !_goalReachedMessageShown)
+    Night.Rectangle playerBoundsForGoalCheck = new Night.Rectangle((int)this.player.X, (int)this.player.Y, this.player.Width, this.player.Height + 1);
+    if (CheckAABBCollision(playerBoundsForGoalCheck, this.goalPlatform) && !this.goalReachedMessageShown)
     {
       // Simple win condition: print a message.
       Console.WriteLine("Congratulations! Goal Reached!");
-      _goalReachedMessageShown = true;
+      this.goalReachedMessageShown = true;
     }
   }
 
@@ -73,23 +67,23 @@ public class Platformer : IGame
     Night.Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
 
     // Draw platforms
-    if (_platformSprite != null)
+    if (this.platformSprite != null)
     {
-      foreach (var platform in _platforms)
+      foreach (var platform in this.platforms)
       {
         // Scale the 1x1 pixel sprite to the platform's dimensions
         Graphics.Draw(
-            sprite: _platformSprite,
+            sprite: this.platformSprite,
             x: platform.X,
             y: platform.Y,
             rotation: 0,
             scaleX: platform.Width,
-            scaleY: platform.Height
-        );
+            scaleY: platform.Height);
       }
     }
 
-    _player.Draw();
+    this.player.Draw();
+
     // Player and Level drawing logic will go here in later tasks.
   }
 
@@ -102,14 +96,17 @@ public class Platformer : IGame
       Console.WriteLine("SampleGame: Escape key pressed, closing window.");
       Window.Close();
     }
+
     // Player input (movement, jump) will be handled in Player.Update using Night.Keyboard.IsDown().
   }
-}
 
-public class PlatformerGame
-{
-  public static void PlatformerGameMain()
+  // Helper for collision detection (AABB)
+  private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
   {
-    Night.Framework.Run(new Platformer());
+    // True if the rectangles are overlapping
+    return rect1.X < rect2.X + rect2.Width &&
+           rect1.X + rect1.Width > rect2.X &&
+           rect1.Y < rect2.Y + rect2.Height &&
+           rect1.Y + rect1.Height > rect2.Y;
   }
 }
