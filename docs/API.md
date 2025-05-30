@@ -1,6 +1,19 @@
 # Night / Love2D API
 
+## Configuration
+
+### Types (Configuration)
+
+- AudioConfig
+- GameConfig
+- ModulesConfig
+- WindowConfig
+
 ## Filesystem
+
+### Types (Filesystem)
+
+- FileSystemInfo
 
 ### Functions (Filesystem)
 
@@ -19,6 +32,13 @@
 - FileType
 
 ## Graphics
+
+### Types (Graphics)
+
+- Color
+- PointF
+- Rectangle
+- Sprite
 
 ### Functions (Graphics)
 
@@ -42,12 +62,21 @@
   - SetColor(Color color)
   - SetColor(byte r, byte g, byte b, byte a)
 
+### Enums (Graphics)
+
+- DrawMode
+
 ## Keyboard
 
 ### Functions (Keyboard)
 
 - IsDown() - love.keyboard.isDown
   - IsDown(KeyCode key)
+
+### Enums (Keyboard)
+
+- KeyCode
+- KeySymbol
 
 ## Mouse
 
@@ -62,6 +91,10 @@
   - SetRelativeMode(bool enabled)
 - SetVisible() - love.mouse.setVisible
   - SetVisible(bool visible)
+
+### Enums (Mouse)
+
+- MouseButton
 
 ## System
 
@@ -85,6 +118,10 @@
 
 ## Window
 
+### Types (Window)
+
+- WindowMode
+
 ### Functions (Window)
 
 - Close() - love.window.close
@@ -107,3 +144,7 @@
   - SetTitle(string title)
 - ToPixels() - love.window.toPixels
   - ToPixels(float value)
+
+### Enums (Window)
+
+- FullscreenType

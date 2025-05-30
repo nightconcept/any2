@@ -11,6 +11,7 @@ Directory structure:
     │   ├── PRD.md
     │   ├── operational-guidelines.md
     │   ├── testing-plan.md
+    │   ├── .DS_Store
     │   ├── epics/
     │   │   ├── epic10.md
     │   │   ├── release.md
@@ -69,8 +70,9 @@ Directory structure:
     │   │   ├── Engine/
     │   │   │   └── .gitkeep
     │   │   ├── Filesystem/
-    │   │   │   ├── Enums.cs
+    │   │   │   ├── FileMode.cs
     │   │   │   ├── FileSystemInfo.cs
+    │   │   │   ├── FileType.cs
     │   │   │   └── Filesystem.cs
     │   │   ├── Graphics/
     │   │   │   ├── Color.cs
@@ -97,17 +99,45 @@ Directory structure:
     │   │   │   ├── Window.cs
     │   │   │   └── WindowMode.cs
     │   │   ├── bin/
-    │   │   │   └── Debug/
+    │   │   │   ├── Debug/
+    │   │   │   │   └── net9.0/
+    │   │   │   │       ├── Night.Engine.deps.json
+    │   │   │   │       ├── Night.deps.json
+    │   │   │   │       └── Night.xml
+    │   │   │   └── Release/
     │   │   │       └── net9.0/
-    │   │   │           ├── Night.deps.json
-    │   │   │           └── Night.xml
+    │   │   │           └── Night.deps.json
     │   │   └── obj/
+    │   │       ├── Night.Engine.csproj.nuget.dgspec.json
+    │   │       ├── Night.Engine.csproj.nuget.g.props
+    │   │       ├── Night.Engine.csproj.nuget.g.targets
     │   │       ├── Night.csproj.nuget.dgspec.json
     │   │       ├── Night.csproj.nuget.g.props
     │   │       ├── Night.csproj.nuget.g.targets
     │   │       ├── project.assets.json
     │   │       ├── project.nuget.cache
-    │   │       └── Debug/
+    │   │       ├── Debug/
+    │   │       │   └── net9.0/
+    │   │       │       ├── Night.AssemblyInfo.cs
+    │   │       │       ├── Night.AssemblyInfoInputs.cache
+    │   │       │       ├── Night.Engine.AssemblyInfo.cs
+    │   │       │       ├── Night.Engine.AssemblyInfoInputs.cache
+    │   │       │       ├── Night.Engine.GeneratedMSBuildEditorConfig.editorconfig
+    │   │       │       ├── Night.Engine.GlobalUsings.g.cs
+    │   │       │       ├── Night.Engine.assets.cache
+    │   │       │       ├── Night.Engine.csproj.AssemblyReference.cache
+    │   │       │       ├── Night.Engine.csproj.CoreCompileInputs.cache
+    │   │       │       ├── Night.Engine.sourcelink.json
+    │   │       │       ├── Night.GeneratedMSBuildEditorConfig.editorconfig
+    │   │       │       ├── Night.GlobalUsings.g.cs
+    │   │       │       ├── Night.assets.cache
+    │   │       │       ├── Night.csproj.AssemblyReference.cache
+    │   │       │       ├── Night.csproj.CoreCompileInputs.cache
+    │   │       │       ├── Night.sourcelink.json
+    │   │       │       ├── .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+    │   │       │       ├── ref/
+    │   │       │       └── refint/
+    │   │       └── Release/
     │   │           └── net9.0/
     │   │               ├── Night.AssemblyInfo.cs
     │   │               ├── Night.AssemblyInfoInputs.cache
@@ -136,13 +166,24 @@ Directory structure:
     │       │       ├── pixel_green.pixi
     │       │       └── player_sprite_blue_32x64.aseprite
     │       ├── bin/
-    │       │   └── Debug/
+    │       │   ├── Debug/
+    │       │   │   └── net9.0/
+    │       │   │       ├── Night.SampleGame
+    │       │   │       ├── Night.SampleGame.deps.json
+    │       │   │       ├── Night.SampleGame.runtimeconfig.json
+    │       │   │       ├── Night.SampleGame.xml
+    │       │   │       ├── Night.xml
+    │       │   │       ├── config.json
+    │       │   │       └── assets/
+    │       │   │           ├── data/
+    │       │   │           └── images/
+    │       │   │               ├── pixel_green.pixi
+    │       │   │               └── player_sprite_blue_32x64.aseprite
+    │       │   └── Release/
     │       │       └── net9.0/
     │       │           ├── Night.SampleGame
     │       │           ├── Night.SampleGame.deps.json
     │       │           ├── Night.SampleGame.runtimeconfig.json
-    │       │           ├── Night.SampleGame.xml
-    │       │           ├── Night.xml
     │       │           ├── config.json
     │       │           └── assets/
     │       │               ├── data/
@@ -155,7 +196,23 @@ Directory structure:
     │           ├── Night.SampleGame.csproj.nuget.g.targets
     │           ├── project.assets.json
     │           ├── project.nuget.cache
-    │           └── Debug/
+    │           ├── Debug/
+    │           │   └── net9.0/
+    │           │       ├── Night.Sa.E6945040.Up2Date
+    │           │       ├── Night.SampleGame.AssemblyInfo.cs
+    │           │       ├── Night.SampleGame.AssemblyInfoInputs.cache
+    │           │       ├── Night.SampleGame.GeneratedMSBuildEditorConfig.editorconfig
+    │           │       ├── Night.SampleGame.GlobalUsings.g.cs
+    │           │       ├── Night.SampleGame.assets.cache
+    │           │       ├── Night.SampleGame.csproj.AssemblyReference.cache
+    │           │       ├── Night.SampleGame.csproj.CoreCompileInputs.cache
+    │           │       ├── Night.SampleGame.genruntimeconfig.cache
+    │           │       ├── Night.SampleGame.sourcelink.json
+    │           │       ├── apphost
+    │           │       ├── .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+    │           │       ├── ref/
+    │           │       └── refint/
+    │           └── Release/
     │               └── net9.0/
     │                   ├── Night.Sa.E6945040.Up2Date
     │                   ├── Night.SampleGame.AssemblyInfo.cs
@@ -177,13 +234,36 @@ Directory structure:
     │       ├── Night.Tests.csproj
     │       ├── stylecop.json
     │       ├── bin/
-    │       │   └── Debug/
+    │       │   ├── Debug/
+    │       │   │   └── net9.0/
+    │       │   │       ├── CoverletSourceRootsMapping_Night.Engine.Tests
+    │       │   │       ├── CoverletSourceRootsMapping_Night.Tests
+    │       │   │       ├── Night.Engine.Tests.deps.json
+    │       │   │       ├── Night.Engine.Tests.runtimeconfig.json
+    │       │   │       ├── Night.Tests.deps.json
+    │       │   │       ├── Night.Tests.runtimeconfig.json
+    │       │   │       ├── Night.Tests.xml
+    │       │   │       ├── Night.xml
+    │       │   │       ├── .msCoverageSourceRootsMapping_Night.Engine.Tests
+    │       │   │       ├── .msCoverageSourceRootsMapping_Night.Tests
+    │       │   │       ├── cs/
+    │       │   │       ├── de/
+    │       │   │       ├── es/
+    │       │   │       ├── fr/
+    │       │   │       ├── it/
+    │       │   │       ├── ja/
+    │       │   │       ├── ko/
+    │       │   │       ├── pl/
+    │       │   │       ├── pt-BR/
+    │       │   │       ├── ru/
+    │       │   │       ├── tr/
+    │       │   │       ├── zh-Hans/
+    │       │   │       └── zh-Hant/
+    │       │   └── Release/
     │       │       └── net9.0/
     │       │           ├── CoverletSourceRootsMapping_Night.Tests
     │       │           ├── Night.Tests.deps.json
     │       │           ├── Night.Tests.runtimeconfig.json
-    │       │           ├── Night.Tests.xml
-    │       │           ├── Night.xml
     │       │           ├── .msCoverageSourceRootsMapping_Night.Tests
     │       │           ├── cs/
     │       │           ├── de/
@@ -199,12 +279,40 @@ Directory structure:
     │       │           ├── zh-Hans/
     │       │           └── zh-Hant/
     │       └── obj/
+    │           ├── Night.Engine.Tests.csproj.nuget.dgspec.json
+    │           ├── Night.Engine.Tests.csproj.nuget.g.props
+    │           ├── Night.Engine.Tests.csproj.nuget.g.targets
     │           ├── Night.Tests.csproj.nuget.dgspec.json
     │           ├── Night.Tests.csproj.nuget.g.props
     │           ├── Night.Tests.csproj.nuget.g.targets
     │           ├── project.assets.json
     │           ├── project.nuget.cache
-    │           └── Debug/
+    │           ├── Debug/
+    │           │   └── net9.0/
+    │           │       ├── Night.En.ACB7F3D8.Up2Date
+    │           │       ├── Night.Engine.Tests.AssemblyInfo.cs
+    │           │       ├── Night.Engine.Tests.AssemblyInfoInputs.cache
+    │           │       ├── Night.Engine.Tests.GeneratedMSBuildEditorConfig.editorconfig
+    │           │       ├── Night.Engine.Tests.GlobalUsings.g.cs
+    │           │       ├── Night.Engine.Tests.assets.cache
+    │           │       ├── Night.Engine.Tests.csproj.AssemblyReference.cache
+    │           │       ├── Night.Engine.Tests.csproj.CoreCompileInputs.cache
+    │           │       ├── Night.Engine.Tests.genruntimeconfig.cache
+    │           │       ├── Night.Engine.Tests.sourcelink.json
+    │           │       ├── Night.Te.8CE7B445.Up2Date
+    │           │       ├── Night.Tests.AssemblyInfo.cs
+    │           │       ├── Night.Tests.AssemblyInfoInputs.cache
+    │           │       ├── Night.Tests.GeneratedMSBuildEditorConfig.editorconfig
+    │           │       ├── Night.Tests.GlobalUsings.g.cs
+    │           │       ├── Night.Tests.assets.cache
+    │           │       ├── Night.Tests.csproj.AssemblyReference.cache
+    │           │       ├── Night.Tests.csproj.CoreCompileInputs.cache
+    │           │       ├── Night.Tests.genruntimeconfig.cache
+    │           │       ├── Night.Tests.sourcelink.json
+    │           │       ├── .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+    │           │       ├── ref/
+    │           │       └── refint/
+    │           └── Release/
     │               └── net9.0/
     │                   ├── Night.Te.8CE7B445.Up2Date
     │                   ├── Night.Tests.AssemblyInfo.cs
@@ -235,8 +343,6 @@ Directory structure:
     │   ├── CODEOWNERS
     │   ├── copilot-instructions.md
     │   ├── dependabot.yml
-    │   ├── deactivated/
-    │   │   └── release.yml
     │   ├── scripts/
     │   │   └── determine_next_version.py
     │   └── workflows/
@@ -552,7 +658,20 @@ File: docs/API.md
 ================================================
 # Night / Love2D API
 
+## Configuration
+
+### Types (Configuration)
+
+- AudioConfig
+- GameConfig
+- ModulesConfig
+- WindowConfig
+
 ## Filesystem
+
+### Types (Filesystem)
+
+- FileSystemInfo
 
 ### Functions (Filesystem)
 
@@ -571,6 +690,13 @@ File: docs/API.md
 - FileType
 
 ## Graphics
+
+### Types (Graphics)
+
+- Color
+- PointF
+- Rectangle
+- Sprite
 
 ### Functions (Graphics)
 
@@ -594,12 +720,21 @@ File: docs/API.md
   - SetColor(Color color)
   - SetColor(byte r, byte g, byte b, byte a)
 
+### Enums (Graphics)
+
+- DrawMode
+
 ## Keyboard
 
 ### Functions (Keyboard)
 
 - IsDown() - love.keyboard.isDown
   - IsDown(KeyCode key)
+
+### Enums (Keyboard)
+
+- KeyCode
+- KeySymbol
 
 ## Mouse
 
@@ -614,6 +749,10 @@ File: docs/API.md
   - SetRelativeMode(bool enabled)
 - SetVisible() - love.mouse.setVisible
   - SetVisible(bool visible)
+
+### Enums (Mouse)
+
+- MouseButton
 
 ## System
 
@@ -637,6 +776,10 @@ File: docs/API.md
 
 ## Window
 
+### Types (Window)
+
+- WindowMode
+
 ### Functions (Window)
 
 - Close() - love.window.close
@@ -659,6 +802,10 @@ File: docs/API.md
   - SetTitle(string title)
 - ToPixels() - love.window.toPixels
   - ToPixels(float value)
+
+### Enums (Window)
+
+- FullscreenType
 
 
 
@@ -1500,6 +1647,12 @@ Directly testing code that relies heavily on SDL3 native calls can be difficult 
 Once a CI/CD pipeline is established, automated execution of these unit tests will be a key component to ensure code quality with every change.
 
 This testing plan provides a foundation for building a robust suite of unit tests for `Night.Engine`. It will evolve as the engine grows and new features are added. 
+
+
+================================================
+File: docs/.DS_Store
+================================================
+[Non-text file]
 
 
 ================================================
@@ -4401,7 +4554,7 @@ def parse_types_cs_file(filepath):
     types = []
     # Regex to find public classes (can be extended for structs, interfaces if needed)
     # e.g., r"public\s+(?:class|struct|interface)\s+(\w+)"
-    class_pattern = re.compile(r"public\s+class\s+(\w+)")
+    class_pattern = re.compile(r"public\s+(?:class|struct)\s+(\w+)")
     for match in class_pattern.finditer(content):
         types.append(match.group(1))
     return sorted(list(set(types)))
@@ -4491,15 +4644,17 @@ def main():
 
             print(f"Processing module: {module_name}...")
 
-            # Path for the main module file (e.g., Filesystem.cs for Filesystem module)
-            main_module_cs_file = os.path.join(module_path, f"{module_name}.cs")
-            enums_cs_file = os.path.join(module_path, "Enums.cs")
-            types_cs_file = os.path.join(module_path, "Types.cs")
+            current_module_enums = set()
+            current_module_types = set()
 
-            # 1. Parse main module file for functions
-            if os.path.exists(main_module_cs_file):
-                print(f"  Parsing functions from {main_module_cs_file}...")
-                parsed_functions_data = parse_cs_file(main_module_cs_file)
+            # Define the expected main module file for functions
+            main_module_cs_file_identifier = f"{module_name}.cs"
+            main_module_cs_file_path_expected = os.path.join(module_path, main_module_cs_file_identifier)
+
+            # 1. Parse main module file for functions if it exists
+            if os.path.exists(main_module_cs_file_path_expected):
+                print(f"  Parsing functions from main module file: {main_module_cs_file_path_expected}...")
+                parsed_functions_data = parse_cs_file(main_module_cs_file_path_expected)
                 if parsed_functions_data:
                     for class_name_func, methods in parsed_functions_data.items():
                         # Ensure the functions dict for this class_name_func exists
@@ -4510,29 +4665,39 @@ def main():
                             all_module_data[module_name]["functions"][class_name_func][method_name].extend(signatures)
                             all_module_data[module_name]["functions"][class_name_func][method_name] = \
                                 sorted(list(set(all_module_data[module_name]["functions"][class_name_func][method_name])))
+                else:
+                    print(f"    No functions found or error parsing in {main_module_cs_file_identifier}.")
             else:
-                print(f"  Skipping functions: {main_module_cs_file} not found for module {module_name}.")
+                print(f"  Skipping functions: Main module file {main_module_cs_file_path_expected} not found.")
 
-            # 2. Parse Enums.cs for enums
-            if os.path.exists(enums_cs_file):
-                print(f"  Parsing enums from {enums_cs_file}...")
-                parsed_enums = parse_enums_cs_file(enums_cs_file) # Already returns sorted unique list
-                if parsed_enums:
-                    all_module_data[module_name]["enums"].extend(parsed_enums)
-                    all_module_data[module_name]["enums"] = sorted(list(set(all_module_data[module_name]["enums"]))) # Ensure uniqueness if called multiple times (though not expected here)
+            # 2. Iterate through ALL .cs files in the module directory for enums and types
+            print(f"  Scanning all .cs files in {module_path} for enums and types/structs...")
+            for item_name in sorted(os.listdir(module_path)):
+                item_path = os.path.join(module_path, item_name)
+                if os.path.isfile(item_path) and item_name.endswith(".cs"):
+                    # Parse for enums
+                    parsed_enums = parse_enums_cs_file(item_path)
+                    if parsed_enums:
+                        current_module_enums.update(parsed_enums)
+
+                    # Parse for types (classes/structs)
+                    parsed_types = parse_types_cs_file(item_path)
+                    if parsed_types:
+                        current_module_types.update(parsed_types)
+
+            # Store aggregated enums and types
+            if current_module_enums:
+                all_module_data[module_name]["enums"] = sorted(list(current_module_enums))
+                print(f"  Found {len(all_module_data[module_name]['enums'])} enums in module {module_name}.")
             else:
-                print(f"  Skipping enums: {enums_cs_file} not found for module {module_name}.")
+                print(f"  No enums found in module {module_name}.")
 
-
-            # 3. Parse Types.cs for types
-            if os.path.exists(types_cs_file):
-                print(f"  Parsing types from {types_cs_file}...")
-                parsed_types = parse_types_cs_file(types_cs_file) # Already returns sorted unique list
-                if parsed_types:
-                    all_module_data[module_name]["types"].extend(parsed_types)
-                    all_module_data[module_name]["types"] = sorted(list(set(all_module_data[module_name]["types"]))) # Ensure uniqueness
+            if current_module_types:
+                all_module_data[module_name]["types"] = sorted(list(current_module_types))
+                print(f"  Found {len(all_module_data[module_name]['types'])} types/structs in module {module_name}.")
             else:
-                print(f"  Skipping types: {types_cs_file} not found for module {module_name}.")
+                print(f"  No types/structs found in module {module_name}.")
+
             print("") # Blank line after processing a module's files for readability in console
 
     if all_module_data:
@@ -4867,8 +5032,9 @@ namespace Night
       ConfigurationManager.LoadConfig();
       var windowConfig = ConfigurationManager.CurrentConfig.Window;
 
+      string nightVersionString = VersionInfo.GetVersion();
       string sdlVersionString = NightSDL.GetVersion();
-      Console.WriteLine($"Night Engine: v0.0.1");
+      Console.WriteLine($"Night Engine: v{nightVersionString}");
       Console.WriteLine($"SDL: v{sdlVersionString}");
       Console.WriteLine(GetFormattedPlatformString());
       Console.WriteLine($"Framework: {RuntimeInformation.FrameworkDescription}");
@@ -5582,7 +5748,7 @@ namespace Night
     /// Gets the full semantic version string (e.g., "1.0.0", "1.2.3-beta.1").
     /// This value is updated by the GitHub release Action.
     /// </summary>
-    public const string Version = "0.0.0-dev"; // Placeholder
+    public const string Version = "0.0.0-dev";
 
     /// <summary>
     /// Gets the developer-assigned codename for the current version.
@@ -6199,9 +6365,9 @@ File: src/Night/Engine/.gitkeep
 
 
 ================================================
-File: src/Night/Filesystem/Enums.cs
+File: src/Night/Filesystem/FileMode.cs
 ================================================
-// <copyright file="Enums.cs" company="Night Circle">
+// <copyright file="FileMode.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -6227,37 +6393,6 @@ using System;
 
 namespace Night
 {
-  /// <summary>
-  /// Represents the type of a file system object.
-  /// </summary>
-  public enum FileType
-  {
-    /// <summary>
-    /// A regular file.
-    /// </summary>
-    File,
-
-    /// <summary>
-    /// A directory.
-    /// </summary>
-    Directory,
-
-    /// <summary>
-    /// A symbolic link.
-    /// </summary>
-    Symlink,
-
-    /// <summary>
-    /// Other type (e.g., device, pipe).
-    /// </summary>
-    Other,
-
-    /// <summary>
-    /// The path does not exist or its type cannot be determined.
-    /// </summary>
-    None,
-  }
-
   /// <summary>
   /// Represents the different modes you can open a File in.
   /// </summary>
@@ -6376,6 +6511,69 @@ namespace Night
     /// Gets or sets the file's last modification time in seconds since the Unix epoch, or null if it can't be determined.
     /// </summary>
     public long? ModTime { get; set; }
+  }
+}
+
+
+
+================================================
+File: src/Night/Filesystem/FileType.cs
+================================================
+// <copyright file="FileType.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+// </copyright>
+
+using System;
+
+namespace Night
+{
+  /// <summary>
+  /// Represents the type of a file system object.
+  /// </summary>
+  public enum FileType
+  {
+    /// <summary>
+    /// A regular file.
+    /// </summary>
+    File,
+
+    /// <summary>
+    /// A directory.
+    /// </summary>
+    Directory,
+
+    /// <summary>
+    /// A symbolic link.
+    /// </summary>
+    Symlink,
+
+    /// <summary>
+    /// Other type (e.g., device, pipe).
+    /// </summary>
+    Other,
+
+    /// <summary>
+    /// The path does not exist or its type cannot be determined.
+    /// </summary>
+    None,
   }
 }
 
@@ -9629,6 +9827,52 @@ namespace Night
 
 
 ================================================
+File: src/Night/bin/Debug/net9.0/Night.Engine.deps.json
+================================================
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Night.Engine/1.0.0": {
+        "dependencies": {
+          "SDL3-CS": "3.2.14.2"
+        },
+        "runtime": {
+          "Night.Engine.dll": {}
+        }
+      },
+      "SDL3-CS/3.2.14.2": {
+        "runtime": {
+          "lib/net9.0/SDL3-CS.dll": {
+            "assemblyVersion": "3.2.14.2",
+            "fileVersion": "3.2.14.2"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Night.Engine/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SDL3-CS/3.2.14.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wqWjIm2EP7PmXRQfwSxY4YJDSrXZ0QmolJMCJcs9KY4b3vYBdlwo0U4/olPMdBx6yRzqhN1nGJjmeC9OJT6L1g==",
+      "path": "sdl3-cs/3.2.14.2",
+      "hashPath": "sdl3-cs.3.2.14.2.nupkg.sha512"
+    }
+  }
+}
+
+
+================================================
 File: src/Night/bin/Debug/net9.0/Night.deps.json
 ================================================
 {
@@ -10013,36 +10257,6 @@ File: src/Night/bin/Debug/net9.0/Night.xml
             </summary>
             <returns>The custom error handler delegate, or null if none is set.</returns>
         </member>
-        <member name="T:Night.FileType">
-            <summary>
-            Represents the type of a file system object.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.File">
-            <summary>
-            A regular file.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.Directory">
-            <summary>
-            A directory.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.Symlink">
-            <summary>
-            A symbolic link.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.Other">
-            <summary>
-            Other type (e.g., device, pipe).
-            </summary>
-        </member>
-        <member name="F:Night.FileType.None">
-            <summary>
-            The path does not exist or its type cannot be determined.
-            </summary>
-        </member>
         <member name="T:Night.FileMode">
             <summary>
             Represents the different modes you can open a File in.
@@ -10167,6 +10381,36 @@ File: src/Night/bin/Debug/net9.0/Night.xml
         <member name="P:Night.FileSystemInfo.ModTime">
             <summary>
             Gets or sets the file's last modification time in seconds since the Unix epoch, or null if it can't be determined.
+            </summary>
+        </member>
+        <member name="T:Night.FileType">
+            <summary>
+            Represents the type of a file system object.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.File">
+            <summary>
+            A regular file.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.Directory">
+            <summary>
+            A directory.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.Symlink">
+            <summary>
+            A symbolic link.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.Other">
+            <summary>
+            Other type (e.g., device, pipe).
+            </summary>
+        </member>
+        <member name="F:Night.FileType.None">
+            <summary>
+            The path does not exist or its type cannot be determined.
             </summary>
         </member>
         <member name="T:Night.Framework">
@@ -11670,25 +11914,176 @@ File: src/Night/bin/Debug/net9.0/Night.xml
 
 
 ================================================
+File: src/Night/bin/Release/net9.0/Night.deps.json
+================================================
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Night/1.0.0": {
+        "dependencies": {
+          "SDL3-CS": "3.2.14.2"
+        },
+        "runtime": {
+          "Night.dll": {}
+        }
+      },
+      "SDL3-CS/3.2.14.2": {
+        "runtime": {
+          "lib/net9.0/SDL3-CS.dll": {
+            "assemblyVersion": "3.2.14.2",
+            "fileVersion": "3.2.14.2"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Night/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SDL3-CS/3.2.14.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wqWjIm2EP7PmXRQfwSxY4YJDSrXZ0QmolJMCJcs9KY4b3vYBdlwo0U4/olPMdBx6yRzqhN1nGJjmeC9OJT6L1g==",
+      "path": "sdl3-cs/3.2.14.2",
+      "hashPath": "sdl3-cs.3.2.14.2.nupkg.sha512"
+    }
+  }
+}
+
+
+================================================
+File: src/Night/obj/Night.Engine.csproj.nuget.dgspec.json
+================================================
+{
+  "format": 1,
+  "restore": {
+    "/Users/danny/Documents/GitHub/any2/src/Night.Engine/Night.Engine.csproj": {}
+  },
+  "projects": {
+    "/Users/danny/Documents/GitHub/any2/src/Night.Engine/Night.Engine.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/danny/Documents/GitHub/any2/src/Night.Engine/Night.Engine.csproj",
+        "projectName": "Night.Engine",
+        "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night.Engine/Night.Engine.csproj",
+        "packagesPath": "/Users/danny/.nuget/packages/",
+        "outputPath": "/Users/danny/Documents/GitHub/any2/src/Night.Engine/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/danny/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "SDL3-CS": {
+              "target": "Package",
+              "version": "[*, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
+
+
+================================================
+File: src/Night/obj/Night.Engine.csproj.nuget.g.props
+================================================
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
+    <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
+    <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageFolders>
+    <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.14.0</NuGetToolVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <SourceRoot Include="/Users/danny/.nuget/packages/" />
+  </ItemGroup>
+</Project>
+
+
+================================================
+File: src/Night/obj/Night.Engine.csproj.nuget.g.targets
+================================================
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
+
+
+================================================
 File: src/Night/obj/Night.csproj.nuget.dgspec.json
 ================================================
 {
   "format": 1,
   "restore": {
-    "/home/danny/git/any2/src/Night/Night.csproj": {}
+    "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj": {}
   },
   "projects": {
-    "/home/danny/git/any2/src/Night/Night.csproj": {
+    "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/danny/git/any2/src/Night/Night.csproj",
+        "projectUniqueName": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj",
         "projectName": "Night",
-        "projectPath": "/home/danny/git/any2/src/Night/Night.csproj",
-        "packagesPath": "/home/danny/.nuget/packages/",
-        "outputPath": "/home/danny/git/any2/src/Night/obj/",
+        "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj",
+        "packagesPath": "/Users/danny/.nuget/packages/",
+        "outputPath": "/Users/danny/Documents/GitHub/any2/src/Night/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/danny/.nuget/NuGet/NuGet.Config"
+          "/Users/danny/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -11745,7 +12140,7 @@ File: src/Night/obj/Night.csproj.nuget.dgspec.json
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
@@ -11762,16 +12157,16 @@ File: src/Night/obj/Night.csproj.nuget.g.props
     <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
-    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/home/danny/.nuget/packages/</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/home/danny/.nuget/packages/</NuGetPackageFolders>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.14.0</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="/home/danny/.nuget/packages/" />
+    <SourceRoot Include="/Users/danny/.nuget/packages/" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgStyleCop_Analyzers_Unstable Condition=" '$(PkgStyleCop_Analyzers_Unstable)' == '' ">/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556</PkgStyleCop_Analyzers_Unstable>
+    <PkgStyleCop_Analyzers_Unstable Condition=" '$(PkgStyleCop_Analyzers_Unstable)' == '' ">/Users/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556</PkgStyleCop_Analyzers_Unstable>
   </PropertyGroup>
 </Project>
 
@@ -11866,19 +12261,19 @@ File: src/Night/obj/project.assets.json
     ]
   },
   "packageFolders": {
-    "/home/danny/.nuget/packages/": {}
+    "/Users/danny/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/danny/git/any2/src/Night/Night.csproj",
+      "projectUniqueName": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj",
       "projectName": "Night",
-      "projectPath": "/home/danny/git/any2/src/Night/Night.csproj",
-      "packagesPath": "/home/danny/.nuget/packages/",
-      "outputPath": "/home/danny/git/any2/src/Night/obj/",
+      "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj",
+      "packagesPath": "/Users/danny/.nuget/packages/",
+      "outputPath": "/Users/danny/Documents/GitHub/any2/src/Night/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/danny/.nuget/NuGet/NuGet.Config"
+        "/Users/danny/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -11935,7 +12330,7 @@ File: src/Night/obj/project.assets.json
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
@@ -11947,12 +12342,12 @@ File: src/Night/obj/project.nuget.cache
 ================================================
 {
   "version": 2,
-  "dgSpecHash": "EC7hw3V/lK0=",
+  "dgSpecHash": "IpcCkV15DMQ=",
   "success": true,
-  "projectFilePath": "/home/danny/git/any2/src/Night/Night.csproj",
+  "projectFilePath": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj",
   "expectedPackageFiles": [
-    "/home/danny/.nuget/packages/sdl3-cs/3.2.14.2/sdl3-cs.3.2.14.2.nupkg.sha512",
-    "/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556/stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512"
+    "/Users/danny/.nuget/packages/sdl3-cs/3.2.14.2/sdl3-cs.3.2.14.2.nupkg.sha512",
+    "/Users/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556/stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512"
   ],
   "logs": []
 }
@@ -11976,7 +12371,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+723df3056cff253628733caca021e8f257373604")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be5561aeeb5775b7e8732d9679c65d0d55822e81")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -11989,8 +12384,103 @@ using System.Reflection;
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.AssemblyInfoInputs.cache
 ================================================
-8b9933267753f05971c1eb094435b8dbbe8c94dc0093cf14ccbb2eea4afb3cd7
+78e8bb65724b95a27e1e950fb9f0a0b0e378da7e960fc8eb6af5c7c06ac5716b
 
+
+
+================================================
+File: src/Night/obj/Debug/net9.0/Night.Engine.AssemblyInfo.cs
+================================================
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+
+[assembly: System.Reflection.AssemblyCompanyAttribute("Night.Engine")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9199592ee1287114365d11edda2ee4a27d5a98c0")]
+[assembly: System.Reflection.AssemblyProductAttribute("Night.Engine")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Night.Engine")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+
+// Generated by the MSBuild WriteCodeFragment class.
+
+
+
+
+================================================
+File: src/Night/obj/Debug/net9.0/Night.Engine.AssemblyInfoInputs.cache
+================================================
+1f51dc827502e92fa9a30b06c3a411f2227cb4df15e0c7ab7d14c2ca84a976e6
+
+
+
+================================================
+File: src/Night/obj/Debug/net9.0/Night.Engine.GeneratedMSBuildEditorConfig.editorconfig
+================================================
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Night.Engine
+build_property.ProjectDir = /Users/danny/Documents/GitHub/any2/src/Night.Engine/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+
+
+================================================
+File: src/Night/obj/Debug/net9.0/Night.Engine.GlobalUsings.g.cs
+================================================
+// <auto-generated/>
+global using global::System;
+global using global::System.Collections.Generic;
+global using global::System.IO;
+global using global::System.Linq;
+global using global::System.Net.Http;
+global using global::System.Threading;
+global using global::System.Threading.Tasks;
+
+
+
+================================================
+File: src/Night/obj/Debug/net9.0/Night.Engine.assets.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/Night/obj/Debug/net9.0/Night.Engine.csproj.AssemblyReference.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/Night/obj/Debug/net9.0/Night.Engine.csproj.CoreCompileInputs.cache
+================================================
+b3df604d7cffb48e344726c17cf5ace8003ee548754b1f33d5c7a81b14304dee
+
+
+
+================================================
+File: src/Night/obj/Debug/net9.0/Night.Engine.sourcelink.json
+================================================
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9199592ee1287114365d11edda2ee4a27d5a98c0/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -12006,7 +12496,7 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Night
-build_property.ProjectDir = /home/danny/git/any2/src/Night/
+build_property.ProjectDir = /Users/danny/Documents/GitHub/any2/src/Night/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
@@ -12043,18 +12533,125 @@ File: src/Night/obj/Debug/net9.0/Night.csproj.AssemblyReference.cache
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.csproj.CoreCompileInputs.cache
 ================================================
-26753c2bfd9babc1cfd5c8412384c5a78df11cf5ed75abdcf882447a0fb2af31
+d6c432f9a3deb6696131a1c38ba80beff8db6e474c17666649d8e39526df0b9f
 
 
 
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/723df3056cff253628733caca021e8f257373604/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/be5561aeeb5775b7e8732d9679c65d0d55822e81/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
 File: src/Night/obj/Debug/net9.0/.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+================================================
+// <autogenerated />
+using System;
+using System.Reflection;
+[assembly: global::System.Runtime.Versioning.TargetFrameworkAttribute(".NETCoreApp,Version=v9.0", FrameworkDisplayName = ".NET 9.0")]
+
+
+
+
+
+================================================
+File: src/Night/obj/Release/net9.0/Night.AssemblyInfo.cs
+================================================
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+
+[assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9199592ee1287114365d11edda2ee4a27d5a98c0")]
+[assembly: System.Reflection.AssemblyProductAttribute("Night")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Night")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+
+// Generated by the MSBuild WriteCodeFragment class.
+
+
+
+
+================================================
+File: src/Night/obj/Release/net9.0/Night.AssemblyInfoInputs.cache
+================================================
+9b06813eeb4add5aa47ae12ee53bfdb71bbec9c5c1e3d3d6fd6fb7be41c7091f
+
+
+
+================================================
+File: src/Night/obj/Release/net9.0/Night.GeneratedMSBuildEditorConfig.editorconfig
+================================================
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Night
+build_property.ProjectDir = /Users/danny/Documents/GitHub/any2/src/Night/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+
+
+================================================
+File: src/Night/obj/Release/net9.0/Night.GlobalUsings.g.cs
+================================================
+// <auto-generated/>
+global using global::System;
+global using global::System.Collections.Generic;
+global using global::System.IO;
+global using global::System.Linq;
+global using global::System.Net.Http;
+global using global::System.Threading;
+global using global::System.Threading.Tasks;
+
+
+
+================================================
+File: src/Night/obj/Release/net9.0/Night.assets.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/Night/obj/Release/net9.0/Night.csproj.AssemblyReference.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/Night/obj/Release/net9.0/Night.csproj.CoreCompileInputs.cache
+================================================
+e35b55b06b9c2cc816fb12d13a4a07026832adce57ee9caec137ae375ce8bac7
+
+
+
+================================================
+File: src/Night/obj/Release/net9.0/Night.sourcelink.json
+================================================
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9199592ee1287114365d11edda2ee4a27d5a98c0/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+
+
+================================================
+File: src/Night/obj/Release/net9.0/.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
 ================================================
 // <autogenerated />
 using System;
@@ -13627,36 +14224,6 @@ File: src/SampleGame/bin/Debug/net9.0/Night.xml
             </summary>
             <returns>The custom error handler delegate, or null if none is set.</returns>
         </member>
-        <member name="T:Night.FileType">
-            <summary>
-            Represents the type of a file system object.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.File">
-            <summary>
-            A regular file.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.Directory">
-            <summary>
-            A directory.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.Symlink">
-            <summary>
-            A symbolic link.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.Other">
-            <summary>
-            Other type (e.g., device, pipe).
-            </summary>
-        </member>
-        <member name="F:Night.FileType.None">
-            <summary>
-            The path does not exist or its type cannot be determined.
-            </summary>
-        </member>
         <member name="T:Night.FileMode">
             <summary>
             Represents the different modes you can open a File in.
@@ -13781,6 +14348,36 @@ File: src/SampleGame/bin/Debug/net9.0/Night.xml
         <member name="P:Night.FileSystemInfo.ModTime">
             <summary>
             Gets or sets the file's last modification time in seconds since the Unix epoch, or null if it can't be determined.
+            </summary>
+        </member>
+        <member name="T:Night.FileType">
+            <summary>
+            Represents the type of a file system object.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.File">
+            <summary>
+            A regular file.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.Directory">
+            <summary>
+            A directory.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.Symlink">
+            <summary>
+            A symbolic link.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.Other">
+            <summary>
+            Other type (e.g., device, pipe).
+            </summary>
+        </member>
+        <member name="F:Night.FileType.None">
+            <summary>
+            The path does not exist or its type cannot be determined.
             </summary>
         </member>
         <member name="T:Night.Framework">
@@ -15315,25 +15912,142 @@ File: src/SampleGame/bin/Debug/net9.0/assets/images/player_sprite_blue_32x64.ase
 
 
 ================================================
+File: src/SampleGame/bin/Release/net9.0/Night.SampleGame
+================================================
+[Non-text file]
+
+
+================================================
+File: src/SampleGame/bin/Release/net9.0/Night.SampleGame.deps.json
+================================================
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Night.SampleGame/1.0.0": {
+        "dependencies": {
+          "Night": "1.0.0"
+        },
+        "runtime": {
+          "Night.SampleGame.dll": {}
+        }
+      },
+      "SDL3-CS/3.2.14.2": {
+        "runtime": {
+          "lib/net9.0/SDL3-CS.dll": {
+            "assemblyVersion": "3.2.14.2",
+            "fileVersion": "3.2.14.2"
+          }
+        }
+      },
+      "Night/1.0.0": {
+        "dependencies": {
+          "SDL3-CS": "3.2.14.2"
+        },
+        "runtime": {
+          "Night.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Night.SampleGame/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SDL3-CS/3.2.14.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wqWjIm2EP7PmXRQfwSxY4YJDSrXZ0QmolJMCJcs9KY4b3vYBdlwo0U4/olPMdBx6yRzqhN1nGJjmeC9OJT6L1g==",
+      "path": "sdl3-cs/3.2.14.2",
+      "hashPath": "sdl3-cs.3.2.14.2.nupkg.sha512"
+    },
+    "Night/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
+
+
+================================================
+File: src/SampleGame/bin/Release/net9.0/Night.SampleGame.runtimeconfig.json
+================================================
+{
+  "runtimeOptions": {
+    "tfm": "net9.0",
+    "framework": {
+      "name": "Microsoft.NETCore.App",
+      "version": "9.0.0"
+    },
+    "configProperties": {
+      "System.Reflection.Metadata.MetadataUpdater.IsSupported": false,
+      "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false
+    }
+  }
+}
+
+
+================================================
+File: src/SampleGame/bin/Release/net9.0/config.json
+================================================
+{
+  "window": {
+    "title": "Configured by JSON!",
+    "width": 1024,
+    "height": 768,
+    "resizable": true,
+    "vsync": 0,
+    "fullscreen": false,
+    "borderless": true,
+    "x": 100,
+    "y": 100
+  }
+} 
+
+
+
+================================================
+File: src/SampleGame/bin/Release/net9.0/assets/images/pixel_green.pixi
+================================================
+[Non-text file]
+
+
+================================================
+File: src/SampleGame/bin/Release/net9.0/assets/images/player_sprite_blue_32x64.aseprite
+================================================
+[Non-text file]
+
+
+================================================
 File: src/SampleGame/obj/Night.SampleGame.csproj.nuget.dgspec.json
 ================================================
 {
   "format": 1,
   "restore": {
-    "/home/danny/git/any2/src/SampleGame/Night.SampleGame.csproj": {}
+    "/Users/danny/Documents/GitHub/any2/src/SampleGame/Night.SampleGame.csproj": {}
   },
   "projects": {
-    "/home/danny/git/any2/src/Night/Night.csproj": {
+    "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/danny/git/any2/src/Night/Night.csproj",
+        "projectUniqueName": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj",
         "projectName": "Night",
-        "projectPath": "/home/danny/git/any2/src/Night/Night.csproj",
-        "packagesPath": "/home/danny/.nuget/packages/",
-        "outputPath": "/home/danny/git/any2/src/Night/obj/",
+        "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj",
+        "packagesPath": "/Users/danny/.nuget/packages/",
+        "outputPath": "/Users/danny/Documents/GitHub/any2/src/Night/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/danny/.nuget/NuGet/NuGet.Config"
+          "/Users/danny/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -15390,21 +16104,21 @@ File: src/SampleGame/obj/Night.SampleGame.csproj.nuget.dgspec.json
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/home/danny/git/any2/src/SampleGame/Night.SampleGame.csproj": {
+    "/Users/danny/Documents/GitHub/any2/src/SampleGame/Night.SampleGame.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/danny/git/any2/src/SampleGame/Night.SampleGame.csproj",
+        "projectUniqueName": "/Users/danny/Documents/GitHub/any2/src/SampleGame/Night.SampleGame.csproj",
         "projectName": "Night.SampleGame",
-        "projectPath": "/home/danny/git/any2/src/SampleGame/Night.SampleGame.csproj",
-        "packagesPath": "/home/danny/.nuget/packages/",
-        "outputPath": "/home/danny/git/any2/src/SampleGame/obj/",
+        "projectPath": "/Users/danny/Documents/GitHub/any2/src/SampleGame/Night.SampleGame.csproj",
+        "packagesPath": "/Users/danny/.nuget/packages/",
+        "outputPath": "/Users/danny/Documents/GitHub/any2/src/SampleGame/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/danny/.nuget/NuGet/NuGet.Config"
+          "/Users/danny/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -15416,8 +16130,8 @@ File: src/SampleGame/obj/Night.SampleGame.csproj.nuget.dgspec.json
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "/home/danny/git/any2/src/Night/Night.csproj": {
-                "projectPath": "/home/danny/git/any2/src/Night/Night.csproj"
+              "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj": {
+                "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj"
               }
             }
           }
@@ -15461,7 +16175,7 @@ File: src/SampleGame/obj/Night.SampleGame.csproj.nuget.dgspec.json
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
@@ -15478,16 +16192,16 @@ File: src/SampleGame/obj/Night.SampleGame.csproj.nuget.g.props
     <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
-    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/home/danny/.nuget/packages/</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/home/danny/.nuget/packages/</NuGetPackageFolders>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.14.0</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="/home/danny/.nuget/packages/" />
+    <SourceRoot Include="/Users/danny/.nuget/packages/" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgStyleCop_Analyzers_Unstable Condition=" '$(PkgStyleCop_Analyzers_Unstable)' == '' ">/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556</PkgStyleCop_Analyzers_Unstable>
+    <PkgStyleCop_Analyzers_Unstable Condition=" '$(PkgStyleCop_Analyzers_Unstable)' == '' ">/Users/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556</PkgStyleCop_Analyzers_Unstable>
   </PropertyGroup>
 </Project>
 
@@ -15600,19 +16314,19 @@ File: src/SampleGame/obj/project.assets.json
     ]
   },
   "packageFolders": {
-    "/home/danny/.nuget/packages/": {}
+    "/Users/danny/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/danny/git/any2/src/SampleGame/Night.SampleGame.csproj",
+      "projectUniqueName": "/Users/danny/Documents/GitHub/any2/src/SampleGame/Night.SampleGame.csproj",
       "projectName": "Night.SampleGame",
-      "projectPath": "/home/danny/git/any2/src/SampleGame/Night.SampleGame.csproj",
-      "packagesPath": "/home/danny/.nuget/packages/",
-      "outputPath": "/home/danny/git/any2/src/SampleGame/obj/",
+      "projectPath": "/Users/danny/Documents/GitHub/any2/src/SampleGame/Night.SampleGame.csproj",
+      "packagesPath": "/Users/danny/.nuget/packages/",
+      "outputPath": "/Users/danny/Documents/GitHub/any2/src/SampleGame/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/danny/.nuget/NuGet/NuGet.Config"
+        "/Users/danny/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -15624,8 +16338,8 @@ File: src/SampleGame/obj/project.assets.json
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "/home/danny/git/any2/src/Night/Night.csproj": {
-              "projectPath": "/home/danny/git/any2/src/Night/Night.csproj"
+            "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj": {
+              "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj"
             }
           }
         }
@@ -15669,7 +16383,7 @@ File: src/SampleGame/obj/project.assets.json
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
@@ -15681,12 +16395,12 @@ File: src/SampleGame/obj/project.nuget.cache
 ================================================
 {
   "version": 2,
-  "dgSpecHash": "Zt2hkP+7aII=",
+  "dgSpecHash": "FyckdHDJKMI=",
   "success": true,
-  "projectFilePath": "/home/danny/git/any2/src/SampleGame/Night.SampleGame.csproj",
+  "projectFilePath": "/Users/danny/Documents/GitHub/any2/src/SampleGame/Night.SampleGame.csproj",
   "expectedPackageFiles": [
-    "/home/danny/.nuget/packages/sdl3-cs/3.2.14.2/sdl3-cs.3.2.14.2.nupkg.sha512",
-    "/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556/stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512"
+    "/Users/danny/.nuget/packages/sdl3-cs/3.2.14.2/sdl3-cs.3.2.14.2.nupkg.sha512",
+    "/Users/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556/stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512"
   ],
   "logs": []
 }
@@ -15716,7 +16430,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+723df3056cff253628733caca021e8f257373604")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be5561aeeb5775b7e8732d9679c65d0d55822e81")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -15729,7 +16443,7 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
 ================================================
-34f9498b3f0de935686fdc0f7bd61fcbefed782782f9b992c1ad8dd37f4ecb2c
+807e5dc0d2133d0b0fe73b1f7a500eee259e3a271d64042f45d0e594db3ec7e3
 
 
 
@@ -15746,7 +16460,7 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Night.SampleGame
-build_property.ProjectDir = /home/danny/git/any2/src/SampleGame/
+build_property.ProjectDir = /Users/danny/Documents/GitHub/any2/src/SampleGame/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
@@ -15783,21 +16497,21 @@ File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.csproj.AssemblyReference.
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.csproj.CoreCompileInputs.cache
 ================================================
-a7b82f992a79431d5b9355433118ee37e3172a5637bd2caed35459a2804e25f8
+1a5f42be59ec669a8aa9340c7373987822b166998943eb48e19b2705aa3da57d
 
 
 
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.genruntimeconfig.cache
 ================================================
-dc347d346712591e5aae675a5692bedfe675e498f7c55e8de100f6e2ee179134
+8bbfb6f2f645f910c54f38d02356d60b23664ae18cce5e60cea0853d562c7634
 
 
 
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/723df3056cff253628733caca021e8f257373604/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/be5561aeeb5775b7e8732d9679c65d0d55822e81/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -15808,6 +16522,132 @@ File: src/SampleGame/obj/Debug/net9.0/apphost
 
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+================================================
+// <autogenerated />
+using System;
+using System.Reflection;
+[assembly: global::System.Runtime.Versioning.TargetFrameworkAttribute(".NETCoreApp,Version=v9.0", FrameworkDisplayName = ".NET 9.0")]
+
+
+
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.Sa.E6945040.Up2Date
+================================================
+
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.SampleGame.AssemblyInfo.cs
+================================================
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+
+[assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9199592ee1287114365d11edda2ee4a27d5a98c0")]
+[assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+
+// Generated by the MSBuild WriteCodeFragment class.
+
+
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
+================================================
+4dbfdd3eba3deb2aa2f66e3d3dae3eb6b9ccdab3ccef300e6b48f1e4a3ed8fec
+
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.SampleGame.GeneratedMSBuildEditorConfig.editorconfig
+================================================
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Night.SampleGame
+build_property.ProjectDir = /Users/danny/Documents/GitHub/any2/src/SampleGame/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.SampleGame.GlobalUsings.g.cs
+================================================
+// <auto-generated/>
+global using global::System;
+global using global::System.Collections.Generic;
+global using global::System.IO;
+global using global::System.Linq;
+global using global::System.Net.Http;
+global using global::System.Threading;
+global using global::System.Threading.Tasks;
+
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.SampleGame.assets.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.SampleGame.csproj.AssemblyReference.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.SampleGame.csproj.CoreCompileInputs.cache
+================================================
+722a8640664472fb6083e4af4e0844f2ffa9fa339fe31ab38dc437dd2887dae0
+
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.SampleGame.genruntimeconfig.cache
+================================================
+e9ef6d5d28b70f96cdcf2543d95bc49c1ef1d1dbc7a3ce99fe11aba003ce433d
+
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/Night.SampleGame.sourcelink.json
+================================================
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9199592ee1287114365d11edda2ee4a27d5a98c0/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/apphost
+================================================
+[Non-text file]
+
+
+================================================
+File: src/SampleGame/obj/Release/net9.0/.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
 ================================================
 // <autogenerated />
 using System;
@@ -16235,9 +17075,526 @@ File: tests/Night.Tests/stylecop.json
 
 
 ================================================
+File: tests/Night.Tests/bin/Debug/net9.0/CoverletSourceRootsMapping_Night.Engine.Tests
+================================================
+[Non-text file]
+
+
+================================================
 File: tests/Night.Tests/bin/Debug/net9.0/CoverletSourceRootsMapping_Night.Tests
 ================================================
 [Non-text file]
+
+
+================================================
+File: tests/Night.Tests/bin/Debug/net9.0/Night.Engine.Tests.deps.json
+================================================
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Night.Engine.Tests/1.0.0": {
+        "dependencies": {
+          "Microsoft.NET.Test.Sdk": "17.12.0",
+          "Night.Engine": "1.0.0",
+          "coverlet.collector": "6.0.2",
+          "xunit": "2.9.2",
+          "xunit.runner.visualstudio": "2.8.2"
+        },
+        "runtime": {
+          "Night.Engine.Tests.dll": {}
+        }
+      },
+      "coverlet.collector/6.0.2": {},
+      "Microsoft.CodeCoverage/17.12.0": {
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.VisualStudio.CodeCoverage.Shim.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.524.48002"
+          }
+        }
+      },
+      "Microsoft.NET.Test.Sdk/17.12.0": {
+        "dependencies": {
+          "Microsoft.CodeCoverage": "17.12.0",
+          "Microsoft.TestPlatform.TestHost": "17.12.0"
+        }
+      },
+      "Microsoft.TestPlatform.ObjectModel/17.12.0": {
+        "dependencies": {
+          "System.Reflection.Metadata": "1.6.0"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.CoreUtilities.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.PlatformAbstractions.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          }
+        },
+        "resources": {
+          "lib/netcoreapp3.1/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "Microsoft.TestPlatform.TestHost/17.12.0": {
+        "dependencies": {
+          "Microsoft.TestPlatform.ObjectModel": "17.12.0",
+          "Newtonsoft.Json": "13.0.1"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.CommunicationUtilities.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.CrossPlatEngine.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.Utilities.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.VisualStudio.TestPlatform.Common.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/testhost.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          }
+        },
+        "resources": {
+          "lib/netcoreapp3.1/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "Newtonsoft.Json/13.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.1.25517"
+          }
+        }
+      },
+      "SDL3-CS/3.2.14.2": {
+        "runtime": {
+          "lib/net9.0/SDL3-CS.dll": {
+            "assemblyVersion": "3.2.14.2",
+            "fileVersion": "3.2.14.2"
+          }
+        }
+      },
+      "System.Reflection.Metadata/1.6.0": {},
+      "xunit/2.9.2": {
+        "dependencies": {
+          "xunit.analyzers": "1.16.0",
+          "xunit.assert": "2.9.2",
+          "xunit.core": "2.9.2"
+        }
+      },
+      "xunit.abstractions/2.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/xunit.abstractions.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "xunit.analyzers/1.16.0": {},
+      "xunit.assert/2.9.2": {
+        "runtime": {
+          "lib/net6.0/xunit.assert.dll": {
+            "assemblyVersion": "2.9.2.0",
+            "fileVersion": "2.9.2.0"
+          }
+        }
+      },
+      "xunit.core/2.9.2": {
+        "dependencies": {
+          "xunit.extensibility.core": "2.9.2",
+          "xunit.extensibility.execution": "2.9.2"
+        }
+      },
+      "xunit.extensibility.core/2.9.2": {
+        "dependencies": {
+          "xunit.abstractions": "2.0.3"
+        },
+        "runtime": {
+          "lib/netstandard1.1/xunit.core.dll": {
+            "assemblyVersion": "2.9.2.0",
+            "fileVersion": "2.9.2.0"
+          }
+        }
+      },
+      "xunit.extensibility.execution/2.9.2": {
+        "dependencies": {
+          "xunit.extensibility.core": "2.9.2"
+        },
+        "runtime": {
+          "lib/netstandard1.1/xunit.execution.dotnet.dll": {
+            "assemblyVersion": "2.9.2.0",
+            "fileVersion": "2.9.2.0"
+          }
+        }
+      },
+      "xunit.runner.visualstudio/2.8.2": {},
+      "Night.Engine/1.0.0": {
+        "dependencies": {
+          "SDL3-CS": "3.2.14.2"
+        },
+        "runtime": {
+          "Night.Engine.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Night.Engine.Tests/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "coverlet.collector/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bJShQ6uWRTQ100ZeyiMqcFlhP7WJ+bCuabUs885dJiBEzMsJMSFr7BOyeCw4rgvQokteGi5rKQTlkhfQPUXg2A==",
+      "path": "coverlet.collector/6.0.2",
+      "hashPath": "coverlet.collector.6.0.2.nupkg.sha512"
+    },
+    "Microsoft.CodeCoverage/17.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4svMznBd5JM21JIG2xZKGNanAHNXplxf/kQDFfLHXQ3OnpJkayRK/TjacFjA+EYmoyuNXHo/sOETEfcYtAzIrA==",
+      "path": "microsoft.codecoverage/17.12.0",
+      "hashPath": "microsoft.codecoverage.17.12.0.nupkg.sha512"
+    },
+    "Microsoft.NET.Test.Sdk/17.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kt/PKBZ91rFCWxVIJZSgVLk+YR+4KxTuHf799ho8WNiK5ZQpJNAEZCAWX86vcKrs+DiYjiibpYKdGZP6+/N17w==",
+      "path": "microsoft.net.test.sdk/17.12.0",
+      "hashPath": "microsoft.net.test.sdk.17.12.0.nupkg.sha512"
+    },
+    "Microsoft.TestPlatform.ObjectModel/17.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TDqkTKLfQuAaPcEb3pDDWnh7b3SyZF+/W9OZvWFp6eJCIiiYFdSB6taE2I6tWrFw5ywhzOb6sreoGJTI6m3rSQ==",
+      "path": "microsoft.testplatform.objectmodel/17.12.0",
+      "hashPath": "microsoft.testplatform.objectmodel.17.12.0.nupkg.sha512"
+    },
+    "Microsoft.TestPlatform.TestHost/17.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MiPEJQNyADfwZ4pJNpQex+t9/jOClBGMiCiVVFuELCMSX2nmNfvUor3uFVxNNCg30uxDP8JDYfPnMXQzsfzYyg==",
+      "path": "microsoft.testplatform.testhost/17.12.0",
+      "hashPath": "microsoft.testplatform.testhost.17.12.0.nupkg.sha512"
+    },
+    "Newtonsoft.Json/13.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A==",
+      "path": "newtonsoft.json/13.0.1",
+      "hashPath": "newtonsoft.json.13.0.1.nupkg.sha512"
+    },
+    "SDL3-CS/3.2.14.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wqWjIm2EP7PmXRQfwSxY4YJDSrXZ0QmolJMCJcs9KY4b3vYBdlwo0U4/olPMdBx6yRzqhN1nGJjmeC9OJT6L1g==",
+      "path": "sdl3-cs/3.2.14.2",
+      "hashPath": "sdl3-cs.3.2.14.2.nupkg.sha512"
+    },
+    "System.Reflection.Metadata/1.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-COC1aiAJjCoA5GBF+QKL2uLqEBew4JsCkQmoHKbN3TlOZKa2fKLz5CpiRQKDz0RsAOEGsVKqOD5bomsXq/4STQ==",
+      "path": "system.reflection.metadata/1.6.0",
+      "hashPath": "system.reflection.metadata.1.6.0.nupkg.sha512"
+    },
+    "xunit/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7LhFS2N9Z6Xgg8aE5lY95cneYivRMfRI8v+4PATa4S64D5Z/Plkg0qa8dTRHSiGRgVZ/CL2gEfJDE5AUhOX+2Q==",
+      "path": "xunit/2.9.2",
+      "hashPath": "xunit.2.9.2.nupkg.sha512"
+    },
+    "xunit.abstractions/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pot1I4YOxlWjIb5jmwvvQNbTrZ3lJQ+jUGkGjWE3hEFM0l5gOnBWS+H3qsex68s5cO52g+44vpGzhAt+42vwKg==",
+      "path": "xunit.abstractions/2.0.3",
+      "hashPath": "xunit.abstractions.2.0.3.nupkg.sha512"
+    },
+    "xunit.analyzers/1.16.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hptYM7vGr46GUIgZt21YHO4rfuBAQS2eINbFo16CV/Dqq+24Tp+P5gDCACu1AbFfW4Sp/WRfDPSK8fmUUb8s0Q==",
+      "path": "xunit.analyzers/1.16.0",
+      "hashPath": "xunit.analyzers.1.16.0.nupkg.sha512"
+    },
+    "xunit.assert/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QkNBAQG4pa66cholm28AxijBjrmki98/vsEh4Sx5iplzotvPgpiotcxqJQMRC8d7RV7nIT8ozh97957hDnZwsQ==",
+      "path": "xunit.assert/2.9.2",
+      "hashPath": "xunit.assert.2.9.2.nupkg.sha512"
+    },
+    "xunit.core/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-O6RrNSdmZ0xgEn5kT927PNwog5vxTtKrWMihhhrT0Sg9jQ7iBDciYOwzBgP2krBEk5/GBXI18R1lKvmnxGcb4w==",
+      "path": "xunit.core/2.9.2",
+      "hashPath": "xunit.core.2.9.2.nupkg.sha512"
+    },
+    "xunit.extensibility.core/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ol+KlBJz1x8BrdnhN2DeOuLrr1I/cTwtHCggL9BvYqFuVd/TUSzxNT5O0NxCIXth30bsKxgMfdqLTcORtM52yQ==",
+      "path": "xunit.extensibility.core/2.9.2",
+      "hashPath": "xunit.extensibility.core.2.9.2.nupkg.sha512"
+    },
+    "xunit.extensibility.execution/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-rKMpq4GsIUIJibXuZoZ8lYp5EpROlnYaRpwu9Zr0sRZXE7JqJfEEbCsUriZqB+ByXCLFBJyjkTRULMdC+U566g==",
+      "path": "xunit.extensibility.execution/2.9.2",
+      "hashPath": "xunit.extensibility.execution.2.9.2.nupkg.sha512"
+    },
+    "xunit.runner.visualstudio/2.8.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vm1tbfXhFmjFMUmS4M0J0ASXz3/U5XvXBa6DOQUL3fEz4Vt6YPhv+ESCarx6M6D+9kJkJYZKCNvJMas1+nVfmQ==",
+      "path": "xunit.runner.visualstudio/2.8.2",
+      "hashPath": "xunit.runner.visualstudio.2.8.2.nupkg.sha512"
+    },
+    "Night.Engine/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
+
+
+================================================
+File: tests/Night.Tests/bin/Debug/net9.0/Night.Engine.Tests.runtimeconfig.json
+================================================
+{
+  "runtimeOptions": {
+    "tfm": "net9.0",
+    "framework": {
+      "name": "Microsoft.NETCore.App",
+      "version": "9.0.0"
+    },
+    "configProperties": {
+      "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false
+    }
+  }
+}
 
 
 ================================================
@@ -17215,36 +18572,6 @@ File: tests/Night.Tests/bin/Debug/net9.0/Night.xml
             </summary>
             <returns>The custom error handler delegate, or null if none is set.</returns>
         </member>
-        <member name="T:Night.FileType">
-            <summary>
-            Represents the type of a file system object.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.File">
-            <summary>
-            A regular file.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.Directory">
-            <summary>
-            A directory.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.Symlink">
-            <summary>
-            A symbolic link.
-            </summary>
-        </member>
-        <member name="F:Night.FileType.Other">
-            <summary>
-            Other type (e.g., device, pipe).
-            </summary>
-        </member>
-        <member name="F:Night.FileType.None">
-            <summary>
-            The path does not exist or its type cannot be determined.
-            </summary>
-        </member>
         <member name="T:Night.FileMode">
             <summary>
             Represents the different modes you can open a File in.
@@ -17369,6 +18696,36 @@ File: tests/Night.Tests/bin/Debug/net9.0/Night.xml
         <member name="P:Night.FileSystemInfo.ModTime">
             <summary>
             Gets or sets the file's last modification time in seconds since the Unix epoch, or null if it can't be determined.
+            </summary>
+        </member>
+        <member name="T:Night.FileType">
+            <summary>
+            Represents the type of a file system object.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.File">
+            <summary>
+            A regular file.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.Directory">
+            <summary>
+            A directory.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.Symlink">
+            <summary>
+            A symbolic link.
+            </summary>
+        </member>
+        <member name="F:Night.FileType.Other">
+            <summary>
+            Other type (e.g., device, pipe).
+            </summary>
+        </member>
+        <member name="F:Night.FileType.None">
+            <summary>
+            The path does not exist or its type cannot be determined.
             </summary>
         </member>
         <member name="T:Night.Framework">
@@ -18872,6 +20229,12 @@ File: tests/Night.Tests/bin/Debug/net9.0/Night.xml
 
 
 ================================================
+File: tests/Night.Tests/bin/Debug/net9.0/.msCoverageSourceRootsMapping_Night.Engine.Tests
+================================================
+[Non-text file]
+
+
+================================================
 File: tests/Night.Tests/bin/Debug/net9.0/.msCoverageSourceRootsMapping_Night.Tests
 ================================================
 [Non-text file]
@@ -18891,25 +20254,765 @@ File: tests/Night.Tests/bin/Debug/net9.0/.msCoverageSourceRootsMapping_Night.Tes
 
 
 ================================================
+File: tests/Night.Tests/bin/Release/net9.0/CoverletSourceRootsMapping_Night.Tests
+================================================
+[Non-text file]
+
+
+================================================
+File: tests/Night.Tests/bin/Release/net9.0/Night.Tests.deps.json
+================================================
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Night.Tests/1.0.0": {
+        "dependencies": {
+          "Microsoft.NET.Test.Sdk": "17.12.0",
+          "Night": "1.0.0",
+          "coverlet.collector": "6.0.2",
+          "xunit": "2.9.2",
+          "xunit.runner.visualstudio": "2.8.2"
+        },
+        "runtime": {
+          "Night.Tests.dll": {}
+        }
+      },
+      "coverlet.collector/6.0.2": {},
+      "Microsoft.CodeCoverage/17.12.0": {
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.VisualStudio.CodeCoverage.Shim.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.524.48002"
+          }
+        }
+      },
+      "Microsoft.NET.Test.Sdk/17.12.0": {
+        "dependencies": {
+          "Microsoft.CodeCoverage": "17.12.0",
+          "Microsoft.TestPlatform.TestHost": "17.12.0"
+        }
+      },
+      "Microsoft.TestPlatform.ObjectModel/17.12.0": {
+        "dependencies": {
+          "System.Reflection.Metadata": "1.6.0"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.CoreUtilities.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.PlatformAbstractions.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          }
+        },
+        "resources": {
+          "lib/netcoreapp3.1/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "Microsoft.TestPlatform.TestHost/17.12.0": {
+        "dependencies": {
+          "Microsoft.TestPlatform.ObjectModel": "17.12.0",
+          "Newtonsoft.Json": "13.0.1"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.CommunicationUtilities.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.CrossPlatEngine.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.TestPlatform.Utilities.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/Microsoft.VisualStudio.TestPlatform.Common.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          },
+          "lib/netcoreapp3.1/testhost.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.1200.24.56501"
+          }
+        },
+        "resources": {
+          "lib/netcoreapp3.1/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "lib/netcoreapp3.1/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "Newtonsoft.Json/13.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.1.25517"
+          }
+        }
+      },
+      "SDL3-CS/3.2.14.2": {
+        "runtime": {
+          "lib/net9.0/SDL3-CS.dll": {
+            "assemblyVersion": "3.2.14.2",
+            "fileVersion": "3.2.14.2"
+          }
+        }
+      },
+      "System.Reflection.Metadata/1.6.0": {},
+      "xunit/2.9.2": {
+        "dependencies": {
+          "xunit.analyzers": "1.16.0",
+          "xunit.assert": "2.9.2",
+          "xunit.core": "2.9.2"
+        }
+      },
+      "xunit.abstractions/2.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/xunit.abstractions.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "xunit.analyzers/1.16.0": {},
+      "xunit.assert/2.9.2": {
+        "runtime": {
+          "lib/net6.0/xunit.assert.dll": {
+            "assemblyVersion": "2.9.2.0",
+            "fileVersion": "2.9.2.0"
+          }
+        }
+      },
+      "xunit.core/2.9.2": {
+        "dependencies": {
+          "xunit.extensibility.core": "2.9.2",
+          "xunit.extensibility.execution": "2.9.2"
+        }
+      },
+      "xunit.extensibility.core/2.9.2": {
+        "dependencies": {
+          "xunit.abstractions": "2.0.3"
+        },
+        "runtime": {
+          "lib/netstandard1.1/xunit.core.dll": {
+            "assemblyVersion": "2.9.2.0",
+            "fileVersion": "2.9.2.0"
+          }
+        }
+      },
+      "xunit.extensibility.execution/2.9.2": {
+        "dependencies": {
+          "xunit.extensibility.core": "2.9.2"
+        },
+        "runtime": {
+          "lib/netstandard1.1/xunit.execution.dotnet.dll": {
+            "assemblyVersion": "2.9.2.0",
+            "fileVersion": "2.9.2.0"
+          }
+        }
+      },
+      "xunit.runner.visualstudio/2.8.2": {},
+      "Night/1.0.0": {
+        "dependencies": {
+          "SDL3-CS": "3.2.14.2"
+        },
+        "runtime": {
+          "Night.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Night.Tests/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "coverlet.collector/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bJShQ6uWRTQ100ZeyiMqcFlhP7WJ+bCuabUs885dJiBEzMsJMSFr7BOyeCw4rgvQokteGi5rKQTlkhfQPUXg2A==",
+      "path": "coverlet.collector/6.0.2",
+      "hashPath": "coverlet.collector.6.0.2.nupkg.sha512"
+    },
+    "Microsoft.CodeCoverage/17.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4svMznBd5JM21JIG2xZKGNanAHNXplxf/kQDFfLHXQ3OnpJkayRK/TjacFjA+EYmoyuNXHo/sOETEfcYtAzIrA==",
+      "path": "microsoft.codecoverage/17.12.0",
+      "hashPath": "microsoft.codecoverage.17.12.0.nupkg.sha512"
+    },
+    "Microsoft.NET.Test.Sdk/17.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kt/PKBZ91rFCWxVIJZSgVLk+YR+4KxTuHf799ho8WNiK5ZQpJNAEZCAWX86vcKrs+DiYjiibpYKdGZP6+/N17w==",
+      "path": "microsoft.net.test.sdk/17.12.0",
+      "hashPath": "microsoft.net.test.sdk.17.12.0.nupkg.sha512"
+    },
+    "Microsoft.TestPlatform.ObjectModel/17.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TDqkTKLfQuAaPcEb3pDDWnh7b3SyZF+/W9OZvWFp6eJCIiiYFdSB6taE2I6tWrFw5ywhzOb6sreoGJTI6m3rSQ==",
+      "path": "microsoft.testplatform.objectmodel/17.12.0",
+      "hashPath": "microsoft.testplatform.objectmodel.17.12.0.nupkg.sha512"
+    },
+    "Microsoft.TestPlatform.TestHost/17.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MiPEJQNyADfwZ4pJNpQex+t9/jOClBGMiCiVVFuELCMSX2nmNfvUor3uFVxNNCg30uxDP8JDYfPnMXQzsfzYyg==",
+      "path": "microsoft.testplatform.testhost/17.12.0",
+      "hashPath": "microsoft.testplatform.testhost.17.12.0.nupkg.sha512"
+    },
+    "Newtonsoft.Json/13.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A==",
+      "path": "newtonsoft.json/13.0.1",
+      "hashPath": "newtonsoft.json.13.0.1.nupkg.sha512"
+    },
+    "SDL3-CS/3.2.14.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wqWjIm2EP7PmXRQfwSxY4YJDSrXZ0QmolJMCJcs9KY4b3vYBdlwo0U4/olPMdBx6yRzqhN1nGJjmeC9OJT6L1g==",
+      "path": "sdl3-cs/3.2.14.2",
+      "hashPath": "sdl3-cs.3.2.14.2.nupkg.sha512"
+    },
+    "System.Reflection.Metadata/1.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-COC1aiAJjCoA5GBF+QKL2uLqEBew4JsCkQmoHKbN3TlOZKa2fKLz5CpiRQKDz0RsAOEGsVKqOD5bomsXq/4STQ==",
+      "path": "system.reflection.metadata/1.6.0",
+      "hashPath": "system.reflection.metadata.1.6.0.nupkg.sha512"
+    },
+    "xunit/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7LhFS2N9Z6Xgg8aE5lY95cneYivRMfRI8v+4PATa4S64D5Z/Plkg0qa8dTRHSiGRgVZ/CL2gEfJDE5AUhOX+2Q==",
+      "path": "xunit/2.9.2",
+      "hashPath": "xunit.2.9.2.nupkg.sha512"
+    },
+    "xunit.abstractions/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pot1I4YOxlWjIb5jmwvvQNbTrZ3lJQ+jUGkGjWE3hEFM0l5gOnBWS+H3qsex68s5cO52g+44vpGzhAt+42vwKg==",
+      "path": "xunit.abstractions/2.0.3",
+      "hashPath": "xunit.abstractions.2.0.3.nupkg.sha512"
+    },
+    "xunit.analyzers/1.16.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hptYM7vGr46GUIgZt21YHO4rfuBAQS2eINbFo16CV/Dqq+24Tp+P5gDCACu1AbFfW4Sp/WRfDPSK8fmUUb8s0Q==",
+      "path": "xunit.analyzers/1.16.0",
+      "hashPath": "xunit.analyzers.1.16.0.nupkg.sha512"
+    },
+    "xunit.assert/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QkNBAQG4pa66cholm28AxijBjrmki98/vsEh4Sx5iplzotvPgpiotcxqJQMRC8d7RV7nIT8ozh97957hDnZwsQ==",
+      "path": "xunit.assert/2.9.2",
+      "hashPath": "xunit.assert.2.9.2.nupkg.sha512"
+    },
+    "xunit.core/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-O6RrNSdmZ0xgEn5kT927PNwog5vxTtKrWMihhhrT0Sg9jQ7iBDciYOwzBgP2krBEk5/GBXI18R1lKvmnxGcb4w==",
+      "path": "xunit.core/2.9.2",
+      "hashPath": "xunit.core.2.9.2.nupkg.sha512"
+    },
+    "xunit.extensibility.core/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ol+KlBJz1x8BrdnhN2DeOuLrr1I/cTwtHCggL9BvYqFuVd/TUSzxNT5O0NxCIXth30bsKxgMfdqLTcORtM52yQ==",
+      "path": "xunit.extensibility.core/2.9.2",
+      "hashPath": "xunit.extensibility.core.2.9.2.nupkg.sha512"
+    },
+    "xunit.extensibility.execution/2.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-rKMpq4GsIUIJibXuZoZ8lYp5EpROlnYaRpwu9Zr0sRZXE7JqJfEEbCsUriZqB+ByXCLFBJyjkTRULMdC+U566g==",
+      "path": "xunit.extensibility.execution/2.9.2",
+      "hashPath": "xunit.extensibility.execution.2.9.2.nupkg.sha512"
+    },
+    "xunit.runner.visualstudio/2.8.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vm1tbfXhFmjFMUmS4M0J0ASXz3/U5XvXBa6DOQUL3fEz4Vt6YPhv+ESCarx6M6D+9kJkJYZKCNvJMas1+nVfmQ==",
+      "path": "xunit.runner.visualstudio/2.8.2",
+      "hashPath": "xunit.runner.visualstudio.2.8.2.nupkg.sha512"
+    },
+    "Night/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
+
+
+================================================
+File: tests/Night.Tests/bin/Release/net9.0/Night.Tests.runtimeconfig.json
+================================================
+{
+  "runtimeOptions": {
+    "tfm": "net9.0",
+    "framework": {
+      "name": "Microsoft.NETCore.App",
+      "version": "9.0.0"
+    },
+    "configProperties": {
+      "System.Reflection.Metadata.MetadataUpdater.IsSupported": false,
+      "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false
+    }
+  }
+}
+
+
+================================================
+File: tests/Night.Tests/bin/Release/net9.0/.msCoverageSourceRootsMapping_Night.Tests
+================================================
+[Non-text file]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================================================
+File: tests/Night.Tests/obj/Night.Engine.Tests.csproj.nuget.dgspec.json
+================================================
+{
+  "format": 1,
+  "restore": {
+    "/Users/danny/Documents/GitHub/any2/tests/Night.Engine.Tests/Night.Engine.Tests.csproj": {}
+  },
+  "projects": {
+    "/Users/danny/Documents/GitHub/any2/src/Night.Engine/Night.Engine.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/danny/Documents/GitHub/any2/src/Night.Engine/Night.Engine.csproj",
+        "projectName": "Night.Engine",
+        "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night.Engine/Night.Engine.csproj",
+        "packagesPath": "/Users/danny/.nuget/packages/",
+        "outputPath": "/Users/danny/Documents/GitHub/any2/src/Night.Engine/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/danny/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "SDL3-CS": {
+              "target": "Package",
+              "version": "[*, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/danny/Documents/GitHub/any2/tests/Night.Engine.Tests/Night.Engine.Tests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/danny/Documents/GitHub/any2/tests/Night.Engine.Tests/Night.Engine.Tests.csproj",
+        "projectName": "Night.Engine.Tests",
+        "projectPath": "/Users/danny/Documents/GitHub/any2/tests/Night.Engine.Tests/Night.Engine.Tests.csproj",
+        "packagesPath": "/Users/danny/.nuget/packages/",
+        "outputPath": "/Users/danny/Documents/GitHub/any2/tests/Night.Engine.Tests/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/danny/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/Users/danny/Documents/GitHub/any2/src/Night.Engine/Night.Engine.csproj": {
+                "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night.Engine/Night.Engine.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.12.0, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.9.2, )"
+            },
+            "xunit.runner.visualstudio": {
+              "target": "Package",
+              "version": "[2.8.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
+
+
+================================================
+File: tests/Night.Tests/obj/Night.Engine.Tests.csproj.nuget.g.props
+================================================
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
+    <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
+    <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageFolders>
+    <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.14.0</NuGetToolVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <SourceRoot Include="/Users/danny/.nuget/packages/" />
+  </ItemGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)xunit.runner.visualstudio/2.8.2/build/net6.0/xunit.runner.visualstudio.props" Condition="Exists('$(NuGetPackageRoot)xunit.runner.visualstudio/2.8.2/build/net6.0/xunit.runner.visualstudio.props')" />
+    <Import Project="$(NuGetPackageRoot)xunit.core/2.9.2/build/xunit.core.props" Condition="Exists('$(NuGetPackageRoot)xunit.core/2.9.2/build/xunit.core.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.testplatform.testhost/17.12.0/build/netcoreapp3.1/Microsoft.TestPlatform.TestHost.props" Condition="Exists('$(NuGetPackageRoot)microsoft.testplatform.testhost/17.12.0/build/netcoreapp3.1/Microsoft.TestPlatform.TestHost.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.codecoverage/17.12.0/build/netstandard2.0/Microsoft.CodeCoverage.props" Condition="Exists('$(NuGetPackageRoot)microsoft.codecoverage/17.12.0/build/netstandard2.0/Microsoft.CodeCoverage.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.net.test.sdk/17.12.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.props" Condition="Exists('$(NuGetPackageRoot)microsoft.net.test.sdk/17.12.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.props')" />
+  </ImportGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Pkgxunit_analyzers Condition=" '$(Pkgxunit_analyzers)' == '' ">/Users/danny/.nuget/packages/xunit.analyzers/1.16.0</Pkgxunit_analyzers>
+  </PropertyGroup>
+</Project>
+
+
+================================================
+File: tests/Night.Tests/obj/Night.Engine.Tests.csproj.nuget.g.targets
+================================================
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)xunit.core/2.9.2/build/xunit.core.targets" Condition="Exists('$(NuGetPackageRoot)xunit.core/2.9.2/build/xunit.core.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.codecoverage/17.12.0/build/netstandard2.0/Microsoft.CodeCoverage.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.codecoverage/17.12.0/build/netstandard2.0/Microsoft.CodeCoverage.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.net.test.sdk/17.12.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.net.test.sdk/17.12.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.targets')" />
+    <Import Project="$(NuGetPackageRoot)coverlet.collector/6.0.2/build/netstandard2.0/coverlet.collector.targets" Condition="Exists('$(NuGetPackageRoot)coverlet.collector/6.0.2/build/netstandard2.0/coverlet.collector.targets')" />
+  </ImportGroup>
+</Project>
+
+
+================================================
 File: tests/Night.Tests/obj/Night.Tests.csproj.nuget.dgspec.json
 ================================================
 {
   "format": 1,
   "restore": {
-    "/home/danny/git/any2/tests/Night.Tests/Night.Tests.csproj": {}
+    "/Users/danny/Documents/GitHub/any2/tests/Night.Tests/Night.Tests.csproj": {}
   },
   "projects": {
-    "/home/danny/git/any2/src/Night/Night.csproj": {
+    "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/danny/git/any2/src/Night/Night.csproj",
+        "projectUniqueName": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj",
         "projectName": "Night",
-        "projectPath": "/home/danny/git/any2/src/Night/Night.csproj",
-        "packagesPath": "/home/danny/.nuget/packages/",
-        "outputPath": "/home/danny/git/any2/src/Night/obj/",
+        "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj",
+        "packagesPath": "/Users/danny/.nuget/packages/",
+        "outputPath": "/Users/danny/Documents/GitHub/any2/src/Night/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/danny/.nuget/NuGet/NuGet.Config"
+          "/Users/danny/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -18966,21 +21069,21 @@ File: tests/Night.Tests/obj/Night.Tests.csproj.nuget.dgspec.json
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/home/danny/git/any2/tests/Night.Tests/Night.Tests.csproj": {
+    "/Users/danny/Documents/GitHub/any2/tests/Night.Tests/Night.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/danny/git/any2/tests/Night.Tests/Night.Tests.csproj",
+        "projectUniqueName": "/Users/danny/Documents/GitHub/any2/tests/Night.Tests/Night.Tests.csproj",
         "projectName": "Night.Tests",
-        "projectPath": "/home/danny/git/any2/tests/Night.Tests/Night.Tests.csproj",
-        "packagesPath": "/home/danny/.nuget/packages/",
-        "outputPath": "/home/danny/git/any2/tests/Night.Tests/obj/",
+        "projectPath": "/Users/danny/Documents/GitHub/any2/tests/Night.Tests/Night.Tests.csproj",
+        "packagesPath": "/Users/danny/.nuget/packages/",
+        "outputPath": "/Users/danny/Documents/GitHub/any2/tests/Night.Tests/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/danny/.nuget/NuGet/NuGet.Config"
+          "/Users/danny/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -18992,8 +21095,8 @@ File: tests/Night.Tests/obj/Night.Tests.csproj.nuget.dgspec.json
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "/home/danny/git/any2/src/Night/Night.csproj": {
-                "projectPath": "/home/danny/git/any2/src/Night/Night.csproj"
+              "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj": {
+                "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj"
               }
             }
           }
@@ -19053,7 +21156,7 @@ File: tests/Night.Tests/obj/Night.Tests.csproj.nuget.dgspec.json
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
@@ -19070,13 +21173,13 @@ File: tests/Night.Tests/obj/Night.Tests.csproj.nuget.g.props
     <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
-    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/home/danny/.nuget/packages/</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/home/danny/.nuget/packages/</NuGetPackageFolders>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/Users/danny/.nuget/packages/</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.14.0</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="/home/danny/.nuget/packages/" />
+    <SourceRoot Include="/Users/danny/.nuget/packages/" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <Import Project="$(NuGetPackageRoot)xunit.runner.visualstudio/2.8.2/build/net6.0/xunit.runner.visualstudio.props" Condition="Exists('$(NuGetPackageRoot)xunit.runner.visualstudio/2.8.2/build/net6.0/xunit.runner.visualstudio.props')" />
@@ -19086,8 +21189,8 @@ File: tests/Night.Tests/obj/Night.Tests.csproj.nuget.g.props
     <Import Project="$(NuGetPackageRoot)microsoft.net.test.sdk/17.12.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.props" Condition="Exists('$(NuGetPackageRoot)microsoft.net.test.sdk/17.12.0/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Pkgxunit_analyzers Condition=" '$(Pkgxunit_analyzers)' == '' ">/home/danny/.nuget/packages/xunit.analyzers/1.16.0</Pkgxunit_analyzers>
-    <PkgStyleCop_Analyzers_Unstable Condition=" '$(PkgStyleCop_Analyzers_Unstable)' == '' ">/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556</PkgStyleCop_Analyzers_Unstable>
+    <Pkgxunit_analyzers Condition=" '$(Pkgxunit_analyzers)' == '' ">/Users/danny/.nuget/packages/xunit.analyzers/1.16.0</Pkgxunit_analyzers>
+    <PkgStyleCop_Analyzers_Unstable Condition=" '$(PkgStyleCop_Analyzers_Unstable)' == '' ">/Users/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556</PkgStyleCop_Analyzers_Unstable>
   </PropertyGroup>
 </Project>
 
@@ -20139,19 +22242,19 @@ File: tests/Night.Tests/obj/project.assets.json
     ]
   },
   "packageFolders": {
-    "/home/danny/.nuget/packages/": {}
+    "/Users/danny/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/danny/git/any2/tests/Night.Tests/Night.Tests.csproj",
+      "projectUniqueName": "/Users/danny/Documents/GitHub/any2/tests/Night.Tests/Night.Tests.csproj",
       "projectName": "Night.Tests",
-      "projectPath": "/home/danny/git/any2/tests/Night.Tests/Night.Tests.csproj",
-      "packagesPath": "/home/danny/.nuget/packages/",
-      "outputPath": "/home/danny/git/any2/tests/Night.Tests/obj/",
+      "projectPath": "/Users/danny/Documents/GitHub/any2/tests/Night.Tests/Night.Tests.csproj",
+      "packagesPath": "/Users/danny/.nuget/packages/",
+      "outputPath": "/Users/danny/Documents/GitHub/any2/tests/Night.Tests/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/danny/.nuget/NuGet/NuGet.Config"
+        "/Users/danny/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -20163,8 +22266,8 @@ File: tests/Night.Tests/obj/project.assets.json
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "/home/danny/git/any2/src/Night/Night.csproj": {
-              "projectPath": "/home/danny/git/any2/src/Night/Night.csproj"
+            "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj": {
+              "projectPath": "/Users/danny/Documents/GitHub/any2/src/Night/Night.csproj"
             }
           }
         }
@@ -20224,7 +22327,7 @@ File: tests/Night.Tests/obj/project.assets.json
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/Users/danny/.local/share/mise/installs/dotnet/9.0.300/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
@@ -20236,30 +22339,139 @@ File: tests/Night.Tests/obj/project.nuget.cache
 ================================================
 {
   "version": 2,
-  "dgSpecHash": "R6fQv26aUGs=",
+  "dgSpecHash": "ZGKUX2iKjkw=",
   "success": true,
-  "projectFilePath": "/home/danny/git/any2/tests/Night.Tests/Night.Tests.csproj",
+  "projectFilePath": "/Users/danny/Documents/GitHub/any2/tests/Night.Tests/Night.Tests.csproj",
   "expectedPackageFiles": [
-    "/home/danny/.nuget/packages/coverlet.collector/6.0.2/coverlet.collector.6.0.2.nupkg.sha512",
-    "/home/danny/.nuget/packages/microsoft.codecoverage/17.12.0/microsoft.codecoverage.17.12.0.nupkg.sha512",
-    "/home/danny/.nuget/packages/microsoft.net.test.sdk/17.12.0/microsoft.net.test.sdk.17.12.0.nupkg.sha512",
-    "/home/danny/.nuget/packages/microsoft.testplatform.objectmodel/17.12.0/microsoft.testplatform.objectmodel.17.12.0.nupkg.sha512",
-    "/home/danny/.nuget/packages/microsoft.testplatform.testhost/17.12.0/microsoft.testplatform.testhost.17.12.0.nupkg.sha512",
-    "/home/danny/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
-    "/home/danny/.nuget/packages/sdl3-cs/3.2.14.2/sdl3-cs.3.2.14.2.nupkg.sha512",
-    "/home/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556/stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512",
-    "/home/danny/.nuget/packages/system.reflection.metadata/1.6.0/system.reflection.metadata.1.6.0.nupkg.sha512",
-    "/home/danny/.nuget/packages/xunit/2.9.2/xunit.2.9.2.nupkg.sha512",
-    "/home/danny/.nuget/packages/xunit.abstractions/2.0.3/xunit.abstractions.2.0.3.nupkg.sha512",
-    "/home/danny/.nuget/packages/xunit.analyzers/1.16.0/xunit.analyzers.1.16.0.nupkg.sha512",
-    "/home/danny/.nuget/packages/xunit.assert/2.9.2/xunit.assert.2.9.2.nupkg.sha512",
-    "/home/danny/.nuget/packages/xunit.core/2.9.2/xunit.core.2.9.2.nupkg.sha512",
-    "/home/danny/.nuget/packages/xunit.extensibility.core/2.9.2/xunit.extensibility.core.2.9.2.nupkg.sha512",
-    "/home/danny/.nuget/packages/xunit.extensibility.execution/2.9.2/xunit.extensibility.execution.2.9.2.nupkg.sha512",
-    "/home/danny/.nuget/packages/xunit.runner.visualstudio/2.8.2/xunit.runner.visualstudio.2.8.2.nupkg.sha512"
+    "/Users/danny/.nuget/packages/coverlet.collector/6.0.2/coverlet.collector.6.0.2.nupkg.sha512",
+    "/Users/danny/.nuget/packages/microsoft.codecoverage/17.12.0/microsoft.codecoverage.17.12.0.nupkg.sha512",
+    "/Users/danny/.nuget/packages/microsoft.net.test.sdk/17.12.0/microsoft.net.test.sdk.17.12.0.nupkg.sha512",
+    "/Users/danny/.nuget/packages/microsoft.testplatform.objectmodel/17.12.0/microsoft.testplatform.objectmodel.17.12.0.nupkg.sha512",
+    "/Users/danny/.nuget/packages/microsoft.testplatform.testhost/17.12.0/microsoft.testplatform.testhost.17.12.0.nupkg.sha512",
+    "/Users/danny/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
+    "/Users/danny/.nuget/packages/sdl3-cs/3.2.14.2/sdl3-cs.3.2.14.2.nupkg.sha512",
+    "/Users/danny/.nuget/packages/stylecop.analyzers.unstable/1.2.0.556/stylecop.analyzers.unstable.1.2.0.556.nupkg.sha512",
+    "/Users/danny/.nuget/packages/system.reflection.metadata/1.6.0/system.reflection.metadata.1.6.0.nupkg.sha512",
+    "/Users/danny/.nuget/packages/xunit/2.9.2/xunit.2.9.2.nupkg.sha512",
+    "/Users/danny/.nuget/packages/xunit.abstractions/2.0.3/xunit.abstractions.2.0.3.nupkg.sha512",
+    "/Users/danny/.nuget/packages/xunit.analyzers/1.16.0/xunit.analyzers.1.16.0.nupkg.sha512",
+    "/Users/danny/.nuget/packages/xunit.assert/2.9.2/xunit.assert.2.9.2.nupkg.sha512",
+    "/Users/danny/.nuget/packages/xunit.core/2.9.2/xunit.core.2.9.2.nupkg.sha512",
+    "/Users/danny/.nuget/packages/xunit.extensibility.core/2.9.2/xunit.extensibility.core.2.9.2.nupkg.sha512",
+    "/Users/danny/.nuget/packages/xunit.extensibility.execution/2.9.2/xunit.extensibility.execution.2.9.2.nupkg.sha512",
+    "/Users/danny/.nuget/packages/xunit.runner.visualstudio/2.8.2/xunit.runner.visualstudio.2.8.2.nupkg.sha512"
   ],
   "logs": []
 }
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.En.ACB7F3D8.Up2Date
+================================================
+
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.Engine.Tests.AssemblyInfo.cs
+================================================
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+
+[assembly: System.Reflection.AssemblyCompanyAttribute("Night.Engine.Tests")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9199592ee1287114365d11edda2ee4a27d5a98c0")]
+[assembly: System.Reflection.AssemblyProductAttribute("Night.Engine.Tests")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Night.Engine.Tests")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+
+// Generated by the MSBuild WriteCodeFragment class.
+
+
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.Engine.Tests.AssemblyInfoInputs.cache
+================================================
+f040431231c5afa2742360ca4082cedeb8d8ed3dbb5ed988334f8e9305ade09a
+
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.Engine.Tests.GeneratedMSBuildEditorConfig.editorconfig
+================================================
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Night.Engine.Tests
+build_property.ProjectDir = /Users/danny/Documents/GitHub/any2/tests/Night.Engine.Tests/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.Engine.Tests.GlobalUsings.g.cs
+================================================
+// <auto-generated/>
+global using global::System;
+global using global::System.Collections.Generic;
+global using global::System.IO;
+global using global::System.Linq;
+global using global::System.Net.Http;
+global using global::System.Threading;
+global using global::System.Threading.Tasks;
+global using global::Xunit;
+
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.Engine.Tests.assets.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.Engine.Tests.csproj.AssemblyReference.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.Engine.Tests.csproj.CoreCompileInputs.cache
+================================================
+804893afb84a2106acc78b32119e8605aea2e7a519ee51e48faf64c2116ef767
+
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.Engine.Tests.genruntimeconfig.cache
+================================================
+1788b9fe64b50655f1e1b15fa7323bbb1908e8d975ac5989dfc77f29fd3457d0
+
+
+
+================================================
+File: tests/Night.Tests/obj/Debug/net9.0/Night.Engine.Tests.sourcelink.json
+================================================
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9199592ee1287114365d11edda2ee4a27d5a98c0/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -20286,7 +22498,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+723df3056cff253628733caca021e8f257373604")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be5561aeeb5775b7e8732d9679c65d0d55822e81")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -20299,7 +22511,7 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.AssemblyInfoInputs.cache
 ================================================
-f7fc7d5c7f928f73008d2dba9d4db4c9c6d0d1e263436747f7b72ae165f7b208
+9d32020f7214934e30b27c3d7a9a88c1ddad4dac177502bd2ca6a96a725ddc5a
 
 
 
@@ -20316,7 +22528,7 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Night.Tests
-build_property.ProjectDir = /home/danny/git/any2/tests/Night.Tests/
+build_property.ProjectDir = /Users/danny/Documents/GitHub/any2/tests/Night.Tests/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
@@ -20354,25 +22566,146 @@ File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.csproj.AssemblyReference.ca
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.csproj.CoreCompileInputs.cache
 ================================================
-04b81a38a2ff4eea0091208272ff770cc2516d398f19b9b392940981a6273875
+62cccf8dc7bc5e8006b3efcb9a12104a7430f183b7cbd1c5a1b5ce7383bcc9ff
 
 
 
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.genruntimeconfig.cache
 ================================================
-9c7ef56059aceb4896b478ec314ab9888356c54b70f9d9db044ee65e57549f3e
+d53d785cd13fe8861eda2a994b895aa112ff854516c6173e0a310886392f409f
 
 
 
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/723df3056cff253628733caca021e8f257373604/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/be5561aeeb5775b7e8732d9679c65d0d55822e81/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+================================================
+// <autogenerated />
+using System;
+using System.Reflection;
+[assembly: global::System.Runtime.Versioning.TargetFrameworkAttribute(".NETCoreApp,Version=v9.0", FrameworkDisplayName = ".NET 9.0")]
+
+
+
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Te.8CE7B445.Up2Date
+================================================
+
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Tests.AssemblyInfo.cs
+================================================
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+
+[assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9199592ee1287114365d11edda2ee4a27d5a98c0")]
+[assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+
+// Generated by the MSBuild WriteCodeFragment class.
+
+
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Tests.AssemblyInfoInputs.cache
+================================================
+9288249c0a704a7f3417c3eb44528bf1ca5795f0b13b4899e57a106b7d554686
+
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Tests.GeneratedMSBuildEditorConfig.editorconfig
+================================================
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Night.Tests
+build_property.ProjectDir = /Users/danny/Documents/GitHub/any2/tests/Night.Tests/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Tests.GlobalUsings.g.cs
+================================================
+// <auto-generated/>
+global using global::System;
+global using global::System.Collections.Generic;
+global using global::System.IO;
+global using global::System.Linq;
+global using global::System.Net.Http;
+global using global::System.Threading;
+global using global::System.Threading.Tasks;
+global using global::Xunit;
+
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Tests.assets.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Tests.csproj.AssemblyReference.cache
+================================================
+[Non-text file]
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Tests.csproj.CoreCompileInputs.cache
+================================================
+d18837008e0cdec4e4a506e1eb6c507ac41ab709c7926f6161b31ea23edd163e
+
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Tests.genruntimeconfig.cache
+================================================
+361cedffbdd790b646e674ff1aa835603a5019ac4c3f1d327a7f13f781470954
+
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/Night.Tests.sourcelink.json
+================================================
+{"documents":{"/Users/danny/Documents/GitHub/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9199592ee1287114365d11edda2ee4a27d5a98c0/*","/Users/danny/Documents/GitHub/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+
+
+================================================
+File: tests/Night.Tests/obj/Release/net9.0/.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
 ================================================
 // <autogenerated />
 using System;
@@ -20709,199 +23042,6 @@ updates:
     schedule:
       # Check for updates to GitHub Actions every week
       interval: "weekly"
-
-
-
-================================================
-File: .github/deactivated/release.yml
-================================================
-name: Create Release
-
-on:
-  workflow_dispatch:
-    inputs:
-      bump_type:
-        description: "Type of version bump (alpha, beta, rc, promote_to_final, patch, minor, major)"
-        required: true
-        default: "alpha"
-        type: choice
-        options:
-          - alpha
-          - beta
-          - rc
-          - promote_to_final
-          - patch
-          - minor
-          - major
-      draft_release:
-        description: "Create as a draft release?"
-        required: true
-        default: "false"
-        type: boolean
-
-permissions:
-  contents: read
-
-jobs:
-  determine_version:
-    runs-on: ubuntu-latest
-    outputs:
-      next_version: ${{ steps.get_version.outputs.next_version }}
-      is_prerelease: ${{ steps.get_version.outputs.is_prerelease }}
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          fetch-depth: 0 # Required to fetch all tags
-
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: pip install semver
-
-      - name: Determine next version
-        id: get_version
-        env:
-          BUMP_TYPE: ${{ github.event.inputs.bump_type }}
-        run: python .github/scripts/determine_next_version.py
-
-  build_and_release:
-    needs: determine_version
-    if: needs.determine_version.outputs.next_version != ''
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write # Required to create releases and tags
-    strategy:
-      matrix:
-        goos: [linux, windows, darwin]
-        goarch: [amd64, arm64]
-        exclude: # Add exclusions if some combinations are not needed/supported
-          - goos: windows
-            goarch: arm64 # Example: if windows arm64 is not a target
-
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Set up Go
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
-        with:
-          go-version: '1.21' # As per PRD
-
-      - name: Set version output
-        id: version_output
-        run: |
-          echo "NEXT_VERSION=${{ needs.determine_version.outputs.next_version }}" >> $GITHUB_ENV
-          echo "IS_PRERELEASE=${{ needs.determine_version.outputs.is_prerelease }}" >> $GITHUB_ENV
-
-      - name: Build application
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-          VERSION: ${{ env.NEXT_VERSION }}
-        run: |
-          echo "Building for $GOOS/$GOARCH with version $VERSION"
-          BINARY_NAME="almd"
-          if [ "$GOOS" == "windows" ]; then
-            BINARY_NAME="almd.exe"
-          fi
-          go build -v -o $BINARY_NAME -ldflags="-X 'main.version=$VERSION'" ./cmd/almd
-          ls -la $BINARY_NAME # Verify binary exists
-
-      - name: Archive binary
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-          VERSION_NO_V: ${{ env.NEXT_VERSION }} # Assuming NEXT_VERSION has 'v' prefix
-        run: |
-          VERSION_TAG=${VERSION_NO_V#v} # Remove 'v' prefix for filename
-          ARCHIVE_NAME="almd_${VERSION_TAG}_${GOOS}_${GOARCH}"
-          BINARY_NAME="almd"
-          if [ "$GOOS" == "windows" ]; then
-            BINARY_NAME="almd.exe"
-            zip "${ARCHIVE_NAME}.zip" $BINARY_NAME
-            echo "ASSET_NAME=${ARCHIVE_NAME}.zip" >> $GITHUB_ENV
-            echo "ASSET_PATH=${ARCHIVE_NAME}.zip" >> $GITHUB_ENV
-          else
-            tar -czvf "${ARCHIVE_NAME}.tar.gz" $BINARY_NAME
-            echo "ASSET_NAME=${ARCHIVE_NAME}.tar.gz" >> $GITHUB_ENV
-            echo "ASSET_PATH=${ARCHIVE_NAME}.tar.gz" >> $GITHUB_ENV
-          fi
-          ls -la $ASSET_PATH # Verify archive exists
-
-      - name: Upload artifact for this job
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: almd-binaries-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: ${{ env.ASSET_PATH }}
-
-  create_release_tag:
-    needs: [determine_version, build_and_release] # Ensure build_and_release completes for all platforms
-    runs-on: ubuntu-latest
-    if: needs.determine_version.outputs.next_version != ''
-    permissions:
-      contents: write
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          fetch-depth: 0
-
-      - name: Create Git Tag
-        env:
-          NEXT_VERSION: ${{ needs.determine_version.outputs.next_version }}
-        run: |
-          echo "Creating tag $NEXT_VERSION"
-          git tag $NEXT_VERSION
-          git push origin $NEXT_VERSION
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          path: release-artifacts # Download all artifacts to this directory
-          # No specific name means download all artifacts from the run
-
-      - name: List downloaded artifacts
-        run: |
-          ls -R release-artifacts
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2.2.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ needs.determine_version.outputs.next_version }}
-          name: Release ${{ needs.determine_version.outputs.next_version }}
-          body: |
-            Automated release for version ${{ needs.determine_version.outputs.next_version }}.
-            See CHANGELOG.md for details (if available).
-          draft: ${{ github.event.inputs.draft_release == 'true' }}
-          prerelease: ${{ needs.determine_version.outputs.is_prerelease == 'true' }}
-          files: |
-            release-artifacts/almd-binaries-linux-amd64/*.tar.gz
-            release-artifacts/almd-binaries-linux-arm64/*.tar.gz
-            release-artifacts/almd-binaries-windows-amd64/*.zip
-            release-artifacts/almd-binaries-darwin-amd64/*.tar.gz
-            release-artifacts/almd-binaries-darwin-arm64/*.tar.gz
 
 
 

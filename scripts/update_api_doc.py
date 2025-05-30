@@ -127,7 +127,7 @@ def parse_types_cs_file(filepath):
     types = []
     # Regex to find public classes (can be extended for structs, interfaces if needed)
     # e.g., r"public\s+(?:class|struct|interface)\s+(\w+)"
-    class_pattern = re.compile(r"public\s+class\s+(\w+)")
+    class_pattern = re.compile(r"public\s+(?:class|struct)\s+(\w+)")
     for match in class_pattern.finditer(content):
         types.append(match.group(1))
     return sorted(list(set(types)))
@@ -217,15 +217,17 @@ def main():
 
             print(f"Processing module: {module_name}...")
 
-            # Path for the main module file (e.g., Filesystem.cs for Filesystem module)
-            main_module_cs_file = os.path.join(module_path, f"{module_name}.cs")
-            enums_cs_file = os.path.join(module_path, "Enums.cs")
-            types_cs_file = os.path.join(module_path, "Types.cs")
+            current_module_enums = set()
+            current_module_types = set()
 
-            # 1. Parse main module file for functions
-            if os.path.exists(main_module_cs_file):
-                print(f"  Parsing functions from {main_module_cs_file}...")
-                parsed_functions_data = parse_cs_file(main_module_cs_file)
+            # Define the expected main module file for functions
+            main_module_cs_file_identifier = f"{module_name}.cs"
+            main_module_cs_file_path_expected = os.path.join(module_path, main_module_cs_file_identifier)
+
+            # 1. Parse main module file for functions if it exists
+            if os.path.exists(main_module_cs_file_path_expected):
+                print(f"  Parsing functions from main module file: {main_module_cs_file_path_expected}...")
+                parsed_functions_data = parse_cs_file(main_module_cs_file_path_expected)
                 if parsed_functions_data:
                     for class_name_func, methods in parsed_functions_data.items():
                         # Ensure the functions dict for this class_name_func exists
@@ -236,29 +238,39 @@ def main():
                             all_module_data[module_name]["functions"][class_name_func][method_name].extend(signatures)
                             all_module_data[module_name]["functions"][class_name_func][method_name] = \
                                 sorted(list(set(all_module_data[module_name]["functions"][class_name_func][method_name])))
+                else:
+                    print(f"    No functions found or error parsing in {main_module_cs_file_identifier}.")
             else:
-                print(f"  Skipping functions: {main_module_cs_file} not found for module {module_name}.")
+                print(f"  Skipping functions: Main module file {main_module_cs_file_path_expected} not found.")
 
-            # 2. Parse Enums.cs for enums
-            if os.path.exists(enums_cs_file):
-                print(f"  Parsing enums from {enums_cs_file}...")
-                parsed_enums = parse_enums_cs_file(enums_cs_file) # Already returns sorted unique list
-                if parsed_enums:
-                    all_module_data[module_name]["enums"].extend(parsed_enums)
-                    all_module_data[module_name]["enums"] = sorted(list(set(all_module_data[module_name]["enums"]))) # Ensure uniqueness if called multiple times (though not expected here)
+            # 2. Iterate through ALL .cs files in the module directory for enums and types
+            print(f"  Scanning all .cs files in {module_path} for enums and types/structs...")
+            for item_name in sorted(os.listdir(module_path)):
+                item_path = os.path.join(module_path, item_name)
+                if os.path.isfile(item_path) and item_name.endswith(".cs"):
+                    # Parse for enums
+                    parsed_enums = parse_enums_cs_file(item_path)
+                    if parsed_enums:
+                        current_module_enums.update(parsed_enums)
+
+                    # Parse for types (classes/structs)
+                    parsed_types = parse_types_cs_file(item_path)
+                    if parsed_types:
+                        current_module_types.update(parsed_types)
+
+            # Store aggregated enums and types
+            if current_module_enums:
+                all_module_data[module_name]["enums"] = sorted(list(current_module_enums))
+                print(f"  Found {len(all_module_data[module_name]['enums'])} enums in module {module_name}.")
             else:
-                print(f"  Skipping enums: {enums_cs_file} not found for module {module_name}.")
+                print(f"  No enums found in module {module_name}.")
 
-
-            # 3. Parse Types.cs for types
-            if os.path.exists(types_cs_file):
-                print(f"  Parsing types from {types_cs_file}...")
-                parsed_types = parse_types_cs_file(types_cs_file) # Already returns sorted unique list
-                if parsed_types:
-                    all_module_data[module_name]["types"].extend(parsed_types)
-                    all_module_data[module_name]["types"] = sorted(list(set(all_module_data[module_name]["types"]))) # Ensure uniqueness
+            if current_module_types:
+                all_module_data[module_name]["types"] = sorted(list(current_module_types))
+                print(f"  Found {len(all_module_data[module_name]['types'])} types/structs in module {module_name}.")
             else:
-                print(f"  Skipping types: {types_cs_file} not found for module {module_name}.")
+                print(f"  No types/structs found in module {module_name}.")
+
             print("") # Blank line after processing a module's files for readability in console
 
     if all_module_data:

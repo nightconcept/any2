@@ -1,4 +1,4 @@
-// <copyright file="Enums.cs" company="Night Circle">
+// <copyright file="FileMode.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -24,37 +24,6 @@ using System;
 
 namespace Night
 {
-  /// <summary>
-  /// Represents the type of a file system object.
-  /// </summary>
-  public enum FileType
-  {
-    /// <summary>
-    /// A regular file.
-    /// </summary>
-    File,
-
-    /// <summary>
-    /// A directory.
-    /// </summary>
-    Directory,
-
-    /// <summary>
-    /// A symbolic link.
-    /// </summary>
-    Symlink,
-
-    /// <summary>
-    /// Other type (e.g., device, pipe).
-    /// </summary>
-    Other,
-
-    /// <summary>
-    /// The path does not exist or its type cannot be determined.
-    /// </summary>
-    None,
-  }
-
   /// <summary>
   /// Represents the different modes you can open a File in.
   /// </summary>
