@@ -293,7 +293,7 @@ end
   - **Acceptance Criteria:** Project has a logo. Sample game displays a custom window icon.
   - **Status:** To Do
 
-- [ ] **Task 10.11: Establish Basic CI Workflow**
+- [x] **Task 10.11: Establish Basic CI Workflow**
   - **Description:** Review deactivated CI workflows. Create a new, active GitHub Actions workflow that, at a minimum, builds `Night` and `SampleGame` on push/PR to main branch for Windows, Linux, and macOS. Run any automated tests established in Task 10.9.
   - **Acceptance Criteria:** CI workflow successfully builds and (if applicable) tests the project on all target OS upon code changes.
   - **Status:** Done (Basic requirements met by existing `.github/workflows/ci.yml`. Further enhancements can be added.)
@@ -322,11 +322,8 @@ end
 - **Description:** Restructure the project's directories and C# project files to align with the "Night" and "Night.Engine" namespace strategy. Update all relevant documentation to reflect these changes. The goal is to have a primary assembly named `Night.dll` which contains both the `Night` (framework) and `Night.Engine` (engine extensions) namespaces.
 
 - **Implementation Details:**
-
     - **1. Directory Renaming and Restructuring:**
-
         - [x] Rename the main C# project directory from `src/Night.Engine/` to `src/Night/`.
-
         - [x] Move all contents of the former `src/Night.Engine/Framework/` directory (e.g., `Graphics/`, `Window/`, etc.) directly into the new `src/Night/` directory.
 
             - Example: `src/Night.Engine/Framework/Graphics/Graphics.cs` becomes `src/Night/Graphics/Graphics.cs`.

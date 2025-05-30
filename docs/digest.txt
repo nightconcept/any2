@@ -13,6 +13,7 @@ Directory structure:
     │   ├── testing-plan.md
     │   ├── epics/
     │   │   ├── epic10.md
+    │   │   ├── release.md
     │   │   └── archive/
     │   │       ├── epic1.md
     │   │       ├── epic2.md
@@ -57,6 +58,7 @@ Directory structure:
     │   │   ├── Framework.cs
     │   │   ├── IGame.cs
     │   │   ├── Night.csproj
+    │   │   ├── VersionInfo.cs
     │   │   ├── stylecop.json
     │   │   ├── Configuration/
     │   │   │   ├── AudioConfig.cs
@@ -241,6 +243,7 @@ Directory structure:
     │       ├── ci.yml
     │       ├── codeql-analysis.yml
     │       ├── dependency-review.yml
+    │       ├── release.yml
     │       └── scorecard.yml
     ├── .roo/
     └── .windsurf/
@@ -1797,7 +1800,7 @@ end
   - **Acceptance Criteria:** Project has a logo. Sample game displays a custom window icon.
   - **Status:** To Do
 
-- [ ] **Task 10.11: Establish Basic CI Workflow**
+- [x] **Task 10.11: Establish Basic CI Workflow**
   - **Description:** Review deactivated CI workflows. Create a new, active GitHub Actions workflow that, at a minimum, builds `Night` and `SampleGame` on push/PR to main branch for Windows, Linux, and macOS. Run any automated tests established in Task 10.9.
   - **Acceptance Criteria:** CI workflow successfully builds and (if applicable) tests the project on all target OS upon code changes.
   - **Status:** Done (Basic requirements met by existing `.github/workflows/ci.yml`. Further enhancements can be added.)
@@ -1826,11 +1829,8 @@ end
 - **Description:** Restructure the project's directories and C# project files to align with the "Night" and "Night.Engine" namespace strategy. Update all relevant documentation to reflect these changes. The goal is to have a primary assembly named `Night.dll` which contains both the `Night` (framework) and `Night.Engine` (engine extensions) namespaces.
 
 - **Implementation Details:**
-
     - **1. Directory Renaming and Restructuring:**
-
         - [x] Rename the main C# project directory from `src/Night.Engine/` to `src/Night/`.
-
         - [x] Move all contents of the former `src/Night.Engine/Framework/` directory (e.g., `Graphics/`, `Window/`, etc.) directly into the new `src/Night/` directory.
 
             - Example: `src/Night.Engine/Framework/Graphics/Graphics.cs` becomes `src/Night/Graphics/Graphics.cs`.
@@ -1990,6 +1990,280 @@ end
     - `src/Night/Window/Window.cs(306,11): error CS1501: No overload for method 'GetFullscreenDisplayModes' takes 3 arguments`
   - **Acceptance Criteria:** All listed StyleCop errors are resolved.
   - **Status:** In-Progress
+
+
+
+================================================
+File: docs/epics/release.md
+================================================
+Status: In-Progress
+
+GitHub Actions Release Plan for Night Engine (Night.dll) - Compiled Version Info
+
+This document outlines the implementation plan for a robust, manually triggerable GitHub Actions-based release process for the Night C# library, focusing on creating GitHub Releases. The version information will be compiled directly into the library.
+1. Overview
+
+The goal is to automate the versioning, building, testing, and packaging of the Night.dll library, culminating in a GitHub Release with the generated packages as assets. The process will be initiated manually via workflow_dispatch, allowing the user to specify the exact Semantic Version for the release. The library will contain a `VersionInfo.cs` file where the Semantic Version is updated by the GitHub Action, and a manually editable `CodeName` is stored.
+
+Key Information from Repository Digest:
+
+    Solution File: Night.sln (located at the repository root)
+    Main Library Project: src/Night/Night.csproj (this is the project to be versioned and packaged as Night.dll)
+    Test Project: tests/Night.Tests/Night.Tests.csproj
+    Target Framework: net9.0
+    .NET SDK Version: 9.0.x (aligning with existing CI)
+    Default Branch: main
+    Root Namespace for Library: Night
+
+2. Prerequisites and Initial Setup
+
+Before implementing the release workflow, ensure the following are in place:
+
+    .NET SDK:
+        Ensure your development environment and GitHub Actions runners have access to .NET SDK version 9.0.x. The workflow will use actions/setup-dotnet to configure this.
+    GitHub CLI (gh):
+        The GitHub CLI is used for creating GitHub Releases. It's typically available on GitHub-hosted runners.
+    GitHub Actions Workflow Permissions:
+        The workflow will need permissions to write to the repository (for committing .csproj and .cs changes, creating tags, and creating GitHub releases). The following permissions block should be included in the workflow file:
+
+        permissions:
+          contents: write
+
+3. GitHub Actions Workflow File (`.github/workflows/release.yml`)
+
+Create/update the file with the following content:
+
+```yaml
+name: Release Night Library (GitHub Release)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semantic Version for the release (e.g., 1.0.0, 1.0.0-beta.1). This is the pure SemVer.'
+        required: true
+        type: string
+
+permissions:
+  contents: write # To create commits, tags, and releases
+
+jobs:
+  release:
+    name: Build and Create GitHub Release for Night Library
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      SOLUTION_FILE_PATH: Night.sln
+      MAIN_PROJECT_FILE_PATH: src/Night/Night.csproj
+      VERSION_INFO_FILE_PATH: src/Night/VersionInfo.cs # Path to the version C# file
+      TEST_PROJECT_FILE_PATH: tests/Night.Tests/Night.Tests.csproj
+      PACKAGE_OUTPUT_DIR: ./packages
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to analyze history
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Validate Version Input (SemVer)
+        run: |
+          version_input="${{ github.event.inputs.version }}"
+          semver_regex="^([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+          if [[ ! "$version_input" =~ $semver_regex ]]; then
+            echo "Error: Invalid version format. Input must be a pure Semantic Version (e.g., 1.0.0, 1.2.3-beta.1)."
+            exit 1
+          fi
+          echo "SemVer input '$version_input' is valid."
+        shell: bash
+
+      - name: Update Version in .csproj
+        id: update_version_csproj
+        run: |
+          $newSemVer = "${{ github.event.inputs.version }}"
+          $projectFilePath = "${{ env.MAIN_PROJECT_FILE_PATH }}"
+          Write-Host "Attempting to update <Version> in '$projectFilePath' to '$newSemVer'"
+          [xml]$csproj = Get-Content -Path $projectFilePath -Raw
+          $versionNode = $csproj.SelectSingleNode("//PropertyGroup/Version")
+          if (-not $versionNode) {
+              $propertyGroupNode = $csproj.SelectSingleNode("//PropertyGroup")
+              if (-not $propertyGroupNode) {
+                  $propertyGroupNode = $csproj.CreateElement("PropertyGroup")
+                  $csproj.Project.AppendChild($propertyGroupNode) | Out-Null
+              }
+              $versionNode = $csproj.CreateElement("Version")
+              $propertyGroupNode.AppendChild($versionNode) | Out-Null
+          }
+          $versionNode.'#text' = $newSemVer
+          $csproj.Save($projectFilePath)
+          Write-Host "Saved <Version> $newSemVer to '$projectFilePath'"
+          echo "version_tag=v$newSemVer" >> $GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Update Version in VersionInfo.cs
+        run: |
+          $newSemVer = "${{ github.event.inputs.version }}"
+          $versionInfoFilePath = "${{ env.VERSION_INFO_FILE_PATH }}"
+          Write-Host "Attempting to update Version constant in '$versionInfoFilePath' to '$newSemVer'"
+          $content = Get-Content $versionInfoFilePath -Raw
+          # Regex to find 'public const string Version = ".*";' and replace the version string part
+          $updatedContent = $content -replace '(?<=public const string Version = ")([^"]*)(?=";)', $newSemVer
+          Set-Content -Path $versionInfoFilePath -Value $updatedContent
+          Write-Host "Updated Version constant in '$versionInfoFilePath'"
+        shell: pwsh
+
+      - name: Commit Version Changes
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add "${{ env.MAIN_PROJECT_FILE_PATH }}" # .csproj
+          git add "${{ env.VERSION_INFO_FILE_PATH }}" # VersionInfo.cs
+          git commit -m "Update version to ${{ github.event.inputs.version }} [skip ci]"
+          echo "Committed version updates for ${{ github.event.inputs.version }}"
+        shell: bash
+
+      - name: Create Git Tag
+        run: |
+          git tag "${{ steps.update_version_csproj.outputs.version_tag }}"
+          echo "Created git tag ${{ steps.update_version_csproj.outputs.version_tag }}"
+        shell: bash
+
+      - name: Push Commit and Tag
+        run: |
+          git push origin HEAD:main --follow-tags
+          echo "Pushed commit and tag to remote."
+        shell: bash
+
+      - name: Build Solution
+        run: dotnet build "${{ env.SOLUTION_FILE_PATH }}" -c Release /p:Version="${{ github.event.inputs.version }}"
+
+      - name: Run Tests
+        run: dotnet test "${{ env.SOLUTION_FILE_PATH }}" --no-build -c Release
+
+      - name: Create Package Output Directory
+        run: mkdir -p "${{ env.PACKAGE_OUTPUT_DIR }}"
+
+      - name: Package Library
+        run: |
+          dotnet pack "${{ env.MAIN_PROJECT_FILE_PATH }}" `
+            --no-build `
+            -c Release `
+            -o "${{ env.PACKAGE_OUTPUT_DIR }}" `
+            /p:Version="${{ github.event.inputs.version }}" `
+            /p:IncludeSymbols=true `
+            /p:SymbolPackageFormat=snupkg
+        shell: pwsh
+
+      - name: List Packaged Files
+        run: ls -R "${{ env.PACKAGE_OUTPUT_DIR }}"
+        shell: bash
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION_TAG: ${{ steps.update_version_csproj.outputs.version_tag }}
+          RELEASE_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          gh release create "$VERSION_TAG" \
+            "${{ env.PACKAGE_OUTPUT_DIR }}"/*.nupkg \
+            "${{ env.PACKAGE_OUTPUT_DIR }}"/*.snupkg \
+            --title "Release $RELEASE_VERSION" \
+            --notes "Night Engine Release $RELEASE_VERSION" \
+            --draft=false \
+            --prerelease=$([[ "$RELEASE_VERSION" == *-* ]] && echo true || echo false)
+        shell: bash
+```
+
+4. C# Library Version Information (`src/Night/VersionInfo.cs`)
+
+The library's version information will be stored and retrieved from a compiled C# file.
+
+    Create `src/Night/VersionInfo.cs`:
+    This file will contain the version information. The `Version` constant will be updated by the GitHub Actions workflow. The `CodeName` constant is for manual developer updates.
+
+    ```csharp
+    // In src/Night/VersionInfo.cs
+    namespace Night
+    {
+        public static class VersionInfo
+        {
+            // This SemVer value is updated by the GitHub Action (e.g., "1.0.0", "1.2.3-beta.1")
+            // It is used for AssemblyInformationalVersion and runtime GetVersion()
+            public const string Version = "0.0.0-dev"; // Initial placeholder
+
+            // This value is manually updated by the developer during development cycles.
+            // It is not automatically used in the release title or notes by default.
+            public const string CodeName = "Initial Development"; // Manual placeholder
+
+            /// <summary>
+            /// Gets the Semantic Version of the Night library.
+            /// This version is set during the release process.
+            /// </summary>
+            /// <returns>The library's semantic version string.</returns>
+            public static string GetVersion()
+            {
+                return Version;
+            }
+
+            // Example: If you want a way to get codename, you can add a method like this:
+            // public static string GetCodeName()
+            // {
+            //     return CodeName;
+            // }
+            //
+            // public static string GetFullVersionDisplay()
+            // {
+            //     return $"{Version} ('{CodeName}')";
+            // }
+        }
+    }
+    ```
+
+    Update `.csproj` File (`src/Night/Night.csproj`):
+    Ensure `VERSION.txt` is NO LONGER included if it was previously. The `VersionInfo.cs` file is compiled by default as a `.cs` file within the project. No specific `<Content>` tag is needed for it. The `<Version>` tag in the `.csproj` will still be updated by the workflow, which influences `AssemblyVersion`, `FileVersion`, and `AssemblyInformationalVersion` if not otherwise specified. The `AssemblyInformationalVersion` will effectively be the same as `VersionInfo.Version` after the workflow runs.
+
+5. Step-by-Step Implementation Instructions for You (Agent)
+
+    Update Workflow File:
+        Create or update the `.github/workflows/release.yml` file with the YAML content from Section 3.
+
+    Create `src/Night/VersionInfo.cs`:
+        Create the `src/Night/VersionInfo.cs` file with the C# code from Section 4. Commit with the initial placeholders.
+
+    Delete `src/Night/VERSION.txt` (if it exists):
+        Ensure this file is removed from the `src/Night/` directory and from source control if previously committed.
+
+    Update `src/Night/Night.csproj`:
+        If the `<Content Include="VERSION.txt">...</Content>` item group exists from a previous plan, remove it. The workflow updates `<Version>` in the .csproj directly.
+
+    Commit and Push Changes:
+        Commit all changes:
+        `git add .github/workflows/release.yml src/Night/VersionInfo.cs src/Night/Night.csproj`
+        (If `VERSION.txt` was tracked, also `git rm src/Night/VERSION.txt`)
+        `git commit -m "refactor: Implement compiled versioning with VersionInfo.cs and update release workflow"`
+        `git push origin main`
+
+6. User Guide for Running the Release Workflow
+
+    Navigate to Actions in your GitHub repository.
+    Select the "Release Night Library (GitHub Release)" workflow.
+    Click `Run workflow`.
+    Enter the pure Semantic Version (e.g., 1.0.0, 0.2.0-beta.1) in the input field. This version will be used for Git tagging, .csproj updates, `VersionInfo.cs` updates, and the GitHub release title.
+    Click `Run workflow`.
+
+7. Tailored Considerations and Best Practices
+
+    `AssemblyInformationalVersion`: The `<Version>` tag set in the `.csproj` by the workflow directly influences the `AssemblyInformationalVersionAttribute` during the build. The `VersionInfo.GetVersion()` method will return the same SemVer string that is also effectively in `AssemblyInformationalVersionAttribute`.
+    `CodeName` Usage: The `CodeName` constant in `VersionInfo.cs` is for your internal tracking and development. It is not automatically included in release artifacts or titles by this workflow. You can manually include it in `CHANGELOG.md` or release notes if desired.
+    Branching Strategy: Unchanged. All operations target the `main` branch by default in the workflow.
+    Testing the Workflow: Test with pre-release SemVer strings.
+
+This revised plan focuses on a compiled-in version string, updated by the GitHub Action, and includes a manual codename field, removing the need for an external `VERSION.txt`.
 
 
 
@@ -5269,6 +5543,64 @@ File: src/Night/Night.csproj
   </ItemGroup>
 
 </Project>
+
+
+
+================================================
+File: src/Night/VersionInfo.cs
+================================================
+// <copyright file="VersionInfo.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+// </copyright>
+
+namespace Night
+{
+  /// <summary>
+  /// Provides information about the Night library, such as its version.
+  /// </summary>
+  public static class VersionInfo
+  {
+    /// <summary>
+    /// Gets the full semantic version string (e.g., "1.0.0", "1.2.3-beta.1").
+    /// This value is updated by the GitHub release Action.
+    /// </summary>
+    public const string Version = "0.0.0-dev"; // Placeholder
+
+    /// <summary>
+    /// Gets the developer-assigned codename for the current version.
+    /// This value is manually updated by the developer.
+    /// </summary>
+    public const string CodeName = "Initial Codename"; // Placeholder
+
+    /// <summary>
+    /// Gets the Semantic Version of the Night library.
+    /// This version is set during the release process.
+    /// </summary>
+    /// <returns>The library's semantic version string.</returns>
+    public static string GetVersion()
+    {
+      return Version;
+    }
+  }
+}
 
 
 
@@ -11083,6 +11415,30 @@ File: src/Night/bin/Debug/net9.0/Night.xml
             before the game loop begins and after SDL has been initialized.
             </summary>
         </member>
+        <member name="T:Night.VersionInfo">
+            <summary>
+            Provides information about the Night library, such as its version.
+            </summary>
+        </member>
+        <member name="F:Night.VersionInfo.Version">
+            <summary>
+            Gets the full semantic version string (e.g., "1.0.0", "1.2.3-beta.1").
+            This value is updated by the GitHub release Action.
+            </summary>
+        </member>
+        <member name="F:Night.VersionInfo.CodeName">
+            <summary>
+            Gets the developer-assigned codename for the current version.
+            This value is manually updated by the developer.
+            </summary>
+        </member>
+        <member name="M:Night.VersionInfo.GetVersion">
+            <summary>
+            Gets the Semantic Version of the Night library.
+            This version is set during the release process.
+            </summary>
+            <returns>The library's semantic version string.</returns>
+        </member>
         <member name="T:Night.FullscreenType">
             <summary>
             Types of fullscreen modes.
@@ -11620,7 +11976,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be20e625485639ede440e3c92f5c623a68ec8792")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+723df3056cff253628733caca021e8f257373604")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -11633,7 +11989,7 @@ using System.Reflection;
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.AssemblyInfoInputs.cache
 ================================================
-1ac9493dce43404e8b8348a3b49eb740e1b11a1e0b2d662b7a10eddfc0b70800
+8b9933267753f05971c1eb094435b8dbbe8c94dc0093cf14ccbb2eea4afb3cd7
 
 
 
@@ -11687,14 +12043,14 @@ File: src/Night/obj/Debug/net9.0/Night.csproj.AssemblyReference.cache
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.csproj.CoreCompileInputs.cache
 ================================================
-f4b58ce18ba7cef5595c058422ff25b7df1016252895ea6c66a06882ae7c79c6
+26753c2bfd9babc1cfd5c8412384c5a78df11cf5ed75abdcf882447a0fb2af31
 
 
 
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/be20e625485639ede440e3c92f5c623a68ec8792/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/723df3056cff253628733caca021e8f257373604/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -14673,6 +15029,30 @@ File: src/SampleGame/bin/Debug/net9.0/Night.xml
             before the game loop begins and after SDL has been initialized.
             </summary>
         </member>
+        <member name="T:Night.VersionInfo">
+            <summary>
+            Provides information about the Night library, such as its version.
+            </summary>
+        </member>
+        <member name="F:Night.VersionInfo.Version">
+            <summary>
+            Gets the full semantic version string (e.g., "1.0.0", "1.2.3-beta.1").
+            This value is updated by the GitHub release Action.
+            </summary>
+        </member>
+        <member name="F:Night.VersionInfo.CodeName">
+            <summary>
+            Gets the developer-assigned codename for the current version.
+            This value is manually updated by the developer.
+            </summary>
+        </member>
+        <member name="M:Night.VersionInfo.GetVersion">
+            <summary>
+            Gets the Semantic Version of the Night library.
+            This version is set during the release process.
+            </summary>
+            <returns>The library's semantic version string.</returns>
+        </member>
         <member name="T:Night.FullscreenType">
             <summary>
             Types of fullscreen modes.
@@ -15336,7 +15716,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be20e625485639ede440e3c92f5c623a68ec8792")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+723df3056cff253628733caca021e8f257373604")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -15349,7 +15729,7 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
 ================================================
-fd1e1ef4ea68567b06f41c7bfe1f077791c939fb3ec38bac218438790965a017
+34f9498b3f0de935686fdc0f7bd61fcbefed782782f9b992c1ad8dd37f4ecb2c
 
 
 
@@ -15417,7 +15797,7 @@ dc347d346712591e5aae675a5692bedfe675e498f7c55e8de100f6e2ee179134
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/be20e625485639ede440e3c92f5c623a68ec8792/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/723df3056cff253628733caca021e8f257373604/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -18237,6 +18617,30 @@ File: tests/Night.Tests/bin/Debug/net9.0/Night.xml
             before the game loop begins and after SDL has been initialized.
             </summary>
         </member>
+        <member name="T:Night.VersionInfo">
+            <summary>
+            Provides information about the Night library, such as its version.
+            </summary>
+        </member>
+        <member name="F:Night.VersionInfo.Version">
+            <summary>
+            Gets the full semantic version string (e.g., "1.0.0", "1.2.3-beta.1").
+            This value is updated by the GitHub release Action.
+            </summary>
+        </member>
+        <member name="F:Night.VersionInfo.CodeName">
+            <summary>
+            Gets the developer-assigned codename for the current version.
+            This value is manually updated by the developer.
+            </summary>
+        </member>
+        <member name="M:Night.VersionInfo.GetVersion">
+            <summary>
+            Gets the Semantic Version of the Night library.
+            This version is set during the release process.
+            </summary>
+            <returns>The library's semantic version string.</returns>
+        </member>
         <member name="T:Night.FullscreenType">
             <summary>
             Types of fullscreen modes.
@@ -19882,7 +20286,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be20e625485639ede440e3c92f5c623a68ec8792")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+723df3056cff253628733caca021e8f257373604")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -19895,7 +20299,7 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.AssemblyInfoInputs.cache
 ================================================
-d9d0c8823bd75749e6e66c74082082d79d88646f758d945d53098c61311fcb57
+f7fc7d5c7f928f73008d2dba9d4db4c9c6d0d1e263436747f7b72ae165f7b208
 
 
 
@@ -19964,7 +20368,7 @@ File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.genruntimeconfig.cache
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/be20e625485639ede440e3c92f5c623a68ec8792/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/723df3056cff253628733caca021e8f257373604/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -20809,6 +21213,155 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@38ecb5b593bf0eb19e335c03f97670f792489a8b # v4.7.0
+
+
+
+================================================
+File: .github/workflows/release.yml
+================================================
+name: Release Night Library (GitHub Release)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semantic Version for the release (e.g., 1.0.0, 1.0.0-beta.1). This is the pure SemVer.'
+        required: true
+        type: string
+
+permissions:
+  contents: write # To create commits, tags, and releases
+
+jobs:
+  release:
+    name: Build and Create GitHub Release for Night Library
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      SOLUTION_FILE_PATH: Night.sln
+      MAIN_PROJECT_FILE_PATH: src/Night/Night.csproj
+      VERSION_INFO_FILE_PATH: src/Night/VersionInfo.cs # Path to the version C# file
+      TEST_PROJECT_FILE_PATH: tests/Night.Tests/Night.Tests.csproj
+      PACKAGE_OUTPUT_DIR: ./packages
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to analyze history
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Validate Version Input (SemVer)
+        run: |
+          version_input="${{ github.event.inputs.version }}"
+          semver_regex="^([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+          if [[ ! "$version_input" =~ $semver_regex ]]; then
+            echo "Error: Invalid version format. Input must be a pure Semantic Version (e.g., 1.0.0, 1.2.3-beta.1)."
+            exit 1
+          fi
+          echo "SemVer input '$version_input' is valid."
+        shell: bash
+
+      - name: Update Version in .csproj
+        id: update_version_csproj
+        run: |
+          $newSemVer = "${{ github.event.inputs.version }}"
+          $projectFilePath = "${{ env.MAIN_PROJECT_FILE_PATH }}"
+          Write-Host "Attempting to update <Version> in '$projectFilePath' to '$newSemVer'"
+          [xml]$csproj = Get-Content -Path $projectFilePath -Raw
+          $versionNode = $csproj.SelectSingleNode("//PropertyGroup/Version")
+          if (-not $versionNode) {
+              $propertyGroupNode = $csproj.SelectSingleNode("//PropertyGroup")
+              if (-not $propertyGroupNode) {
+                  $propertyGroupNode = $csproj.CreateElement("PropertyGroup")
+                  $csproj.Project.AppendChild($propertyGroupNode) | Out-Null
+              }
+              $versionNode = $csproj.CreateElement("Version")
+              $propertyGroupNode.AppendChild($versionNode) | Out-Null
+          }
+          $versionNode.'#text' = $newSemVer
+          $csproj.Save($projectFilePath)
+          Write-Host "Saved <Version> $newSemVer to '$projectFilePath'"
+          echo "version_tag=v$newSemVer" >> $GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Update Version in VersionInfo.cs
+        run: |
+          $newSemVer = "${{ github.event.inputs.version }}"
+          $versionInfoFilePath = "${{ env.VERSION_INFO_FILE_PATH }}"
+          Write-Host "Attempting to update Version constant in '$versionInfoFilePath' to '$newSemVer'"
+          $content = Get-Content $versionInfoFilePath -Raw
+          # Regex to find 'public const string Version = ".*";' and replace the version string part
+          $updatedContent = $content -replace '(?<=public const string Version = ")([^"]*)(?=";)', $newSemVer
+          Set-Content -Path $versionInfoFilePath -Value $updatedContent
+          Write-Host "Updated Version constant in '$versionInfoFilePath'"
+        shell: pwsh
+
+      - name: Commit Version Changes
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add "${{ env.MAIN_PROJECT_FILE_PATH }}" # .csproj
+          git add "${{ env.VERSION_INFO_FILE_PATH }}" # VersionInfo.cs
+          git commit -m "Update version to ${{ github.event.inputs.version }} [skip ci]"
+          echo "Committed version updates for ${{ github.event.inputs.version }}"
+        shell: bash
+
+      - name: Create Git Tag
+        run: |
+          git tag "${{ steps.update_version_csproj.outputs.version_tag }}"
+          echo "Created git tag ${{ steps.update_version_csproj.outputs.version_tag }}"
+        shell: bash
+
+      - name: Push Commit and Tag
+        run: |
+          git push origin HEAD:main --follow-tags
+          echo "Pushed commit and tag to remote."
+        shell: bash
+
+      - name: Build Solution
+        run: dotnet build "${{ env.SOLUTION_FILE_PATH }}" -c Release /p:Version="${{ github.event.inputs.version }}"
+
+      - name: Run Tests
+        run: dotnet test "${{ env.SOLUTION_FILE_PATH }}" --no-build -c Release
+
+      - name: Create Package Output Directory
+        run: mkdir -p "${{ env.PACKAGE_OUTPUT_DIR }}"
+
+      - name: Package Library
+        run: |
+          dotnet pack "${{ env.MAIN_PROJECT_FILE_PATH }}" `
+            --no-build `
+            -c Release `
+            -o "${{ env.PACKAGE_OUTPUT_DIR }}" `
+            /p:Version="${{ github.event.inputs.version }}" `
+            /p:IncludeSymbols=true `
+            /p:SymbolPackageFormat=snupkg
+        shell: pwsh
+
+      - name: List Packaged Files
+        run: ls -R "${{ env.PACKAGE_OUTPUT_DIR }}"
+        shell: bash
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION_TAG: ${{ steps.update_version_csproj.outputs.version_tag }}
+          RELEASE_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          gh release create "$VERSION_TAG" \
+            "${{ env.PACKAGE_OUTPUT_DIR }}"/*.nupkg \
+            "${{ env.PACKAGE_OUTPUT_DIR }}"/*.snupkg \
+            --title "Release $RELEASE_VERSION" \
+            --notes "Night Engine Release $RELEASE_VERSION" \
+            --draft=false \
+            --prerelease=$([[ "$RELEASE_VERSION" == *-* ]] && echo true || echo false)
+        shell: bash
 
 
 
