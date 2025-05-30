@@ -16,8 +16,6 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive' # Ensure submodules like SDL are checked out
-        autocrlf: false
-        eol: lf
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
