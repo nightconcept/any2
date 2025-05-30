@@ -1,13 +1,14 @@
 {
   "window": {
-    "title": "Configured by JSON!",
+    "title": "Night Sample Game (from config!)",
+    "icon": "assets/icon.ico",
     "width": 1024,
     "height": 768,
     "resizable": true,
-    "vsync": 0,
+    "vsync": false,
     "fullscreen": false,
     "borderless": true,
     "x": 100,
     "y": 100
   }
-} 
+}

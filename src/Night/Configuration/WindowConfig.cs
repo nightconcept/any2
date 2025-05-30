@@ -30,70 +30,88 @@ namespace Night
   public class WindowConfig
   {
     /// <summary>
-    /// Gets or sets the title of the window.
+    /// Gets or sets the window title.
     /// </summary>
     [JsonPropertyName("title")]
-    public string Title { get; set; } = "Untitled";
+    public string? Title { get; set; } = "Night Game"; // Default title
 
     /// <summary>
-    /// Gets or sets the path to the window icon image file. Null for no icon.
+    /// Gets or sets the path to the window icon file. Relative to the game's root directory.
     /// </summary>
     [JsonPropertyName("icon")]
-    public string? Icon { get; set; } = null;
+    public string? IconPath { get; set; } = null;
 
     /// <summary>
-    /// Gets or sets the initial width of the window in pixels.
+    /// Gets or sets the window width in pixels.
     /// </summary>
     [JsonPropertyName("width")]
     public int Width { get; set; } = 800;
 
     /// <summary>
-    /// Gets or sets the initial height of the window in pixels.
+    /// Gets or sets the window height in pixels.
     /// </summary>
     [JsonPropertyName("height")]
     public int Height { get; set; } = 600;
 
     /// <summary>
-    /// Gets or sets a value indicating whether the window should be borderless.
+    /// Gets or sets the x-coordinate of the window's top-left corner on the screen. Null for centered.
     /// </summary>
-    [JsonPropertyName("borderless")]
-    public bool Borderless { get; set; } = false;
+    [JsonPropertyName("x")]
+    public int? X { get; set; } = null;
 
     /// <summary>
-    /// Gets or sets a value indicating whether the window should be resizable.
+    /// Gets or sets the y-coordinate of the window's top-left corner on the screen. Null for centered.
+    /// </summary>
+    [JsonPropertyName("y")]
+    public int? Y { get; set; } = null;
+
+    /// <summary>
+    /// Gets or sets the minimum window width.
+    /// </summary>
+    [JsonPropertyName("minwidth")]
+    public int MinWidth { get; set; } = 1; // LÖVE default
+
+    /// <summary>
+    /// Gets or sets the minimum window height.
+    /// </summary>
+    [JsonPropertyName("minheight")]
+    public int MinHeight { get; set; } = 1; // LÖVE default
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the window is resizable.
     /// </summary>
     [JsonPropertyName("resizable")]
     public bool Resizable { get; set; } = false;
 
     /// <summary>
-    /// Gets or sets the minimum width of the window if resizable.
+    /// Gets or sets a value indicating whether the window has a border.
     /// </summary>
-    [JsonPropertyName("minwidth")]
-    public int MinWidth { get; set; } = 1;
+    [JsonPropertyName("borderless")]
+    public bool Borderless { get; set; } = false;
 
     /// <summary>
-    /// Gets or sets the minimum height of the window if resizable.
-    /// </summary>
-    [JsonPropertyName("minheight")]
-    public int MinHeight { get; set; } = 1;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the window should start in fullscreen mode.
+    /// Gets or sets a value indicating whether the window is fullscreen.
     /// </summary>
     [JsonPropertyName("fullscreen")]
     public bool Fullscreen { get; set; } = false;
 
     /// <summary>
-    /// Gets or sets the type of fullscreen mode ("desktop" or "exclusive").
+    /// Gets or sets the type of fullscreen mode. Expected values: "desktop" or "exclusive".
     /// </summary>
     [JsonPropertyName("fullscreentype")]
-    public string FullscreenType { get; set; } = "desktop"; // "desktop" or "exclusive"
+    public string FullscreenType { get; set; } = "desktop"; // LÖVE default
 
     /// <summary>
-    /// Gets or sets the VSync mode. -1 for adaptive, 0 for disabled, 1 for enabled.
+    /// Gets or sets a value indicating whether VSync is enabled.
     /// </summary>
     [JsonPropertyName("vsync")]
-    public int VSync { get; set; } = 1; // -1 adaptive, 0 disabled, 1 enabled
+    public bool VSync { get; set; } = true; // LÖVE default
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to enable high-DPI mode if available.
+    /// </summary>
+    [JsonPropertyName("highdpi")]
+    public bool HighDPI { get; set; } = false; // LÖVE default
 
     /// <summary>
     /// Gets or sets the multisample anti-aliasing (MSAA) level.
@@ -120,27 +138,9 @@ namespace Night
     public int Display { get; set; } = 1; // 1-indexed
 
     /// <summary>
-    /// Gets or sets a value indicating whether to enable High DPI mode if available.
-    /// </summary>
-    [JsonPropertyName("highdpi")]
-    public bool HighDPI { get; set; } = false;
-
-    /// <summary>
     /// Gets or sets a value indicating whether to use DPI scaling.
     /// </summary>
     [JsonPropertyName("usedpiscale")]
     public bool UseDPIScale { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets the initial X position of the window. Null for centered.
-    /// </summary>
-    [JsonPropertyName("x")]
-    public int? X { get; set; } = null;
-
-    /// <summary>
-    /// Gets or sets the initial Y position of the window. Null for centered.
-    /// </summary>
-    [JsonPropertyName("y")]
-    public int? Y { get; set; } = null;
   }
 }

@@ -278,7 +278,7 @@ end
   - **Acceptance Criteria:** The engine loads `config.json`. If `game.Load()` doesn't open a window, the engine uses `config.json` values (or defaults) for window width, height, title, resizable, borderless, fullscreen, fullscreen type, VSync, and initial position. The sample game can have its initial window settings overridden by a `config.json` file (once sample game is updated).
   - **Status:** In-Progress
 
-- [ ] **Task 10.8: Setup `docfx` Documentation Generation**
+- [x] **Task 10.8: Setup `docfx` Documentation Generation**
   - **Description:** Integrate `docfx` into the project. Configure it to generate API documentation from C# XML comments for `Night`. Setup a GitHub Actions workflow to build and deploy this documentation to GitHub Pages.
   - **Acceptance Criteria:** API documentation is automatically generated and published to a GitHub Pages site.
   - **Status:** Review
@@ -288,10 +288,23 @@ end
   - **Acceptance Criteria:** A clear testing strategy for 0.1.0 is in place. Any new critical utility functions have basic unit tests.
   - **Status:** In-Progress
 
-- [ ] **Task 10.10: Create Project Logo and Icon**
+- [x] **Task 10.10: Create Project Logo and Icon**
   - **Description:** Design or procure a logo for Night Engine. Prepare application icon files (e.g., .ico, .icns) and integrate them so the `Night.SampleGame` window uses the icon. `Night.Window.SetIcon()` would be needed if not already planned. (Roadmap `love.window` has `setIcon` [cite: 1291, 1327] as out of scope, may need to be scoped in for this).
-  - **Acceptance Criteria:** Project has a logo. Sample game displays a custom window icon.
-  - **Status:** To Do
+  - **Implementation Details:**
+    - [x] Design/Procure Night Engine logo and create `.ico` and `.icns` files. (Responsibility of User)
+    - [x] Add `private static string? currentIconPath;` to `Night.Window`.
+    - [x] Implement `public static bool Night.Window.SetIcon(string imagePath)`:
+      - Takes a file path string (e.g., ".ico", ".bmp"). Uses `SDL.LoadBMP` for loading.
+      - Sets the window icon using `SDL.SetWindowIcon`.
+      - Converts loaded surface to RGBA8888 format, extracts pixel data into a `Night.ImageData` object, and stores it.
+    - [x] Implement `public static Night.ImageData? Night.Window.GetIcon()`:
+      - Returns the stored `Night.ImageData` object (or null).
+    - [x] Update `Night.Configuration.GameConfig` to include `IconPath` in `WindowConfig` (and split config classes to separate files).
+    - [x] Update `Night.FrameworkLoop.Run()` (now `Framework.Run()`) to load icon from `config.json` if specified.
+    - [x] Update `Night.SampleGame` to call `SetIcon` (commented out, driven by config) and include a sample icon file (user to provide actual file, config updated).
+    - [x] Update `docs/love2d-api/modules/window.md` for `SetIcon` and `GetIcon`.
+  - **Acceptance Criteria:** Project has a logo. Sample game displays a custom window icon. `Night.Window.GetIcon()` returns the path of the set icon.
+  - **Status:** In-Progress
 
 - [x] **Task 10.11: Establish Basic CI Workflow**
   - **Description:** Review deactivated CI workflows. Create a new, active GitHub Actions workflow that, at a minimum, builds `Night` and `SampleGame` on push/PR to main branch for Windows, Linux, and macOS. Run any automated tests established in Task 10.9.

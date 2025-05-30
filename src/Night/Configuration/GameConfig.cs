@@ -89,4 +89,8 @@ namespace Night
     [JsonPropertyName("modules")]
     public ModulesConfig Modules { get; set; } = new ModulesConfig();
   }
+
+  // NOTE: The definitions for AudioConfig, WindowConfig, and ModulesConfig
+  // have been moved to their own files: AudioConfig.cs, WindowConfig.cs, and ModulesConfig.cs
+  // This is to resolve SA1402: File may only contain a single type.
 }

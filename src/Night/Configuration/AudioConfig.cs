@@ -30,13 +30,8 @@ namespace Night
   public class AudioConfig
   {
     /// <summary>
-    /// Gets or sets a value indicating whether the microphone should be enabled.
-    /// </summary>
-    [JsonPropertyName("mic")]
-    public bool Mic { get; set; } = false;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the game's audio should mix with system audio.
+    /// Gets or sets a value indicating whether to mix game audio with system audio (true) or mute system audio (false).
+    /// Relevant primarily for mobile platforms.
     /// </summary>
     [JsonPropertyName("mixwithsystem")]
     public bool MixWithSystem { get; set; } = true;

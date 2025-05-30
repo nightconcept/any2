@@ -36,6 +36,7 @@
 ### Types (Graphics)
 
 - Color
+- ImageData
 - PointF
 - Rectangle
 - Sprite
@@ -134,10 +135,13 @@
 - GetFullscreen() - love.window.getFullscreen
 - GetFullscreenModes() - love.window.getFullscreenModes
   - GetFullscreenModes(int displayIndex)
+- GetIcon() - love.window.getIcon
 - GetMode() - love.window.getMode
 - IsOpen() - love.window.isOpen
 - SetFullscreen() - love.window.setFullscreen
   - SetFullscreen(bool fullscreen, FullscreenType fsType)
+- SetIcon() - love.window.setIcon
+  - SetIcon(string imagePath)
 - SetMode() - love.window.setMode
   - SetMode(int width, int height, SDL.WindowFlags flags)
 - SetTitle() - love.window.setTitle

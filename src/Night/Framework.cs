@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -117,7 +118,7 @@ namespace Night
           return;
         }
 
-        Window.SetTitle(windowConfig.Title);
+        Window.SetTitle(windowConfig.Title ?? "Night Game");
 
         if (windowConfig.Fullscreen)
         {
@@ -132,7 +133,7 @@ namespace Night
 
         if (Window.RendererPtr != nint.Zero)
         {
-          if (!SDL.SetRenderVSync(Window.RendererPtr, windowConfig.VSync))
+          if (!SDL.SetRenderVSync(Window.RendererPtr, windowConfig.VSync ? 1 : 0))
           {
             Console.WriteLine($"Night.Framework.Run: Failed to set initial VSync mode from configuration: {SDL.GetError()}");
           }
@@ -141,6 +142,27 @@ namespace Night
         if (windowConfig.X.HasValue && windowConfig.Y.HasValue && Window.Handle != nint.Zero)
         {
           _ = SDL.SetWindowPosition(Window.Handle, windowConfig.X.Value, windowConfig.Y.Value);
+        }
+
+        // Set window icon if specified in config
+        if (!string.IsNullOrEmpty(windowConfig.IconPath) && Window.Handle != nint.Zero)
+        {
+          // Assuming IconPath is relative to the game's executable directory or a common assets folder.
+          // AppContext.BaseDirectory should give the directory where the .exe is.
+          // If your assets are in a subdirectory like "assets", you might need:
+          // string iconFullPath = System.IO.Path.Combine(AppContext.BaseDirectory, "assets", windowConfig.IconPath);
+          // For now, let's assume IconPath can be resolved directly or is absolute.
+          // A more robust solution would involve the Filesystem module to resolve paths.
+          string iconFullPath = windowConfig.IconPath;
+          if (!Path.IsPathRooted(iconFullPath))
+          {
+            iconFullPath = Path.Combine(AppContext.BaseDirectory, iconFullPath);
+          }
+
+          if (!Window.SetIcon(iconFullPath))
+          {
+            Console.WriteLine($"Night.Framework.Run: Failed to set window icon from configuration: '{iconFullPath}'. Check path and image format.");
+          }
         }
 
         // End of initial window setup

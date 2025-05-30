@@ -38,6 +38,7 @@ namespace Night
     private static bool isVideoInitialized = false;
     private static bool isWindowOpen = false;
     private static FullscreenType currentFullscreenType = FullscreenType.Desktop;
+    private static ImageData? currentIconData = null;
 
     /// <summary>
     /// Gets the pointer to the internal SDL renderer. For use by Night.Graphics.
@@ -48,6 +49,112 @@ namespace Night
     /// Gets the handle to the internal SDL window. For use by other Night modules or internal methods.
     /// </summary>
     internal static nint Handle => window;
+
+    /// <summary>
+    /// Sets the window icon.
+    /// </summary>
+    /// <param name="imagePath">The path to the icon image file (e.g., .ico, .png, .bmp).
+    /// Uses SDL_image for loading, so supports various formats.</param>
+    /// <returns>True if the icon was set successfully, false otherwise.</returns>
+    public static bool SetIcon(string imagePath)
+    {
+      currentIconData = null;
+
+      if (window == nint.Zero)
+      {
+        Console.WriteLine("Night.Window.SetIcon: Window handle is null. Icon not set.");
+        return false;
+      }
+
+      if (string.IsNullOrEmpty(imagePath))
+      {
+        Console.WriteLine("Night.Window.SetIcon: imagePath is null or empty. Icon not set.");
+        return false;
+      }
+
+      _ = SDL.ClearError();
+      nint loadedSurfacePtr = SDL3.Image.Load(imagePath);
+      if (loadedSurfacePtr == nint.Zero)
+      {
+        string imgError = SDL.GetError();
+        Console.WriteLine($"Night.Window.SetIcon: Failed to load image '{imagePath}' using SDL_image. Error: {imgError}");
+        return false;
+      }
+
+      SDL.PixelFormat targetFormatEnum = SDL.PixelFormat.RGBA8888;
+      nint convertedSurfacePtr = SDL.ConvertSurface(loadedSurfacePtr, targetFormatEnum);
+
+      if (convertedSurfacePtr == nint.Zero)
+      {
+        string sdlError = SDL.GetError();
+        Console.WriteLine($"Night.Window.SetIcon: Failed to convert surface to target format. SDL Error: {sdlError}");
+        SDL.DestroySurface(loadedSurfacePtr);
+        return false;
+      }
+
+      try
+      {
+        if (!SDL.SetWindowIcon(window, convertedSurfacePtr))
+        {
+          string sdlError = SDL.GetError();
+          Console.WriteLine($"Night.Window.SetIcon: SDL_SetWindowIcon failed. SDL Error: {sdlError}");
+          return false;
+        }
+
+        SDL.Surface convertedSurfaceStruct = Marshal.PtrToStructure<SDL.Surface>(convertedSurfacePtr);
+        int width = convertedSurfaceStruct.Width;
+        int height = convertedSurfaceStruct.Height;
+
+        IntPtr detailsPtr = SDL.GetPixelFormatDetails(convertedSurfaceStruct.Format);
+        if (detailsPtr == IntPtr.Zero)
+        {
+          string sdlError = SDL.GetError();
+          Console.WriteLine($"Night.Window.SetIcon: Failed to get pixel format details. SDL Error: {sdlError}");
+          return false;
+        }
+
+        SDL.PixelFormatDetails pixelFormatDetails = Marshal.PtrToStructure<SDL.PixelFormatDetails>(detailsPtr);
+        int bytesPerPixel = pixelFormatDetails.BytesPerPixel;
+
+        if (bytesPerPixel != 4)
+        {
+          Console.WriteLine($"Night.Window.SetIcon: Converted surface is not 4bpp as expected for RGBA. Actual bpp: {bytesPerPixel}, Format: {convertedSurfaceStruct.Format}");
+          return false;
+        }
+
+        byte[] pixelData = new byte[width * height * bytesPerPixel];
+        Marshal.Copy(convertedSurfaceStruct.Pixels, pixelData, 0, pixelData.Length);
+
+        currentIconData = new ImageData(width, height, pixelData);
+        return true;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine($"Night.Window.SetIcon: Error processing surface or creating ImageData. Error: {e.Message}");
+        return false;
+      }
+      finally
+      {
+        if (convertedSurfacePtr != nint.Zero)
+        {
+          SDL.DestroySurface(convertedSurfacePtr);
+        }
+
+        if (loadedSurfacePtr != nint.Zero)
+        {
+          SDL.DestroySurface(loadedSurfacePtr);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the image data of the currently set window icon.
+    /// </summary>
+    /// <returns>The <see cref="ImageData"/> of the icon, or null if no icon has been set or an error occurred.</returns>
+    public static ImageData? GetIcon()
+    {
+      return currentIconData;
+    }
 
     /// <summary>
     ///     Sets the display mode and properties of the window.
@@ -68,7 +175,6 @@ namespace Night
         isVideoInitialized = true;
       }
 
-      // Clean up existing window and renderer
       if (window != nint.Zero)
       {
         if (renderer != nint.Zero)
@@ -312,7 +418,7 @@ namespace Night
       }
 
       var modesList = new List<(int Width, int Height)>();
-      var uniqueModes = new HashSet<(int Width, int Height)>(); // Keep track of unique modes
+      var uniqueModes = new HashSet<(int Width, int Height)>();
 
       uint[]? actualDisplayIDs = SDL.GetDisplays(out int displayCount);
       if (actualDisplayIDs == null || displayCount <= 0 || displayIndex < 0 || displayIndex >= displayCount)
@@ -444,7 +550,13 @@ namespace Night
     /// <returns>The equivalent value in density-independent units.</returns>
     public static float FromPixels(float value)
     {
-      return value / GetDPIScale();
+      float dpiScale = GetDPIScale();
+      if (dpiScale == 0f)
+      {
+        return value;
+      }
+
+      return value / dpiScale;
     }
 
     /// <summary>
