@@ -1,13 +1,16 @@
-using System;
-using System.IO;
-using System.Runtime.InteropServices;
-
-using Night;
-
-using SDL3;
+// <copyright file="Graphics.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+  using System.IO;
+  using System.Runtime.InteropServices;
+
+  using Night;
+  using SDL3;
+
   /// <summary>
   /// Provides functionality for drawing graphics.
   /// Mimics Love2D's love.graphics module.
@@ -63,6 +66,7 @@ namespace Night
         Console.WriteLine($"Error in Graphics.NewImage: Failed to create texture from surface for '{filePath}'. SDL Error: {sdlError}");
         return null;
       }
+
       return new Sprite(texturePtr, width, height);
     }
 
@@ -217,6 +221,7 @@ namespace Night
         {
           lineVertices[i] = new SDL.FPoint { X = vertices[i].X, Y = vertices[i].Y };
         }
+
         lineVertices[vertices.Length] = new SDL.FPoint { X = vertices[0].X, Y = vertices[0].Y }; // Close the polygon
 
         if (!SDL.RenderLines(rendererPtr, lineVertices, lineVertices.Length))
@@ -227,7 +232,10 @@ namespace Night
       }
       else // GraphicsTypes.DrawMode.Fill
       {
-        if (vertices.Length < 3) return;
+        if (vertices.Length < 3)
+        {
+          return;
+        }
 
         float[] xy = new float[vertices.Length * 2];
         SDL.FColor[] vertexColors = new SDL.FColor[vertices.Length];
@@ -239,7 +247,7 @@ namespace Night
         for (int i = 0; i < vertices.Length; i++)
         {
           xy[i * 2] = vertices[i].X;
-          xy[i * 2 + 1] = vertices[i].Y;
+          xy[(i * 2) + 1] = vertices[i].Y;
           vertexColors[i] = drawColor;
         }
 
@@ -247,8 +255,8 @@ namespace Night
         for (int i = 0; i < vertices.Length - 2; i++)
         {
           indices[i * 3] = 0;
-          indices[i * 3 + 1] = (byte)(i + 1);
-          indices[i * 3 + 2] = (byte)(i + 2);
+          indices[(i * 3) + 1] = (byte)(i + 1);
+          indices[(i * 3) + 2] = (byte)(i + 2);
         }
 
         GCHandle xyHandle = default;
@@ -278,9 +286,20 @@ namespace Night
         }
         finally
         {
-          if (xyHandle.IsAllocated) xyHandle.Free();
-          if (colorsHandle.IsAllocated) colorsHandle.Free();
-          if (indicesHandle.IsAllocated) indicesHandle.Free();
+          if (xyHandle.IsAllocated)
+          {
+            xyHandle.Free();
+          }
+
+          if (colorsHandle.IsAllocated)
+          {
+            colorsHandle.Free();
+          }
+
+          if (indicesHandle.IsAllocated)
+          {
+            indicesHandle.Free();
+          }
         }
       }
     }
@@ -300,6 +319,7 @@ namespace Night
         Console.WriteLine("Error in Graphics.Circle: Radius must be positive.");
         return;
       }
+
       if (segments < 3)
       {
         Console.WriteLine("Error in Graphics.Circle: Segments must be 3 or greater.");
@@ -312,8 +332,8 @@ namespace Night
       for (int i = 0; i < segments; i++)
       {
         double currentAngle = i * angleStep;
-        float vertX = x + radius * (float)Math.Cos(currentAngle);
-        float vertY = y + radius * (float)Math.Sin(currentAngle);
+        float vertX = x + (radius * (float)Math.Cos(currentAngle));
+        float vertY = y + (radius * (float)Math.Sin(currentAngle));
         circleVertices[i] = new PointF(vertX, vertY);
       }
 
@@ -359,13 +379,13 @@ namespace Night
         X = x,
         Y = y,
         W = sprite.Width * scaleX,
-        H = sprite.Height * scaleY
+        H = sprite.Height * scaleY,
       };
 
       SDL.FPoint centerPointStruct = new SDL.FPoint
       {
         X = offsetX * scaleX,
-        Y = offsetY * scaleY
+        Y = offsetY * scaleY,
       };
 
       double angleInDegrees = rotation * (180.0 / Math.PI);
@@ -393,6 +413,7 @@ namespace Night
         {
           Marshal.FreeHGlobal(dstRectPtr);
         }
+
         if (centerPointPtr != IntPtr.Zero)
         {
           Marshal.FreeHGlobal(centerPointPtr);

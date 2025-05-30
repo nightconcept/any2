@@ -1,7 +1,11 @@
-using System;
+// <copyright file="Types.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+
   /// <summary>
   /// Represents a 2D sprite, typically an image loaded into a texture.
   /// </summary>
@@ -30,9 +34,9 @@ namespace Night
     /// <param name="height">The height of the texture.</param>
     public Sprite(IntPtr texture, int width, int height)
     {
-      Texture = texture;
-      Width = width;
-      Height = height;
+      this.Texture = texture;
+      this.Width = width;
+      this.Height = height;
     }
   }
 }

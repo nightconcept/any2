@@ -1,9 +1,13 @@
-using System;
-
-using SDL3;
+// <copyright file="Enums.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+
+  using SDL3;
+
   /// <summary>
   /// Represents keyboard keys. Values correspond to SDL_Scancode.
   /// </summary>
@@ -64,7 +68,7 @@ namespace Night
     Minus = 45,       // SDL.Scancode.Minus
     Equals = 46,      // SDL.Scancode.Equals
     Leftbracket = 47, // SDL.Scancode.Leftbracket
-    Rightbracket = 48,// SDL.Scancode.Rightbracket
+    Rightbracket = 48, // SDL.Scancode.Rightbracket
     Backslash = 49,   // SDL.Scancode.Backslash
     NonUshash = 50,   // SDL.Scancode.NonUshash
     Semicolon = 51,   // SDL.Scancode.Semicolon

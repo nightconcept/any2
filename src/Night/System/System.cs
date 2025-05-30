@@ -1,7 +1,11 @@
-using SDL3;
+// <copyright file="System.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using SDL3;
+
   /// <summary>
   /// Provides access to system-level information and functions.
   /// </summary>

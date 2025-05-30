@@ -1,7 +1,11 @@
-using System;
+// <copyright file="Structs.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+
   /// <summary>
   /// Represents a color with Red, Green, Blue, and Alpha components. Implements Love2D's RGBA color table.
   /// Each component is a byte value ranging from 0 to 255.
@@ -16,10 +20,10 @@ namespace Night
 
     public Color(byte r, byte g, byte b, byte a = 255)
     {
-      R = r;
-      G = g;
-      B = b;
-      A = a;
+      this.R = r;
+      this.G = g;
+      this.B = b;
+      this.A = a;
     }
 
     // Common color presets
@@ -46,10 +50,10 @@ namespace Night
 
     public Rectangle(int x, int y, int width, int height)
     {
-      X = x;
-      Y = y;
-      Width = width;
-      Height = height;
+      this.X = x;
+      this.Y = y;
+      this.Width = width;
+      this.Height = height;
     }
   }
 
@@ -63,8 +67,8 @@ namespace Night
 
     public PointF(float x, float y)
     {
-      X = x;
-      Y = y;
+      this.X = x;
+      this.Y = y;
     }
   }
 }

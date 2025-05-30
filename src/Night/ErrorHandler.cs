@@ -1,7 +1,11 @@
-using System;
+// <copyright file="ErrorHandler.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+
   /// <summary>
   /// Defines the delegate for handling unhandled exceptions from game code.
   /// </summary>

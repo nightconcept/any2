@@ -1,11 +1,14 @@
-using System;
-
-using Night;
-
-using SDL3;
+// <copyright file="Mouse.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+
+  using Night;
+  using SDL3;
+
   /// <summary>
   /// Provides an interface to the user's mouse.
   /// </summary>
@@ -76,7 +79,11 @@ namespace Night
     /// <param name="visible">True to show the cursor, false to hide it.</param>
     public static void SetVisible(bool visible)
     {
-      if (!Framework.IsInputInitialized) return;
+      if (!Framework.IsInputInitialized)
+      {
+        return;
+      }
+
       if (visible)
       {
         _ = SDL.ShowCursor();
@@ -93,7 +100,11 @@ namespace Night
     /// <param name="grabbed">True to grab the mouse, false to release it.</param>
     public static void SetGrabbed(bool grabbed)
     {
-      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero) return;
+      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero)
+      {
+        return;
+      }
+
       _ = SDL.SetWindowMouseGrab(Window.Handle, grabbed);
     }
 
@@ -104,7 +115,11 @@ namespace Night
     /// <param name="enabled">True to enable relative mode, false to disable it.</param>
     public static void SetRelativeMode(bool enabled)
     {
-      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero) return;
+      if (!Framework.IsInputInitialized || Window.Handle == nint.Zero)
+      {
+        return;
+      }
+
       _ = SDL.SetWindowRelativeMouseMode(Window.Handle, enabled);
     }
   }

@@ -1,35 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-
-using Night;
-using Night.Configuration; // Added for configuration management
-
-using SDL3;
-
-// Namespace for the public Framework API.
 namespace Night
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Diagnostics;
+  using System.Linq;
+  using System.Runtime.InteropServices;
+
+  using Night;
+  using Night.Configuration; // Added for configuration management
+  using SDL3;
+
   /// <summary>
   /// Manages the main game loop and coordination of game states.
   /// Provides the main entry point to run a game.
   /// </summary>
   public static class Framework
   {
-    private static bool _isSdlInitialized = false;
-    private static SDL.InitFlags _initializedSubsystems = 0;
+    private static bool isSdlInitialized = false;
+    private static SDL.InitFlags initializedSubsystems = 0;
 
-    private static int _frameCount = 0;
-    private static double _fpsTimeAccumulator = 0.0;
-    private static List<double> _deltaHistory = new List<double>();
+    private static int frameCount = 0;
+    private static double fpsTimeAccumulator = 0.0;
+    private static List<double> deltaHistory = new List<double>();
     private const int MaxDeltaHistorySamples = 60; // Store up to 1 second of deltas at 60fps
 
-    private static bool _inErrorState = false;
+    private static bool inErrorState = false;
 
     /// <summary>
-    /// A flag indicating whether the core SDL systems, particularly for input,
+    /// Gets a value indicating whether a flag indicating whether the core SDL systems, particularly for input,
     /// have been successfully initialized by this Framework's Run method.
     /// </summary>
     public static bool IsInputInitialized { get; private set; } = false;
@@ -50,7 +48,7 @@ namespace Night
             Arguments = "-productVersion",
             RedirectStandardOutput = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
           };
           using (Process swVersProcess = Process.Start(swVersPsi)!)
           {
@@ -65,7 +63,7 @@ namespace Night
             Arguments = "-r",
             RedirectStandardOutput = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
           };
           using (Process unameProcess = Process.Start(unamePsi)!)
           {
@@ -84,6 +82,7 @@ namespace Night
           Console.WriteLine($"Night.Framework.Run: Could not retrieve detailed macOS version info: {ex.Message}");
         }
       }
+
       // Fallback for non-macOS platforms or if macOS version retrieval fails
       return $"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})";
     }
@@ -114,21 +113,33 @@ namespace Night
 
       try
       {
-        _initializedSubsystems = SDL.InitFlags.Video | SDL.InitFlags.Events;
-        if (!SDL.Init(_initializedSubsystems))
+        initializedSubsystems = SDL.InitFlags.Video | SDL.InitFlags.Events;
+        if (!SDL.Init(initializedSubsystems))
         {
           Console.WriteLine($"Night.Framework.Run: SDL_Init failed: {SDL.GetError()}");
           return;
         }
-        _isSdlInitialized = true;
-        IsInputInitialized = (_initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
+
+        isSdlInitialized = true;
+        IsInputInitialized = (initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
 
         // Setup initial window based on configuration BEFORE game.Load()
         Console.WriteLine("Night.Framework.Run: Initializing window with config/default settings before game.Load().");
         SDL.WindowFlags sdlFlags = (SDL.WindowFlags)0;
-        if (windowConfig.Resizable) sdlFlags |= SDL.WindowFlags.Resizable;
-        if (windowConfig.Borderless) sdlFlags |= SDL.WindowFlags.Borderless;
-        if (windowConfig.HighDPI) sdlFlags |= SDL.WindowFlags.HighPixelDensity;
+        if (windowConfig.Resizable)
+        {
+          sdlFlags |= SDL.WindowFlags.Resizable;
+        }
+
+        if (windowConfig.Borderless)
+        {
+          sdlFlags |= SDL.WindowFlags.Borderless;
+        }
+
+        if (windowConfig.HighDPI)
+        {
+          sdlFlags |= SDL.WindowFlags.HighPixelDensity;
+        }
 
         bool modeSet = Window.SetMode(windowConfig.Width, windowConfig.Height, sdlFlags);
         if (!modeSet)
@@ -163,8 +174,8 @@ namespace Night
         {
           _ = SDL.SetWindowPosition(Window.Handle, windowConfig.X.Value, windowConfig.Y.Value);
         }
-        // End of initial window setup
 
+        // End of initial window setup
         try
         {
           game.Load(); // game.Load() can now use Graphics.NewImage(), and can also call Window.SetMode again to override.
@@ -172,14 +183,14 @@ namespace Night
         catch (Exception e)
         {
           HandleGameException(e, game);
-          if (_inErrorState)
+          if (inErrorState)
           {
             CleanUpSDLAndWindow();
             return;
           }
         }
 
-        // After game.Load(), check if window is still open. 
+        // After game.Load(), check if window is still open.
         // If game.Load() called Window.Close() or failed to maintain a window, we should not continue.
         if (!Window.IsOpen())
         {
@@ -187,50 +198,48 @@ namespace Night
           CleanUpSDLAndWindow(); // Ensure cleanup if window was closed by game.Load()
           return;
         }
+
         // If game.Load() *did* change window settings (e.g. VSync via a new SetMode call),
         // we don't re-apply config VSync here unless we have a way to know it wasn't touched by game.
         // The current Window.SetMode creates a new renderer, so VSync would be reset anyway if game called SetMode.
         // So, if game called SetMode, it's responsible for its own VSync if it differs from config default for new renderer.
         // If game didn't call SetMode, our initial VSync setting stands.
-
         Night.Timer.Initialize();
 
-        _frameCount = 0;
-        _fpsTimeAccumulator = 0.0;
-        _deltaHistory.Clear();
-
+        frameCount = 0;
+        fpsTimeAccumulator = 0.0;
+        deltaHistory.Clear();
 
         // Main game loop
-        while (Window.IsOpen() && !_inErrorState)
+        while (Window.IsOpen() && !inErrorState)
         {
-
           // Calculate DeltaTime by calling Night.Timer.Step()
           double deltaTime = Night.Timer.Step();
 
           // FPS Calculation
-          _frameCount++;
-          _fpsTimeAccumulator += deltaTime;
-          if (_fpsTimeAccumulator >= 1.0)
+          frameCount++;
+          fpsTimeAccumulator += deltaTime;
+          if (fpsTimeAccumulator >= 1.0)
           {
-            Night.Timer.CurrentFPS = _frameCount;
-            _frameCount = 0;
-            _fpsTimeAccumulator -= 1.0; // Subtract 1 second, keep remainder for accuracy
+            Night.Timer.CurrentFPS = frameCount;
+            frameCount = 0;
+            fpsTimeAccumulator -= 1.0; // Subtract 1 second, keep remainder for accuracy
           }
 
           // Average Delta Calculation
-          _deltaHistory.Add(deltaTime);
-          if (_deltaHistory.Count > MaxDeltaHistorySamples)
+          deltaHistory.Add(deltaTime);
+          if (deltaHistory.Count > MaxDeltaHistorySamples)
           {
-            _deltaHistory.RemoveAt(0); // Keep the list size bounded
-          }
-          if (_deltaHistory.Count > 0)
-          {
-            Night.Timer.CurrentAverageDelta = _deltaHistory.Average();
+            deltaHistory.RemoveAt(0); // Keep the list size bounded
           }
 
+          if (deltaHistory.Count > 0)
+          {
+            Night.Timer.CurrentAverageDelta = deltaHistory.Average();
+          }
 
           // Event Processing
-          while (SDL.PollEvent(out SDL.Event e) && !_inErrorState)
+          while (SDL.PollEvent(out SDL.Event e) && !inErrorState)
           {
             var eventType = (SDL.EventType)e.Type;
 
@@ -246,8 +255,7 @@ namespace Night
                 game.KeyPressed(
                     (KeySymbol)e.Key.Key,
                     (KeyCode)e.Key.Scancode,
-                    e.Key.Repeat
-                );
+                    e.Key.Repeat);
               }
               catch (Exception exUser)
               {
@@ -260,8 +268,7 @@ namespace Night
               {
                 game.KeyReleased(
                     (KeySymbol)e.Key.Key,
-                    (KeyCode)e.Key.Scancode
-                );
+                    (KeyCode)e.Key.Scancode);
               }
               catch (Exception exUser)
               {
@@ -277,8 +284,7 @@ namespace Night
                     (int)e.Button.Y,
                     (MouseButton)e.Button.Button,
                     e.Button.Which == SDL.TouchMouseID, // istouch
-                    e.Button.Clicks
-                );
+                    e.Button.Clicks);
               }
               catch (Exception exUser)
               {
@@ -294,18 +300,18 @@ namespace Night
                     (int)e.Button.Y,
                     (MouseButton)e.Button.Button,
                     e.Button.Which == SDL.TouchMouseID, // istouch
-                    e.Button.Clicks
-                );
+                    e.Button.Clicks);
               }
               catch (Exception exUser)
               {
                 HandleGameException(exUser, game);
               }
             }
+
             // TODO: Add other event handling (mouse, etc.) as per future tasks.
           }
 
-          if (_inErrorState) // Check if error occurred during event processing
+          if (inErrorState) // Check if error occurred during event processing
           {
             // Error handler (Default or custom) should have run.
             // Default handler enters its own loop or prepares for exit.
@@ -315,7 +321,7 @@ namespace Night
           }
 
           // Update
-          if (!_inErrorState) // Do not update if an error has occurred and is being handled
+          if (!inErrorState) // Do not update if an error has occurred and is being handled
           {
             try
             {
@@ -324,12 +330,15 @@ namespace Night
             catch (Exception exUser)
             {
               HandleGameException(exUser, game);
-              if (_inErrorState) break; // Exit main loop if error sets state
+              if (inErrorState)
+              {
+                break; // Exit main loop if error sets state
+              }
             }
           }
 
           // Draw
-          if (!_inErrorState) // Do not draw if an error has occurred and is being handled
+          if (!inErrorState) // Do not draw if an error has occurred and is being handled
           {
             try
             {
@@ -344,9 +353,13 @@ namespace Night
             catch (Exception exUser)
             {
               HandleGameException(exUser, game);
+
               // If Draw fails, we typically still want to try and finish the frame/loop iteration
               // unless _inErrorState is set by the handler to signal a desire to stop.
-              if (_inErrorState) break;
+              if (inErrorState)
+              {
+                break;
+              }
             }
           }
         }
@@ -355,20 +368,20 @@ namespace Night
       {
         // This is for errors within Framework.Run itself, not game code.
         Console.WriteLine($"Night.Framework.Run: An UNEXPECTED FRAMEWORK error occurred: {ex.ToString()}");
+
         // Attempt to call default error handler for framework errors too, but without game instance.
         HandleGameException(ex, null);
       }
       finally
       {
         // TODO: Call gameLogic.Quit() if it's added to IGame.
-
         CleanUpSDLAndWindow();
       }
     }
 
     private static void HandleGameException(Exception e, IGame? gameInstance)
     {
-      _inErrorState = true; // Signal that we are now in an error state.
+      inErrorState = true; // Signal that we are now in an error state.
 
       var customHandler = Night.Error.GetHandler();
       if (customHandler != null)
@@ -376,19 +389,27 @@ namespace Night
         try
         {
           customHandler(e);
+
           // If custom handler returns, we assume it handled the error
           // and the game might want to continue or has already quit.
           // For now, we'll still close the window to be safe, unless custom handler re-opens it.
           // This behavior might need refinement.
-          if (Window.IsOpen()) Window.Close();
+          if (Window.IsOpen())
+          {
+            Window.Close();
+          }
         }
         catch (Exception exHandler)
         {
           // Error in the custom error handler itself!
           Console.WriteLine($"Night.Framework.Run: CRITICAL: Exception in custom error handler: {exHandler.ToString()}");
+
           // Fallback to a very minimal default behavior
           Console.WriteLine($"Night.Framework.Run: Original game error: {e.ToString()}");
-          if (Window.IsOpen()) Window.Close(); // Ensure shutdown
+          if (Window.IsOpen())
+          {
+            Window.Close(); // Ensure shutdown
+          }
         }
       }
       else
@@ -412,12 +433,13 @@ namespace Night
         if (!Window.IsOpen() || (Window.RendererPtr == nint.Zero)) // Assuming Graphics.RendererPtr is a good check for active graphics
         {
           Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window or Graphics not initialized. Attempting to set mode...");
+
           // Attempt to set a basic window mode if not already open.
           // Use a default size. WindowFlags can be minimal or Resizable.
           if (Window.SetMode(800, 600, SDL.WindowFlags.Resizable))
           {
             Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window mode set to 800x600.");
-            canDrawError = (Window.RendererPtr != nint.Zero);
+            canDrawError = Window.RendererPtr != nint.Zero;
           }
           else
           {
@@ -435,6 +457,7 @@ namespace Night
           Mouse.SetVisible(true);
           Mouse.SetGrabbed(false);
           Mouse.SetRelativeMode(false);
+
           // Mouse.SetCursor() - Skipped as per plan if complex; SDL default cursor should apply.
         }
       }
@@ -444,16 +467,15 @@ namespace Night
         canDrawError = false; // If reset fails, drawing might be unsafe.
       }
 
-
       if (canDrawError)
       {
         try
         {
           // Simple error display loop
           string fullErrorText = $"Error: {e.Message}\n\n{e.StackTrace}";
+
           // Shorten for display if too long, or make it scrollable if we had font rendering
           // For now, just display what fits or make user copy.
-
           Window.SetTitle($"Error - {gameInstance?.GetType().Name ?? "Night Game"}");
 
           bool runningErrorLoop = true;
@@ -467,6 +489,7 @@ namespace Night
                 Window.Close();
                 break;
               }
+
               if (ev.Type == (uint)SDL.EventType.KeyDown)
               {
                 if (ev.Key.Key == SDL.Keycode.Escape)
@@ -475,6 +498,7 @@ namespace Night
                   Window.Close();
                   break;
                 }
+
                 // Check for Ctrl+C - SDL.Keymod.Ctrl is a flag
                 if (ev.Key.Key == SDL.Keycode.C && ((SDL.GetModState() & SDL.Keymod.Ctrl) != 0))
                 {
@@ -496,17 +520,20 @@ namespace Night
                 }
               }
             }
-            if (!runningErrorLoop) break;
+
+            if (!runningErrorLoop)
+            {
+              break;
+            }
 
             Graphics.Clear(new Color(89, 157, 220, 255)); // Blue background
+
             // Graphics.Print functionality is NOT available.
             // We will just show a blue screen and title. User must check console.
             // If Night.Font was available:
             // Graphics.SetColor(Night.Color.Black);
             // Graphics.Print($"Error: {e.Message}", 10, 10, Window.GetWidth() - 20);
             // Graphics.Print($"Press ESC to quit. Ctrl+C to copy.", 10, Window.GetHeight() - 30);
-
-
             Graphics.Present();
             Timer.Sleep(0.01f); // Sleep for 10ms
           }
@@ -519,11 +546,16 @@ namespace Night
       else
       {
         Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Cannot display visual error. Check console. Press Ctrl+C in console to quit if frozen.");
+
         // Loop to keep process alive for a bit for console reading, or just exit.
         // For now, just let it fall through to finally block.
       }
+
       // Ensure the main loop knows to terminate
-      if (Window.IsOpen()) Window.Close();
+      if (Window.IsOpen())
+      {
+        Window.Close();
+      }
     }
 
     private static void CleanUpSDLAndWindow()
@@ -536,6 +568,7 @@ namespace Night
         Console.WriteLine("Night.Framework.Run (CleanUpSDLAndWindow): Window was still open, attempting to close.");
         Window.Close(); // This will set _isWindowOpen to false
       }
+
       // Window.Shutdown() handles destroying window, renderer, and SDL.QuitSubSystem(SDL.InitFlags.Video)
       // It's important that Shutdown is called AFTER the error handler's visual loop might have used the window/renderer.
       Window.Shutdown();
@@ -545,15 +578,15 @@ namespace Night
 
     private static void CleanUpSDL()
     {
-      if (_isSdlInitialized)
+      if (isSdlInitialized)
       {
         // SDL.QuitSubSystem was already called for Video by Window.Shutdown().
         // We only need to quit other subsystems explicitly initialized by Run if they weren't covered.
         // However, SDL.Quit() handles all initialized subsystems.
         SDL.Quit();
-        _isSdlInitialized = false;
+        isSdlInitialized = false;
         IsInputInitialized = false;
-        _initializedSubsystems = 0;
+        initializedSubsystems = 0;
       }
     }
   }

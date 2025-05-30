@@ -1,7 +1,11 @@
-using System;
+// <copyright file="Enums.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+
   /// <summary>
   /// Represents mouse buttons. Values correspond to SDL_MouseButtonFlags/
   /// SDL3.SDL.Button* constants.
@@ -14,6 +18,6 @@ namespace Night
     Middle = 2,  // Corresponds to SDL.ButtonMiddle
     Right = 3,   // Corresponds to SDL.ButtonRight
     X1 = 4,      // Corresponds to SDL.ButtonX1 (Typically "back")
-    X2 = 5       // Corresponds to SDL.ButtonX2 (Typically "forward")
+    X2 = 5,       // Corresponds to SDL.ButtonX2 (Typically "forward")
   }
 }

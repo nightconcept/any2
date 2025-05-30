@@ -1,7 +1,11 @@
-using System;
+// <copyright file="Structs.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+
   /// <summary>
   /// Represents the display mode of a window, including width, height, and other properties.
   /// </summary>
@@ -11,14 +15,17 @@ namespace Night
     /// Window width.
     /// </summary>
     public int Width;
+
     /// <summary>
     /// Window height.
     /// </summary>
     public int Height;
+
     /// <summary>
     /// Fullscreen (true), or windowed (false).
     /// </summary>
     public bool Fullscreen;
+
     /// <summary>
     /// The type of fullscreen mode used.
     /// </summary>

@@ -1,10 +1,14 @@
-using System;
-using System.IO;
-
-using Night;
+// <copyright file="Filesystem.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+  using System.IO;
+
+  using Night;
+
   /// <summary>
   /// Provides basic file system operations.
   /// Inspired by Love2D's love.filesystem module.
@@ -42,6 +46,7 @@ namespace Night
           {
             type = FileType.File;
           }
+
           size = fileInfo.Length;
           modTime = ((DateTimeOffset)fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
         }
@@ -56,6 +61,7 @@ namespace Night
           {
             type = FileType.Directory;
           }
+
           modTime = ((DateTimeOffset)dirInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
         }
         else
@@ -84,7 +90,10 @@ namespace Night
     /// <returns>The FileSystemInfo object given as an argument, filled with information, or null if nothing exists at the path.</returns>
     public static FileSystemInfo? GetInfo(string path, FileSystemInfo info)
     {
-      if (info == null) return null;
+      if (info == null)
+      {
+        return null;
+      }
 
       var newInfo = GetInfo(path);
       if (newInfo != null)
@@ -94,6 +103,7 @@ namespace Night
         info.ModTime = newInfo.ModTime;
         return info;
       }
+
       return null;
     }
 
@@ -106,7 +116,10 @@ namespace Night
     /// <returns>The FileSystemInfo object given as an argument, filled with information, or null if nothing exists at the path or if it doesn't match the filterType.</returns>
     public static FileSystemInfo? GetInfo(string path, FileType filterType, FileSystemInfo info)
     {
-      if (info == null) return null;
+      if (info == null)
+      {
+        return null;
+      }
 
       var newInfo = GetInfo(path, filterType);
       if (newInfo != null)
@@ -116,6 +129,7 @@ namespace Night
         info.ModTime = newInfo.ModTime;
         return info;
       }
+
       return null;
     }
 

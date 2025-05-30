@@ -1,24 +1,32 @@
-using System;
-using System.IO;
-using System.Text.Json;
-
-using Night;
-using Night.Configuration;
+// <copyright file="ConfigurationManager.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+  using System.IO;
+  using System.Text.Json;
+
+  using Night;
+  using Night.Configuration;
+
   public static class ConfigurationManager
   {
     private static readonly string ConfigFileName = "config.json";
-    private static Night.Configuration.GameConfig _currentConfig = new Night.Configuration.GameConfig();
-    private static bool _isLoaded = false;
+    private static Night.Configuration.GameConfig currentConfig = new Night.Configuration.GameConfig();
+    private static bool isLoaded = false;
 
-    public static Night.Configuration.GameConfig CurrentConfig => _currentConfig;
-    public static bool IsLoaded => _isLoaded;
+    public static Night.Configuration.GameConfig CurrentConfig => currentConfig;
+
+    public static bool IsLoaded => isLoaded;
 
     public static void LoadConfig(string? gameDirectory = null)
     {
-      if (_isLoaded) return;
+      if (isLoaded)
+      {
+        return;
+      }
 
       string effectiveGameDirectory = gameDirectory ?? AppContext.BaseDirectory;
       string configFilePath = Path.Combine(effectiveGameDirectory, ConfigFileName);
@@ -34,12 +42,12 @@ namespace Night
             {
               PropertyNameCaseInsensitive = true,
               AllowTrailingCommas = true,
-              ReadCommentHandling = JsonCommentHandling.Skip
+              ReadCommentHandling = JsonCommentHandling.Skip,
             };
             Night.Configuration.GameConfig? loadedConfig = JsonSerializer.Deserialize<Night.Configuration.GameConfig>(jsonContent, options);
             if (loadedConfig != null)
             {
-              _currentConfig = loadedConfig;
+              currentConfig = loadedConfig;
               Console.WriteLine($"Info: Successfully loaded '{ConfigFileName}' from '{configFilePath}'.");
             }
             else
@@ -65,7 +73,8 @@ namespace Night
       {
         Console.WriteLine($"Info: '{ConfigFileName}' not found at '{configFilePath}'. Using default configuration.");
       }
-      _isLoaded = true;
+
+      isLoaded = true;
     }
   }
 }

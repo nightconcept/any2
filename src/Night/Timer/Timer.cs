@@ -1,23 +1,31 @@
-using System;
-using System.Threading;
-
-using SDL3;
+// <copyright file="Timer.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+  using System.Threading;
+
+  using SDL3;
+
   /// <summary>
   /// Provides high-resolution timing functionality.
   /// </summary>
   public static class Timer
   {
     // _timerStartTime is initialized when the Timer class is first loaded.
-    private static readonly ulong _timerStartTime = SDL.GetPerformanceCounter();
+    private static readonly ulong timerStartTime = SDL.GetPerformanceCounter();
 
     // These are updated by FrameworkLoop.cs or by Timer methods themselves
     internal static int CurrentFPS { get; set; } = 0;
+
     internal static float CurrentDelta { get; set; } = 0.0f;
+
     internal static double CurrentAverageDelta { get; set; } = 0.0;
+
     internal static ulong LastStepTime { get; set; } = 0; // Initialized by Initialize()
+
     internal static ulong PerformanceFrequency { get; private set; } = 1; // Initialized by Initialize(), made private set
 
     /// <summary>
@@ -27,8 +35,13 @@ namespace Night
     internal static void Initialize()
     {
       PerformanceFrequency = SDL.GetPerformanceFrequency();
-      if (PerformanceFrequency == 0) PerformanceFrequency = 1; // Avoid division by zero, though SDL should provide valid freq.
+      if (PerformanceFrequency == 0)
+      {
+        PerformanceFrequency = 1; // Avoid division by zero, though SDL should provide valid freq.
+      }
+
       LastStepTime = SDL.GetPerformanceCounter(); // Initialize for the first call to Step()
+
       // _timerStartTime is already initialized at class load (line 14) and should remain as such
       // to reflect "time since module loaded" for GetTime().
       // Do not re-assign _timerStartTime here.
@@ -40,9 +53,13 @@ namespace Night
     /// <returns>The time in seconds. Given as a decimal, accurate to the microsecond.</returns>
     public static double GetTime()
     {
-      if (PerformanceFrequency == 0) return 0.0;
+      if (PerformanceFrequency == 0)
+      {
+        return 0.0;
+      }
+
       ulong currentTimeCounter = SDL.GetPerformanceCounter();
-      return (double)(currentTimeCounter - _timerStartTime) / PerformanceFrequency;
+      return (double)(currentTimeCounter - timerStartTime) / PerformanceFrequency;
     }
 
     /// <summary>
@@ -56,7 +73,7 @@ namespace Night
 
     /// <summary>
     /// Gets the time elapsed since the last frame, in seconds.
-    /// This is the same value passed to <code>IGame.Update(float deltaTime)</code>.
+    /// This is the same value passed to. <code>IGame.Update(float deltaTime)</code>.
     /// </summary>
     /// <returns>The delta time in seconds.</returns>
     public static float GetDelta()
@@ -86,6 +103,7 @@ namespace Night
       {
         return;
       }
+
       Thread.Sleep(TimeSpan.FromSeconds(seconds));
     }
 
@@ -105,6 +123,7 @@ namespace Night
         ulong elapsedTicks = now - LastStepTime;
         deltaTimeSeconds = (double)elapsedTicks / PerformanceFrequency;
       }
+
       // Clamp deltaTime to avoid large jumps
       if (deltaTimeSeconds > 0.0666) // Approx 15 FPS, or 66.6ms
       {

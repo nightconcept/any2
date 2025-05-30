@@ -1,31 +1,35 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
-using SDL3;
+// <copyright file="Window.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Runtime.InteropServices;
+
+  using SDL3;
+
   /// <summary>
   /// Provides an interface for modifying and retrieving information about the program's window.
   /// </summary>
   public static class Window
   {
-    private static nint _window = nint.Zero;
-    private static nint _renderer = nint.Zero;
-    private static bool _isVideoInitialized = false;
-    private static bool _isWindowOpen = false;
-    private static FullscreenType _currentFullscreenType = FullscreenType.Desktop;
+    private static nint window = nint.Zero;
+    private static nint renderer = nint.Zero;
+    private static bool isVideoInitialized = false;
+    private static bool isWindowOpen = false;
+    private static FullscreenType currentFullscreenType = FullscreenType.Desktop;
 
     // Internal accessor for the renderer, to be used by Night.Graphics
-    internal static nint RendererPtr => _renderer;
+    internal static nint RendererPtr => renderer;
+
     // Internal accessor for the window handle, to be used by other Night modules if needed
     // And for the methods within this class that need the handle, which is now _window.
-    internal static nint Handle => _window;
-
+    internal static nint Handle => window;
 
     /// <summary>
-    ///  	Sets the display mode and properties of the window.
+    ///     Sets the display mode and properties of the window.
     /// </summary>
     /// <param name="width">The width of the window.</param>
     /// <param name="height">The height of the window.</param>
@@ -33,43 +37,46 @@ namespace Night
     /// <returns>True if the mode was set successfully, false otherwise.</returns>
     public static bool SetMode(int width, int height, SDL.WindowFlags flags)
     {
-      if (!_isVideoInitialized)
+      if (!isVideoInitialized)
       {
         if (!SDL.InitSubSystem(SDL.InitFlags.Video))
         {
           return false;
         }
-        _isVideoInitialized = true;
+
+        isVideoInitialized = true;
       }
 
-      if (_window != nint.Zero) // Clean up existing window and renderer
+      if (window != nint.Zero) // Clean up existing window and renderer
       {
-        if (_renderer != nint.Zero)
+        if (renderer != nint.Zero)
         {
-          SDL.DestroyRenderer(_renderer);
-          _renderer = nint.Zero;
+          SDL.DestroyRenderer(renderer);
+          renderer = nint.Zero;
         }
-        SDL.DestroyWindow(_window);
-        _window = nint.Zero;
-        _isWindowOpen = false;
+
+        SDL.DestroyWindow(window);
+        window = nint.Zero;
+        isWindowOpen = false;
       }
 
-      _window = SDL.CreateWindow("Night Engine", width, height, flags);
-      if (_window == nint.Zero)
+      window = SDL.CreateWindow("Night Engine", width, height, flags);
+      if (window == nint.Zero)
       {
-        _isWindowOpen = false;
+        isWindowOpen = false;
         return false;
       }
 
-      _renderer = SDL.CreateRenderer(_window, null);
-      if (_renderer == nint.Zero)
+      renderer = SDL.CreateRenderer(window, null);
+      if (renderer == nint.Zero)
       {
-        SDL.DestroyWindow(_window);
-        _window = nint.Zero;
-        _isWindowOpen = false;
+        SDL.DestroyWindow(window);
+        window = nint.Zero;
+        isWindowOpen = false;
         return false;
       }
-      _isWindowOpen = true;
+
+      isWindowOpen = true;
       return true;
     }
 
@@ -79,12 +86,13 @@ namespace Night
     /// <param name="title">The new window title.</param>
     public static void SetTitle(string title)
     {
-      if (_window == nint.Zero)
+      if (window == nint.Zero)
       {
         string errorMsg = "Error in Night.Window.SetTitle: Window handle is null. Was SetMode called successfully?";
         throw new InvalidOperationException(errorMsg);
       }
-      if (!SDL.SetWindowTitle(_window, title))
+
+      if (!SDL.SetWindowTitle(window, title))
       {
         string sdlError = SDL.GetError();
         throw new Exception($"SDL Error in Night.Window.SetTitle: {sdlError}");
@@ -97,17 +105,17 @@ namespace Night
     /// <returns>True if the window is open, false otherwise.</returns>
     public static bool IsOpen()
     {
-      return _isWindowOpen && _window != nint.Zero;
+      return isWindowOpen && window != nint.Zero;
     }
 
     /// <summary>
     /// Signals that the window should close.
     /// This is typically called by the engine when a quit event is received.
-    /// TODO: Does this need to align with Love2D more? https://love2d.org/wiki/love.window.close
+    /// TODO: Does this need to align with Love2D more? https://love2d.org/wiki/love.window.close.
     /// </summary>
     public static void Close()
     {
-      _isWindowOpen = false;
+      isWindowOpen = false;
     }
 
     /// <summary>
@@ -116,22 +124,25 @@ namespace Night
     /// </summary>
     internal static void Shutdown()
     {
-      if (_renderer != nint.Zero)
+      if (renderer != nint.Zero)
       {
-        SDL.DestroyRenderer(_renderer);
-        _renderer = nint.Zero;
+        SDL.DestroyRenderer(renderer);
+        renderer = nint.Zero;
       }
-      if (_window != nint.Zero)
+
+      if (window != nint.Zero)
       {
-        SDL.DestroyWindow(_window);
-        _window = nint.Zero;
+        SDL.DestroyWindow(window);
+        window = nint.Zero;
       }
-      if (_isVideoInitialized)
+
+      if (isVideoInitialized)
       {
         SDL.QuitSubSystem(SDL.InitFlags.Video);
-        _isVideoInitialized = false;
+        isVideoInitialized = false;
       }
-      _isWindowOpen = false;
+
+      isWindowOpen = false;
     }
 
     /// <summary>
@@ -140,12 +151,17 @@ namespace Night
     /// <returns>The number of currently connected displays.</returns>
     public static int GetDisplayCount()
     {
-      if (!_isVideoInitialized) { EnsureVideoInitialized(); }
+      if (!isVideoInitialized)
+      {
+        EnsureVideoInitialized();
+      }
+
       uint[]? displays = SDL.GetDisplays(out int count);
       if (displays == null || count < 0)
       {
         return 0;
       }
+
       return count;
     }
 
@@ -156,13 +172,17 @@ namespace Night
     /// <returns>A tuple containing the width and height of the desktop, or (0,0) if an error occurs.</returns>
     public static (int Width, int Height) GetDesktopDimensions(int displayIndex = 0)
     {
-      if (!_isVideoInitialized) { EnsureVideoInitialized(); }
+      if (!isVideoInitialized)
+      {
+        EnsureVideoInitialized();
+      }
 
       uint[]? actualDisplayIDs = SDL.GetDisplays(out int displayCount);
       if (actualDisplayIDs == null || displayCount <= 0 || displayIndex < 0 || displayIndex >= displayCount)
       {
         return (0, 0);
       }
+
       uint targetDisplayID = actualDisplayIDs[displayIndex];
 
       SDL.DisplayMode? mode = SDL.GetDesktopDisplayMode(targetDisplayID);
@@ -170,6 +190,7 @@ namespace Night
       {
         return (0, 0);
       }
+
       return (mode.Value.W, mode.Value.H);
     }
 
@@ -181,13 +202,18 @@ namespace Night
     /// fsType indicates the type of fullscreen mode used.</returns>
     public static (bool isFullscreen, FullscreenType fsType) GetFullscreen()
     {
-      if (_window == nint.Zero) return (false, _currentFullscreenType);
-      var flags = SDL.GetWindowFlags(_window);
+      if (window == nint.Zero)
+      {
+        return (false, currentFullscreenType);
+      }
+
+      var flags = SDL.GetWindowFlags(window);
       if ((flags & SDL.WindowFlags.Fullscreen) != 0)
       {
-        return (true, _currentFullscreenType);
+        return (true, currentFullscreenType);
       }
-      return (false, _currentFullscreenType);
+
+      return (false, currentFullscreenType);
     }
 
     /// <summary>
@@ -199,22 +225,26 @@ namespace Night
     /// <returns>True if the operation was successful, false otherwise.</returns>
     public static bool SetFullscreen(bool fullscreen, FullscreenType fsType = FullscreenType.Desktop)
     {
-      if (_window == nint.Zero) return false;
+      if (window == nint.Zero)
+      {
+        return false;
+      }
 
       if (fullscreen)
       {
-        _currentFullscreenType = fsType;
+        currentFullscreenType = fsType;
         if (fsType == FullscreenType.Exclusive)
         {
-          uint displayID = SDL.GetDisplayForWindow(_window);
+          uint displayID = SDL.GetDisplayForWindow(window);
           if (displayID == 0 && SDL.GetError() != null && SDL.GetError().Length > 0)
           {
             return false;
           }
+
           SDL.DisplayMode? dm = SDL.GetDesktopDisplayMode(displayID);
           if (dm.HasValue)
           {
-            if (!SDL.SetWindowFullscreenMode(_window, dm.Value))
+            if (!SDL.SetWindowFullscreenMode(window, dm.Value))
             {
               return false;
             }
@@ -226,24 +256,26 @@ namespace Night
         }
         else // FullscreenType.Desktop
         {
-          if (!SDL.SetWindowFullscreenMode(_window, nint.Zero))
+          if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
           {
           }
-          if (!SDL.SetWindowBordered(_window, false))
+
+          if (!SDL.SetWindowBordered(window, false))
           {
             return false;
           }
 
-          uint displayID = SDL.GetDisplayForWindow(_window);
+          uint displayID = SDL.GetDisplayForWindow(window);
           if (displayID == 0 && SDL.GetError() != null && SDL.GetError().Length > 0)
           {
             return false;
           }
+
           var (desktopW, desktopH) = GetDesktopDimensionsForDisplayID(displayID);
           if (desktopW > 0 && desktopH > 0)
           {
-            _ = SDL.SetWindowPosition(_window, 0, 0);
-            if (!SDL.SetWindowSize(_window, desktopW, desktopH))
+            _ = SDL.SetWindowPosition(window, 0, 0);
+            if (!SDL.SetWindowSize(window, desktopW, desktopH))
             {
               return false;
             }
@@ -256,16 +288,19 @@ namespace Night
       }
       else // Not fullscreen (go windowed)
       {
-        _currentFullscreenType = FullscreenType.Desktop;
-        if (!SDL.SetWindowFullscreenMode(_window, nint.Zero))
+        currentFullscreenType = FullscreenType.Desktop;
+        if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
         {
         }
-        if (!SDL.SetWindowBordered(_window, true))
+
+        if (!SDL.SetWindowBordered(window, true))
         {
           return false;
         }
-        _ = SDL.RestoreWindow(_window);
+
+        _ = SDL.RestoreWindow(window);
       }
+
       return true;
     }
 
@@ -276,7 +311,11 @@ namespace Night
     /// <returns>A list of (Width, Height) tuples representing available modes, or an empty list on error.</returns>
     public static List<(int Width, int Height)> GetFullscreenModes(int displayIndex = 0)
     {
-      if (!_isVideoInitialized) { EnsureVideoInitialized(); }
+      if (!isVideoInitialized)
+      {
+        EnsureVideoInitialized();
+      }
+
       var modesList = new List<(int Width, int Height)>();
       var uniqueModes = new HashSet<(int Width, int Height)>(); // Keep track of unique modes
 
@@ -285,6 +324,7 @@ namespace Night
       {
         return modesList;
       }
+
       uint targetDisplayID = actualDisplayIDs[displayIndex];
 
       SDL.DisplayMode[]? displayModes = SDL.GetFullscreenDisplayModes(targetDisplayID, out int count);
@@ -302,9 +342,9 @@ namespace Night
           modesList.Add(currentModeTuple);
         }
       }
+
       return modesList;
     }
-
 
     /// <summary>
     /// Gets the current window mode (width, height, and flags).
@@ -312,18 +352,17 @@ namespace Night
     /// <returns>A WindowMode struct containing width, height, and current flags.</returns>
     public static WindowMode GetMode()
     {
-      if (_window == nint.Zero)
+      if (window == nint.Zero)
       {
-        return new WindowMode { Width = 0, Height = 0, Fullscreen = false, FullscreenType = _currentFullscreenType, Borderless = false };
+        return new WindowMode { Width = 0, Height = 0, Fullscreen = false, FullscreenType = currentFullscreenType, Borderless = false };
       }
 
-      _ = SDL.GetWindowSize(_window, out int w, out int h);
-      var flags = SDL.GetWindowFlags(_window);
+      _ = SDL.GetWindowSize(window, out int w, out int h);
+      var flags = SDL.GetWindowFlags(window);
 
       bool isSdlExclusiveFullscreen = (flags & SDL.WindowFlags.Fullscreen) != 0;
       bool isSdlBorderless = (flags & SDL.WindowFlags.Borderless) != 0;
-      FullscreenType reportedFsType = _currentFullscreenType;
-
+      FullscreenType reportedFsType = currentFullscreenType;
 
       bool actualReportedFullscreenState;
       if (isSdlExclusiveFullscreen)
@@ -333,9 +372,9 @@ namespace Night
       }
       else if (isSdlBorderless)
       {
-        if (_currentFullscreenType == FullscreenType.Desktop)
+        if (currentFullscreenType == FullscreenType.Desktop)
         {
-          uint currentDisplayID = SDL.GetDisplayForWindow(_window);
+          uint currentDisplayID = SDL.GetDisplayForWindow(window);
           if (currentDisplayID != 0)
           {
             var (desktopW, desktopH) = GetDesktopDimensionsForDisplayID(currentDisplayID);
@@ -369,7 +408,7 @@ namespace Night
         Height = h,
         Fullscreen = actualReportedFullscreenState,
         FullscreenType = reportedFsType,
-        Borderless = isSdlBorderless
+        Borderless = isSdlBorderless,
       };
     }
 
@@ -379,12 +418,17 @@ namespace Night
     /// <returns>The DPI scale factor, or 1.0f on error or if not applicable.</returns>
     public static float GetDPIScale()
     {
-      if (_window == nint.Zero) return 1.0f;
-      float dpiScale = SDL.GetWindowDisplayScale(_window);
+      if (window == nint.Zero)
+      {
+        return 1.0f;
+      }
+
+      float dpiScale = SDL.GetWindowDisplayScale(window);
       if (dpiScale <= 0f)
       {
         return 1.0f;
       }
+
       return dpiScale;
     }
 
@@ -406,7 +450,11 @@ namespace Night
     public static float FromPixels(float value)
     {
       float dpiScale = GetDPIScale();
-      if (dpiScale == 0) return value;
+      if (dpiScale == 0)
+      {
+        return value;
+      }
+
       return value / dpiScale;
     }
 
@@ -415,14 +463,15 @@ namespace Night
     /// </summary>
     private static void EnsureVideoInitialized()
     {
-      if (!_isVideoInitialized)
+      if (!isVideoInitialized)
       {
         if (!SDL.InitSubSystem(SDL.InitFlags.Video))
         {
           string sdlError = SDL.GetError();
           throw new Exception($"SDL Error initializing video subsystem: {sdlError}");
         }
-        _isVideoInitialized = true;
+
+        isVideoInitialized = true;
       }
     }
 
@@ -433,12 +482,17 @@ namespace Night
     /// <returns>A tuple containing the width and height of the desktop, or (0,0) if an error occurs.</returns>
     private static (int Width, int Height) GetDesktopDimensionsForDisplayID(uint displayID)
     {
-      if (!_isVideoInitialized) { EnsureVideoInitialized(); }
+      if (!isVideoInitialized)
+      {
+        EnsureVideoInitialized();
+      }
+
       SDL.DisplayMode? mode = SDL.GetDesktopDisplayMode(displayID);
       if (mode == null)
       {
         return (0, 0);
       }
+
       return (mode.Value.W, mode.Value.H);
     }
   }

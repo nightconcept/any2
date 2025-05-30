@@ -1,7 +1,11 @@
-using System.Text.Json.Serialization;
+// <copyright file="GameConfig.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night.Configuration
 {
+  using System.Text.Json.Serialization;
+
   public class GameConfig
   {
     [JsonPropertyName("identity")]
@@ -109,7 +113,6 @@ namespace Night.Configuration
     // TODO: Implement actual module enabling/disabling based on these flags.
     // For now, they are just placeholders. love.filesystem, love.data, and love (Night core) are mandatory.
     // love.graphics needs love.window.
-
     [JsonPropertyName("audio")]
     public bool Audio { get; set; } = true;
 

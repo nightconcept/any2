@@ -1,7 +1,11 @@
-using System;
+// <copyright file="Enums.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+
   /// <summary>
   /// Represents the type of a file system object.
   /// </summary>
@@ -11,22 +15,26 @@ namespace Night
     /// A regular file.
     /// </summary>
     File,
+
     /// <summary>
     /// A directory.
     /// </summary>
     Directory,
+
     /// <summary>
     /// A symbolic link.
     /// </summary>
     Symlink,
+
     /// <summary>
     /// Other type (e.g., device, pipe).
     /// </summary>
     Other,
+
     /// <summary>
     /// The path does not exist or its type cannot be determined.
     /// </summary>
-    None
+    None,
   }
 
   /// <summary>
@@ -38,33 +46,40 @@ namespace Night
     /// Open a file for read.
     /// </summary>
     Read,
+
     /// <summary>
     /// Open a file for write.
     /// </summary>
     Write,
+
     /// <summary>
     /// Open a file for append.
     /// </summary>
     Append,
+
     /// <summary>
     /// Do not open a file (represents a closed file.)
     /// </summary>
     Close,
+
     /// <summary>
     /// Open a file for write.
     /// </summary>
-    w = Write,
+    W = Write,
+
     /// <summary>
     /// Open a file for read.
     /// </summary>
-    r = Read,
+    R = Read,
+
     /// <summary>
     /// Open a file for append.
     /// </summary>
-    a = Append,
+    A = Append,
+
     /// <summary>
     /// Do not open a file (represents a closed file.)
     /// </summary>
-    c = Close
+    C = Close,
   }
 }

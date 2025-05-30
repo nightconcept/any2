@@ -1,12 +1,15 @@
-using System;
-using System.Runtime.InteropServices;
-
-using Night;
-
-using SDL3;
+// <copyright file="Keyboard.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Night
 {
+  using System;
+  using System.Runtime.InteropServices;
+
+  using Night;
+  using SDL3;
+
   /// <summary>
   /// Provides an interface to the user's keyboard.
   /// </summary>
@@ -45,6 +48,7 @@ namespace Night
         Console.WriteLine($"Warning: Scancode {(int)sdlScancode} is out of bounds (numKeys: {keyboardState.Length}).");
         return false;
       }
+
       return keyboardState[(int)sdlScancode];
     }
   }
