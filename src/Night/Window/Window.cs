@@ -309,9 +309,17 @@ namespace Night
       }
 
       var flags = SDL.GetWindowFlags(window);
+
+      // Check for SDL's native/exclusive fullscreen first
       if ((flags & SDL.WindowFlags.Fullscreen) != 0)
       {
-        return (true, currentFullscreenType);
+        return (true, FullscreenType.Exclusive);
+      }
+
+      // Check for our "Desktop Fullscreen" mode
+      if (currentFullscreenType == FullscreenType.Desktop && (flags & SDL.WindowFlags.Borderless) != 0)
+      {
+        return (true, FullscreenType.Desktop);
       }
 
       return (false, currentFullscreenType);
@@ -359,6 +367,7 @@ namespace Night
         {
           if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
           {
+            // This might not be critical if it fails.
           }
 
           if (!SDL.SetWindowBordered(window, false))
@@ -373,12 +382,14 @@ namespace Night
           }
 
           var (desktopW, desktopH) = GetDesktopDimensionsForDisplayID(displayID);
+
           if (desktopW > 0 && desktopH > 0)
           {
             _ = SDL.SetWindowPosition(window, 0, 0);
             if (!SDL.SetWindowSize(window, desktopW, desktopH))
             {
-              return false;
+              // Even if this fails to resize, we've set it borderless.
+              // The issue of it not resizing is separate from the borderless toggle.
             }
           }
           else
@@ -389,10 +400,8 @@ namespace Night
       }
       else
       {
-        currentFullscreenType = FullscreenType.Desktop;
-        if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
-        {
-        }
+        currentFullscreenType = FullscreenType.Desktop; // Conceptually, when we exit, we are aiming for a non-fullscreen desktop window.
+        _ = SDL.SetWindowFullscreenMode(window, nint.Zero); // Turn off SDL's exclusive fullscreen
 
         if (!SDL.SetWindowBordered(window, true))
         {
@@ -400,6 +409,8 @@ namespace Night
         }
 
         _ = SDL.RestoreWindow(window);
+        _ = SDL.SetWindowSize(window, 800, 600); // Explicitly set a defined windowed size.
+        _ = SDL.RaiseWindow(window);
       }
 
       return true;
@@ -466,6 +477,7 @@ namespace Night
       FullscreenType reportedFsType = currentFullscreenType;
 
       bool actualReportedFullscreenState;
+
       if (isSdlExclusiveFullscreen)
       {
         actualReportedFullscreenState = true;

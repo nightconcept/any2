@@ -1,7 +1,6 @@
 {
   "window": {
     "title": "Night Sample Game (from config!)",
-    "icon": "assets/icon.ico",
     "width": 1024,
     "height": 768,
     "resizable": true,
