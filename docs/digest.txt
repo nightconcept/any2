@@ -8050,7 +8050,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9ab7f7ef9a7b0be1c05d78d732c3bb64883bbf6e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd34a24349262b6756620fd321e8165d3bb64d10")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -8063,7 +8063,7 @@ using System.Reflection;
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.AssemblyInfoInputs.cache
 ================================================
-09b78c5eb621058b8eb0866e4e732fb99291911e532211c27cb29613e75cced5
+9db0e824b21cdd8eb554b10db67d7f16a3a5ba816f31a0ae0ce52aa21b9fbaee
 
 
 
@@ -8124,7 +8124,7 @@ cb5d82de82cf2868752796dcad4edbd7810515267684c92faae8d67719d9c500
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9ab7f7ef9a7b0be1c05d78d732c3bb64883bbf6e/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/bd34a24349262b6756620fd321e8165d3bb64d10/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -9261,7 +9261,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9ab7f7ef9a7b0be1c05d78d732c3bb64883bbf6e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd34a24349262b6756620fd321e8165d3bb64d10")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -9274,7 +9274,7 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
 ================================================
-eb74fa7cf16e3f7a5da2d031c86985f24a4beface13571b7c176c4620d0dde93
+62319eaab98c3c27617b068e99e7af2f1e380f4147c53946e75f1ce46f081604
 
 
 
@@ -9342,7 +9342,7 @@ dc347d346712591e5aae675a5692bedfe675e498f7c55e8de100f6e2ee179134
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9ab7f7ef9a7b0be1c05d78d732c3bb64883bbf6e/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/bd34a24349262b6756620fd321e8165d3bb64d10/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -11559,7 +11559,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9ab7f7ef9a7b0be1c05d78d732c3bb64883bbf6e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd34a24349262b6756620fd321e8165d3bb64d10")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -11572,7 +11572,7 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.AssemblyInfoInputs.cache
 ================================================
-4afb3c9751f1c70d7fb14b3e89bfebb55ec2d3e9fc96a7d3ff5ea4d72cd80497
+ed7106977c2f73e0144a267cddabb25cbdec4a72d3bd31d3b8d09f6a0065ff3b
 
 
 
@@ -11641,7 +11641,7 @@ File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.genruntimeconfig.cache
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/9ab7f7ef9a7b0be1c05d78d732c3bb64883bbf6e/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/bd34a24349262b6756620fd321e8165d3bb64d10/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -12363,6 +12363,12 @@ jobs:
       with:
         submodules: 'recursive' # Ensure submodules like SDL are checked out
 
+    - name: Set Git line endings for Windows
+      if: runner.os == 'Windows'
+      run: |
+        git config --global core.autocrlf false
+        git config --global core.eol lf
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -12428,6 +12434,12 @@ jobs:
           # We must fetch all history for CodeQL to correctly analyze commits
           fetch-depth: 0
 
+      - name: Set Git line endings for Windows
+        if: runner.os == 'Windows' # Though this job runs on ubuntu, good practice if matrix changes
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
@@ -12444,8 +12456,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: |
-            9.0.x # Should match the version used in your ci.yml
+          dotnet-version: 9.0.x
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17

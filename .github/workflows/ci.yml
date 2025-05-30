@@ -17,6 +17,12 @@ jobs:
       with:
         submodules: 'recursive' # Ensure submodules like SDL are checked out
 
+    - name: Set Git line endings for Windows
+      if: runner.os == 'Windows'
+      run: |
+        git config --global core.autocrlf false
+        git config --global core.eol lf
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:

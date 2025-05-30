@@ -38,6 +38,12 @@ jobs:
           # We must fetch all history for CodeQL to correctly analyze commits
           fetch-depth: 0
 
+      - name: Set Git line endings for Windows
+        if: runner.os == 'Windows' # Though this job runs on ubuntu, good practice if matrix changes
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
