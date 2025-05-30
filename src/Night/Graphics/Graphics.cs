@@ -138,17 +138,90 @@ namespace Night
         return;
       }
 
-      SDL.FRect rect = new SDL.FRect { X = x, Y = y, W = width, H = height };
+      if (width <= 0 || height <= 0)
+      {
+        // No-op for zero or negative dimensions
+        return;
+      }
 
       bool success;
       if (mode == DrawMode.Fill)
       {
-        success = SDL.RenderFillRect(rendererPtr, rect);
+        // Define the 4 vertices of the rectangle
+        float[] xy = new float[]
+        {
+            x, y,                        // Top-left
+            x + width, y,                // Top-right
+            x + width, y + height,       // Bottom-right
+            x, y + height, // Bottom-left
+        };
+
+        SDL.FColor[] vertexColors = new SDL.FColor[4];
+        byte r_byte, g_byte, b_byte, a_byte;
+        _ = SDL.GetRenderDrawColor(rendererPtr, out r_byte, out g_byte, out b_byte, out a_byte);
+        SDL.FColor drawColor = new SDL.FColor { R = r_byte / 255f, G = g_byte / 255f, B = b_byte / 255f, A = a_byte / 255f };
+        for (int i = 0; i < 4; i++)
+        {
+          vertexColors[i] = drawColor;
+        }
+
+        // Indices for two triangles forming the rectangle (0,1,2 and 0,2,3)
+        // SDL.RenderGeometryRaw expects indices, typically byte or short.
+        // Using byte here as polygon fill does, but ensure it's appropriate for SDL3's expectations.
+        // For a quad, it's 2 triangles, 6 indices.
+        byte[] indices = new byte[] { 0, 1, 2, 0, 2, 3 }; // Triangle 1: (v0,v1,v2), Triangle 2: (v0,v2,v3)
+
+        GCHandle xyHandle = default;
+        GCHandle colorsHandle = default;
+        GCHandle indicesHandle = default;
+
+        try
+        {
+          xyHandle = GCHandle.Alloc(xy, GCHandleType.Pinned);
+          colorsHandle = GCHandle.Alloc(vertexColors, GCHandleType.Pinned);
+          indicesHandle = GCHandle.Alloc(indices, GCHandleType.Pinned);
+
+          IntPtr xyPtr = xyHandle.AddrOfPinnedObject();
+          IntPtr colorsPtr = colorsHandle.AddrOfPinnedObject();
+          IntPtr indicesPtr = indicesHandle.AddrOfPinnedObject();
+
+          success = SDL.RenderGeometryRaw(
+                                     rendererPtr,
+                                     IntPtr.Zero, // No texture
+                                     xyPtr,
+                                     sizeof(float) * 2, // Stride for xy
+                                     colorsPtr,
+                                     Marshal.SizeOf<SDL.FColor>(), // Stride for colors
+                                     IntPtr.Zero, // No UVs
+                                     0,           // Stride for UVs
+                                     4,           // Number of vertices
+                                     indicesPtr,
+                                     indices.Length, // Number of indices
+                                     sizeof(byte));  // Size of each index
+        }
+        finally
+        {
+          if (xyHandle.IsAllocated)
+          {
+            xyHandle.Free();
+          }
+
+          if (colorsHandle.IsAllocated)
+          {
+            colorsHandle.Free();
+          }
+
+          if (indicesHandle.IsAllocated)
+          {
+            indicesHandle.Free();
+          }
+        }
       }
 
       // DrawMode.Line
       else
       {
+        SDL.FRect rect = new SDL.FRect { X = x, Y = y, W = width, H = height };
         success = SDL.RenderRect(rendererPtr, rect);
       }
 

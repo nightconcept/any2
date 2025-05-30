@@ -3,7 +3,6 @@ Directory structure:
     ├── README.md
     ├── LICENSE
     ├── Night.sln
-    ├── stylecop.json
     ├── .editorconfig
     ├── .pre-commit-config.yaml
     ├── docs/
@@ -174,7 +173,6 @@ Directory structure:
     │   └── Night.Tests/
     │       ├── FilesystemTests.cs
     │       ├── Night.Tests.csproj
-    │       ├── UnitTest1.cs
     │       ├── stylecop.json
     │       ├── bin/
     │       │   └── Debug/
@@ -433,24 +431,6 @@ Global
 		{D9CEF2DF-0142-4130-8F26-E580B0B36D9E} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal
-
-
-
-================================================
-File: stylecop.json
-================================================
-{
-  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
-  "settings": {
-    "documentationRules": {
-      "companyName": "Night Circle",
-      "copyrightText": "Copyright (c) {copyrightYears} Danny Solivan and {companyName}\n\nThis software is provided 'as-is', without any express or implied\nwarranty. In no event will the authors be held liable for any damages\narising from the use of this software.\n\nPermission is granted to anyone to use this software for any purpose,\nincluding commercial applications, and to alter it and redistribute it\nfreely, subject to the following restrictions:\n\n1. The origin of this software must not be misrepresented; you must not\n   claim that you wrote the original software. If you use this software\n   in a product, an acknowledgment in the product documentation would be\n   appreciated but is not required.\n2. Altered source versions must be plainly marked as such, and must not be\n   misrepresented as being the original software.\n3. This notice may not be removed or altered from any source distribution.",
-      "variables": {
-        "copyrightYears": "2025"
-      }
-    }
-  }
-}
 
 
 
@@ -6542,17 +6522,90 @@ namespace Night
         return;
       }
 
-      SDL.FRect rect = new SDL.FRect { X = x, Y = y, W = width, H = height };
+      if (width <= 0 || height <= 0)
+      {
+        // No-op for zero or negative dimensions
+        return;
+      }
 
       bool success;
       if (mode == DrawMode.Fill)
       {
-        success = SDL.RenderFillRect(rendererPtr, rect);
+        // Define the 4 vertices of the rectangle
+        float[] xy = new float[]
+        {
+            x, y,                        // Top-left
+            x + width, y,                // Top-right
+            x + width, y + height,       // Bottom-right
+            x, y + height, // Bottom-left
+        };
+
+        SDL.FColor[] vertexColors = new SDL.FColor[4];
+        byte r_byte, g_byte, b_byte, a_byte;
+        _ = SDL.GetRenderDrawColor(rendererPtr, out r_byte, out g_byte, out b_byte, out a_byte);
+        SDL.FColor drawColor = new SDL.FColor { R = r_byte / 255f, G = g_byte / 255f, B = b_byte / 255f, A = a_byte / 255f };
+        for (int i = 0; i < 4; i++)
+        {
+          vertexColors[i] = drawColor;
+        }
+
+        // Indices for two triangles forming the rectangle (0,1,2 and 0,2,3)
+        // SDL.RenderGeometryRaw expects indices, typically byte or short.
+        // Using byte here as polygon fill does, but ensure it's appropriate for SDL3's expectations.
+        // For a quad, it's 2 triangles, 6 indices.
+        byte[] indices = new byte[] { 0, 1, 2, 0, 2, 3 }; // Triangle 1: (v0,v1,v2), Triangle 2: (v0,v2,v3)
+
+        GCHandle xyHandle = default;
+        GCHandle colorsHandle = default;
+        GCHandle indicesHandle = default;
+
+        try
+        {
+          xyHandle = GCHandle.Alloc(xy, GCHandleType.Pinned);
+          colorsHandle = GCHandle.Alloc(vertexColors, GCHandleType.Pinned);
+          indicesHandle = GCHandle.Alloc(indices, GCHandleType.Pinned);
+
+          IntPtr xyPtr = xyHandle.AddrOfPinnedObject();
+          IntPtr colorsPtr = colorsHandle.AddrOfPinnedObject();
+          IntPtr indicesPtr = indicesHandle.AddrOfPinnedObject();
+
+          success = SDL.RenderGeometryRaw(
+                                     rendererPtr,
+                                     IntPtr.Zero, // No texture
+                                     xyPtr,
+                                     sizeof(float) * 2, // Stride for xy
+                                     colorsPtr,
+                                     Marshal.SizeOf<SDL.FColor>(), // Stride for colors
+                                     IntPtr.Zero, // No UVs
+                                     0,           // Stride for UVs
+                                     4,           // Number of vertices
+                                     indicesPtr,
+                                     indices.Length, // Number of indices
+                                     sizeof(byte));  // Size of each index
+        }
+        finally
+        {
+          if (xyHandle.IsAllocated)
+          {
+            xyHandle.Free();
+          }
+
+          if (colorsHandle.IsAllocated)
+          {
+            colorsHandle.Free();
+          }
+
+          if (indicesHandle.IsAllocated)
+          {
+            indicesHandle.Free();
+          }
+        }
       }
 
       // DrawMode.Line
       else
       {
+        SDL.FRect rect = new SDL.FRect { X = x, Y = y, W = width, H = height };
         success = SDL.RenderRect(rendererPtr, rect);
       }
 
@@ -11567,7 +11620,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1647f1cecc708a85ac77fbb9aabb522aeed66c3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be20e625485639ede440e3c92f5c623a68ec8792")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -11580,7 +11633,7 @@ using System.Reflection;
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.AssemblyInfoInputs.cache
 ================================================
-184536ab7e429b9304da7df0fe66a462a60d8fe768a38f90cbff9230eafb93b2
+1ac9493dce43404e8b8348a3b49eb740e1b11a1e0b2d662b7a10eddfc0b70800
 
 
 
@@ -11641,7 +11694,7 @@ f4b58ce18ba7cef5595c058422ff25b7df1016252895ea6c66a06882ae7c79c6
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/a1647f1cecc708a85ac77fbb9aabb522aeed66c3/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/be20e625485639ede440e3c92f5c623a68ec8792/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -11792,62 +11845,91 @@ public class Game : IGame
 
     this.player.Draw();
 
-    // --- Graphics Shape Drawing Demonstration ---
+    // --- Graphics Shape Drawing Demonstration (Top-Left Corner) ---
+    // All coordinates and sizes are adjusted to fit in a smaller area.
+    // Base offset for the demo shapes
+    int demoXOffset = 10;
+    int demoYOffset = 10;
+    int shapeSize = 20; // General size for smaller shapes
+    int spacing = 5;    // Spacing between shapes
+
     // Rectangle Demo
     Graphics.SetColor(Night.Color.Red);
-    Graphics.Rectangle(Night.DrawMode.Fill, 50, 50, 100, 50); // Filled Red Rectangle
+    Graphics.Rectangle(Night.DrawMode.Fill, demoXOffset, demoYOffset, shapeSize, shapeSize / 2); // Smaller Red Rectangle
     Graphics.SetColor(Night.Color.Black);
-    Graphics.Rectangle(Night.DrawMode.Line, 50, 50, 100, 50); // Black outline for Red Rectangle
+    Graphics.Rectangle(Night.DrawMode.Line, demoXOffset, demoYOffset, shapeSize, shapeSize / 2);
+
+    demoXOffset += shapeSize + spacing; // Move right for next shape
 
     Graphics.SetColor(0, 0, 255, 128); // Semi-transparent Blue
-    Graphics.Rectangle(Night.DrawMode.Line, 160, 50, 80, 60); // Outlined Blue Rectangle
+    Graphics.Rectangle(Night.DrawMode.Line, demoXOffset, demoYOffset, shapeSize - 5, shapeSize + 5); // Adjusted Blue Rectangle
+
+    demoXOffset += (shapeSize - 5) + spacing; // Move right
 
     // Circle Demo
     Graphics.SetColor(Night.Color.Green);
-    Graphics.Circle(Night.DrawMode.Fill, 300, 80, 30); // Filled Green Circle
+    Graphics.Circle(Night.DrawMode.Fill, demoXOffset + (shapeSize / 2), demoYOffset + (shapeSize / 2), shapeSize / 2); // Smaller Green Circle
     Graphics.SetColor(Night.Color.Black);
-    Graphics.Circle(Night.DrawMode.Line, 300, 80, 30, 24); // Black outline, 24 segments
+    Graphics.Circle(Night.DrawMode.Line, demoXOffset + (shapeSize / 2), demoYOffset + (shapeSize / 2), shapeSize / 2, 12); // 12 segments
+
+    demoXOffset += shapeSize + spacing; // Move right
 
     Graphics.SetColor(Night.Color.Yellow);
-    Graphics.Circle(Night.DrawMode.Line, 400, 80, 25, 6); // 6-segment "circle" (hexagon) outline
+    Graphics.Circle(Night.DrawMode.Line, demoXOffset + (shapeSize / 3), demoYOffset + (shapeSize / 3), shapeSize / 3, 6); // Smaller Hexagon
+
+    // Reset X offset for a new "row" of shapes if needed, or continue right
+    // For this demo, we'll just continue right and assume enough horizontal space for this small demo.
+    // If more shapes were added, a new row would be demoYOffset += shapeSize + spacing; demoXOffset = 10;
+    demoXOffset += (shapeSize / 3 * 2) + spacing; // Move right based on hexagon diameter
 
     // Line Demo
     Graphics.SetColor(Night.Color.Magenta);
-    Graphics.Line(50, 120, 250, 150); // Single Magenta Line
+    Graphics.Line(demoXOffset, demoYOffset, demoXOffset + shapeSize, demoYOffset + (shapeSize / 2)); // Smaller Magenta Line
+
+    demoXOffset += shapeSize + spacing;
 
     Night.PointF[] linePoints = new Night.PointF[]
     {
-      new Night.PointF(280, 120),
-      new Night.PointF(320, 160),
-      new Night.PointF(360, 120),
-      new Night.PointF(400, 160),
-      new Night.PointF(440, 120),
+      new Night.PointF(demoXOffset, demoYOffset),
+      new Night.PointF(demoXOffset + (shapeSize / 3), demoYOffset + (shapeSize / 2)),
+      new Night.PointF(demoXOffset + (shapeSize * 2 / 3), demoYOffset),
+      new Night.PointF(demoXOffset + shapeSize, demoYOffset + (shapeSize / 2)),
     };
     Graphics.SetColor(Night.Color.Cyan);
-    Graphics.Line(linePoints); // Polyline in Cyan
+    Graphics.Line(linePoints); // Smaller Polyline in Cyan
+
+    demoXOffset += shapeSize + spacing;
 
     // Polygon Demo
     Night.PointF[] triangleVertices = new Night.PointF[]
     {
-      new Night.PointF(500, 50),
-      new Night.PointF(550, 100),
-      new Night.PointF(450, 100),
+      new Night.PointF(demoXOffset + (shapeSize / 2), demoYOffset),
+      new Night.PointF(demoXOffset + shapeSize, demoYOffset + shapeSize),
+      new Night.PointF(demoXOffset, demoYOffset + shapeSize),
     };
     Graphics.SetColor(new Night.Color(255, 165, 0)); // Orange
-    Graphics.Polygon(Night.DrawMode.Fill, triangleVertices); // Filled Orange Triangle
+    Graphics.Polygon(Night.DrawMode.Fill, triangleVertices); // Smaller Orange Triangle
     Graphics.SetColor(Night.Color.Black);
-    Graphics.Polygon(Night.DrawMode.Line, triangleVertices); // Black outline for Triangle
+    Graphics.Polygon(Night.DrawMode.Line, triangleVertices);
+
+    demoXOffset += shapeSize + spacing;
 
     Night.PointF[] pentagonVertices = new Night.PointF[]
     {
-        new Night.PointF(600, 80),
-        new Night.PointF(630, 60),
-        new Night.PointF(650, 90),
-        new Night.PointF(620, 110),
-        new Night.PointF(580, 100),
+        new Night.PointF(demoXOffset + (shapeSize / 2), demoYOffset),
+        new Night.PointF(demoXOffset + shapeSize, demoYOffset + (shapeSize / 3)),
+        new Night.PointF(demoXOffset + (shapeSize * 2 / 3), demoYOffset + shapeSize),
+        new Night.PointF(demoXOffset + (shapeSize / 3), demoYOffset + shapeSize),
+        new Night.PointF(demoXOffset, demoYOffset + (shapeSize / 3)),
     };
     Graphics.SetColor(new Night.Color(75, 0, 130)); // Indigo
-    Graphics.Polygon(Night.DrawMode.Line, pentagonVertices);
+    Graphics.Polygon(Night.DrawMode.Line, pentagonVertices); // Smaller Pentagon
+
+    // --- Test Large Filled Rectangle ---
+    Graphics.SetColor(Night.Color.Blue);
+    Graphics.Rectangle(Night.DrawMode.Fill, 300, 200, 200, 150); // Large Blue Filled Rectangle Test
+
+    // --- End Test Large Filled Rectangle ---
   }
 
   /// <summary>
@@ -15254,7 +15336,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1647f1cecc708a85ac77fbb9aabb522aeed66c3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be20e625485639ede440e3c92f5c623a68ec8792")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -15267,7 +15349,7 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
 ================================================
-256f45c8789af4ffef31a4bb665088b422c19b3ed2021a1e2709e2a8bfd3b43d
+fd1e1ef4ea68567b06f41c7bfe1f077791c939fb3ec38bac218438790965a017
 
 
 
@@ -15335,7 +15417,7 @@ dc347d346712591e5aae675a5692bedfe675e498f7c55e8de100f6e2ee179134
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/a1647f1cecc708a85ac77fbb9aabb522aeed66c3/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/be20e625485639ede440e3c92f5c623a68ec8792/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -15751,49 +15833,6 @@ File: tests/Night.Tests/Night.Tests.csproj
   </ItemGroup>
 
 </Project>
-
-
-
-================================================
-File: tests/Night.Tests/UnitTest1.cs
-================================================
-﻿// <copyright file="UnitTest1.cs" company="Night Circle">
-// zlib license
-//
-// Copyright (c) 2025 Danny Solivan, Night Circle
-//
-// This software is provided 'as-is', without any express or implied
-// warranty. In no event will the authors be held liable for any damages
-// arising from the use of this software.
-//
-// Permission is granted to anyone to use this software for any purpose,
-// including commercial applications, and to alter it and redistribute it
-// freely, subject to the following restrictions:
-//
-// 1. The origin of this software must not be misrepresented; you must not
-//    claim that you wrote the original software. If you use this software
-//    in a product, an acknowledgment in the product documentation would be
-//    appreciated but is not required.
-// 2. Altered source versions must be plainly marked as such, and must not be
-//    misrepresented as being the original software.
-// 3. This notice may not be removed or altered from any source distribution.
-// </copyright>
-
-namespace Night.Engine.Tests;
-
-/// <summary>
-/// Placeholder for future tests.
-/// </summary>
-public class UnitTest1
-{
-  /// <summary>
-  /// Placeholder test method.
-  /// </summary>
-  [Fact]
-  public void Test1()
-  {
-  }
-}
 
 
 
@@ -16459,16 +16498,6 @@ File: tests/Night.Tests/bin/Debug/net9.0/Night.Tests.xml
         <member name="M:FilesystemTests.ReadText_NonExistentFile_ThrowsFileNotFound">
             <summary>
             Tests that ReadText throws a FileNotFoundException for a non-existent file.
-            </summary>
-        </member>
-        <member name="T:Night.Engine.Tests.UnitTest1">
-            <summary>
-            Placeholder for future tests.
-            </summary>
-        </member>
-        <member name="M:Night.Engine.Tests.UnitTest1.Test1">
-            <summary>
-            Placeholder test method.
             </summary>
         </member>
     </members>
@@ -19853,7 +19882,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1647f1cecc708a85ac77fbb9aabb522aeed66c3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be20e625485639ede440e3c92f5c623a68ec8792")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -19866,7 +19895,7 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.AssemblyInfoInputs.cache
 ================================================
-fbf291dd93243a400edf57a3ae7e4f6063503f05907f3a07a480dda0912d123b
+d9d0c8823bd75749e6e66c74082082d79d88646f758d945d53098c61311fcb57
 
 
 
@@ -19921,7 +19950,7 @@ File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.csproj.AssemblyReference.ca
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.csproj.CoreCompileInputs.cache
 ================================================
-5f71926cd0b586681a58984a8c193885beac7229ad320aca2553c183f02617d0
+04b81a38a2ff4eea0091208272ff770cc2516d398f19b9b392940981a6273875
 
 
 
@@ -19935,7 +19964,7 @@ File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.genruntimeconfig.cache
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/a1647f1cecc708a85ac77fbb9aabb522aeed66c3/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/be20e625485639ede440e3c92f5c623a68ec8792/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================

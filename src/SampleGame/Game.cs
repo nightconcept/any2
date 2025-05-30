@@ -131,62 +131,91 @@ public class Game : IGame
 
     this.player.Draw();
 
-    // --- Graphics Shape Drawing Demonstration ---
+    // --- Graphics Shape Drawing Demonstration (Top-Left Corner) ---
+    // All coordinates and sizes are adjusted to fit in a smaller area.
+    // Base offset for the demo shapes
+    int demoXOffset = 10;
+    int demoYOffset = 10;
+    int shapeSize = 20; // General size for smaller shapes
+    int spacing = 5;    // Spacing between shapes
+
     // Rectangle Demo
     Graphics.SetColor(Night.Color.Red);
-    Graphics.Rectangle(Night.DrawMode.Fill, 50, 50, 100, 50); // Filled Red Rectangle
+    Graphics.Rectangle(Night.DrawMode.Fill, demoXOffset, demoYOffset, shapeSize, shapeSize / 2); // Smaller Red Rectangle
     Graphics.SetColor(Night.Color.Black);
-    Graphics.Rectangle(Night.DrawMode.Line, 50, 50, 100, 50); // Black outline for Red Rectangle
+    Graphics.Rectangle(Night.DrawMode.Line, demoXOffset, demoYOffset, shapeSize, shapeSize / 2);
+
+    demoXOffset += shapeSize + spacing; // Move right for next shape
 
     Graphics.SetColor(0, 0, 255, 128); // Semi-transparent Blue
-    Graphics.Rectangle(Night.DrawMode.Line, 160, 50, 80, 60); // Outlined Blue Rectangle
+    Graphics.Rectangle(Night.DrawMode.Line, demoXOffset, demoYOffset, shapeSize - 5, shapeSize + 5); // Adjusted Blue Rectangle
+
+    demoXOffset += (shapeSize - 5) + spacing; // Move right
 
     // Circle Demo
     Graphics.SetColor(Night.Color.Green);
-    Graphics.Circle(Night.DrawMode.Fill, 300, 80, 30); // Filled Green Circle
+    Graphics.Circle(Night.DrawMode.Fill, demoXOffset + (shapeSize / 2), demoYOffset + (shapeSize / 2), shapeSize / 2); // Smaller Green Circle
     Graphics.SetColor(Night.Color.Black);
-    Graphics.Circle(Night.DrawMode.Line, 300, 80, 30, 24); // Black outline, 24 segments
+    Graphics.Circle(Night.DrawMode.Line, demoXOffset + (shapeSize / 2), demoYOffset + (shapeSize / 2), shapeSize / 2, 12); // 12 segments
+
+    demoXOffset += shapeSize + spacing; // Move right
 
     Graphics.SetColor(Night.Color.Yellow);
-    Graphics.Circle(Night.DrawMode.Line, 400, 80, 25, 6); // 6-segment "circle" (hexagon) outline
+    Graphics.Circle(Night.DrawMode.Line, demoXOffset + (shapeSize / 3), demoYOffset + (shapeSize / 3), shapeSize / 3, 6); // Smaller Hexagon
+
+    // Reset X offset for a new "row" of shapes if needed, or continue right
+    // For this demo, we'll just continue right and assume enough horizontal space for this small demo.
+    // If more shapes were added, a new row would be demoYOffset += shapeSize + spacing; demoXOffset = 10;
+    demoXOffset += (shapeSize / 3 * 2) + spacing; // Move right based on hexagon diameter
 
     // Line Demo
     Graphics.SetColor(Night.Color.Magenta);
-    Graphics.Line(50, 120, 250, 150); // Single Magenta Line
+    Graphics.Line(demoXOffset, demoYOffset, demoXOffset + shapeSize, demoYOffset + (shapeSize / 2)); // Smaller Magenta Line
+
+    demoXOffset += shapeSize + spacing;
 
     Night.PointF[] linePoints = new Night.PointF[]
     {
-      new Night.PointF(280, 120),
-      new Night.PointF(320, 160),
-      new Night.PointF(360, 120),
-      new Night.PointF(400, 160),
-      new Night.PointF(440, 120),
+      new Night.PointF(demoXOffset, demoYOffset),
+      new Night.PointF(demoXOffset + (shapeSize / 3), demoYOffset + (shapeSize / 2)),
+      new Night.PointF(demoXOffset + (shapeSize * 2 / 3), demoYOffset),
+      new Night.PointF(demoXOffset + shapeSize, demoYOffset + (shapeSize / 2)),
     };
     Graphics.SetColor(Night.Color.Cyan);
-    Graphics.Line(linePoints); // Polyline in Cyan
+    Graphics.Line(linePoints); // Smaller Polyline in Cyan
+
+    demoXOffset += shapeSize + spacing;
 
     // Polygon Demo
     Night.PointF[] triangleVertices = new Night.PointF[]
     {
-      new Night.PointF(500, 50),
-      new Night.PointF(550, 100),
-      new Night.PointF(450, 100),
+      new Night.PointF(demoXOffset + (shapeSize / 2), demoYOffset),
+      new Night.PointF(demoXOffset + shapeSize, demoYOffset + shapeSize),
+      new Night.PointF(demoXOffset, demoYOffset + shapeSize),
     };
     Graphics.SetColor(new Night.Color(255, 165, 0)); // Orange
-    Graphics.Polygon(Night.DrawMode.Fill, triangleVertices); // Filled Orange Triangle
+    Graphics.Polygon(Night.DrawMode.Fill, triangleVertices); // Smaller Orange Triangle
     Graphics.SetColor(Night.Color.Black);
-    Graphics.Polygon(Night.DrawMode.Line, triangleVertices); // Black outline for Triangle
+    Graphics.Polygon(Night.DrawMode.Line, triangleVertices);
+
+    demoXOffset += shapeSize + spacing;
 
     Night.PointF[] pentagonVertices = new Night.PointF[]
     {
-        new Night.PointF(600, 80),
-        new Night.PointF(630, 60),
-        new Night.PointF(650, 90),
-        new Night.PointF(620, 110),
-        new Night.PointF(580, 100),
+        new Night.PointF(demoXOffset + (shapeSize / 2), demoYOffset),
+        new Night.PointF(demoXOffset + shapeSize, demoYOffset + (shapeSize / 3)),
+        new Night.PointF(demoXOffset + (shapeSize * 2 / 3), demoYOffset + shapeSize),
+        new Night.PointF(demoXOffset + (shapeSize / 3), demoYOffset + shapeSize),
+        new Night.PointF(demoXOffset, demoYOffset + (shapeSize / 3)),
     };
     Graphics.SetColor(new Night.Color(75, 0, 130)); // Indigo
-    Graphics.Polygon(Night.DrawMode.Line, pentagonVertices);
+    Graphics.Polygon(Night.DrawMode.Line, pentagonVertices); // Smaller Pentagon
+
+    // --- Test Large Filled Rectangle ---
+    Graphics.SetColor(Night.Color.Blue);
+    Graphics.Rectangle(Night.DrawMode.Fill, 300, 200, 200, 150); // Large Blue Filled Rectangle Test
+
+    // --- End Test Large Filled Rectangle ---
   }
 
   /// <summary>
