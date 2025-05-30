@@ -1,5 +1,23 @@
-// <copyright file="Game.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Game.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -12,6 +30,10 @@ using SDL3;
 
 namespace Night.SampleGame;
 
+/// <summary>
+/// Main game class for the platformer sample.
+/// Implements the <see cref="IGame"/> interface for Night.Engine integration.
+/// </summary>
 public class Game : IGame
 {
   private Player player;
@@ -20,12 +42,19 @@ public class Game : IGame
   private Night.Rectangle goalPlatform;
   private bool goalReachedMessageShown = false; // To ensure message prints only once
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="Game"/> class.
+  /// </summary>
   public Game()
   {
     this.player = new Player();
     this.platforms = new List<Night.Rectangle>();
   }
 
+  /// <summary>
+  /// Loads game assets and initializes game state.
+  /// Called once at the start of the game by the Night.Engine.
+  /// </summary>
   public void Load()
   {
     // _ = Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
@@ -51,6 +80,11 @@ public class Game : IGame
     this.platforms.Add(this.goalPlatform);
   }
 
+  /// <summary>
+  /// Updates the game state.
+  /// Called every frame by the Night.Engine.
+  /// </summary>
+  /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
   public void Update(double deltaTime)
   {
     this.player.Update(deltaTime, this.platforms);
@@ -71,6 +105,10 @@ public class Game : IGame
     }
   }
 
+  /// <summary>
+  /// Draws the game scene.
+  /// Called every frame by the Night.Engine after Update.
+  /// </summary>
   public void Draw()
   {
     Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
@@ -151,6 +189,13 @@ public class Game : IGame
     Graphics.Polygon(Night.DrawMode.Line, pentagonVertices);
   }
 
+  /// <summary>
+  /// Handles key press events.
+  /// Called by Night.Engine when a key is pressed.
+  /// </summary>
+  /// <param name="key">The <see cref="Night.KeySymbol"/> of the pressed key.</param>
+  /// <param name="scancode">The <see cref="Night.KeyCode"/> (physical key code) of the pressed key.</param>
+  /// <param name="isRepeat">True if this is a repeat key event, false otherwise.</param>
   public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
   {
     // Minimal key handling for now, primarily for closing the window.

@@ -58,6 +58,7 @@ Directory structure:
     │   │   ├── Framework.cs
     │   │   ├── IGame.cs
     │   │   ├── Night.csproj
+    │   │   ├── stylecop.json
     │   │   ├── Configuration/
     │   │   │   ├── AudioConfig.cs
     │   │   │   ├── ConfigurationManager.cs
@@ -124,6 +125,7 @@ Directory structure:
     │       ├── Player.cs
     │       ├── Program.cs
     │       ├── config.json
+    │       ├── stylecop.json
     │       ├── Samples/
     │       │   ├── Platformer.cs
     │       │   └── PlatformerGame.cs
@@ -138,6 +140,7 @@ Directory structure:
     │       │           ├── Night.SampleGame
     │       │           ├── Night.SampleGame.deps.json
     │       │           ├── Night.SampleGame.runtimeconfig.json
+    │       │           ├── Night.SampleGame.xml
     │       │           ├── Night.xml
     │       │           ├── config.json
     │       │           └── assets/
@@ -172,12 +175,14 @@ Directory structure:
     │       ├── FilesystemTests.cs
     │       ├── Night.Tests.csproj
     │       ├── UnitTest1.cs
+    │       ├── stylecop.json
     │       ├── bin/
     │       │   └── Debug/
     │       │       └── net9.0/
     │       │           ├── CoverletSourceRootsMapping_Night.Tests
     │       │           ├── Night.Tests.deps.json
     │       │           ├── Night.Tests.runtimeconfig.json
+    │       │           ├── Night.Tests.xml
     │       │           ├── Night.xml
     │       │           ├── .msCoverageSourceRootsMapping_Night.Tests
     │       │           ├── cs/
@@ -515,6 +520,7 @@ dotnet_diagnostic.SA1649.severity = none
 # StyleCop Analyzer SA1633: The file header is missing or not located at the top of the file.
 # Set to warning or error to ensure it's reported.
 dotnet_diagnostic.SA1633.severity = warning
+dotnet_diagnostic.SA1636.severity = warning
 
 # use 2-spaces for csproj
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,nativeproj,locproj}]
@@ -4460,8 +4466,26 @@ if __name__ == "__main__":
 ================================================
 File: src/Night/Error.cs
 ================================================
-// <copyright file="Error.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Error.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -4514,8 +4538,26 @@ namespace Night
 ================================================
 File: src/Night/Framework.cs
 ================================================
-// <copyright file="Framework.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Framework.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -5125,8 +5167,26 @@ namespace Night
 ================================================
 File: src/Night/IGame.cs
 ================================================
-// <copyright file="IGame.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="IGame.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -5220,6 +5280,7 @@ File: src/Night/Night.csproj
   </PropertyGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
     <PackageReference Include="SDL3-CS" Version="*" />
     <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
       <PrivateAssets>all</PrivateAssets>
@@ -5232,10 +5293,46 @@ File: src/Night/Night.csproj
 
 
 ================================================
+File: src/Night/stylecop.json
+================================================
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Night Circle",
+      "copyrightText": "zlib license\n\nCopyright (c) {copyrightYears} Danny Solivan, {companyName}\n\nThis software is provided 'as-is', without any express or implied\nwarranty. In no event will the authors be held liable for any damages\narising from the use of this software.\n\nPermission is granted to anyone to use this software for any purpose,\nincluding commercial applications, and to alter it and redistribute it\nfreely, subject to the following restrictions:\n\n1. The origin of this software must not be misrepresented; you must not\n   claim that you wrote the original software. If you use this software\n   in a product, an acknowledgment in the product documentation would be\n   appreciated but is not required.\n2. Altered source versions must be plainly marked as such, and must not be\n   misrepresented as being the original software.\n3. This notice may not be removed or altered from any source distribution.",
+      "variables": {
+        "copyrightYears": "2025"
+      }
+    }
+  }
+}
+
+
+
+================================================
 File: src/Night/Configuration/AudioConfig.cs
 ================================================
-// <copyright file="AudioConfig.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="AudioConfig.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System.Text.Json.Serialization;
@@ -5266,8 +5363,26 @@ namespace Night
 ================================================
 File: src/Night/Configuration/ConfigurationManager.cs
 ================================================
-// <copyright file="ConfigurationManager.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="ConfigurationManager.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -5367,8 +5482,26 @@ namespace Night
 ================================================
 File: src/Night/Configuration/GameConfig.cs
 ================================================
-// <copyright file="GameConfig.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="GameConfig.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System.Text.Json.Serialization;
@@ -5447,8 +5580,26 @@ namespace Night
 ================================================
 File: src/Night/Configuration/ModulesConfig.cs
 ================================================
-// <copyright file="ModulesConfig.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="ModulesConfig.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System.Text.Json.Serialization;
@@ -5580,8 +5731,26 @@ namespace Night
 ================================================
 File: src/Night/Configuration/WindowConfig.cs
 ================================================
-// <copyright file="WindowConfig.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="WindowConfig.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System.Text.Json.Serialization;
@@ -5720,8 +5889,26 @@ File: src/Night/Engine/.gitkeep
 ================================================
 File: src/Night/Filesystem/Enums.cs
 ================================================
-// <copyright file="Enums.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Enums.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -5811,8 +5998,26 @@ namespace Night
 ================================================
 File: src/Night/Filesystem/FileSystemInfo.cs
 ================================================
-// <copyright file="FileSystemInfo.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="FileSystemInfo.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -5867,8 +6072,26 @@ namespace Night
 ================================================
 File: src/Night/Filesystem/Filesystem.cs
 ================================================
-// <copyright file="Filesystem.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Filesystem.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -6027,8 +6250,26 @@ namespace Night
 ================================================
 File: src/Night/Graphics/Color.cs
 ================================================
-// <copyright file="Color.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Color.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -6113,8 +6354,26 @@ namespace Night
 ================================================
 File: src/Night/Graphics/DrawMode.cs
 ================================================
-// <copyright file="DrawMode.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="DrawMode.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -6143,8 +6402,26 @@ namespace Night
 ================================================
 File: src/Night/Graphics/Graphics.cs
 ================================================
-// <copyright file="Graphics.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Graphics.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -6671,8 +6948,26 @@ namespace Night
 ================================================
 File: src/Night/Graphics/PointF.cs
 ================================================
-// <copyright file="PointF.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="PointF.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -6712,8 +7007,26 @@ namespace Night
 ================================================
 File: src/Night/Graphics/Rectangle.cs
 ================================================
-// <copyright file="Rectangle.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Rectangle.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -6767,8 +7080,26 @@ namespace Night
 ================================================
 File: src/Night/Graphics/Sprite.cs
 ================================================
-// <copyright file="Sprite.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Sprite.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -6815,8 +7146,26 @@ namespace Night
 ================================================
 File: src/Night/Keyboard/KeyCode.cs
 ================================================
-// <copyright file="KeyCode.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="KeyCode.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 namespace Night
@@ -7320,8 +7669,26 @@ namespace Night
 ================================================
 File: src/Night/Keyboard/KeySymbol.cs
 ================================================
-// <copyright file="KeySymbol.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="KeySymbol.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using SDL3;
@@ -7589,8 +7956,26 @@ namespace Night
 ================================================
 File: src/Night/Keyboard/Keyboard.cs
 ================================================
-// <copyright file="Keyboard.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Keyboard.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -7651,8 +8036,26 @@ namespace Night
 ================================================
 File: src/Night/Mouse/Mouse.cs
 ================================================
-// <copyright file="Mouse.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Mouse.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -7784,8 +8187,26 @@ namespace Night
 ================================================
 File: src/Night/Mouse/MouseButton.cs
 ================================================
-// <copyright file="MouseButton.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="MouseButton.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -7836,8 +8257,26 @@ namespace Night
 ================================================
 File: src/Night/SDL/NightSDL.cs
 ================================================
-// <copyright file="NightSDL.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="NightSDL.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -7884,8 +8323,26 @@ namespace Night
 ================================================
 File: src/Night/System/System.cs
 ================================================
-// <copyright file="System.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="System.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 namespace Night
@@ -7920,8 +8377,26 @@ namespace Night
 ================================================
 File: src/Night/Timer/Timer.cs
 ================================================
-// <copyright file="Timer.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Timer.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -8083,8 +8558,26 @@ namespace Night
 ================================================
 File: src/Night/Window/FullscreenType.cs
 ================================================
-// <copyright file="FullscreenType.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="FullscreenType.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -8114,8 +8607,26 @@ namespace Night
 ================================================
 File: src/Night/Window/Window.cs
 ================================================
-// <copyright file="Window.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Window.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -8617,8 +9128,26 @@ namespace Night
 ================================================
 File: src/Night/Window/WindowMode.cs
 ================================================
-// <copyright file="WindowMode.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="WindowMode.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -11038,7 +11567,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0117cd0f73b4801d36870b0c1ab5cf9739ba4190")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1647f1cecc708a85ac77fbb9aabb522aeed66c3")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -11051,7 +11580,7 @@ using System.Reflection;
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.AssemblyInfoInputs.cache
 ================================================
-c08ffc56d917fc066b17d35ecf87a8851967abfb6a3701017fdde110e61daa2c
+184536ab7e429b9304da7df0fe66a462a60d8fe768a38f90cbff9230eafb93b2
 
 
 
@@ -11112,7 +11641,7 @@ f4b58ce18ba7cef5595c058422ff25b7df1016252895ea6c66a06882ae7c79c6
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0117cd0f73b4801d36870b0c1ab5cf9739ba4190/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/a1647f1cecc708a85ac77fbb9aabb522aeed66c3/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -11130,8 +11659,26 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/Game.cs
 ================================================
-// <copyright file="Game.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Game.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -11144,6 +11691,10 @@ using SDL3;
 
 namespace Night.SampleGame;
 
+/// <summary>
+/// Main game class for the platformer sample.
+/// Implements the <see cref="IGame"/> interface for Night.Engine integration.
+/// </summary>
 public class Game : IGame
 {
   private Player player;
@@ -11152,12 +11703,19 @@ public class Game : IGame
   private Night.Rectangle goalPlatform;
   private bool goalReachedMessageShown = false; // To ensure message prints only once
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="Game"/> class.
+  /// </summary>
   public Game()
   {
     this.player = new Player();
     this.platforms = new List<Night.Rectangle>();
   }
 
+  /// <summary>
+  /// Loads game assets and initializes game state.
+  /// Called once at the start of the game by the Night.Engine.
+  /// </summary>
   public void Load()
   {
     // _ = Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
@@ -11183,6 +11741,11 @@ public class Game : IGame
     this.platforms.Add(this.goalPlatform);
   }
 
+  /// <summary>
+  /// Updates the game state.
+  /// Called every frame by the Night.Engine.
+  /// </summary>
+  /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
   public void Update(double deltaTime)
   {
     this.player.Update(deltaTime, this.platforms);
@@ -11203,6 +11766,10 @@ public class Game : IGame
     }
   }
 
+  /// <summary>
+  /// Draws the game scene.
+  /// Called every frame by the Night.Engine after Update.
+  /// </summary>
   public void Draw()
   {
     Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
@@ -11283,6 +11850,13 @@ public class Game : IGame
     Graphics.Polygon(Night.DrawMode.Line, pentagonVertices);
   }
 
+  /// <summary>
+  /// Handles key press events.
+  /// Called by Night.Engine when a key is pressed.
+  /// </summary>
+  /// <param name="key">The <see cref="Night.KeySymbol"/> of the pressed key.</param>
+  /// <param name="scancode">The <see cref="Night.KeyCode"/> (physical key code) of the pressed key.</param>
+  /// <param name="isRepeat">True if this is a repeat key event, false otherwise.</param>
   public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
   {
     // Minimal key handling for now, primarily for closing the window.
@@ -11345,9 +11919,12 @@ File: src/SampleGame/Night.SampleGame.csproj
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>13.0</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Night.SampleGame.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
     <ProjectReference Include="..\Night\Night.csproj" />
   </ItemGroup>
 
@@ -11403,8 +11980,26 @@ File: src/SampleGame/Night.SampleGame.csproj
 ================================================
 File: src/SampleGame/Player.cs
 ================================================
-// <copyright file="Player.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Player.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -11415,6 +12010,10 @@ using Night;
 
 namespace Night.SampleGame
 {
+  /// <summary>
+  /// Represents the player character in the game.
+  /// Handles player movement, physics, and rendering.
+  /// </summary>
   public class Player
   {
     private const float HorizontalSpeed = 200f; // Pixels per second
@@ -11426,20 +12025,38 @@ namespace Night.SampleGame
     private bool isGrounded;
     private Night.Sprite? playerSprite; // To hold the blue rectangle sprite
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Player"/> class.
+    /// </summary>
     public Player()
     {
       // Initialize properties in Load()
       this.isGrounded = false; // Start in the air or assume Load sets initial grounded state
     }
 
+    /// <summary>
+    /// Gets the player's current X-coordinate (left edge).
+    /// </summary>
     public float X { get; private set; }
 
+    /// <summary>
+    /// Gets the player's current Y-coordinate (top edge).
+    /// </summary>
     public float Y { get; private set; }
 
+    /// <summary>
+    /// Gets the width of the player.
+    /// </summary>
     public int Width { get; private set; }
 
+    /// <summary>
+    /// Gets the height of the player.
+    /// </summary>
     public int Height { get; private set; }
 
+    /// <summary>
+    /// Loads player assets and initializes player state (position, size, sprite).
+    /// </summary>
     public void Load()
     {
       this.Width = 32;
@@ -11479,6 +12096,11 @@ namespace Night.SampleGame
       this.isGrounded = false; // Player starts potentially in the air and falls to ground.
     }
 
+    /// <summary>
+    /// Updates the player's state, including handling input, physics, and collisions.
+    /// </summary>
+    /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
+    /// <param name="platforms">A list of <see cref="Night.Rectangle"/> objects representing solid platforms.</param>
     public void Update(double deltaTime, List<Night.Rectangle> platforms)
     {
       float dt = (float)deltaTime;
@@ -11642,6 +12264,9 @@ namespace Night.SampleGame
       // if (Y < 0) { Y = 0; if (_velocityY < 0) _velocityY = 0; }
     }
 
+    /// <summary>
+    /// Draws the player on the screen.
+    /// </summary>
     public void Draw()
     {
       if (this.playerSprite != null)
@@ -11678,14 +12303,40 @@ namespace Night.SampleGame
 ================================================
 File: src/SampleGame/Program.cs
 ================================================
-// <copyright file="Program.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Program.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 namespace Night.SampleGame
 {
+  /// <summary>
+  /// Main program class for the SampleGame.
+  /// Contains the entry point of the application.
+  /// </summary>
   public class Program
   {
+    /// <summary>
+    /// The main entry point for the application.
+    /// Initializes and runs the game using the Night.Framework.
+    /// </summary>
     public static void Main()
     {
       Framework.Run(new Game());
@@ -11714,10 +12365,46 @@ File: src/SampleGame/config.json
 
 
 ================================================
+File: src/SampleGame/stylecop.json
+================================================
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Night Circle",
+      "copyrightText": "zlib license\n\nCopyright (c) {copyrightYears} Danny Solivan, {companyName}\n\nThis software is provided 'as-is', without any express or implied\nwarranty. In no event will the authors be held liable for any damages\narising from the use of this software.\n\nPermission is granted to anyone to use this software for any purpose,\nincluding commercial applications, and to alter it and redistribute it\nfreely, subject to the following restrictions:\n\n1. The origin of this software must not be misrepresented; you must not\n   claim that you wrote the original software. If you use this software\n   in a product, an acknowledgment in the product documentation would be\n   appreciated but is not required.\n2. Altered source versions must be plainly marked as such, and must not be\n   misrepresented as being the original software.\n3. This notice may not be removed or altered from any source distribution.",
+      "variables": {
+        "copyrightYears": "2025"
+      }
+    }
+  }
+}
+
+
+
+================================================
 File: src/SampleGame/Samples/Platformer.cs
 ================================================
-// <copyright file="Platformer.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Platformer.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -11730,6 +12417,10 @@ using SDL3;
 
 namespace Night.SampleGame;
 
+/// <summary>
+/// A sample platformer game implementation using the Night engine.
+/// Implements the <see cref="IGame"/> interface for Night.Engine integration.
+/// </summary>
 public class Platformer : IGame
 {
   private Player player;
@@ -11738,12 +12429,19 @@ public class Platformer : IGame
   private Night.Rectangle goalPlatform;
   private bool goalReachedMessageShown = false;
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="Platformer"/> class.
+  /// </summary>
   public Platformer()
   {
     this.player = new Player();
     this.platforms = new List<Night.Rectangle>();
   }
 
+  /// <summary>
+  /// Loads game assets and initializes game state for the platformer.
+  /// Called once at the start of the game by the Night.Engine.
+  /// </summary>
   public void Load()
   {
     _ = Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
@@ -11767,6 +12465,11 @@ public class Platformer : IGame
     this.platforms.Add(this.goalPlatform);
   }
 
+  /// <summary>
+  /// Updates the platformer game state.
+  /// Called every frame by the Night.Engine.
+  /// </summary>
+  /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
   public void Update(double deltaTime)
   {
     this.player.Update(deltaTime, this.platforms);
@@ -11780,6 +12483,10 @@ public class Platformer : IGame
     }
   }
 
+  /// <summary>
+  /// Draws the platformer game scene.
+  /// Called every frame by the Night.Engine after Update.
+  /// </summary>
   public void Draw()
   {
     Night.Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
@@ -11805,6 +12512,13 @@ public class Platformer : IGame
     // Player and Level drawing logic will go here in later tasks.
   }
 
+  /// <summary>
+  /// Handles key press events for the platformer game.
+  /// Called by Night.Engine when a key is pressed.
+  /// </summary>
+  /// <param name="key">The <see cref="Night.KeySymbol"/> of the pressed key.</param>
+  /// <param name="scancode">The <see cref="Night.KeyCode"/> (physical key code) of the pressed key.</param>
+  /// <param name="isRepeat">True if this is a repeat key event, false otherwise.</param>
   public void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
   {
     // Minimal key handling for now, primarily for closing the window.
@@ -11834,16 +12548,40 @@ public class Platformer : IGame
 ================================================
 File: src/SampleGame/Samples/PlatformerGame.cs
 ================================================
-// <copyright file="PlatformerGame.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="PlatformerGame.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using Night;
 
 namespace Night.SampleGame;
 
+/// <summary>
+/// Provides an entry point to run the Platformer sample game.
+/// </summary>
 public class PlatformerGame
 {
+  /// <summary>
+  /// Main method to initialize and run the Platformer game.
+  /// </summary>
   public static void PlatformerGameMain()
   {
     Night.Framework.Run(new Platformer());
@@ -11957,6 +12695,168 @@ File: src/SampleGame/bin/Debug/net9.0/Night.SampleGame.runtimeconfig.json
     }
   }
 }
+
+
+================================================
+File: src/SampleGame/bin/Debug/net9.0/Night.SampleGame.xml
+================================================
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Night.SampleGame</name>
+    </assembly>
+    <members>
+        <member name="T:Night.SampleGame.Game">
+            <summary>
+            Main game class for the platformer sample.
+            Implements the <see cref="T:Night.IGame"/> interface for Night.Engine integration.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Game.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Night.SampleGame.Game"/> class.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Game.Load">
+            <summary>
+            Loads game assets and initializes game state.
+            Called once at the start of the game by the Night.Engine.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Game.Update(System.Double)">
+            <summary>
+            Updates the game state.
+            Called every frame by the Night.Engine.
+            </summary>
+            <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
+        </member>
+        <member name="M:Night.SampleGame.Game.Draw">
+            <summary>
+            Draws the game scene.
+            Called every frame by the Night.Engine after Update.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Game.KeyPressed(Night.KeySymbol,Night.KeyCode,System.Boolean)">
+            <summary>
+            Handles key press events.
+            Called by Night.Engine when a key is pressed.
+            </summary>
+            <param name="key">The <see cref="T:Night.KeySymbol"/> of the pressed key.</param>
+            <param name="scancode">The <see cref="T:Night.KeyCode"/> (physical key code) of the pressed key.</param>
+            <param name="isRepeat">True if this is a repeat key event, false otherwise.</param>
+        </member>
+        <member name="T:Night.SampleGame.Player">
+            <summary>
+            Represents the player character in the game.
+            Handles player movement, physics, and rendering.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Player.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Night.SampleGame.Player"/> class.
+            </summary>
+        </member>
+        <member name="P:Night.SampleGame.Player.X">
+            <summary>
+            Gets the player's current X-coordinate (left edge).
+            </summary>
+        </member>
+        <member name="P:Night.SampleGame.Player.Y">
+            <summary>
+            Gets the player's current Y-coordinate (top edge).
+            </summary>
+        </member>
+        <member name="P:Night.SampleGame.Player.Width">
+            <summary>
+            Gets the width of the player.
+            </summary>
+        </member>
+        <member name="P:Night.SampleGame.Player.Height">
+            <summary>
+            Gets the height of the player.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Player.Load">
+            <summary>
+            Loads player assets and initializes player state (position, size, sprite).
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Player.Update(System.Double,System.Collections.Generic.List{Night.Rectangle})">
+            <summary>
+            Updates the player's state, including handling input, physics, and collisions.
+            </summary>
+            <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
+            <param name="platforms">A list of <see cref="T:Night.Rectangle"/> objects representing solid platforms.</param>
+        </member>
+        <member name="M:Night.SampleGame.Player.Draw">
+            <summary>
+            Draws the player on the screen.
+            </summary>
+        </member>
+        <member name="T:Night.SampleGame.Program">
+            <summary>
+            Main program class for the SampleGame.
+            Contains the entry point of the application.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Program.Main">
+            <summary>
+            The main entry point for the application.
+            Initializes and runs the game using the Night.Framework.
+            </summary>
+        </member>
+        <member name="T:Night.SampleGame.Platformer">
+            <summary>
+            A sample platformer game implementation using the Night engine.
+            Implements the <see cref="T:Night.IGame"/> interface for Night.Engine integration.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Platformer.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Night.SampleGame.Platformer"/> class.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Platformer.Load">
+            <summary>
+            Loads game assets and initializes game state for the platformer.
+            Called once at the start of the game by the Night.Engine.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Platformer.Update(System.Double)">
+            <summary>
+            Updates the platformer game state.
+            Called every frame by the Night.Engine.
+            </summary>
+            <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
+        </member>
+        <member name="M:Night.SampleGame.Platformer.Draw">
+            <summary>
+            Draws the platformer game scene.
+            Called every frame by the Night.Engine after Update.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.Platformer.KeyPressed(Night.KeySymbol,Night.KeyCode,System.Boolean)">
+            <summary>
+            Handles key press events for the platformer game.
+            Called by Night.Engine when a key is pressed.
+            </summary>
+            <param name="key">The <see cref="T:Night.KeySymbol"/> of the pressed key.</param>
+            <param name="scancode">The <see cref="T:Night.KeyCode"/> (physical key code) of the pressed key.</param>
+            <param name="isRepeat">True if this is a repeat key event, false otherwise.</param>
+        </member>
+        <member name="T:Night.SampleGame.PlatformerGame">
+            <summary>
+            Provides an entry point to run the Platformer sample game.
+            </summary>
+        </member>
+        <member name="M:Night.SampleGame.PlatformerGame.PlatformerGameMain">
+            <summary>
+            Main method to initialize and run the Platformer game.
+            </summary>
+        </member>
+    </members>
+</doc>
+
 
 
 ================================================
@@ -14354,7 +15254,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0117cd0f73b4801d36870b0c1ab5cf9739ba4190")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1647f1cecc708a85ac77fbb9aabb522aeed66c3")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -14367,7 +15267,7 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
 ================================================
-7c3419c761f25bca68e9da6c78a154cb3c9b83369334c8909de741185491b426
+256f45c8789af4ffef31a4bb665088b422c19b3ed2021a1e2709e2a8bfd3b43d
 
 
 
@@ -14435,7 +15335,7 @@ dc347d346712591e5aae675a5692bedfe675e498f7c55e8de100f6e2ee179134
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0117cd0f73b4801d36870b0c1ab5cf9739ba4190/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/a1647f1cecc708a85ac77fbb9aabb522aeed66c3/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -14459,8 +15359,26 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/FilesystemTests.cs
 ================================================
-// <copyright file="FilesystemTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="FilesystemTests.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -14471,6 +15389,9 @@ using Night;
 
 using Xunit;
 
+/// <summary>
+/// Tests for the <see cref="Night.Filesystem"/> class.
+/// </summary>
 public class FilesystemTests : IDisposable
 {
   private const string TestDir = "test_filesystem_temp";
@@ -14482,6 +15403,10 @@ public class FilesystemTests : IDisposable
   private readonly string testSymlinkFilePath;
   private readonly string testSymlinkDirPath;
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="FilesystemTests"/> class.
+  /// Sets up the test environment by creating temporary directories and files.
+  /// </summary>
   public FilesystemTests()
   {
     // Create a temporary directory for test files relative to the test execution directory
@@ -14527,6 +15452,9 @@ public class FilesystemTests : IDisposable
     }
   }
 
+  /// <summary>
+  /// Disposes of the test resources by deleting the temporary directory.
+  /// </summary>
   public void Dispose()
   {
     // Clean up the temporary directory
@@ -14538,18 +15466,27 @@ public class FilesystemTests : IDisposable
     }
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns null when the path is null.
+  /// </summary>
   [Fact]
   public void GetInfo_NullPath_ReturnsNull()
   {
     Assert.Null(Night.Filesystem.GetInfo(null!));
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns null when the path is empty.
+  /// </summary>
   [Fact]
   public void GetInfo_EmptyPath_ReturnsNull()
   {
     Assert.Null(Night.Filesystem.GetInfo(string.Empty));
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns null for a non-existent path.
+  /// </summary>
   [Fact]
   public void GetInfo_NonExistentPath_ReturnsNull()
   {
@@ -14558,6 +15495,9 @@ public class FilesystemTests : IDisposable
     Assert.Null(Night.Filesystem.GetInfo(Path.Combine(testDirFullPath, "non_existent_file.txt")));
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns correct FileSystemInfo for an existing file.
+  /// </summary>
   [Fact]
   public void GetInfo_ExistingFile_ReturnsFileInfo()
   {
@@ -14568,6 +15508,9 @@ public class FilesystemTests : IDisposable
     _ = Assert.NotNull(info.ModTime);
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns correct FileSystemInfo for an existing file when filtered by type File.
+  /// </summary>
   [Fact]
   public void GetInfo_ExistingFile_WithFilterTypeFile_ReturnsFileInfo()
   {
@@ -14576,6 +15519,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(Night.FileType.File, info.Type);
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns null for an existing file when filtered by type Directory.
+  /// </summary>
   [Fact]
   public void GetInfo_ExistingFile_WithFilterTypeDirectory_ReturnsNull()
   {
@@ -14583,6 +15529,9 @@ public class FilesystemTests : IDisposable
     Assert.Null(info);
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns correct FileSystemInfo for an existing directory.
+  /// </summary>
   [Fact]
   public void GetInfo_ExistingDirectory_ReturnsDirectoryInfo()
   {
@@ -14593,6 +15542,9 @@ public class FilesystemTests : IDisposable
     _ = Assert.NotNull(info.ModTime);
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns correct FileSystemInfo for an existing directory when filtered by type Directory.
+  /// </summary>
   [Fact]
   public void GetInfo_ExistingDirectory_WithFilterTypeDirectory_ReturnsDirectoryInfo()
   {
@@ -14601,6 +15553,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(Night.FileType.Directory, info.Type);
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns null for an existing directory when filtered by type File.
+  /// </summary>
   [Fact]
   public void GetInfo_ExistingDirectory_WithFilterTypeFile_ReturnsNull()
   {
@@ -14608,6 +15563,9 @@ public class FilesystemTests : IDisposable
     Assert.Null(info);
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns correct FileSystemInfo for a file symlink.
+  /// </summary>
   [Fact]
   public void GetInfo_FileSymlink_ReturnsSymlinkInfo()
   {
@@ -14623,6 +15581,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(Night.FileType.Symlink, info.Type);
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns correct FileSystemInfo for a directory symlink.
+  /// </summary>
   [Fact]
   public void GetInfo_DirectorySymlink_ReturnsSymlinkInfo()
   {
@@ -14638,6 +15599,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(Night.FileType.Symlink, info.Type);
   }
 
+  /// <summary>
+  /// Tests that GetInfo correctly populates an existing FileSystemInfo object for a valid path.
+  /// </summary>
   [Fact]
   public void GetInfo_PopulatesExistingObject_ValidPath()
   {
@@ -14650,6 +15614,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(new FileInfo(this.testFilePath).Length, existingInfo.Size);
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns null and does not modify an existing FileSystemInfo object for a non-existent path.
+  /// </summary>
   [Fact]
   public void GetInfo_PopulatesExistingObject_NonExistentPath_ReturnsNullAndDoesNotChangeObject()
   {
@@ -14670,6 +15637,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(originalModTime, existingInfo.ModTime);
   }
 
+  /// <summary>
+  /// Tests that GetInfo correctly populates an existing FileSystemInfo object with a filter for a valid path and type.
+  /// </summary>
   [Fact]
   public void GetInfo_PopulatesExistingObjectWithFilter_ValidPathAndType()
   {
@@ -14681,6 +15651,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(Night.FileType.File, existingInfo.Type);
   }
 
+  /// <summary>
+  /// Tests that GetInfo returns null when populating an existing object if the path exists but the type filter does not match.
+  /// </summary>
   [Fact]
   public void GetInfo_PopulatesExistingObjectWithFilter_PathExistsButWrongType_ReturnsNull()
   {
@@ -14692,6 +15665,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(originalType, existingInfo.Type); // Should not have been modified
   }
 
+  /// <summary>
+  /// Tests that ReadBytes returns the correct byte array for an existing file.
+  /// </summary>
   [Fact]
   public void ReadBytes_ExistingFile_ReturnsCorrectBytes()
   {
@@ -14700,6 +15676,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(expectedBytes, actualBytes);
   }
 
+  /// <summary>
+  /// Tests that ReadBytes throws a FileNotFoundException for a non-existent file.
+  /// </summary>
   [Fact]
   public void ReadBytes_NonExistentFile_ThrowsFileNotFound()
   {
@@ -14708,6 +15687,9 @@ public class FilesystemTests : IDisposable
     _ = Assert.Throws<FileNotFoundException>(() => Night.Filesystem.ReadBytes(Path.Combine(testDirFullPath, "non_existent_file_for_read.txt")));
   }
 
+  /// <summary>
+  /// Tests that ReadText returns the correct string for an existing file.
+  /// </summary>
   [Fact]
   public void ReadText_ExistingFile_ReturnsCorrectText()
   {
@@ -14716,6 +15698,9 @@ public class FilesystemTests : IDisposable
     Assert.Equal(expectedText, actualText);
   }
 
+  /// <summary>
+  /// Tests that ReadText throws a FileNotFoundException for a non-existent file.
+  /// </summary>
   [Fact]
   public void ReadText_NonExistentFile_ThrowsFileNotFound()
   {
@@ -14738,9 +15723,12 @@ File: tests/Night.Tests/Night.Tests.csproj
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Night.Tests.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
     <ProjectReference Include="..\..\src\Night\Night.csproj" />
   </ItemGroup>
 
@@ -14769,17 +15757,59 @@ File: tests/Night.Tests/Night.Tests.csproj
 ================================================
 File: tests/Night.Tests/UnitTest1.cs
 ================================================
-﻿// <copyright file="UnitTest1.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="UnitTest1.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 namespace Night.Engine.Tests;
 
+/// <summary>
+/// Placeholder for future tests.
+/// </summary>
 public class UnitTest1
 {
+  /// <summary>
+  /// Placeholder test method.
+  /// </summary>
   [Fact]
   public void Test1()
   {
+  }
+}
+
+
+
+================================================
+File: tests/Night.Tests/stylecop.json
+================================================
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Night Circle",
+      "copyrightText": "zlib license\n\nCopyright (c) {copyrightYears} Danny Solivan, {companyName}\n\nThis software is provided 'as-is', without any express or implied\nwarranty. In no event will the authors be held liable for any damages\narising from the use of this software.\n\nPermission is granted to anyone to use this software for any purpose,\nincluding commercial applications, and to alter it and redistribute it\nfreely, subject to the following restrictions:\n\n1. The origin of this software must not be misrepresented; you must not\n   claim that you wrote the original software. If you use this software\n   in a product, an acknowledgment in the product documentation would be\n   appreciated but is not required.\n2. Altered source versions must be plainly marked as such, and must not be\n   misrepresented as being the original software.\n3. This notice may not be removed or altered from any source distribution.",
+      "variables": {
+        "copyrightYears": "2025"
+      }
+    }
   }
 }
 
@@ -15309,6 +16339,141 @@ File: tests/Night.Tests/bin/Debug/net9.0/Night.Tests.runtimeconfig.json
     }
   }
 }
+
+
+================================================
+File: tests/Night.Tests/bin/Debug/net9.0/Night.Tests.xml
+================================================
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Night.Tests</name>
+    </assembly>
+    <members>
+        <member name="T:FilesystemTests">
+            <summary>
+            Tests for the <see cref="T:Night.Filesystem"/> class.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FilesystemTests"/> class.
+            Sets up the test environment by creating temporary directories and files.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.Dispose">
+            <summary>
+            Disposes of the test resources by deleting the temporary directory.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_NullPath_ReturnsNull">
+            <summary>
+            Tests that GetInfo returns null when the path is null.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_EmptyPath_ReturnsNull">
+            <summary>
+            Tests that GetInfo returns null when the path is empty.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_NonExistentPath_ReturnsNull">
+            <summary>
+            Tests that GetInfo returns null for a non-existent path.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_ExistingFile_ReturnsFileInfo">
+            <summary>
+            Tests that GetInfo returns correct FileSystemInfo for an existing file.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_ExistingFile_WithFilterTypeFile_ReturnsFileInfo">
+            <summary>
+            Tests that GetInfo returns correct FileSystemInfo for an existing file when filtered by type File.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_ExistingFile_WithFilterTypeDirectory_ReturnsNull">
+            <summary>
+            Tests that GetInfo returns null for an existing file when filtered by type Directory.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_ExistingDirectory_ReturnsDirectoryInfo">
+            <summary>
+            Tests that GetInfo returns correct FileSystemInfo for an existing directory.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_ExistingDirectory_WithFilterTypeDirectory_ReturnsDirectoryInfo">
+            <summary>
+            Tests that GetInfo returns correct FileSystemInfo for an existing directory when filtered by type Directory.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_ExistingDirectory_WithFilterTypeFile_ReturnsNull">
+            <summary>
+            Tests that GetInfo returns null for an existing directory when filtered by type File.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_FileSymlink_ReturnsSymlinkInfo">
+            <summary>
+            Tests that GetInfo returns correct FileSystemInfo for a file symlink.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_DirectorySymlink_ReturnsSymlinkInfo">
+            <summary>
+            Tests that GetInfo returns correct FileSystemInfo for a directory symlink.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_PopulatesExistingObject_ValidPath">
+            <summary>
+            Tests that GetInfo correctly populates an existing FileSystemInfo object for a valid path.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_PopulatesExistingObject_NonExistentPath_ReturnsNullAndDoesNotChangeObject">
+            <summary>
+            Tests that GetInfo returns null and does not modify an existing FileSystemInfo object for a non-existent path.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_PopulatesExistingObjectWithFilter_ValidPathAndType">
+            <summary>
+            Tests that GetInfo correctly populates an existing FileSystemInfo object with a filter for a valid path and type.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.GetInfo_PopulatesExistingObjectWithFilter_PathExistsButWrongType_ReturnsNull">
+            <summary>
+            Tests that GetInfo returns null when populating an existing object if the path exists but the type filter does not match.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.ReadBytes_ExistingFile_ReturnsCorrectBytes">
+            <summary>
+            Tests that ReadBytes returns the correct byte array for an existing file.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.ReadBytes_NonExistentFile_ThrowsFileNotFound">
+            <summary>
+            Tests that ReadBytes throws a FileNotFoundException for a non-existent file.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.ReadText_ExistingFile_ReturnsCorrectText">
+            <summary>
+            Tests that ReadText returns the correct string for an existing file.
+            </summary>
+        </member>
+        <member name="M:FilesystemTests.ReadText_NonExistentFile_ThrowsFileNotFound">
+            <summary>
+            Tests that ReadText throws a FileNotFoundException for a non-existent file.
+            </summary>
+        </member>
+        <member name="T:Night.Engine.Tests.UnitTest1">
+            <summary>
+            Placeholder for future tests.
+            </summary>
+        </member>
+        <member name="M:Night.Engine.Tests.UnitTest1.Test1">
+            <summary>
+            Placeholder test method.
+            </summary>
+        </member>
+    </members>
+</doc>
+
 
 
 ================================================
@@ -18688,7 +19853,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0117cd0f73b4801d36870b0c1ab5cf9739ba4190")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1647f1cecc708a85ac77fbb9aabb522aeed66c3")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -18701,7 +19866,7 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.AssemblyInfoInputs.cache
 ================================================
-ca3e70e2f0e083a118699e0dccbda844f3c5260ae5aedc7fe42cd5035db1831a
+fbf291dd93243a400edf57a3ae7e4f6063503f05907f3a07a480dda0912d123b
 
 
 
@@ -18770,7 +19935,7 @@ File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.genruntimeconfig.cache
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0117cd0f73b4801d36870b0c1ab5cf9739ba4190/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/a1647f1cecc708a85ac77fbb9aabb522aeed66c3/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================

@@ -1,5 +1,23 @@
-// <copyright file="Player.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Player.cs" company="Night Circle">
+// zlib license
+//
+// Copyright (c) 2025 Danny Solivan, Night Circle
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -10,6 +28,10 @@ using Night;
 
 namespace Night.SampleGame
 {
+  /// <summary>
+  /// Represents the player character in the game.
+  /// Handles player movement, physics, and rendering.
+  /// </summary>
   public class Player
   {
     private const float HorizontalSpeed = 200f; // Pixels per second
@@ -21,20 +43,38 @@ namespace Night.SampleGame
     private bool isGrounded;
     private Night.Sprite? playerSprite; // To hold the blue rectangle sprite
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Player"/> class.
+    /// </summary>
     public Player()
     {
       // Initialize properties in Load()
       this.isGrounded = false; // Start in the air or assume Load sets initial grounded state
     }
 
+    /// <summary>
+    /// Gets the player's current X-coordinate (left edge).
+    /// </summary>
     public float X { get; private set; }
 
+    /// <summary>
+    /// Gets the player's current Y-coordinate (top edge).
+    /// </summary>
     public float Y { get; private set; }
 
+    /// <summary>
+    /// Gets the width of the player.
+    /// </summary>
     public int Width { get; private set; }
 
+    /// <summary>
+    /// Gets the height of the player.
+    /// </summary>
     public int Height { get; private set; }
 
+    /// <summary>
+    /// Loads player assets and initializes player state (position, size, sprite).
+    /// </summary>
     public void Load()
     {
       this.Width = 32;
@@ -74,6 +114,11 @@ namespace Night.SampleGame
       this.isGrounded = false; // Player starts potentially in the air and falls to ground.
     }
 
+    /// <summary>
+    /// Updates the player's state, including handling input, physics, and collisions.
+    /// </summary>
+    /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
+    /// <param name="platforms">A list of <see cref="Night.Rectangle"/> objects representing solid platforms.</param>
     public void Update(double deltaTime, List<Night.Rectangle> platforms)
     {
       float dt = (float)deltaTime;
@@ -237,6 +282,9 @@ namespace Night.SampleGame
       // if (Y < 0) { Y = 0; if (_velocityY < 0) _velocityY = 0; }
     }
 
+    /// <summary>
+    /// Draws the player on the screen.
+    /// </summary>
     public void Draw()
     {
       if (this.playerSprite != null)
