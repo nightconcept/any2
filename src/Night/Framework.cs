@@ -73,8 +73,9 @@ namespace Night
       ConfigurationManager.LoadConfig();
       var windowConfig = ConfigurationManager.CurrentConfig.Window;
 
+      string nightVersionString = VersionInfo.GetVersion();
       string sdlVersionString = NightSDL.GetVersion();
-      Console.WriteLine($"Night Engine: v0.0.1");
+      Console.WriteLine($"Night Engine: v{nightVersionString}");
       Console.WriteLine($"SDL: v{sdlVersionString}");
       Console.WriteLine(GetFormattedPlatformString());
       Console.WriteLine($"Framework: {RuntimeInformation.FrameworkDescription}");
