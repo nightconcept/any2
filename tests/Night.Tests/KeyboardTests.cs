@@ -70,7 +70,7 @@ namespace Night.Tests.Keyboard
       // Act
       // Cast an SDL.Scancode that is explicitly 'Unknown' to Night.KeyCode
       // This simulates a scenario where a KeyCode might not have a valid mapping.
-      bool result = Night.Keyboard.IsDown((Night.KeyCode)SDL.Scancode.Unknown);
+      bool result = Night.Keyboard.IsDown((Night.KeyCode)SDL3.SDL.Scancode.Unknown);
 
       // Assert
       Assert.False(result);
