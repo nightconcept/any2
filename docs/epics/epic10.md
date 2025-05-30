@@ -285,8 +285,26 @@ end
 
 - [ ] **Task 10.9: Formalize Basic Test Suite**
   - **Description:** Review current testing strategy (`Night.SampleGame` as integration test [cite: 209]). Establish a basic structure for more formal tests if deemed necessary (e.g., a separate test project). Add minimal unit tests for any new complex, non-SDL-dependent logic introduced in this epic (e.g., utility functions in `Night.Filesystem` or `Night.Timer`).
-  - **Acceptance Criteria:** A clear testing strategy for 0.1.0 is in place. Any new critical utility functions have basic unit tests.
-  - **Status:** In-Progress
+  - **Implementation:**
+    - [x] Created `Night.Tests` project (`tests/Night.Tests/Night.Tests.csproj`) for xUnit tests. (Path corrected)
+    - [x] Added `tests/Night.Tests/Graphics/GraphicsTests.cs` with unit tests for `Night.Graphics` methods, focusing on parameter validation and behavior with null `Window.RendererPtr`. Tests cover:
+      - `NewImage()`: Null/non-existent file paths.
+      - `Draw()`: Null sprite, sprite with null texture.
+      - `Rectangle()`: Invalid dimensions.
+      - `Line(PointF[])`: Null/insufficient points.
+      - `Polygon()`: Null/insufficient vertices.
+      - `Circle()`: Invalid segments/radius.
+      - General graphics operations (`SetColor`, `Clear`, `Present`, shape drawing) when `Window.RendererPtr` is null.
+    - [x] Added XML documentation comments to all public members in `tests/Night.Tests/Graphics/GraphicsTests.cs` to resolve build warnings.
+    - [x] Added `tests/Night.Tests/Keyboard/KeyboardTests.cs` with unit tests for `Night.Keyboard.IsDown()` method, focusing on C# logic paths:
+      - Input system not initialized.
+      - Unknown `KeyCode`.
+      - `KeyCode` (scancode) out of bounds.
+    - [x] Modified `Framework.IsInputInitialized` in `src/Night/Framework.cs` to have an `internal` setter.
+    - [x] Added `InternalsVisibleTo("Night.Tests")` to `src/Night/Night.csproj` to allow test project access for setting `Framework.IsInputInitialized`.
+    - [x] Added MSBuild `Content` items to `tests/Night.Tests/Night.Tests.csproj` to copy SDL3 and SDL3_image native binaries to the output directory, resolving `DllNotFoundException` for `KeyboardTests`.
+  - **Acceptance Criteria:** A clear testing strategy for 0.1.0 is in place. Critical utility functions and core framework modules like `Night.Graphics` and `Night.Keyboard` have basic unit tests covering C# logic and parameter validation. Test files are documented to avoid build warnings. Tests for `Night.Keyboard` can correctly manipulate necessary framework state for testing and can locate native SDL binaries.
+  - **Status:** In-Progress // Added Keyboard.cs tests, Documented GraphicsTests.cs, Fixed KeyboardTests build issues, Added SDL native copy to Night.Tests
 
 - [x] **Task 10.10: Create Project Logo and Icon**
   - **Description:** Design or procure a logo for Night Engine. Prepare application icon files (e.g., .ico, .icns) and integrate them so the `Night.SampleGame` window uses the icon. `Night.Window.SetIcon()` would be needed if not already planned. (Roadmap `love.window` has `setIcon` [cite: 1291, 1327] as out of scope, may need to be scoped in for this).
@@ -312,7 +330,7 @@ end
   - **Status:** Done (Basic requirements met by existing `.github/workflows/ci.yml`. Further enhancements can be added.)
 
 - [x] **Task 10.12: Create API Documentation Script**
-  - **Description:** Write a new Python script `scripts/get_api.py`. This script will parse all C# files in `src/Night.Engine/Framework` and its subdirectories. It will generate a markdown file listing all public static classes and their public static functions (including overloads). The script should attempt to derive an equivalent Love2D API call for each function.
+  - **Description:** Write a new Python script `scripts/get_api.py`. This script will parse all C# files in `src/Night/` and its subdirectories. It will generate a markdown file listing all public static classes and their public static functions (including overloads). The script should attempt to derive an equivalent Love2D API call for each function.
   - **Output Format:**
     - Modules (classes) should be Header Level 2.
     - Functions should be an unordered list item: `FunctionName() - love.module.functionName`
@@ -335,113 +353,113 @@ end
 - **Description:** Restructure the project's directories and C# project files to align with the "Night" and "Night.Engine" namespace strategy. Update all relevant documentation to reflect these changes. The goal is to have a primary assembly named `Night.dll` which contains both the `Night` (framework) and `Night.Engine` (engine extensions) namespaces.
 
 - **Implementation Details:**
-    - **1. Directory Renaming and Restructuring:**
-        - [x] Rename the main C# project directory from `src/Night.Engine/` to `src/Night/`.
-        - [x] Move all contents of the former `src/Night.Engine/Framework/` directory (e.g., `Graphics/`, `Window/`, etc.) directly into the new `src/Night/` directory.
+  - **1. Directory Renaming and Restructuring:**
+    - [x] Rename the main C# project directory from `src/Night.Engine/` to `src/Night/`.
+    - [x] Move all contents of the former `src/Night.Engine/Framework/` directory (e.g., `Graphics/`, `Window/`, etc.) directly into the new `src/Night/` directory.
 
-            - Example: `src/Night.Engine/Framework/Graphics/Graphics.cs` becomes `src/Night/Graphics/Graphics.cs`.
+      - Example: `src/Night.Engine/Framework/Graphics/Graphics.cs` becomes `src/Night/Graphics/Graphics.cs`.
 
-        - [x] Move the contents of the former `src/Night.Engine/Engine/` directory into a new `Engine` subdirectory within `src/Night/`.
+    - [x] Move the contents of the former `src/Night.Engine/Engine/` directory into a new `Engine` subdirectory within `src/Night/`.
 
-            - Example: `src/Night.Engine/Engine/.gitkeep` becomes `src/Night/Engine/.gitkeep`.
+      - Example: `src/Night.Engine/Engine/.gitkeep` becomes `src/Night/Engine/.gitkeep`.
 
-            - Future engine components like `SceneManager.cs` would go into `src/Night/Engine/`.
+      - Future engine components like `SceneManager.cs` would go into `src/Night/Engine/`.
 
-    - **2. C# Project File (.csproj) Adjustments:**
+  - **2. C# Project File (.csproj) Adjustments:**
 
-        - [x] Rename the C# project file from `src/Night.Engine/Night.Engine.csproj` to `src/Night/Night.csproj`.
+    - [x] Rename the C# project file from `src/Night.Engine/Night.Engine.csproj` to `src/Night/Night.csproj`.
 
-        - [x] Update the `src/Night/Night.csproj` file:
+    - [x] Update the `src/Night/Night.csproj` file:
 
-            - [x] Modify the `<AssemblyName>` property (or add it if not present) to ensure the output assembly is named `Night`. (e.g., `<AssemblyName>Night</AssemblyName>`)
+      - [x] Modify the `<AssemblyName>` property (or add it if not present) to ensure the output assembly is named `Night`. (e.g., `<AssemblyName>Night</AssemblyName>`)
 
-            - [x] Verify that all source file paths (`<Compile Include="..." />` if explicit, or implicit globbing patterns) are correct after the directory restructuring.
+      - [x] Verify that all source file paths (`<Compile Include="..." />` if explicit, or implicit globbing patterns) are correct after the directory restructuring.
 
-    - **3. Solution File (`.sln`) Update:**
+  - **3. Solution File (`.sln`) Update:**
 
-        - [x] Edit the `Night.sln` file to reflect the new path and name of the C# project file.
+    - [x] Edit the `Night.sln` file to reflect the new path and name of the C# project file.
 
-            - Example: Change `Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Night.Engine", "src\Night.Engine\Night.Engine.csproj", "{...}"`
+      - Example: Change `Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Night.Engine", "src\Night.Engine\Night.Engine.csproj", "{...}"`
 
-            - To: `Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Night", "src\Night\Night.csproj", "{...}"` (The project GUID `{...}` should remain the same).
+      - To: `Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Night", "src\Night\Night.csproj", "{...}"` (The project GUID `{...}` should remain the same).
 
-            - [x] Also update `Night.Engine.Tests` to `Night.Tests` and its path in the solution.
+      - [x] Also update `Night.Engine.Tests` to `Night.Tests` and its path in the solution.
 
-    - **4. Namespace Verification (Conceptual - No Code Change unless inconsistencies found):**
+  - **4. Namespace Verification (Conceptual - No Code Change unless inconsistencies found):**
 
-        - [x] Conceptually verify that all files moved from `src/Night.Engine/Framework/*` are already in the `Night` namespace (or sub-namespaces like `Night.Graphics`).
+    - [x] Conceptually verify that all files moved from `src/Night.Engine/Framework/*` are already in the `Night` namespace (or sub-namespaces like `Night.Graphics`).
 
-        - [x] Conceptually verify that any files moved to `src/Night/Engine/*` will use the `Night.Engine` namespace.
+    - [x] Conceptually verify that any files moved to `src/Night/Engine/*` will use the `Night.Engine` namespace.
 
-    - **5. Documentation Updates:**
+  - **5. Documentation Updates:**
 
-        - [x] **`docs/PRD.md`:**
+    - [x] **`docs/PRD.md`:**
 
-            - [x] Update Section 3 "Technical Specifications"
+      - [x] Update Section 3 "Technical Specifications"
 
-                - Change primary library name from `Night.Engine` to `Night`.
+        - Change primary library name from `Night.Engine` to `Night`.
 
-                - Reflect that the output DLL is `Night.dll`.
+        - Reflect that the output DLL is `Night.dll`.
 
-                - Clarify that this `Night.dll` contains both `Night` (framework) and `Night.Engine` (engine extensions) namespaces.
+        - Clarify that this `Night.dll` contains both `Night` (framework) and `Night.Engine` (engine extensions) namespaces.
 
-            - [x] Update Section 4 "Project Structure"
+      - [x] Update Section 4 "Project Structure"
 
-                - Modify the Mermaid diagram and textual descriptions to show the new `src/Night/` top-level directory for the main library.
+        - Modify the Mermaid diagram and textual descriptions to show the new `src/Night/` top-level directory for the main library.
 
-                - Show module directories (e.g., `Graphics`, `Window`) directly under `src/Night/`.
+        - Show module directories (e.g., `Graphics`, `Window`) directly under `src/Night/`.
 
-                - Show the `Engine` subdirectory as `src/Night/Engine/`.
+        - Show the `Engine` subdirectory as `src/Night/Engine/`.
 
-            - [x] Update Section 5 "File Descriptions"
+      - [x] Update Section 5 "File Descriptions"
 
-                - Change `src/Night.Engine/Night.Engine.csproj` to `src/Night/Night.csproj`.
+        - Change `src/Night.Engine/Night.Engine.csproj` to `src/Night/Night.csproj`.
 
-                - Describe `Night.csproj` as the project file for the main `Night.dll` library.
+        - Describe `Night.csproj` as the project file for the main `Night.dll` library.
 
-        - [x] **`README.md`:**
+    - [x] **`README.md`:**
 
-            - [x] Review and update any mentions of `Night.Engine` as the primary library name or `Night.Engine.dll` if they exist.
+      - [x] Review and update any mentions of `Night.Engine` as the primary library name or `Night.Engine.dll` if they exist.
 
-            - [x] Ensure any "Getting Started" or API usage examples correctly reflect `using Night;` and `using Night.Engine;` and the concept of a single `Night.dll`.
+      - [x] Ensure any "Getting Started" or API usage examples correctly reflect `using Night;` and `using Night.Engine;` and the concept of a single `Night.dll`.
 
-        - [x] **`docs/epics/*.md` (especially `epic10.md` and any active epics):**
+    - [x] **`docs/epics/*.md` (especially `epic10.md` and any active epics):**
 
-            - [x] Review all task descriptions and implementation details.
+      - [x] Review all task descriptions and implementation details.
 
-            - [x] Update file paths (e.g., references to `src/Night.Engine/Framework/...` should become `src/Night/...`).
+      - [x] Update file paths (e.g., references to `src/Night.Engine/Framework/...` should become `src/Night/...`).
 
-            - [x] Update references to `Night.Engine.csproj` to `Night.csproj`.
+      - [x] Update references to `Night.Engine.csproj` to `Night.csproj`.
 
-        - [x] **`docs/operational-guidelines.md`:**
+    - [x] **`docs/operational-guidelines.md`:**
 
-            - [x] Review for any path or project name specifics that might need updating.
+      - [x] Review for any path or project name specifics that might need updating.
 
-        - [x] **`.github/workflows/ci.yml` (and any other relevant workflows):**
+    - [x] **`.github/workflows/ci.yml` (and any other relevant workflows):**
 
-            - [x] Update paths to the solution file (`Night.sln` - likely no change here unless solution name changes).
+      - [x] Update paths to the solution file (`Night.sln` - likely no change here unless solution name changes).
 
-            - [x] Update paths to the C# project file if explicitly referenced (e.g., `dotnet build src/Night/Night.csproj`).
+      - [x] Update paths to the C# project file if explicitly referenced (e.g., `dotnet build src/Night/Night.csproj`).
 
-            - [x] Ensure build steps correctly produce `Night.dll`.
+      - [x] Ensure build steps correctly produce `Night.dll`.
 
-        - [x] **`scripts/update_api_doc.py` (Task 10.12 in `epic10.md`):**
+    - [x] **`scripts/update_api_doc.py` (Task 10.12 in `epic10.md`):**
 
-            - [x] Ensure the script's `framework_dir` points to `src/Night/` (or its relevant subdirectories like `src/Night/Graphics`, etc., if it iterates that way) instead of `src/Night.Engine/Framework/`.
+      - [x] Ensure the script's `framework_dir` points to `src/Night/` (or its relevant subdirectories like `src/Night/Graphics`, etc., if it iterates that way) instead of `src/Night.Engine/Framework/`.
 
 - **Acceptance Criteria:**
 
-    - The project directory structure is updated as specified.
+  - The project directory structure is updated as specified.
 
-    - The C# project file is renamed to `Night.csproj`, located in `src/Night/`, and configured to output `Night.dll`.
+  - The C# project file is renamed to `Night.csproj`, located in `src/Night/`, and configured to output `Night.dll`.
 
-    - The `Night.sln` file correctly references the renamed and relocated project.
+  - The `Night.sln` file correctly references the renamed and relocated project.
 
-    - The solution builds successfully, producing `Night.dll`.
+  - The solution builds successfully, producing `Night.dll`.
 
-    - The `Night.SampleGame` project still builds and runs correctly, referencing the new `Night.dll` and using the `Night` and `Night.Engine` namespaces as intended.
+  - The `Night.SampleGame` project still builds and runs correctly, referencing the new `Night.dll` and using the `Night` and `Night.Engine` namespaces as intended.
 
-    - All specified documentation files (`PRD.md`, `README.md`, relevant epics, CI workflows, API doc script) are updated to accurately reflect the new structure, naming, and API organization.
+  - All specified documentation files (`PRD.md`, `README.md`, relevant epics, CI workflows, API doc script) are updated to accurately reflect the new structure, naming, and API organization.
 
 - **Status:** Review
 

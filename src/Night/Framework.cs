@@ -54,7 +54,7 @@ namespace Night
     /// Gets a value indicating whether a flag indicating whether the core SDL systems, particularly for input,
     /// have been successfully initialized by this Framework's Run method.
     /// </summary>
-    public static bool IsInputInitialized { get; private set; } = false;
+    public static bool IsInputInitialized { get; internal set; } = false;
 
     /// <summary>
     /// Runs the game instance.
