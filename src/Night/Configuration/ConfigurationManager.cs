@@ -6,18 +6,17 @@ using System;
 using System.IO;
 using System.Text.Json;
 
+using Night;
+
 namespace Night
 {
-  using Night;
-  using Night.Configuration;
-
   public static class ConfigurationManager
   {
     private static readonly string ConfigFileName = "config.json";
-    private static Night.Configuration.GameConfig currentConfig = new Night.Configuration.GameConfig();
+    private static GameConfig currentConfig = new GameConfig();
     private static bool isLoaded = false;
 
-    public static Night.Configuration.GameConfig CurrentConfig => currentConfig;
+    public static GameConfig CurrentConfig => currentConfig;
 
     public static bool IsLoaded => isLoaded;
 
@@ -44,7 +43,7 @@ namespace Night
               AllowTrailingCommas = true,
               ReadCommentHandling = JsonCommentHandling.Skip,
             };
-            Night.Configuration.GameConfig? loadedConfig = JsonSerializer.Deserialize<Night.Configuration.GameConfig>(jsonContent, options);
+            GameConfig? loadedConfig = JsonSerializer.Deserialize<GameConfig>(jsonContent, options);
             if (loadedConfig != null)
             {
               currentConfig = loadedConfig;

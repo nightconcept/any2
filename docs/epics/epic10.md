@@ -20,7 +20,7 @@
 
 ### Phase 1: Core Framework Enhancements
 
-- [ ] **Task 10.1: Implement `Night.Filesystem` (Basic)**
+- [x] **Task 10.1: Implement `Night.Filesystem` (Basic)**
   - **Description:** Create the `Night.Filesystem` static class. Implement core functions needed for 0.1.0, focusing on reading files (e.g., for `Graphics.NewImage`), checking file/directory existence. Refer to `docs/love2d-api/modules/filesystem.md` for API inspiration, but scope to essential read operations.
   - **Implementation:**
     - [x] Create `Night.Filesystem` static class
@@ -44,7 +44,7 @@
   - **Acceptance Criteria:** Basic file operations are available and usable by other modules (e.g., `Night.Graphics.NewImage` can use it). Sample game can demonstrate reading a simple text file.
   - **Status:** In-Progress
 
-- [ ] **Task 10.2: Extend `Night.Graphics` with Basic Shape Drawing**
+- [x] **Task 10.2: Extend `Night.Graphics` with Basic Shape Drawing**
   - **Description:** Add methods to `Night.Graphics` for drawing 2D primitives.
   - **Implementation:**
     - [x] Define `Night.DrawMode` enum with values:
@@ -71,7 +71,7 @@
   - **Acceptance Criteria:** `Night.Timer.GetFPS()` returns current FPS. `Night.Timer.GetTime()` returns elapsed game time. Sample game can display these values.
   - **Status:** Done
 
-- [ ] **Task 10.4: Implement Remaining Input Event Callbacks**
+- [x] **Task 10.4: Implement Remaining Input Event Callbacks**
   - **Description:** Add remaining input event callbacks to handle keyboard and mouse interactions.
   - **Implementation:**
     - [x] Add to `IGame` interface:
@@ -255,7 +255,7 @@ end
 - **Acceptance Criteria:** A user can provide a custom function to `Night.Framework` that gets called on unhandled game code exceptions, allowing custom display or logging.
 - **Status:** Done
 
-- [ ] **Task 10.7: Basic Game Configuration File Support**
+- [x] **Task 10.7: Basic Game Configuration File Support**
   - **Description:** Implement functionality to load basic game settings from a configuration file (e.g., `config.json`) at startup.
   - Focus on settings like default window width, height, title, vsync toggle.
   - `Night.Framework.Run` or `IGame.Load` could access these.

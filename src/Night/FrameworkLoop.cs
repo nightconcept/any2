@@ -9,7 +9,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 using Night;
-using Night.Configuration; // Added for configuration management
 
 using SDL3;
 

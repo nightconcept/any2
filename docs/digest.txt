@@ -1524,7 +1524,7 @@ File: docs/epics/epic10.md
 
 ### Phase 1: Core Framework Enhancements
 
-- [ ] **Task 10.1: Implement `Night.Filesystem` (Basic)**
+- [x] **Task 10.1: Implement `Night.Filesystem` (Basic)**
   - **Description:** Create the `Night.Filesystem` static class. Implement core functions needed for 0.1.0, focusing on reading files (e.g., for `Graphics.NewImage`), checking file/directory existence. Refer to `docs/love2d-api/modules/filesystem.md` for API inspiration, but scope to essential read operations.
   - **Implementation:**
     - [x] Create `Night.Filesystem` static class
@@ -1548,7 +1548,7 @@ File: docs/epics/epic10.md
   - **Acceptance Criteria:** Basic file operations are available and usable by other modules (e.g., `Night.Graphics.NewImage` can use it). Sample game can demonstrate reading a simple text file.
   - **Status:** In-Progress
 
-- [ ] **Task 10.2: Extend `Night.Graphics` with Basic Shape Drawing**
+- [x] **Task 10.2: Extend `Night.Graphics` with Basic Shape Drawing**
   - **Description:** Add methods to `Night.Graphics` for drawing 2D primitives.
   - **Implementation:**
     - [x] Define `Night.DrawMode` enum with values:
@@ -1575,7 +1575,7 @@ File: docs/epics/epic10.md
   - **Acceptance Criteria:** `Night.Timer.GetFPS()` returns current FPS. `Night.Timer.GetTime()` returns elapsed game time. Sample game can display these values.
   - **Status:** Done
 
-- [ ] **Task 10.4: Implement Remaining Input Event Callbacks**
+- [x] **Task 10.4: Implement Remaining Input Event Callbacks**
   - **Description:** Add remaining input event callbacks to handle keyboard and mouse interactions.
   - **Implementation:**
     - [x] Add to `IGame` interface:
@@ -1759,7 +1759,7 @@ end
 - **Acceptance Criteria:** A user can provide a custom function to `Night.Framework` that gets called on unhandled game code exceptions, allowing custom display or logging.
 - **Status:** Done
 
-- [ ] **Task 10.7: Basic Game Configuration File Support**
+- [x] **Task 10.7: Basic Game Configuration File Support**
   - **Description:** Implement functionality to load basic game settings from a configuration file (e.g., `config.json`) at startup.
   - Focus on settings like default window width, height, title, vsync toggle.
   - `Night.Framework.Run` or `IGame.Load` could access these.
@@ -4448,7 +4448,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 using Night;
-using Night.Configuration; // Added for configuration management
 
 using SDL3;
 
@@ -5149,18 +5148,17 @@ using System;
 using System.IO;
 using System.Text.Json;
 
+using Night;
+
 namespace Night
 {
-  using Night;
-  using Night.Configuration;
-
   public static class ConfigurationManager
   {
     private static readonly string ConfigFileName = "config.json";
-    private static Night.Configuration.GameConfig currentConfig = new Night.Configuration.GameConfig();
+    private static GameConfig currentConfig = new GameConfig();
     private static bool isLoaded = false;
 
-    public static Night.Configuration.GameConfig CurrentConfig => currentConfig;
+    public static GameConfig CurrentConfig => currentConfig;
 
     public static bool IsLoaded => isLoaded;
 
@@ -5187,7 +5185,7 @@ namespace Night
               AllowTrailingCommas = true,
               ReadCommentHandling = JsonCommentHandling.Skip,
             };
-            Night.Configuration.GameConfig? loadedConfig = JsonSerializer.Deserialize<Night.Configuration.GameConfig>(jsonContent, options);
+            GameConfig? loadedConfig = JsonSerializer.Deserialize<GameConfig>(jsonContent, options);
             if (loadedConfig != null)
             {
               currentConfig = loadedConfig;
@@ -5233,7 +5231,7 @@ File: src/Night/Configuration/GameConfig.cs
 
 using System.Text.Json.Serialization;
 
-namespace Night.Configuration
+namespace Night
 {
 
   public class GameConfig
@@ -8050,7 +8048,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd34a24349262b6756620fd321e8165d3bb64d10")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0525ee88c265b33fa6724e0db77184b53b4d713c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -8063,7 +8061,7 @@ using System.Reflection;
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.AssemblyInfoInputs.cache
 ================================================
-9db0e824b21cdd8eb554b10db67d7f16a3a5ba816f31a0ae0ce52aa21b9fbaee
+db14d5e6be7702840fa060052804ca7ce1a204a1bf7765c2a49c11ed17f09662
 
 
 
@@ -8124,7 +8122,7 @@ cb5d82de82cf2868752796dcad4edbd7810515267684c92faae8d67719d9c500
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/bd34a24349262b6756620fd321e8165d3bb64d10/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0525ee88c265b33fa6724e0db77184b53b4d713c/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -9261,7 +9259,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd34a24349262b6756620fd321e8165d3bb64d10")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0525ee88c265b33fa6724e0db77184b53b4d713c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -9274,7 +9272,7 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
 ================================================
-62319eaab98c3c27617b068e99e7af2f1e380f4147c53946e75f1ce46f081604
+7a940e472a22722aeba609865d00e199bddba40d4329a5b1c71603f240779c8d
 
 
 
@@ -9342,7 +9340,7 @@ dc347d346712591e5aae675a5692bedfe675e498f7c55e8de100f6e2ee179134
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/bd34a24349262b6756620fd321e8165d3bb64d10/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0525ee88c265b33fa6724e0db77184b53b4d713c/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -11559,7 +11557,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd34a24349262b6756620fd321e8165d3bb64d10")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0525ee88c265b33fa6724e0db77184b53b4d713c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -11572,7 +11570,7 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.AssemblyInfoInputs.cache
 ================================================
-ed7106977c2f73e0144a267cddabb25cbdec4a72d3bd31d3b8d09f6a0065ff3b
+a3b0fbcd8a92a59176467de15ff6c93bc37bde2b9f50c5f8bdf715d44d844f9b
 
 
 
@@ -11641,7 +11639,7 @@ File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.genruntimeconfig.cache
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/bd34a24349262b6756620fd321e8165d3bb64d10/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0525ee88c265b33fa6724e0db77184b53b4d713c/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -12363,12 +12361,6 @@ jobs:
       with:
         submodules: 'recursive' # Ensure submodules like SDL are checked out
 
-    - name: Set Git line endings for Windows
-      if: runner.os == 'Windows'
-      run: |
-        git config --global core.autocrlf false
-        git config --global core.eol lf
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -12433,12 +12425,6 @@ jobs:
         with:
           # We must fetch all history for CodeQL to correctly analyze commits
           fetch-depth: 0
-
-      - name: Set Git line endings for Windows
-        if: runner.os == 'Windows' # Though this job runs on ubuntu, good practice if matrix changes
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL

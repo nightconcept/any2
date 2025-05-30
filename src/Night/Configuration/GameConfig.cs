@@ -4,7 +4,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Night.Configuration
+namespace Night
 {
 
   public class GameConfig
