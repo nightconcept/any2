@@ -16,13 +16,13 @@ run = ["dotnet build Night.sln"]
 alias = "digest"
 description = "Run gitingest on current directory."
 run = [
-  "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/*,lib/*,.venv/*,.windsurf/*,src/Night.SampleGame/bin/*,src/Night.Engine/bin/*,src/Night.SampleGame/obj/*,src/Night.Engine/obj/* .",
+  "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/*,lib/*,.venv/*,.windsurf/*,src/SampleGame/bin/*,src/Night.Engine/bin/*,src/SampleGame/obj/*,src/Night.Engine/obj/* .",
 ]
 
 [tasks.game]
 alias = "game"
 description = "Run the sample game."
-run = ["dotnet run --project src/SampleGame/Night.SampleGame.csproj"]
+run = ["dotnet run --project src/SampleGame/SampleGame.csproj"]
 
 [tasks.clean]
 alias = "clean"
@@ -55,6 +55,5 @@ run = [
   "dotnet format --verbosity diagnostic Night.sln",
   "dotnet build Night.sln",
   "python scripts/update_api_doc.py",
-  "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/*,lib/*,.venv/*,.windsurf/*,src/Night.SampleGame/bin/*,src/Night.Engine/bin/*,src/Night.SampleGame/obj/*,src/Night.Engine/obj/* .",
 
 ]

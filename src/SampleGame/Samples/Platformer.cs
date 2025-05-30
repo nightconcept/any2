@@ -28,7 +28,7 @@ using Night;
 
 using SDL3;
 
-namespace Night.SampleGame;
+namespace SampleGame;
 
 /// <summary>
 /// A sample platformer game implementation using the Night engine.

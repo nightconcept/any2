@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>13.0</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Night.SampleGame.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\SampleGame.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Night", "src\Night\Night.csproj", "{259774D0-6C26-4CD6-8611-D184D8D04BF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Night.SampleGame", "src\SampleGame\Night.SampleGame.csproj", "{665B8256-5042-4354-99DC-25D560A0DF8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleGame", "src\SampleGame\SampleGame.csproj", "{665B8256-5042-4354-99DC-25D560A0DF8B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject

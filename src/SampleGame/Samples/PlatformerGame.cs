@@ -22,7 +22,7 @@
 
 using Night;
 
-namespace Night.SampleGame;
+namespace SampleGame;
 
 /// <summary>
 /// Provides an entry point to run the Platformer sample game.

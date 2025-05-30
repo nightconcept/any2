@@ -20,7 +20,9 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
-namespace Night.SampleGame
+using Night;
+
+namespace SampleGame
 {
   /// <summary>
   /// Main program class for the SampleGame.

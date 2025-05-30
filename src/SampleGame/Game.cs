@@ -28,7 +28,7 @@ using Night;
 
 using SDL3;
 
-namespace Night.SampleGame;
+namespace SampleGame;
 
 /// <summary>
 /// Main game class for the platformer sample.
@@ -66,7 +66,7 @@ public class Game : IGame
     string baseDirectory = AppContext.BaseDirectory;
     string platformImageRelativePath = Path.Combine("assets", "images", "pixel_green.png");
     string platformImageFullPath = Path.Combine(baseDirectory, platformImageRelativePath);
-    this.platformSprite = Graphics.NewImage(platformImageFullPath); // Graphics class will be in Night.Framework
+    this.platformSprite = Graphics.NewImage(platformImageFullPath);
     if (this.platformSprite == null)
     {
       Console.WriteLine($"Game.Load: Failed to load platform sprite at '{platformImageFullPath}'. Platforms will not be drawn.");

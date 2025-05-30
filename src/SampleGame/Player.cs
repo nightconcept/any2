@@ -26,7 +26,7 @@ using System.IO;
 
 using Night;
 
-namespace Night.SampleGame
+namespace SampleGame
 {
   /// <summary>
   /// Represents the player character in the game.
