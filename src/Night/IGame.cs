@@ -1,4 +1,4 @@
-// <copyright file="Types.cs" company="PlaceholderCompany">
+// <copyright file="IGame.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 

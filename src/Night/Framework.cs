@@ -1,4 +1,4 @@
-// <copyright file="FrameworkLoop.cs" company="PlaceholderCompany">
+// <copyright file="Framework.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -20,13 +20,14 @@ namespace Night
   /// </summary>
   public static class Framework
   {
+    private const int MaxDeltaHistorySamples = 60; // Store up to 1 second of deltas at 60fps
+
     private static bool isSdlInitialized = false;
     private static SDL.InitFlags initializedSubsystems = 0;
 
     private static int frameCount = 0;
     private static double fpsTimeAccumulator = 0.0;
     private static List<double> deltaHistory = new List<double>();
-    private const int MaxDeltaHistorySamples = 60; // Store up to 1 second of deltas at 60fps
 
     private static bool inErrorState = false;
 
@@ -35,61 +36,6 @@ namespace Night
     /// have been successfully initialized by this Framework's Run method.
     /// </summary>
     public static bool IsInputInitialized { get; private set; } = false;
-
-    private static string GetFormattedPlatformString()
-    {
-      if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-      {
-        try
-        {
-          string macOSVersion = string.Empty;
-          string darwinVersion = string.Empty;
-
-          // Get macOS version
-          ProcessStartInfo swVersPsi = new ProcessStartInfo
-          {
-            FileName = "sw_vers",
-            Arguments = "-productVersion",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-          };
-          using (Process swVersProcess = Process.Start(swVersPsi)!)
-          {
-            macOSVersion = swVersProcess.StandardOutput.ReadToEnd().Trim();
-            swVersProcess.WaitForExit();
-          }
-
-          // Get Darwin kernel version
-          ProcessStartInfo unamePsi = new ProcessStartInfo
-          {
-            FileName = "uname",
-            Arguments = "-r",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-          };
-          using (Process unameProcess = Process.Start(unamePsi)!)
-          {
-            darwinVersion = unameProcess.StandardOutput.ReadToEnd().Trim();
-            unameProcess.WaitForExit();
-          }
-
-          if (!string.IsNullOrEmpty(macOSVersion) && !string.IsNullOrEmpty(darwinVersion))
-          {
-            return $"Platform: macOS {macOSVersion} (Darwin {darwinVersion})";
-          }
-        }
-        catch (Exception ex)
-        {
-          // Log the exception or handle it as needed, then fall back.
-          Console.WriteLine($"Night.Framework.Run: Could not retrieve detailed macOS version info: {ex.Message}");
-        }
-      }
-
-      // Fallback for non-macOS platforms or if macOS version retrieval fails
-      return $"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})";
-    }
 
     /// <summary>
     /// Runs the game instance.
@@ -128,7 +74,6 @@ namespace Night
         IsInputInitialized = (initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
 
         // Setup initial window based on configuration BEFORE game.Load()
-        Console.WriteLine("Night.Framework.Run: Initializing window with config/default settings before game.Load().");
         SDL.WindowFlags sdlFlags = (SDL.WindowFlags)0;
         if (windowConfig.Resizable)
         {
@@ -182,7 +127,8 @@ namespace Night
         // End of initial window setup
         try
         {
-          game.Load(); // game.Load() can now use Graphics.NewImage(), and can also call Window.SetMode again to override.
+          // game.Load() can now use Graphics.NewImage(), and can also call Window.SetMode again to override.
+          game.Load();
         }
         catch (Exception e)
         {
@@ -199,7 +145,9 @@ namespace Night
         if (!Window.IsOpen())
         {
           Console.WriteLine("Night.Framework.Run: Window is not open after game.Load(). Exiting.");
-          CleanUpSDLAndWindow(); // Ensure cleanup if window was closed by game.Load()
+
+          // Ensure cleanup if window was closed by game.Load()
+          CleanUpSDLAndWindow();
           return;
         }
 
@@ -227,14 +175,17 @@ namespace Night
           {
             Night.Timer.CurrentFPS = frameCount;
             frameCount = 0;
-            fpsTimeAccumulator -= 1.0; // Subtract 1 second, keep remainder for accuracy
+
+            // Subtract 1 second, keep remainder for accuracy
+            fpsTimeAccumulator -= 1.0;
           }
 
           // Average Delta Calculation
           deltaHistory.Add(deltaTime);
           if (deltaHistory.Count > MaxDeltaHistorySamples)
           {
-            deltaHistory.RemoveAt(0); // Keep the list size bounded
+            // Keep the list size bounded
+            deltaHistory.RemoveAt(0);
           }
 
           if (deltaHistory.Count > 0)
@@ -287,7 +238,7 @@ namespace Night
                     (int)e.Button.X,
                     (int)e.Button.Y,
                     (MouseButton)e.Button.Button,
-                    e.Button.Which == SDL.TouchMouseID, // istouch
+                    /* istouch */ e.Button.Which == SDL.TouchMouseID,
                     e.Button.Clicks);
               }
               catch (Exception exUser)
@@ -303,7 +254,7 @@ namespace Night
                     (int)e.Button.X,
                     (int)e.Button.Y,
                     (MouseButton)e.Button.Button,
-                    e.Button.Which == SDL.TouchMouseID, // istouch
+                    /* istouch */ e.Button.Which == SDL.TouchMouseID,
                     e.Button.Clicks);
               }
               catch (Exception exUser)
@@ -315,7 +266,8 @@ namespace Night
             // TODO: Add other event handling (mouse, etc.) as per future tasks.
           }
 
-          if (inErrorState) // Check if error occurred during event processing
+          // Check if error occurred during event processing
+          if (inErrorState)
           {
             // Error handler (Default or custom) should have run.
             // Default handler enters its own loop or prepares for exit.
@@ -324,8 +276,8 @@ namespace Night
             break;
           }
 
-          // Update
-          if (!inErrorState) // Do not update if an error has occurred and is being handled
+          // Update, do not update if an error has occurred and is being handled
+          if (!inErrorState)
           {
             try
             {
@@ -341,8 +293,8 @@ namespace Night
             }
           }
 
-          // Draw
-          if (!inErrorState) // Do not draw if an error has occurred and is being handled
+          // Draw, do not draw if an error has occurred and is being handled
+          if (!inErrorState)
           {
             try
             {
@@ -434,7 +386,8 @@ namespace Night
       bool canDrawError = false;
       try
       {
-        if (!Window.IsOpen() || (Window.RendererPtr == nint.Zero)) // Assuming Graphics.RendererPtr is a good check for active graphics
+        // Assuming Graphics.RendererPtr is a good check for active graphics
+        if (!Window.IsOpen() || (Window.RendererPtr == nint.Zero))
         {
           Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window or Graphics not initialized. Attempting to set mode...");
 
@@ -456,7 +409,7 @@ namespace Night
         }
 
         // Reset input state
-        if (IsInputInitialized) // Check if input was ever initialized
+        if (IsInputInitialized)
         {
           Mouse.SetVisible(true);
           Mouse.SetGrabbed(false);
@@ -566,9 +519,9 @@ namespace Night
     {
       // Shutdown window and related resources (renderer, etc.)
       // This should happen before SDL.QuitSubSystem for Video.
+      // This case should ideally not be hit if _inErrorState or loop conditions were managed correctly
       if (Window.IsOpen())
       {
-        // This case should ideally not be hit if _inErrorState or loop conditions were managed correctly
         Console.WriteLine("Night.Framework.Run (CleanUpSDLAndWindow): Window was still open, attempting to close.");
         Window.Close(); // This will set _isWindowOpen to false
       }
@@ -592,6 +545,61 @@ namespace Night
         IsInputInitialized = false;
         initializedSubsystems = 0;
       }
+    }
+
+    private static string GetFormattedPlatformString()
+    {
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+      {
+        try
+        {
+          string macOSVersion = string.Empty;
+          string darwinVersion = string.Empty;
+
+          // Get macOS version
+          ProcessStartInfo swVersPsi = new ProcessStartInfo
+          {
+            FileName = "sw_vers",
+            Arguments = "-productVersion",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+          };
+          using (Process swVersProcess = Process.Start(swVersPsi)!)
+          {
+            macOSVersion = swVersProcess.StandardOutput.ReadToEnd().Trim();
+            swVersProcess.WaitForExit();
+          }
+
+          // Get Darwin kernel version
+          ProcessStartInfo unamePsi = new ProcessStartInfo
+          {
+            FileName = "uname",
+            Arguments = "-r",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+          };
+          using (Process unameProcess = Process.Start(unamePsi)!)
+          {
+            darwinVersion = unameProcess.StandardOutput.ReadToEnd().Trim();
+            unameProcess.WaitForExit();
+          }
+
+          if (!string.IsNullOrEmpty(macOSVersion) && !string.IsNullOrEmpty(darwinVersion))
+          {
+            return $"Platform: macOS {macOSVersion} (Darwin {darwinVersion})";
+          }
+        }
+        catch (Exception ex)
+        {
+          // Log the exception or handle it as needed, then fall back.
+          Console.WriteLine($"Night.Framework.Run: Could not retrieve detailed macOS version info: {ex.Message}");
+        }
+      }
+
+      // Fallback for non-macOS platforms or if macOS version retrieval fails
+      return $"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})";
     }
   }
 }

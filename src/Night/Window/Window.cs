@@ -10,7 +10,6 @@ using SDL3;
 
 namespace Night
 {
-
   /// <summary>
   /// Provides an interface for modifying and retrieving information about the program's window.
   /// </summary>
@@ -22,11 +21,14 @@ namespace Night
     private static bool isWindowOpen = false;
     private static FullscreenType currentFullscreenType = FullscreenType.Desktop;
 
-    // Internal accessor for the renderer, to be used by Night.Graphics
+    /// <summary>
+    /// Gets the pointer to the internal SDL renderer. For use by Night.Graphics.
+    /// </summary>
     internal static nint RendererPtr => renderer;
 
-    // Internal accessor for the window handle, to be used by other Night modules if needed
-    // And for the methods within this class that need the handle, which is now _window.
+    /// <summary>
+    /// Gets the handle to the internal SDL window. For use by other Night modules or internal methods.
+    /// </summary>
     internal static nint Handle => window;
 
     /// <summary>
@@ -48,7 +50,8 @@ namespace Night
         isVideoInitialized = true;
       }
 
-      if (window != nint.Zero) // Clean up existing window and renderer
+      // Clean up existing window and renderer
+      if (window != nint.Zero)
       {
         if (renderer != nint.Zero)
         {
@@ -120,33 +123,6 @@ namespace Night
     }
 
     /// <summary>
-    /// Internal method to shut down the window and renderer, and quit the video subsystem.
-    /// Should be called by the FrameworkLoop at the end of the application.
-    /// </summary>
-    internal static void Shutdown()
-    {
-      if (renderer != nint.Zero)
-      {
-        SDL.DestroyRenderer(renderer);
-        renderer = nint.Zero;
-      }
-
-      if (window != nint.Zero)
-      {
-        SDL.DestroyWindow(window);
-        window = nint.Zero;
-      }
-
-      if (isVideoInitialized)
-      {
-        SDL.QuitSubSystem(SDL.InitFlags.Video);
-        isVideoInitialized = false;
-      }
-
-      isWindowOpen = false;
-    }
-
-    /// <summary>
     /// Gets the number of connected monitors.
     /// </summary>
     /// <returns>The number of currently connected displays.</returns>
@@ -198,10 +174,10 @@ namespace Night
     /// <summary>
     /// Gets whether the window is fullscreen.
     /// </summary>
-    /// <returns>A tuple: (bool IsFullscreen, FullscreenType fsType).
+    /// <returns>A tuple: (bool IsFullscreen, FullscreenType FsType).
     /// IsFullscreen is true if the window is in any fullscreen mode, false otherwise.
-    /// fsType indicates the type of fullscreen mode used.</returns>
-    public static (bool isFullscreen, FullscreenType fsType) GetFullscreen()
+    /// FsType indicates the type of fullscreen mode used.</returns>
+    public static (bool IsFullscreen, FullscreenType FsType) GetFullscreen()
     {
       if (window == nint.Zero)
       {
@@ -255,7 +231,7 @@ namespace Night
             return false;
           }
         }
-        else // FullscreenType.Desktop
+        else
         {
           if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
           {
@@ -287,7 +263,7 @@ namespace Night
           }
         }
       }
-      else // Not fullscreen (go windowed)
+      else
       {
         currentFullscreenType = FullscreenType.Desktop;
         if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
@@ -338,7 +314,7 @@ namespace Night
       foreach (var mode in displayModes)
       {
         var currentModeTuple = (mode.W, mode.H);
-        if (uniqueModes.Add(currentModeTuple)) // Add returns true if the item was added (i.e., it was unique)
+        if (uniqueModes.Add(currentModeTuple))
         {
           modesList.Add(currentModeTuple);
         }
@@ -450,13 +426,34 @@ namespace Night
     /// <returns>The equivalent value in density-independent units.</returns>
     public static float FromPixels(float value)
     {
-      float dpiScale = GetDPIScale();
-      if (dpiScale == 0)
+      return value / GetDPIScale();
+    }
+
+    /// <summary>
+    /// Internal method to shut down the window and renderer, and quit the video subsystem.
+    /// Should be called by the FrameworkLoop at the end of the application.
+    /// </summary>
+    internal static void Shutdown()
+    {
+      if (renderer != nint.Zero)
       {
-        return value;
+        SDL.DestroyRenderer(renderer);
+        renderer = nint.Zero;
       }
 
-      return value / dpiScale;
+      if (window != nint.Zero)
+      {
+        SDL.DestroyWindow(window);
+        window = nint.Zero;
+      }
+
+      if (isVideoInitialized)
+      {
+        SDL.QuitSubSystem(SDL.InitFlags.Video);
+        isVideoInitialized = false;
+      }
+
+      isWindowOpen = false;
     }
 
     /// <summary>

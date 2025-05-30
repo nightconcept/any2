@@ -434,3 +434,55 @@ end
     - All specified documentation files (`PRD.md`, `README.md`, relevant epics, CI workflows, API doc script) are updated to accurately reflect the new structure, naming, and API organization.
 
 - **Status:** Review
+
+- [x] **Task 10.14: Fix Linting Errors**
+  - **Description:** Address StyleCop linting errors reported in the codebase.
+  - **Errors to fix:**
+    - `src/Night/Filesystem/Types.cs(33,12): error SA1201: A constructor should not follow a property`
+    - `src/Night/Graphics/Types.cs(35,12): error SA1201: A constructor should not follow a property`
+    - `src/Night/Timer/Timer.cs(54,26): error SA1202: 'public' members should come before 'internal' members`
+    - `src/Night/FrameworkLoop.cs(101,24): error SA1202: 'public' members should come before 'private' members`
+    - `src/Night/FrameworkLoop.cs(29,23): error SA1203: Constant fields should appear before non-constant fields`
+    - `src/Night/Window/Window.cs(152,23): error SA1202: 'public' members should come before 'internal' members`
+    - `src/Night/Graphics/Structs.cs(30,34): error SA1201: A field should not follow a constructor`
+    - `src/Night/Configuration/GameConfig.cs(42,16): error SA1402: File may only contain a single type`
+    - `src/Night/Configuration/GameConfig.cs(51,16): error SA1402: File may only contain a single type`
+    - `src/Night/Configuration/GameConfig.cs(111,16): error SA1402: File may only contain a single type`
+    - `src/Night/ErrorHandler.cs(19,23): error SA1649: File name should match first type name`
+    - `src/Night/Filesystem/Types.cs(12,16): error SA1649: File name should match first type name`
+    - `src/Night/FrameworkLoop.cs(21,23): error SA1649: File name should match first type name`
+    - `src/Night/Timer/Timer.cs(36,25): error SA1201: A property should not follow a method`
+    - `src/Night/Timer/Timer.cs(69,23): error SA1202: 'public' members should come before 'internal' members`
+    - `src/Night/FrameworkLoop.cs(32,23): error SA1203: Constant fields should appear before non-constant fields`
+    - `src/Night/Window/Window.cs(173,43): error SA1202: 'public' members should come before 'internal' members`
+    - `src/Night/Graphics/Enums.cs(12,15): error SA1649: File name should match first type name`
+    - `src/Night/Window/Window.cs(50,32): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Window/Window.cs(203,25): error SA1316: Tuple element names should use correct casing`
+    - `src/Night/Window/Window.cs(203,54): error SA1316: Tuple element names should use correct casing`
+    - `src/Night/Mouse/Mouse.cs(64,24): error SA1316: Tuple element names should use correct casing`
+    - `src/Night/Mouse/Mouse.cs(64,31): error SA1316: Tuple element names should use correct casing`
+    - `src/Night/Timer/Timer.cs(121,57): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Timer/Timer.cs(128,38): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Window/Window.cs(340,48): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Window/Window.cs(257,14): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Window/Window.cs(289,12): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Graphics/Structs.cs(14,17): error SA1649: File name should match first type name`
+    - `src/Night/Graphics/Graphics.cs(130,12): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Graphics/Types.cs(12,16): error SA1649: File name should match first type name`
+    - `src/Night/Configuration/ConfigurationManager.cs(66,30): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/FrameworkLoop.cs(438,68): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/FrameworkLoop.cs(460,33): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Graphics/Graphics.cs(233,12): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Graphics/Graphics.cs(281,81): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Graphics/Graphics.cs(277,38): error SA1117: The parameters should all be placed on the same line or each parameter should be placed on its own line`
+    - `src/Night/Mouse/Enums.cs(14,15): error SA1649: File name should match first type name`
+    - `src/Night/FrameworkLoop.cs(264,29): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/FrameworkLoop.cs(274,30): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/FrameworkLoop.cs(291,30): error SA1108: Block statements should not contain embedded comments`
+    - `src/Night/Types.cs(13,20): error SA1649: File name should match first type name`
+    - `src/Night/Window/Enums.cs(12,15): error SA1649: File name should match first type name`
+    - `src/Night/Window/Structs.cs(12,17): error SA1649: File name should match first type name`
+    - `CSC : error SA0001: XML comment analysis is disabled due to project configuration`
+    - `src/Night/Window/Window.cs(306,11): error CS1501: No overload for method 'GetFullscreenDisplayModes' takes 3 arguments`
+  - **Acceptance Criteria:** All listed StyleCop errors are resolved.
+  - **Status:** In-Progress

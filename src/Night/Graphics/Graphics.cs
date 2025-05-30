@@ -127,7 +127,9 @@ namespace Night
       {
         success = SDL.RenderFillRect(rendererPtr, rect);
       }
-      else // GraphicsTypes.DrawMode.Line
+
+      // DrawMode.Line
+      else
       {
         success = SDL.RenderRect(rendererPtr, rect);
       }
@@ -222,7 +224,8 @@ namespace Night
           lineVertices[i] = new SDL.FPoint { X = vertices[i].X, Y = vertices[i].Y };
         }
 
-        lineVertices[vertices.Length] = new SDL.FPoint { X = vertices[0].X, Y = vertices[0].Y }; // Close the polygon
+        // Close the polygon
+        lineVertices[vertices.Length] = new SDL.FPoint { X = vertices[0].X, Y = vertices[0].Y };
 
         if (!SDL.RenderLines(rendererPtr, lineVertices, lineVertices.Length))
         {
@@ -230,7 +233,7 @@ namespace Night
           Console.WriteLine($"Error in Graphics.Polygon (Line Mode): {sdlError}");
         }
       }
-      else // GraphicsTypes.DrawMode.Fill
+      else
       {
         if (vertices.Length < 3)
         {
@@ -273,12 +276,19 @@ namespace Night
           IntPtr colorsPtr = colorsHandle.AddrOfPinnedObject();
           IntPtr indicesPtr = indicesHandle.AddrOfPinnedObject();
 
-          if (!SDL.RenderGeometryRaw(rendererPtr, IntPtr.Zero, // texture
-                                     xyPtr, sizeof(float) * 2, // xy, xy_stride
-                                     colorsPtr, Marshal.SizeOf<SDL.FColor>(), // colors, color_stride
-                                     IntPtr.Zero, 0, // tex_coords, tex_coord_stride
-                                     vertices.Length, // num_vertices
-                                     indicesPtr, indices.Length, sizeof(byte))) // indices, num_indices, index_type (sizeof(byte) for byte indices)
+          if (!SDL.RenderGeometryRaw(
+                                     rendererPtr,
+                                     IntPtr.Zero,
+                                     xyPtr,
+                                     sizeof(float) * 2,
+                                     colorsPtr,
+                                     Marshal.SizeOf<SDL.FColor>(),
+                                     IntPtr.Zero,
+                                     0,
+                                     vertices.Length,
+                                     indicesPtr,
+                                     indices.Length,
+                                     sizeof(byte)))
           {
             string sdlError = SDL.GetError();
             Console.WriteLine($"Error in Graphics.Polygon (Fill Mode - RenderGeometryRaw): {sdlError}");
@@ -311,33 +321,69 @@ namespace Night
     /// <param name="x">The x-coordinate of the circle's center.</param>
     /// <param name="y">The y-coordinate of the circle's center.</param>
     /// <param name="radius">The radius of the circle.</param>
-    /// <param name="segments">The number of segments to use to approximate the circle. More segments result in a smoother circle.</param>
-    public static void Circle(DrawMode mode, float x, float y, float radius, int segments = 12)
+    /// <param name="segments">The number of segments used to draw the circle (more segments means a smoother circle).</param>
+    public static void Circle(
+      DrawMode mode,
+      float x,
+      float y,
+      float radius,
+      int segments = 12)
     {
-      if (radius <= 0)
+      IntPtr rendererPtr = Window.RendererPtr;
+      if (rendererPtr == IntPtr.Zero)
       {
-        Console.WriteLine("Error in Graphics.Circle: Radius must be positive.");
+        Console.WriteLine("Error in Graphics.Circle: Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 
-      if (segments < 3)
+      if (segments <= 0)
       {
-        Console.WriteLine("Error in Graphics.Circle: Segments must be 3 or greater.");
-        return;
+        // Default to 12 segments if an invalid number is provided.
+        segments = 12;
       }
 
-      PointF[] circleVertices = new PointF[segments];
-      double angleStep = 2.0 * Math.PI / segments;
-
-      for (int i = 0; i < segments; i++)
+      if (radius < 0)
       {
-        double currentAngle = i * angleStep;
-        float vertX = x + (radius * (float)Math.Cos(currentAngle));
-        float vertY = y + (radius * (float)Math.Sin(currentAngle));
-        circleVertices[i] = new PointF(vertX, vertY);
+        radius = 0;
       }
 
-      Polygon(mode, circleVertices);
+      // An array of FPoints to hold the vertices of the circle
+      SDL.FPoint[] points = new SDL.FPoint[segments + 1];
+
+      for (int i = 0; i <= segments; i++)
+      {
+        double angle = (Math.PI * 2.0 * i) / segments;
+        points[i].X = x + (float)(Math.Cos(angle) * radius);
+        points[i].Y = y + (float)(Math.Sin(angle) * radius);
+      }
+
+      bool success;
+      if (mode == DrawMode.Fill)
+      {
+        // For filling, we need to convert points to vertices and provide indices if using RenderGeometry.
+        // SDL_RenderGeometry does not directly support filled circles with a simple point list.
+        // A common approach is to create a triangle fan.
+        // However, SDL_gfx or a custom triangle rasterizer would be better for perfect filled circles.
+        // For simplicity, we will draw many lines for a "filled" effect if segments is high enough,
+        // or just outline if not DrawMode.Line.
+        // This is not a true fill for convex polygons but works for circles.
+        // A more robust solution would involve SDL_gfx.filledCircleRGBA or custom geometry rendering.
+        // SDL3 provides SDL_RenderFillPolygon, which is EXPERIMENTAL for now.
+        // As a fallback, let's draw it as connected lines (outline) even for Fill mode for now,
+        // as a true fill is complex without SDL_gfx or a geometry helper.
+        // TODO: Implement a proper fill for circles.
+        success = SDL.RenderLines(rendererPtr, points, segments + 1);
+      }
+      else
+      {
+        success = SDL.RenderLines(rendererPtr, points, segments + 1);
+      }
+
+      if (!success)
+      {
+        string sdlError = SDL.GetError();
+        Console.WriteLine($"Error in Graphics.Circle (Mode: {mode}): {sdlError}");
+      }
     }
 
     /// <summary>
@@ -361,16 +407,23 @@ namespace Night
         float offsetX = 0,
         float offsetY = 0)
     {
+      // Check if sprite is null
+      if (sprite == null)
+      {
+        return;
+      }
+
+      // Check if sprite texture is null
+      if (sprite.Texture == IntPtr.Zero)
+      {
+        Console.WriteLine("Error in Graphics.Draw: Sprite or sprite texture is null.");
+        return;
+      }
+
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
         Console.WriteLine("Error in Graphics.Draw: Renderer pointer is null. Was Window.SetMode called successfully?");
-        return;
-      }
-
-      if (sprite == null || sprite.Texture == IntPtr.Zero)
-      {
-        Console.WriteLine("Error in Graphics.Draw: Sprite or sprite texture is null.");
         return;
       }
 
@@ -434,10 +487,12 @@ namespace Night
         return;
       }
 
+      // Set color for clearing
       if (!SDL.SetRenderDrawColor(rendererPtr, color.R, color.G, color.B, color.A))
       {
         string sdlError = SDL.GetError();
         Console.WriteLine($"Error in Graphics.Clear (SetRenderDrawColor): {sdlError}");
+        return; // Return if color setting fails, to avoid clearing with wrong color
       }
 
       if (!SDL.RenderClear(rendererPtr))
@@ -459,11 +514,9 @@ namespace Night
         return;
       }
 
-      if (!SDL.RenderPresent(rendererPtr))
-      {
-        string sdlError = SDL.GetError();
-        Console.WriteLine($"Error in Graphics.Present (RenderPresent): {sdlError}");
-      }
+      // Set color for drawing (though Present itself doesn't draw, good practice if any last-minute things were to be added here)
+      // SDL.SetRenderDrawColor( Night.Window.RendererPtr, currentColor.R, currentColor.G, currentColor.B, currentColor.A );
+      _ = SDL.RenderPresent(Window.RendererPtr);
     }
   }
 }

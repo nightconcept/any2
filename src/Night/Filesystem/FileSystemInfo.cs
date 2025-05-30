@@ -1,4 +1,4 @@
-// <copyright file="Types.cs" company="PlaceholderCompany">
+// <copyright file="FileSystemInfo.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -11,22 +11,6 @@ namespace Night
   /// </summary>
   public class FileSystemInfo
   {
-    /// <summary>
-    /// Gets or sets the type of the object at the path (file, directory, symlink, etc.).
-    /// Default is None.
-    /// </summary>
-    public FileType Type { get; set; } = FileType.None;
-
-    /// <summary>
-    /// Gets or sets the size in bytes of the file, or null if it can't be determined or not applicable (e.g. for a directory).
-    /// </summary>
-    public long? Size { get; set; }
-
-    /// <summary>
-    /// Gets or sets the file's last modification time in seconds since the Unix epoch, or null if it can't be determined.
-    /// </summary>
-    public long? ModTime { get; set; }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="FileSystemInfo"/> class.
     /// </summary>
@@ -46,5 +30,21 @@ namespace Night
       this.Size = size;
       this.ModTime = modTime;
     }
+
+    /// <summary>
+    /// Gets or sets the type of the object at the path (file, directory, symlink, etc.).
+    /// Default is None.
+    /// </summary>
+    public FileType Type { get; set; } = FileType.None;
+
+    /// <summary>
+    /// Gets or sets the size in bytes of the file, or null if it can't be determined or not applicable (e.g. for a directory).
+    /// </summary>
+    public long? Size { get; set; }
+
+    /// <summary>
+    /// Gets or sets the file's last modification time in seconds since the Unix epoch, or null if it can't be determined.
+    /// </summary>
+    public long? ModTime { get; set; }
   }
 }

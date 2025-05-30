@@ -134,7 +134,7 @@ namespace Night
     /// </summary>
     /// <param name="path">The path to the file to read.</param>
     /// <returns>A byte array containing the contents of the file.</returns>
-    /// <exception cref="System.IO.FileNotFoundException">Thrown if the file is not found.</exception>
+    /// <exception cref="FileNotFoundException">Thrown if the file is not found.</exception>
     public static byte[] ReadBytes(string path)
     {
       return File.ReadAllBytes(path);
@@ -145,7 +145,7 @@ namespace Night
     /// </summary>
     /// <param name="path">The path to the file to read.</param>
     /// <returns>A string containing the contents of the file.</returns>
-    /// <exception cref="System.IO.FileNotFoundException">Thrown if the file is not found.</exception>
+    /// <exception cref="FileNotFoundException">Thrown if the file is not found.</exception>
     public static string ReadText(string path)
     {
       return File.ReadAllText(path);

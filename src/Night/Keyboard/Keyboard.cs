@@ -11,7 +11,6 @@ using SDL3;
 
 namespace Night
 {
-
   /// <summary>
   /// Provides an interface to the user's keyboard.
   /// </summary>

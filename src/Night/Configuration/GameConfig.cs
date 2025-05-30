@@ -6,166 +6,69 @@ using System.Text.Json.Serialization;
 
 namespace Night
 {
-
+  /// <summary>
+  /// Represents the overall game configuration settings, typically loaded from a config.json file.
+  /// </summary>
   public class GameConfig
   {
+    /// <summary>
+    /// Gets or sets the identity of the game. This is used for the save directory.
+    /// </summary>
     [JsonPropertyName("identity")]
     public string? Identity { get; set; } = null;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the game identity should be appended to the save directory path.
+    /// </summary>
     [JsonPropertyName("appendidentity")]
     public bool AppendIdentity { get; set; } = false;
 
+    /// <summary>
+    /// Gets or sets the LÖVE version this game targets. Currently informational.
+    /// </summary>
     [JsonPropertyName("version")]
     public string Version { get; set; } = "11.4"; // Default to LÖVE 11.4
 
+    /// <summary>
+    /// Gets or sets a value indicating whether a console window should be attached (Windows only, currently placeholder).
+    /// </summary>
     [JsonPropertyName("console")]
     public bool Console { get; set; } = false;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the accelerometer should be used as a joystick.
+    /// </summary>
     [JsonPropertyName("accelerometerjoystick")]
     public bool AccelerometerJoystick { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to request external storage access (Android only, currently placeholder).
+    /// </summary>
     [JsonPropertyName("externalstorage")]
     public bool ExternalStorage { get; set; } = false;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether gamma correction should be enabled.
+    /// </summary>
     [JsonPropertyName("gammacorrect")]
     public bool GammaCorrect { get; set; } = false;
 
+    /// <summary>
+    /// Gets or sets the audio module configuration.
+    /// </summary>
     [JsonPropertyName("audio")]
     public AudioConfig Audio { get; set; } = new AudioConfig();
 
+    /// <summary>
+    /// Gets or sets the window module configuration.
+    /// </summary>
     [JsonPropertyName("window")]
     public WindowConfig Window { get; set; } = new WindowConfig();
 
+    /// <summary>
+    /// Gets or sets the configuration for enabling/disabling engine modules.
+    /// </summary>
     [JsonPropertyName("modules")]
     public ModulesConfig Modules { get; set; } = new ModulesConfig();
-  }
-
-  public class AudioConfig
-  {
-    [JsonPropertyName("mic")]
-    public bool Mic { get; set; } = false;
-
-    [JsonPropertyName("mixwithsystem")]
-    public bool MixWithSystem { get; set; } = true;
-  }
-
-  public class WindowConfig
-  {
-    [JsonPropertyName("title")]
-    public string Title { get; set; } = "Untitled";
-
-    [JsonPropertyName("icon")]
-    public string? Icon { get; set; } = null;
-
-    [JsonPropertyName("width")]
-    public int Width { get; set; } = 800;
-
-    [JsonPropertyName("height")]
-    public int Height { get; set; } = 600;
-
-    [JsonPropertyName("borderless")]
-    public bool Borderless { get; set; } = false;
-
-    [JsonPropertyName("resizable")]
-    public bool Resizable { get; set; } = false;
-
-    [JsonPropertyName("minwidth")]
-    public int MinWidth { get; set; } = 1;
-
-    [JsonPropertyName("minheight")]
-    public int MinHeight { get; set; } = 1;
-
-    [JsonPropertyName("fullscreen")]
-    public bool Fullscreen { get; set; } = false;
-
-    [JsonPropertyName("fullscreentype")]
-    public string FullscreenType { get; set; } = "desktop"; // "desktop" or "exclusive"
-
-    [JsonPropertyName("vsync")]
-    public int VSync { get; set; } = 1; // -1 adaptive, 0 disabled, 1 enabled
-
-    [JsonPropertyName("msaa")]
-    public int MSAA { get; set; } = 0;
-
-    [JsonPropertyName("depth")]
-    public int? Depth { get; set; } = null;
-
-    [JsonPropertyName("stencil")]
-    public int? Stencil { get; set; } = null;
-
-    [JsonPropertyName("display")]
-    public int Display { get; set; } = 1; // 1-indexed
-
-    [JsonPropertyName("highdpi")]
-    public bool HighDPI { get; set; } = false;
-
-    [JsonPropertyName("usedpiscale")]
-    public bool UseDPIScale { get; set; } = true;
-
-    [JsonPropertyName("x")]
-    public int? X { get; set; } = null;
-
-    [JsonPropertyName("y")]
-    public int? Y { get; set; } = null;
-  }
-
-  public class ModulesConfig
-  {
-    // TODO: Implement actual module enabling/disabling based on these flags.
-    // For now, they are just placeholders. love.filesystem, love.data, and love (Night core) are mandatory.
-    // love.graphics needs love.window.
-    [JsonPropertyName("audio")]
-    public bool Audio { get; set; } = true;
-
-    [JsonPropertyName("data")]
-    public bool Data { get; set; } = true; // Mandatory in LÖVE
-
-    [JsonPropertyName("event")]
-    public bool Event { get; set; } = true;
-
-    [JsonPropertyName("font")]
-    public bool Font { get; set; } = true;
-
-    [JsonPropertyName("graphics")]
-    public bool Graphics { get; set; } = true; // Needs Window
-
-    [JsonPropertyName("image")]
-    public bool Image { get; set; } = true;
-
-    [JsonPropertyName("joystick")]
-    public bool Joystick { get; set; } = true;
-
-    [JsonPropertyName("keyboard")]
-    public bool Keyboard { get; set; } = true;
-
-    [JsonPropertyName("math")]
-    public bool Math { get; set; } = true;
-
-    [JsonPropertyName("mouse")]
-    public bool Mouse { get; set; } = true;
-
-    [JsonPropertyName("physics")]
-    public bool Physics { get; set; } = true;
-
-    [JsonPropertyName("sound")]
-    public bool Sound { get; set; } = true;
-
-    [JsonPropertyName("system")]
-    public bool System { get; set; } = true;
-
-    [JsonPropertyName("thread")]
-    public bool Thread { get; set; } = true;
-
-    [JsonPropertyName("timer")]
-    public bool Timer { get; set; } = true;
-
-    [JsonPropertyName("touch")]
-    public bool Touch { get; set; } = true;
-
-    [JsonPropertyName("video")]
-    public bool Video { get; set; } = true;
-
-    [JsonPropertyName("window")]
-    public bool Window { get; set; } = true; // Mandatory for Graphics
   }
 }

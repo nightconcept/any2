@@ -1,4 +1,4 @@
-// <copyright file="Types.cs" company="PlaceholderCompany">
+// <copyright file="Sprite.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -11,6 +11,19 @@ namespace Night
   /// </summary>
   public class Sprite
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Sprite"/> class.
+    /// </summary>
+    /// <param name="texture">The SDL texture handle.</param>
+    /// <param name="width">The width of the texture.</param>
+    /// <param name="height">The height of the texture.</param>
+    public Sprite(IntPtr texture, int width, int height)
+    {
+      this.Texture = texture;
+      this.Width = width;
+      this.Height = height;
+    }
+
     /// <summary>
     /// Gets the SDL texture handle.
     /// </summary>
@@ -25,18 +38,5 @@ namespace Night
     /// Gets the height of the sprite in pixels.
     /// </summary>
     public int Height { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Sprite"/> class.
-    /// </summary>
-    /// <param name="texture">The SDL texture handle.</param>
-    /// <param name="width">The width of the texture.</param>
-    /// <param name="height">The height of the texture.</param>
-    public Sprite(IntPtr texture, int width, int height)
-    {
-      this.Texture = texture;
-      this.Width = width;
-      this.Height = height;
-    }
   }
 }

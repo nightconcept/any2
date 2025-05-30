@@ -10,16 +10,31 @@ using Night;
 
 namespace Night
 {
+  /// <summary>
+  /// Manages the loading and accessing of game configuration settings.
+  /// </summary>
   public static class ConfigurationManager
   {
     private static readonly string ConfigFileName = "config.json";
     private static GameConfig currentConfig = new GameConfig();
     private static bool isLoaded = false;
 
+    /// <summary>
+    /// Gets the currently loaded game configuration. If no configuration has been loaded, returns the default configuration.
+    /// </summary>
     public static GameConfig CurrentConfig => currentConfig;
 
+    /// <summary>
+    /// Gets a value indicating whether the configuration has been loaded.
+    /// </summary>
     public static bool IsLoaded => isLoaded;
 
+    /// <summary>
+    /// Loads the game configuration from a 'config.json' file.
+    /// If the file is not found, or if an error occurs during loading or parsing, default settings are used.
+    /// The configuration is loaded only once; subsequent calls will not reload the configuration.
+    /// </summary>
+    /// <param name="gameDirectory">The directory to search for 'config.json'. If null, the application's base directory is used.</param>
     public static void LoadConfig(string? gameDirectory = null)
     {
       if (isLoaded)
@@ -47,7 +62,6 @@ namespace Night
             if (loadedConfig != null)
             {
               currentConfig = loadedConfig;
-              Console.WriteLine($"Info: Successfully loaded '{ConfigFileName}' from '{configFilePath}'.");
             }
             else
             {
@@ -63,9 +77,11 @@ namespace Night
         {
           Console.WriteLine($"Error deserializing '{ConfigFileName}' from '{configFilePath}': {jsonEx.Message}. Using default configuration.");
         }
-        catch (Exception ex) // Catches IOExceptions, SecurityExceptions, etc.
+
+        // Catch-all for other potential issues
+        catch (Exception ex)
         {
-          Console.WriteLine($"Error loading '{ConfigFileName}' from '{configFilePath}': {ex.Message}. Using default configuration.");
+          Console.WriteLine($"Night.ConfigurationManager: Error loading or deserializing config.json: {ex.Message}. Using default configuration.");
         }
       }
       else

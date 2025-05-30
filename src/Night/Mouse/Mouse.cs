@@ -60,8 +60,8 @@ namespace Night
     /// <summary>
     /// Gets the current position of the mouse cursor in the window.
     /// </summary>
-    /// <returns>A tuple (int x, int y) representing the mouse cursor coordinates.</returns>
-    public static (int x, int y) GetPosition()
+    /// <returns>A tuple (int X, int Y) representing the mouse cursor coordinates.</returns>
+    public static (int X, int Y) GetPosition()
     {
       if (!Framework.IsInputInitialized)
       {

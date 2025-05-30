@@ -1,4 +1,4 @@
-// <copyright file="Enums.cs" company="PlaceholderCompany">
+// <copyright file="FullscreenType.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 

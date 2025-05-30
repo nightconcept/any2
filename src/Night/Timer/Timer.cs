@@ -17,35 +17,30 @@ namespace Night
     // _timerStartTime is initialized when the Timer class is first loaded.
     private static readonly ulong TimerStartTime = SDL.GetPerformanceCounter();
 
-    // These are updated by FrameworkLoop.cs or by Timer methods themselves
+    /// <summary>
+    /// Gets or sets the current frames per second. Updated by the framework.
+    /// </summary>
     internal static int CurrentFPS { get; set; } = 0;
 
+    /// <summary>
+    /// Gets or sets the delta time of the current frame. Updated by <see cref="Step()"/>.
+    /// </summary>
     internal static float CurrentDelta { get; set; } = 0.0f;
 
+    /// <summary>
+    /// Gets or sets the average delta time over recent frames. Updated by the framework.
+    /// </summary>
     internal static double CurrentAverageDelta { get; set; } = 0.0;
 
-    internal static ulong LastStepTime { get; set; } = 0; // Initialized by Initialize()
-
-    internal static ulong PerformanceFrequency { get; private set; } = 1; // Initialized by Initialize(), made private set
+    /// <summary>
+    /// Gets or sets the timestamp of the last call to <see cref="Step()"/>. Initialized by <see cref="Initialize()"/>.
+    /// </summary>
+    internal static ulong LastStepTime { get; set; } = 0;
 
     /// <summary>
-    /// Initializes essential timer values. Must be called once by the framework
-    /// before the game loop begins and after SDL has been initialized.
+    /// Gets the performance counter frequency. Initialized by <see cref="Initialize()"/>.
     /// </summary>
-    internal static void Initialize()
-    {
-      PerformanceFrequency = SDL.GetPerformanceFrequency();
-      if (PerformanceFrequency == 0)
-      {
-        PerformanceFrequency = 1; // Avoid division by zero, though SDL should provide valid freq.
-      }
-
-      LastStepTime = SDL.GetPerformanceCounter(); // Initialize for the first call to Step()
-
-      // _timerStartTime is already initialized at class load (line 14) and should remain as such
-      // to reflect "time since module loaded" for GetTime().
-      // Do not re-assign _timerStartTime here.
-    }
+    internal static ulong PerformanceFrequency { get; private set; } = 1;
 
     /// <summary>
     /// Gets the time elapsed since the Timer module was loaded, in seconds.
@@ -118,14 +113,16 @@ namespace Night
       ulong now = SDL.GetPerformanceCounter();
       double deltaTimeSeconds = 0;
 
-      if (LastStepTime > 0 && PerformanceFrequency > 0) // Ensure LastStepTime and PerformanceFrequency have been initialized
+      // Ensure LastStepTime and PerformanceFrequency have been initialized
+      if (LastStepTime > 0 && PerformanceFrequency > 0)
       {
         ulong elapsedTicks = now - LastStepTime;
         deltaTimeSeconds = (double)elapsedTicks / PerformanceFrequency;
       }
 
       // Clamp deltaTime to avoid large jumps
-      if (deltaTimeSeconds > 0.0666) // Approx 15 FPS, or 66.6ms
+      // Approx 15 FPS, or 66.6ms
+      if (deltaTimeSeconds > 0.0666)
       {
         deltaTimeSeconds = 0.0666;
       }
@@ -134,6 +131,27 @@ namespace Night
       CurrentDelta = (float)deltaTimeSeconds;
 
       return deltaTimeSeconds;
+    }
+
+    /// <summary>
+    /// Initializes essential timer values. Must be called once by the framework
+    /// before the game loop begins and after SDL has been initialized.
+    /// </summary>
+    internal static void Initialize()
+    {
+      PerformanceFrequency = SDL.GetPerformanceFrequency();
+      if (PerformanceFrequency == 0)
+      {
+        // Avoid division by zero, though SDL should provide valid freq.
+        PerformanceFrequency = 1;
+      }
+
+      // Initialize for the first call to Step()
+      LastStepTime = SDL.GetPerformanceCounter();
+
+      // _timerStartTime is already initialized at class load (line 14) and should remain as such
+      // to reflect "time since module loaded" for GetTime().
+      // Do not re-assign _timerStartTime here.
     }
   }
 }
