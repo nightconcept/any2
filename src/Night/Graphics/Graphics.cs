@@ -165,9 +165,8 @@ namespace Night
     /// <summary>
     /// Draws a sequence of connected line segments.
     /// </summary>
-    /// <param name="mode">The drawing mode (Fill or Line). Note: SDL.RenderLines always draws lines; Fill mode is not directly applicable here.</param>
     /// <param name="points">An array of points to connect.</param>
-    public static void Line(DrawMode mode, PointF[] points)
+    public static void Line(PointF[] points)
     {
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)

@@ -131,7 +131,7 @@ public class Game : IGame
       new Night.PointF(440, 120)
     };
     Graphics.SetColor(Night.Color.Cyan);
-    Graphics.Line(Night.DrawMode.Line, linePoints); // Polyline in Cyan
+    Graphics.Line(linePoints); // Polyline in Cyan
 
     // Polygon Demo
     Night.PointF[] triangleVertices = new Night.PointF[]

@@ -13,8 +13,6 @@ namespace Night
   /// </summary>
   public static class Filesystem
   {
-    private static readonly DateTimeOffset UnixEpoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
-
     /// <summary>
     /// Gets information about the specified file or directory.
     /// </summary>

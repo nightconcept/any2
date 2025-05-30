@@ -37,7 +37,7 @@
 - Draw() - love.graphics.draw
   - Draw(Sprite sprite, float x, float y, float rotation, float scaleX, float scaleY, float offsetX, float offsetY)
 - Line() - love.graphics.line
-  - Line(DrawMode mode, PointF[] points)
+  - Line(PointF[] points)
   - Line(float x1, float y1, float x2, float y2)
 - NewImage() - love.graphics.newImage
   - NewImage(string filePath)

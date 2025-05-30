@@ -52,7 +52,7 @@ alias = "prepare"
 description = "Prepare everything before a commit."
 run = [
   "dotnet clean Night.sln",
-  "dotnet format Night.sln",
+  "dotnet format --verify-no-changes --verbosity diagnostic Night.sln",
   "dotnet build Night.sln",
   "python scripts/update_api_doc.py",
   "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/*,lib/*,.venv/*,.windsurf/*,src/Night.SampleGame/bin/*,src/Night.Engine/bin/*,src/Night.SampleGame/obj/*,src/Night.Engine/obj/* .",

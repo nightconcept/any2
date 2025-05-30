@@ -54,8 +54,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: |
-            9.0.x # Should match the version used in your ci.yml
+          dotnet-version: 9.0.x
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
