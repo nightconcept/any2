@@ -5049,6 +5049,9 @@ File: src/Night/Night.csproj
     <Nullable>enable</Nullable>
     <LangVersion>13.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -7821,6 +7824,7 @@ File: src/Night/obj/Night.csproj.nuget.dgspec.json
           }
         },
         "warningProperties": {
+          "allWarningsAsErrors": true,
           "warnAsError": [
             "NU1605"
           ]
@@ -7972,6 +7976,7 @@ File: src/Night/obj/project.assets.json
         }
       },
       "warningProperties": {
+        "allWarningsAsErrors": true,
         "warnAsError": [
           "NU1605"
         ]
@@ -8020,7 +8025,7 @@ File: src/Night/obj/project.nuget.cache
 ================================================
 {
   "version": 2,
-  "dgSpecHash": "26ARwza29+8=",
+  "dgSpecHash": "Tj7eGYTm63M=",
   "success": true,
   "projectFilePath": "/home/danny/git/any2/src/Night/Night.csproj",
   "expectedPackageFiles": [
@@ -8048,7 +8053,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0525ee88c265b33fa6724e0db77184b53b4d713c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+86fc6cdb514e49ccd657f2239af8e81bd4b1718e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -8061,7 +8066,7 @@ using System.Reflection;
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.AssemblyInfoInputs.cache
 ================================================
-db14d5e6be7702840fa060052804ca7ce1a204a1bf7765c2a49c11ed17f09662
+e0888be1641300f727090d494b5e74630edd2b4863fbb5b809dc59d64b68d39e
 
 
 
@@ -8122,7 +8127,7 @@ cb5d82de82cf2868752796dcad4edbd7810515267684c92faae8d67719d9c500
 ================================================
 File: src/Night/obj/Debug/net9.0/Night.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0525ee88c265b33fa6724e0db77184b53b4d713c/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/86fc6cdb514e49ccd657f2239af8e81bd4b1718e/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -8947,6 +8952,7 @@ File: src/SampleGame/obj/Night.SampleGame.csproj.nuget.dgspec.json
           }
         },
         "warningProperties": {
+          "allWarningsAsErrors": true,
           "warnAsError": [
             "NU1605"
           ]
@@ -9225,7 +9231,7 @@ File: src/SampleGame/obj/project.nuget.cache
 ================================================
 {
   "version": 2,
-  "dgSpecHash": "1S4DG1WS0dM=",
+  "dgSpecHash": "rpJQN8aAinU=",
   "success": true,
   "projectFilePath": "/home/danny/git/any2/src/SampleGame/Night.SampleGame.csproj",
   "expectedPackageFiles": [
@@ -9259,7 +9265,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0525ee88c265b33fa6724e0db77184b53b4d713c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+86fc6cdb514e49ccd657f2239af8e81bd4b1718e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.SampleGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -9272,7 +9278,7 @@ using System.Reflection;
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.AssemblyInfoInputs.cache
 ================================================
-7a940e472a22722aeba609865d00e199bddba40d4329a5b1c71603f240779c8d
+9e25a0abc2e02384811b039ffe0cfb0f7cc8b1211002e0f6f79c558b8bd61095
 
 
 
@@ -9340,7 +9346,7 @@ dc347d346712591e5aae675a5692bedfe675e498f7c55e8de100f6e2ee179134
 ================================================
 File: src/SampleGame/obj/Debug/net9.0/Night.SampleGame.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0525ee88c265b33fa6724e0db77184b53b4d713c/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/86fc6cdb514e49ccd657f2239af8e81bd4b1718e/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
@@ -10245,6 +10251,7 @@ File: tests/Night.Tests/obj/Night.Tests.csproj.nuget.dgspec.json
           }
         },
         "warningProperties": {
+          "allWarningsAsErrors": true,
           "warnAsError": [
             "NU1605"
           ]
@@ -11508,7 +11515,7 @@ File: tests/Night.Tests/obj/project.nuget.cache
 ================================================
 {
   "version": 2,
-  "dgSpecHash": "ifkwnqpwW0U=",
+  "dgSpecHash": "jgrzMfkVRgU=",
   "success": true,
   "projectFilePath": "/home/danny/git/any2/tests/Night.Tests/Night.Tests.csproj",
   "expectedPackageFiles": [
@@ -11557,7 +11564,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0525ee88c265b33fa6724e0db77184b53b4d713c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+86fc6cdb514e49ccd657f2239af8e81bd4b1718e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Night.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
@@ -11570,7 +11577,7 @@ using System.Reflection;
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.AssemblyInfoInputs.cache
 ================================================
-a3b0fbcd8a92a59176467de15ff6c93bc37bde2b9f50c5f8bdf715d44d844f9b
+1e01e8ed13dd0d5b0586e2874153e77eb891a2b8e39daeb4f525804ee0c5b9e7
 
 
 
@@ -11639,7 +11646,7 @@ File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.genruntimeconfig.cache
 ================================================
 File: tests/Night.Tests/obj/Debug/net9.0/Night.Tests.sourcelink.json
 ================================================
-{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/0525ee88c265b33fa6724e0db77184b53b4d713c/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
+{"documents":{"/home/danny/git/any2/*":"https://raw.githubusercontent.com/nightconcept/any2/86fc6cdb514e49ccd657f2239af8e81bd4b1718e/*","/home/danny/git/any2/lib/SDL3-CS/*":"https://raw.githubusercontent.com/edwardgushchin/SDL3-CS/f910675dcf9e0825b10e97b8583c892e0eee14be/*"}}
 
 
 ================================================
