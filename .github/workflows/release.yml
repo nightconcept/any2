@@ -102,7 +102,7 @@ jobs:
               $versionNode = $csproj.CreateElement("Version")
               $propertyGroupNode.AppendChild($versionNode) | Out-Null
           }
-          $versionNode.'#text' = $newSemVer
+          $versionNode.InnerText = $newSemVer
           $csproj.Save($projectFilePath)
           Write-Host "Saved <Version> $newSemVer to '$projectFilePath'"
           echo "version_tag=v$newSemVer" >> $GITHUB_OUTPUT
