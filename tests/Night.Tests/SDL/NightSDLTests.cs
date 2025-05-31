@@ -98,7 +98,7 @@ namespace Night.Tests.SDL
 
       // Assert
       Assert.NotNull(error); // Should return at least an empty string, not null.
-      Assert.IsType<string>(error);
+      _ = Assert.IsType<string>(error);
     }
   }
 }

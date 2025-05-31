@@ -54,6 +54,6 @@ run = [
   "dotnet clean Night.sln",
   "dotnet format --verbosity diagnostic Night.sln",
   "dotnet build Night.sln",
+  "dotnet test",
   "python scripts/update_api_doc.py",
-
 ]

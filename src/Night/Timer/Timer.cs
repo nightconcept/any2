@@ -56,9 +56,9 @@ namespace Night
     internal static ulong LastStepTime { get; set; } = 0;
 
     /// <summary>
-    /// Gets the performance counter frequency. Initialized by <see cref="Initialize()"/>.
+    /// Gets or sets the performance counter frequency. Initialized by <see cref="Initialize()"/>.
     /// </summary>
-    internal static ulong PerformanceFrequency { get; private set; } = 1;
+    internal static ulong PerformanceFrequency { get; set; } = 1;
 
     /// <summary>
     /// Gets the time elapsed since the Timer module was loaded, in seconds.
