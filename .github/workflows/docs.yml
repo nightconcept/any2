@@ -39,12 +39,12 @@ jobs:
         run: dotnet tool restore
 
       - name: Build documentation
-        run: dotnet docfx site/docfx.json
+        run: dotnet docfx docs/docfx.json
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site/_site
+          path: docs/_site
 
       - name: Deploy to GitHub Pages
         id: deployment
