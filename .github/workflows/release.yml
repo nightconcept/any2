@@ -105,7 +105,7 @@ jobs:
           $versionNode.InnerText = $newSemVer
           $csproj.Save($projectFilePath)
           Write-Host "Saved <Version> $newSemVer to '$projectFilePath'"
-          echo "version_tag=v$newSemVer" >> $GITHUB_OUTPUT
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "version_tag=v$newSemVer"
         shell: pwsh
 
       - name: Update Version in VersionInfo.cs
