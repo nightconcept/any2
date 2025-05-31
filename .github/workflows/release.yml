@@ -138,8 +138,10 @@ jobs:
 
       - name: Push Commit and Tag
         run: |
-          git push origin HEAD:main --follow-tags
-          echo "Pushed commit and tag to remote."
+          git push origin HEAD:main
+          echo "Pushed commit to main."
+          git push origin "${{ steps.update_version_csproj.outputs.version_tag }}"
+          echo "Pushed tag ${{ steps.update_version_csproj.outputs.version_tag }} to remote."
         shell: bash
 
       - name: Build Solution
