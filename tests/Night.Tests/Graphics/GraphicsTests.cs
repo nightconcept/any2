@@ -267,7 +267,7 @@ namespace Night.Tests.Graphics
     public void Line_Multiple_NullRenderer_DoesNotThrow()
     {
       // Arrange
-      var points = new PointF[] { new PointF(0, 0), new PointF(1, 1) };
+      var points = new PointF[] { new PointF(0, 0), new PointF(1, 1), new PointF(2, 2) };
 
       // Act & Assert
       var exception = Record.Exception(() => Night.Graphics.Line(points));
@@ -285,7 +285,7 @@ namespace Night.Tests.Graphics
       var vertices = new PointF[] { new PointF(0, 0), new PointF(1, 0), new PointF(0, 1) };
 
       // Act & Assert
-      var exception = Record.Exception(() => Night.Graphics.Polygon(DrawMode.Fill, vertices));
+      var exception = Record.Exception(() => Night.Graphics.Polygon(DrawMode.Line, vertices));
       Assert.Null(exception); // Expects console output
     }
 
@@ -297,23 +297,25 @@ namespace Night.Tests.Graphics
     public void Circle_NullRenderer_DoesNotThrow()
     {
       // Act & Assert
-      var exception = Record.Exception(() => Night.Graphics.Circle(DrawMode.Line, 0, 0, 10, 12));
+      var exception = Record.Exception(() => Night.Graphics.Circle(DrawMode.Fill, 0, 0, 10, 12));
       Assert.Null(exception); // Expects console output
     }
 
     /// <summary>
     /// Tests that <see cref="Night.Graphics.Draw(Sprite, float, float, float, float, float, float, float)"/>
     /// does not throw an exception when the renderer is null.
+    /// This also covers the case where the sprite itself might be valid but the renderer isn't.
     /// </summary>
     [Fact]
     public void Draw_NullRenderer_DoesNotThrow()
     {
       // Arrange
-      // A valid sprite is needed here, but its texture won't be used if renderer is null.
-      // This is tricky because NewImage itself needs a renderer.
-      // For this test, we assume a Sprite instance can be created,
-      // and the Draw method will check RendererPtr first.
-      var dummySprite = new Sprite(IntPtr.Zero, 10, 10); // Create a dummy sprite
+      // Assume a Sprite can be created even if it cannot be effectively drawn without a renderer.
+      // This Sprite constructor will need to handle such cases gracefully or be mockable.
+      // For this test, we are focusing on the Graphics.Draw method's behavior.
+      // If Sprite needs a valid texture path for construction, this test setup needs to be adjusted.
+      // Let's assume we can create a dummy sprite for this test as we did for Draw_SpriteWithNullTexture
+      var dummySprite = new Sprite(IntPtr.Zero, 10, 10); // Or any valid-looking sprite that doesn't rely on renderer for creation
 
       // Act & Assert
       var exception = Record.Exception(() => Night.Graphics.Draw(dummySprite, 0, 0));
@@ -321,7 +323,7 @@ namespace Night.Tests.Graphics
     }
 
     /// <summary>
-    /// Tests that <see cref="Night.Graphics.Clear(Color)"/>
+    /// Tests that <see cref="Night.Graphics.Clear"/>
     /// does not throw an exception when the renderer is null.
     /// </summary>
     [Fact]

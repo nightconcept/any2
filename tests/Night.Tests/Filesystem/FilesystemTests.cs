@@ -248,41 +248,43 @@ public class FilesystemTests : IDisposable
     var result = Night.Filesystem.GetInfo(this.testFilePath, existingInfo);
 
     Assert.NotNull(result);
-    Assert.Same(existingInfo, result);
+    Assert.Same(existingInfo, result); // Ensure it's the same object
     Assert.Equal(Night.FileType.File, existingInfo.Type);
     Assert.Equal(new FileInfo(this.testFilePath).Length, existingInfo.Size);
+    _ = Assert.NotNull(existingInfo.ModTime);
   }
 
   /// <summary>
-  /// Tests that GetInfo returns null and does not modify an existing FileSystemInfo object for a non-existent path.
+  /// Tests that GetInfo correctly populates (or doesn't) an existing FileSystemInfo for a non-existent path.
   /// </summary>
   [Fact]
   public void GetInfo_PopulatesExistingObject_NonExistentPath_ReturnsNullAndDoesNotChangeObject()
   {
-    var originalType = Night.FileType.Other; // Different from what GetInfo might set
-    long? originalSize = 12345;
-    long? originalModTime = 67890;
     var executionPath = Path.GetDirectoryName(typeof(FilesystemTests).Assembly.Location);
     var testDirFullPath = Path.Combine(executionPath!, TestDir);
+    var nonExistentPath = Path.Combine(testDirFullPath, "non_existent_file.txt");
+
+    var originalType = Night.FileType.File; // Use a different type than default if possible
+    long originalSize = 123;
+    long originalModTime = DateTime.UtcNow.Ticks; // Arbitrary non-zero value
 
     var existingInfo = new Night.FileSystemInfo(originalType, originalSize, originalModTime);
-    var result = Night.Filesystem.GetInfo(Path.Combine(testDirFullPath, "non_existent_file.txt"), existingInfo);
+
+    var result = Night.Filesystem.GetInfo(nonExistentPath, existingInfo);
 
     Assert.Null(result);
-
-    // Check that the original object was not modified
     Assert.Equal(originalType, existingInfo.Type);
     Assert.Equal(originalSize, existingInfo.Size);
     Assert.Equal(originalModTime, existingInfo.ModTime);
   }
 
   /// <summary>
-  /// Tests that GetInfo correctly populates an existing FileSystemInfo object with a filter for a valid path and type.
+  /// Tests that GetInfo populates an existing object correctly with a type filter when path and type match.
   /// </summary>
   [Fact]
   public void GetInfo_PopulatesExistingObjectWithFilter_ValidPathAndType()
   {
-    var existingInfo = new Night.FileSystemInfo(Night.FileType.Directory, 0, 0); // Dummy initial values
+    var existingInfo = new Night.FileSystemInfo(Night.FileType.Directory, 0, 0); // Initial dummy type
     var result = Night.Filesystem.GetInfo(this.testFilePath, Night.FileType.File, existingInfo);
 
     Assert.NotNull(result);
@@ -291,17 +293,22 @@ public class FilesystemTests : IDisposable
   }
 
   /// <summary>
-  /// Tests that GetInfo returns null when populating an existing object if the path exists but the type filter does not match.
+  /// Tests that GetInfo returns null when populating an existing object if path exists but type filter doesn't match.
   /// </summary>
   [Fact]
   public void GetInfo_PopulatesExistingObjectWithFilter_PathExistsButWrongType_ReturnsNull()
   {
-    var originalType = Night.FileType.Other;
-    var existingInfo = new Night.FileSystemInfo(originalType, null, null);
-    var result = Night.Filesystem.GetInfo(this.testFilePath, Night.FileType.Directory, existingInfo); // File exists, but asking for Directory type
+    var existingInfo = new Night.FileSystemInfo(Night.FileType.File, 123, DateTime.UtcNow.Ticks);
+    var originalType = existingInfo.Type;
+    var originalSize = existingInfo.Size;
+    var originalModTime = existingInfo.ModTime;
+
+    var result = Night.Filesystem.GetInfo(this.testFilePath, Night.FileType.Directory, existingInfo);
 
     Assert.Null(result);
-    Assert.Equal(originalType, existingInfo.Type); // Should not have been modified
+    Assert.Equal(originalType, existingInfo.Type);
+    Assert.Equal(originalSize, existingInfo.Size);
+    Assert.Equal(originalModTime, existingInfo.ModTime);
   }
 
   /// <summary>
@@ -310,41 +317,41 @@ public class FilesystemTests : IDisposable
   [Fact]
   public void ReadBytes_ExistingFile_ReturnsCorrectBytes()
   {
-    var expectedBytes = Encoding.UTF8.GetBytes("Hello Night Engine!");
+    var expectedBytes = File.ReadAllBytes(this.testFilePath);
     var actualBytes = Night.Filesystem.ReadBytes(this.testFilePath);
     Assert.Equal(expectedBytes, actualBytes);
   }
 
   /// <summary>
-  /// Tests that ReadBytes throws a FileNotFoundException for a non-existent file.
+  /// Tests that ReadBytes throws FileNotFoundException for a non-existent file.
   /// </summary>
   [Fact]
   public void ReadBytes_NonExistentFile_ThrowsFileNotFound()
   {
     var executionPath = Path.GetDirectoryName(typeof(FilesystemTests).Assembly.Location);
     var testDirFullPath = Path.Combine(executionPath!, TestDir);
-    _ = Assert.Throws<FileNotFoundException>(() => Night.Filesystem.ReadBytes(Path.Combine(testDirFullPath, "non_existent_file_for_read.txt")));
+    _ = Assert.Throws<FileNotFoundException>(() => Night.Filesystem.ReadBytes(Path.Combine(testDirFullPath, "no_such_file.dat")));
   }
 
   /// <summary>
-  /// Tests that ReadText returns the correct string for an existing file.
+  /// Tests that ReadText returns the correct string for an existing file (UTF-8).
   /// </summary>
   [Fact]
   public void ReadText_ExistingFile_ReturnsCorrectText()
   {
-    var expectedText = "Hello Night Engine!";
+    var expectedText = File.ReadAllText(this.testFilePath, Encoding.UTF8);
     var actualText = Night.Filesystem.ReadText(this.testFilePath);
     Assert.Equal(expectedText, actualText);
   }
 
   /// <summary>
-  /// Tests that ReadText throws a FileNotFoundException for a non-existent file.
+  /// Tests that ReadText throws FileNotFoundException for a non-existent file.
   /// </summary>
   [Fact]
   public void ReadText_NonExistentFile_ThrowsFileNotFound()
   {
     var executionPath = Path.GetDirectoryName(typeof(FilesystemTests).Assembly.Location);
     var testDirFullPath = Path.Combine(executionPath!, TestDir);
-    _ = Assert.Throws<FileNotFoundException>(() => Night.Filesystem.ReadText(Path.Combine(testDirFullPath, "non_existent_file_for_read.txt")));
+    _ = Assert.Throws<FileNotFoundException>(() => Night.Filesystem.ReadText(Path.Combine(testDirFullPath, "no_such_file.txt")));
   }
 }

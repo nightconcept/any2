@@ -83,7 +83,7 @@ namespace Night.Tests.Mouse
 
       // Assert
       Assert.False(result);
-      Assert.Contains("Warning: Night.Mouse.IsDown called before input system is initialized.", this.stringWriter.ToString());
+      Assert.Contains("Warning: Night.Mouse.IsDown called before input system is initialized. Returning false.", this.stringWriter.ToString());
     }
 
     /// <summary>
