@@ -54,7 +54,7 @@ jobs:
           echo -n "${version_input}" | od -tx1 -c
 
           # Use single quotes for the regex pattern for robustness
-          semver_regex='^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$'
+          semver_regex='^([0-9]+)\.([0-9]+)\.([0-9]+)(-([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?(\+([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?$'
           echo "Using semver_regex: >${semver_regex}<"
 
           # Clear BASH_REMATCH for a clean test
