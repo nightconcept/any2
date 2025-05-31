@@ -35,7 +35,8 @@ namespace Night
   {
     private static nint window = nint.Zero;
     private static nint renderer = nint.Zero;
-    private static bool isVideoInitialized = false;
+
+    // private static bool isVideoInitialized = false; // Removed: SDL lifecycle managed externally (e.g., by SDLFixture or Framework.Run)
     private static bool isWindowOpen = false;
     private static FullscreenType currentFullscreenType = FullscreenType.Desktop;
     private static ImageData? currentIconData = null;
@@ -165,16 +166,15 @@ namespace Night
     /// <returns>True if the mode was set successfully, false otherwise.</returns>
     public static bool SetMode(int width, int height, SDL.WindowFlags flags)
     {
-      if (!isVideoInitialized)
-      {
-        if (!SDL.InitSubSystem(SDL.InitFlags.Video))
-        {
-          return false;
-        }
-
-        isVideoInitialized = true;
-      }
-
+      // Assuming SDL Video subsystem is initialized by the caller (e.g., Framework.Run or SDLFixture for tests)
+      // if (!isVideoInitialized) // Removed
+      // {
+      //   if (!SDL.InitSubSystem(SDL.InitFlags.Video)) // Removed
+      //   {
+      //     return false;
+      //   }
+      //   isVideoInitialized = true; // Removed
+      // }
       if (window != nint.Zero)
       {
         if (renderer != nint.Zero)
@@ -252,11 +252,11 @@ namespace Night
     /// <returns>The number of currently connected displays.</returns>
     public static int GetDisplayCount()
     {
-      if (!isVideoInitialized)
-      {
-        EnsureVideoInitialized();
-      }
-
+      // Assuming SDL Video subsystem is initialized by the caller
+      // if (!isVideoInitialized) // Removed
+      // {
+      //   EnsureVideoInitialized(); // Removed
+      // }
       uint[]? displays = SDL.GetDisplays(out int count);
       if (displays == null || count < 0)
       {
@@ -273,11 +273,11 @@ namespace Night
     /// <returns>A tuple containing the width and height of the desktop, or (0,0) if an error occurs.</returns>
     public static (int Width, int Height) GetDesktopDimensions(int displayIndex = 0)
     {
-      if (!isVideoInitialized)
-      {
-        EnsureVideoInitialized();
-      }
-
+      // Assuming SDL Video subsystem is initialized by the caller
+      // if (!isVideoInitialized) // Removed
+      // {
+      //   EnsureVideoInitialized(); // Removed
+      // }
       uint[]? actualDisplayIDs = SDL.GetDisplays(out int displayCount);
       if (actualDisplayIDs == null || displayCount <= 0 || displayIndex < 0 || displayIndex >= displayCount)
       {
@@ -423,11 +423,11 @@ namespace Night
     /// <returns>A list of (Width, Height) tuples representing available modes, or an empty list on error.</returns>
     public static List<(int Width, int Height)> GetFullscreenModes(int displayIndex = 0)
     {
-      if (!isVideoInitialized)
-      {
-        EnsureVideoInitialized();
-      }
-
+      // Assuming SDL Video subsystem is initialized by the caller
+      // if (!isVideoInitialized) // Removed
+      // {
+      //   EnsureVideoInitialized(); // Removed
+      // }
       var modesList = new List<(int Width, int Height)>();
       var uniqueModes = new HashSet<(int Width, int Height)>();
 
@@ -589,31 +589,42 @@ namespace Night
         window = nint.Zero;
       }
 
-      if (isVideoInitialized)
-      {
-        SDL.QuitSubSystem(SDL.InitFlags.Video);
-        isVideoInitialized = false;
-      }
-
+      // Do not call SDL.QuitSubSystem here. Lifecycle managed externally.
+      // if (isVideoInitialized) // Removed
+      // {
+      //   SDL.QuitSubSystem(SDL.InitFlags.Video); // Removed
+      //   isVideoInitialized = false; // Removed
+      // }
       isWindowOpen = false;
     }
 
     /// <summary>
-    /// Ensures the SDL Video subsystem is initialized.
+    /// Resets the internal static state of the Window class without quitting the SDL video subsystem.
+    /// This is intended for use in testing scenarios where the SDL lifecycle is managed externally.
     /// </summary>
-    private static void EnsureVideoInitialized()
+    internal static void ResetInternalState()
     {
-      if (!isVideoInitialized)
+      if (renderer != nint.Zero)
       {
-        if (!SDL.InitSubSystem(SDL.InitFlags.Video))
-        {
-          string sdlError = SDL.GetError();
-          throw new Exception($"SDL Error initializing video subsystem: {sdlError}");
-        }
-
-        isVideoInitialized = true;
+        SDL.DestroyRenderer(renderer);
+        renderer = nint.Zero;
       }
+
+      if (window != nint.Zero)
+      {
+        SDL.DestroyWindow(window);
+        window = nint.Zero;
+      }
+
+      // Do not call SDL.QuitSubSystem(SDL.InitFlags.Video) here.
+      // Only reset the internal flag for Night.Window's own state.
+      // isVideoInitialized = false; // Removed as the field is removed.
+      isWindowOpen = false;
+      currentIconData = null;
+      currentFullscreenType = FullscreenType.Desktop;
     }
+
+    // EnsureVideoInitialized() method removed as Night.Window no longer manages SDL video subsystem init.
 
     /// <summary>
     /// Gets the dimensions of the desktop for a specific display ID.
@@ -622,11 +633,11 @@ namespace Night
     /// <returns>A tuple containing the width and height of the desktop, or (0,0) if an error occurs.</returns>
     private static (int Width, int Height) GetDesktopDimensionsForDisplayID(uint displayID)
     {
-      if (!isVideoInitialized)
-      {
-        EnsureVideoInitialized();
-      }
-
+      // Assuming SDL Video subsystem is initialized by the caller
+      // if (!isVideoInitialized) // Removed
+      // {
+      //   EnsureVideoInitialized(); // Removed
+      // }
       SDL.DisplayMode? mode = SDL.GetDesktopDisplayMode(displayID);
       if (mode == null)
       {
