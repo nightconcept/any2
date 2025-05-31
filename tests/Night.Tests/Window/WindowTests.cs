@@ -43,10 +43,12 @@ namespace Night.Tests.Window
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowTests"/> class.
     /// </summary>
-    /// <param name="fixture">The SDL fixture.</param>
+    /// <param name="_">The SDL fixture.</param>
+#pragma warning disable SA1313 // Parameter name should begin with lower-case letter
     public WindowTests(SDLFixture _)
+#pragma warning restore SA1313 // Parameter name should begin with lower-case letter
     {
-      // The fixture parameter is used by Xunit to inject the SDLFixture.
+      // The _ parameter is used by Xunit to inject the SDLFixture.
       // We don't need to store it if it's not used directly by test methods.
       Night.Window.ResetInternalState();
     }
