@@ -40,15 +40,14 @@ namespace Night.Tests.Window
   /// </summary>
   public class WindowTests : IClassFixture<SDLFixture>, IDisposable
   {
-    private readonly SDLFixture fixture;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowTests"/> class.
     /// </summary>
     /// <param name="fixture">The SDL fixture.</param>
     public WindowTests(SDLFixture fixture)
     {
-      this.fixture = fixture;
+      // The fixture parameter is used by Xunit to inject the SDLFixture.
+      // We don't need to store it if it's not used directly by test methods.
       Night.Window.ResetInternalState();
     }
 
