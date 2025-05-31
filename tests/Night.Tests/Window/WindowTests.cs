@@ -44,7 +44,7 @@ namespace Night.Tests.Window
     /// Initializes a new instance of the <see cref="WindowTests"/> class.
     /// </summary>
     /// <param name="fixture">The SDL fixture.</param>
-    public WindowTests(SDLFixture fixture)
+    public WindowTests(SDLFixture _)
     {
       // The fixture parameter is used by Xunit to inject the SDLFixture.
       // We don't need to store it if it's not used directly by test methods.
