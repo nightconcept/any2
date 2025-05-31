@@ -61,3 +61,8 @@ run = [
 [tasks.docs]
 description = "Generate docs."
 run = ["dotnet docfx site/docfx.json"]
+
+[tasks.format]
+alias = "format"
+description = "Format files."
+run = ["dotnet format --verbosity verbose Night.sln"]

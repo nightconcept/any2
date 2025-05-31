@@ -22,6 +22,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 using Night;
@@ -44,9 +46,8 @@ namespace Night.Tests.Window
     /// Initializes a new instance of the <see cref="WindowTests"/> class.
     /// </summary>
     /// <param name="_">The SDL fixture.</param>
-#pragma warning disable SA1313 // Parameter name should begin with lower-case letter
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:ParameterNamesMustBeginWithLowerCaseLetter", Justification = "The '_' parameter is used for Xunit fixture injection and is intentionally unused in the method body.")]
     public WindowTests(SDLFixture _)
-#pragma warning restore SA1313 // Parameter name should begin with lower-case letter
     {
       // The _ parameter is used by Xunit to inject the SDLFixture.
       // We don't need to store it if it's not used directly by test methods.
