@@ -25,7 +25,7 @@ using System;
 namespace Night
 {
   /// <summary>
-  /// Represents a 2D sprite, typically an image loaded into a texture.
+  /// A 2D sprite that can be drawn to the screen.
   /// </summary>
   public class Sprite
   {

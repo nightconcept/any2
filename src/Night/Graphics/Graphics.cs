@@ -31,16 +31,13 @@ using SDL3;
 namespace Night
 {
   /// <summary>
-  /// Provides functionality for drawing graphics.
-  /// Mimics Love2D's love.graphics module.
+  /// Provides 2D graphics rendering functionality.
   /// </summary>
   public static class Graphics
   {
-    /// <summary>
-    /// Creates a new image (Sprite) from a file.
-    /// </summary>
-    /// <param name="filePath">The path to the image file.</param>
-    /// <returns>A new Sprite object.</returns>
+    /// <summary>Loads an image file and creates a new Sprite.</summary>
+    /// <param name="filePath">Path to the image file.</param>
+    /// <returns>A new Sprite or null if loading fails.</returns>
     public static Sprite? NewImage(string filePath)
     {
       IntPtr rendererPtr = Window.RendererPtr;
@@ -89,10 +86,8 @@ namespace Night
       return new Sprite(texturePtr, width, height);
     }
 
-    /// <summary>
-    /// Sets the active color for drawing operations.
-    /// </summary>
-    /// <param name="color">The color to set.</param>
+    /// <summary>Sets the current drawing color.</summary>
+    /// <param name="color">The color to use for subsequent drawing operations.</param>
     public static void SetColor(Color color)
     {
       IntPtr rendererPtr = Window.RendererPtr;
@@ -109,26 +104,22 @@ namespace Night
       }
     }
 
-    /// <summary>
-    /// Sets the active color for drawing operations using individual RGBA components.
-    /// </summary>
-    /// <param name="r">The red component (0-255).</param>
-    /// <param name="g">The green component (0-255).</param>
-    /// <param name="b">The blue component (0-255).</param>
-    /// <param name="a">The alpha component (0-255), defaults to 255 (opaque).</param>
+    /// <summary>Sets the current drawing color using RGBA components.</summary>
+    /// <param name="r">Red component (0-255).</param>
+    /// <param name="g">Green component (0-255).</param>
+    /// <param name="b">Blue component (0-255).</param>
+    /// <param name="a">Alpha/transparency (0-255, default 255 = opaque).</param>
     public static void SetColor(byte r, byte g, byte b, byte a = 255)
     {
       SetColor(new Color(r, g, b, a));
     }
 
-    /// <summary>
-    /// Draws a rectangle.
-    /// </summary>
-    /// <param name="mode">The drawing mode (Fill or Line).</param>
-    /// <param name="x">The x-coordinate of the top-left corner.</param>
-    /// <param name="y">The y-coordinate of the top-left corner.</param>
-    /// <param name="width">The width of the rectangle.</param>
-    /// <param name="height">The height of the rectangle.</param>
+    /// <summary>Draws a rectangle.</summary>
+    /// <param name="mode">Fill or outline the rectangle.</param>
+    /// <param name="x">Left position.</param>
+    /// <param name="y">Top position.</param>
+    /// <param name="width">Rectangle width.</param>
+    /// <param name="height">Rectangle height.</param>
     public static void Rectangle(DrawMode mode, float x, float y, float width, float height)
     {
       IntPtr rendererPtr = Window.RendererPtr;

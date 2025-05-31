@@ -29,6 +29,9 @@ using Night;
 using SDL3;
 
 using Xunit;
+using Xunit.Abstractions;
+using Xunit.Extensions;
+using Xunit.Sdk;
 
 namespace Night.Tests.Window
 {
@@ -46,14 +49,6 @@ namespace Night.Tests.Window
     public WindowTests(SDLFixture fixture)
     {
       this.fixture = fixture;
-
-      // Reset Night.Window's internal static state before each test.
-      // Night.Window.Shutdown() also calls SDL.QuitSubSystem.
-      // This might conflict with SDLFixture if not handled carefully.
-      // For now, we rely on SDLFixture to have initialized SDL Video,
-      // and assume Night.Window.ResetInternalState() will clean up Night.Window's
-      // specific resources (window handle, renderer) without affecting the
-      // SDL video subsystem managed by SDLFixture.
       Night.Window.ResetInternalState();
     }
 
@@ -62,7 +57,6 @@ namespace Night.Tests.Window
     /// </summary>
     public void Dispose()
     {
-      // Reset Night.Window's internal static state after each test.
       Night.Window.ResetInternalState();
       GC.SuppressFinalize(this);
     }
@@ -72,9 +66,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.SetIcon(string)"/> returns false when the image path is null.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetIcon_NullImagePath_ReturnsFalse()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       string? imagePath = null;
 
@@ -88,9 +84,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.SetIcon(string)"/> returns false when the image path is empty.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetIcon_EmptyImagePath_ReturnsFalse()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       string imagePath = string.Empty;
 
@@ -104,11 +102,13 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.SetIcon(string)"/> returns false when the window is not initialized.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetIcon_WindowNotInitialized_ReturnsFalse()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
-      // Ensure window is not initialized (default state after constructor's Shutdown)
+      // Ensure window is not initialized (default state after constructor's ResetInternalState)
       string imagePath = "dummy.png"; // Path doesn't need to exist for this specific test
 
       // Act
@@ -122,9 +122,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.SetIcon(string)"/> returns false for a non-existent image path.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetIcon_NonExistentImagePath_ReturnsFalse()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       // First, initialize a window so Window.Handle is not null
       Assert.True(Night.Window.SetMode(100, 100, SDL3.SDL.WindowFlags.Hidden), "Test setup: SetMode failed");
@@ -143,11 +145,13 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetIcon()"/> returns null when no icon has been set.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetIcon_NoIconSet_ReturnsNull()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
-      // Window.Shutdown() in constructor ensures no icon is set
+      // Window.ResetInternalState() in constructor ensures no icon is set
 
       // Act
       ImageData? iconData = Night.Window.GetIcon();
@@ -161,9 +165,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.SetMode(int, int, SDL3.SDL.WindowFlags)"/> returns true and opens the window with valid parameters.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetMode_ValidParameters_ReturnsTrueAndWindowIsOpen()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       int width = 640;
       int height = 480;
@@ -180,9 +186,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Conceptually tests the behavior of <see cref="Night.Window.SetMode(int, int, SDL3.SDL.WindowFlags)"/> if SDL_CreateWindow fails.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetMode_SdlCreateWindowFails_ReturnsFalseAndWindowNotOpen()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // This test is hard to achieve in a pure unit test without mocking SDL.
       // We are testing the C# wrapper's behavior if SDL.CreateWindow were to return nint.Zero.
       // The current Night.Window.SetMode directly calls SDL.CreateWindow and checks its return.
@@ -199,11 +207,13 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.SetTitle(string)"/> throws <see cref="InvalidOperationException"/> when the window is not initialized.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetTitle_WindowNotInitialized_ThrowsInvalidOperationException()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
-      // Window is not initialized by default after constructor's Shutdown()
+      // Window is not initialized by default after constructor's ResetInternalState()
 
       // Act & Assert
       var ex = Assert.Throws<InvalidOperationException>(() => Night.Window.SetTitle("Test Title"));
@@ -213,9 +223,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.SetTitle(string)"/> does not throw an exception for a valid title.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetTitle_ValidTitle_DoesNotThrow()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       Assert.True(Night.Window.SetMode(100, 100, SDL3.SDL.WindowFlags.Hidden), "Test setup: SetMode failed");
       string title = "My Test Window";
@@ -230,9 +242,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.SetTitle(string)"/> throws an exception when the title is null.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetTitle_NullTitle_SdlHandlesOrThrows()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       Assert.True(Night.Window.SetMode(100, 100, SDL3.SDL.WindowFlags.Hidden), "Test setup: SetMode failed");
       string? title = null;
@@ -249,9 +263,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.IsOpen()"/> returns false when the window has not been set.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void IsOpen_WindowNotSet_ReturnsFalse()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       // Window is not initialized by default
 
@@ -265,9 +281,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.IsOpen()"/> returns true after a successful call to <see cref="Night.Window.SetMode(int, int, SDL3.SDL.WindowFlags)"/>.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void IsOpen_AfterSuccessfulSetMode_ReturnsTrue()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       _ = Night.Window.SetMode(100, 100, SDL3.SDL.WindowFlags.Hidden);
 
@@ -281,9 +299,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.IsOpen()"/> returns false after <see cref="Night.Window.Close()"/> is called.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void IsOpen_AfterClose_ReturnsFalse()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       _ = Night.Window.SetMode(100, 100, SDL3.SDL.WindowFlags.Hidden);
       Night.Window.Close();
@@ -300,9 +320,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.Close()"/> sets the internal window state to closed.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void Close_WhenWindowIsOpen_SetsInternalStateToClosed()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       _ = Night.Window.SetMode(100, 100, SDL3.SDL.WindowFlags.Hidden);
       Assert.True(Night.Window.IsOpen(), "Pre-condition: Window should be open.");
@@ -319,19 +341,19 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetDisplayCount()"/> initializes video if not already initialized and returns a display count.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetDisplayCount_VideoNotInitialized_InitializesVideoAndReturnsCount()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
-      // Video is not initialized by default
+      // Video is initialized by fixture if successful
 
       // Act
       int count = Night.Window.GetDisplayCount();
 
       // Assert
       Assert.True(count >= 0, "Display count should be non-negative.");
-
-      // Further assertion: isVideoInitialized should be true internally, but not directly testable without InternalsVisibleTo for that specific field.
     }
 
     // --- GetDesktopDimensions Tests ---
@@ -339,11 +361,13 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetDesktopDimensions(int)"/> initializes video and returns dimensions.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetDesktopDimensions_VideoNotInitialized_InitializesVideoAndReturnsDimensions()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
-      // Video not initialized
+      // Video initialized by fixture
 
       // Act
       var (width, height) = Night.Window.GetDesktopDimensions(0);
@@ -356,9 +380,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetDesktopDimensions(int)"/> returns non-zero dimensions for a valid display index.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetDesktopDimensions_ValidDisplayIndex_ReturnsNonZeroDimensions()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       // Assuming at least one display is connected, which is typical for test environments.
       // Video will be initialized by the call.
@@ -376,9 +402,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetDesktopDimensions(int)"/> returns (0,0) for a negative display index.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetDesktopDimensions_InvalidDisplayIndexNegative_ReturnsZeroZero()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       // Video will be initialized by the call.
 
@@ -393,9 +421,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetDesktopDimensions(int)"/> returns (0,0) for a display index that is too large.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetDesktopDimensions_InvalidDisplayIndexTooLarge_ReturnsZeroZero()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       // Video will be initialized by the call.
       int displayCount = Night.Window.GetDisplayCount(); // Initialize and get count
@@ -413,9 +443,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetFullscreen()"/> returns false and Desktop type when the window is not initialized.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetFullscreen_WindowNotInitialized_ReturnsFalseAndDesktopType()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       // Window not initialized
 
@@ -432,9 +464,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.SetFullscreen(bool, FullscreenType)"/> returns false when the window is not initialized.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void SetFullscreen_WindowNotInitialized_ReturnsFalse()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       // Window not initialized
 
@@ -454,11 +488,13 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetFullscreenModes(int)"/> initializes video and returns a list of modes.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetFullscreenModes_VideoNotInitialized_InitializesVideoAndReturnsModes()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
-      // Video not initialized
+      // Video not initialized by fixture
 
       // Act
       List<(int Width, int Height)> modes = Night.Window.GetFullscreenModes(0);
@@ -470,9 +506,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetFullscreenModes(int)"/> returns an empty list for an invalid display index.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetFullscreenModes_InvalidDisplayIndex_ReturnsEmptyList()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       int displayCount = Night.Window.GetDisplayCount(); // Initialize and get count
 
@@ -489,9 +527,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetMode()"/> returns a default mode structure when the window is not initialized.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetMode_WindowNotInitialized_ReturnsDefaultModeStruct()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       // Window not initialized
 
@@ -511,9 +551,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.GetDPIScale()"/> returns 1.0f when the window is not initialized.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void GetDPIScale_WindowNotInitialized_ReturnsOne()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       // Window not initialized
 
@@ -529,9 +571,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.ToPixels(float)"/> returns the value times 1.0f when the window is not initialized.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void ToPixels_WindowNotInitialized_ReturnsValueTimesOne() // DPI scale is 1.0f if window not init
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       float inputValue = 100f;
 
@@ -545,9 +589,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Tests that <see cref="Night.Window.FromPixels(float)"/> returns the value divided by 1.0f when the window is not initialized.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void FromPixels_WindowNotInitialized_ReturnsValueDividedByOne() // DPI scale is 1.0f if window not init
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // Arrange
       float inputValue = 100f;
 
@@ -561,9 +607,11 @@ namespace Night.Tests.Window
     /// <summary>
     /// Conceptually tests the guard in <see cref="Night.Window.FromPixels(float)"/> for a zero DPI scale.
     /// </summary>
-    [Fact]
+    [SkippableFact]
     public void FromPixels_ZeroDpiScale_ReturnsOriginalValue()
     {
+      Skip.If(!SDLFixture.IsVideoSuccessfullyInitialized, "SDL Video initialization failed, skipping test.");
+
       // This scenario is unlikely with real SDL if GetDPIScale returns 1.0f on error.
       // However, if GetDPIScale somehow returned 0, FromPixels has a guard.
       // This test is more about that guard.

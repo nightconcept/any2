@@ -25,9 +25,8 @@ using System;
 namespace Night
 {
   /// <summary>
-  /// Represents a color with Red, Green, Blue, and Alpha components.
-  /// Each component is a byte value ranging from 0 (no intensity) to 255 (full intensity).
-  /// The Alpha component controls the transparency of the color, where 0 is fully transparent and 255 is fully opaque.
+  /// Represents a color with Red, Green, Blue, and Alpha components (0-255).
+  /// Alpha controls transparency (0 = transparent, 255 = opaque).
   /// </summary>
   public struct Color
   {

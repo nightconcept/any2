@@ -37,19 +37,40 @@ namespace Night.Tests.Window
     /// </summary>
     public SDLFixture()
     {
+      // Reset the static flag at the beginning of each fixture instantiation
+      // to ensure a clean state if the fixture is used multiple times
+      // in a test run (though xUnit typically creates one per test class).
+      IsVideoSuccessfullyInitialized = false;
+
       if (!SDL3.SDL.Init(SDL3.SDL.InitFlags.Video))
       {
         string sdlError = SDL3.SDL.GetError();
-        throw new InvalidOperationException($"SDL_Init(Video) failed: {sdlError}");
+        Console.WriteLine($"Warning: SDL_Init(Video) failed in SDLFixture: {sdlError}. Tests requiring video may be skipped.");
+        IsVideoSuccessfullyInitialized = false;
+
+        // Do not throw; allow tests to check IsVideoSuccessfullyInitialized
+      }
+      else
+      {
+        IsVideoSuccessfullyInitialized = true;
       }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the SDL video subsystem was successfully initialized.
+    /// </summary>
+    public static bool IsVideoSuccessfullyInitialized { get; private set; }
 
     /// <summary>
     /// Cleans up resources by quitting SDL.
     /// </summary>
     public void Dispose()
     {
-      SDL3.SDL.Quit();
+      if (IsVideoSuccessfullyInitialized)
+      {
+        SDL3.SDL.Quit();
+      }
+
       GC.SuppressFinalize(this);
     }
   }
