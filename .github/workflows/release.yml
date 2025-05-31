@@ -37,14 +37,51 @@ jobs:
 
       - name: Validate Version Input (SemVer)
         run: |
-          version_input="${{ github.event.inputs.version }}"
-          version_input=$(echo "$version_input" | xargs) # Trim whitespace
-          semver_regex="^([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
-          if [[ ! "$version_input" =~ $semver_regex ]]; then
+          echo "Starting SemVer validation..."
+          version_input_raw="${{ github.event.inputs.version }}"
+          echo "Raw version_input (length ${#version_input_raw}): >${version_input_raw}<"
+          echo "Raw version_input (hex):"
+          echo -n "${version_input_raw}" | od -tx1 -c
+
+          # Trim whitespace using a more direct bash method
+          # Remove leading whitespace
+          temp_trimmed_input="${version_input_raw#"${version_input_raw%%[![:space:]]*}"}"
+          # Remove trailing whitespace
+          version_input="${temp_trimmed_input%"${temp_trimmed_input##*[![:space:]]}"}"
+
+          echo "Trimmed version_input (length ${#version_input}): >${version_input}<"
+          echo "Trimmed version_input (hex):"
+          echo -n "${version_input}" | od -tx1 -c
+
+          # Use single quotes for the regex pattern for robustness
+          semver_regex='^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$'
+          echo "Using semver_regex: >${semver_regex}<"
+
+          # Clear BASH_REMATCH for a clean test
+          unset BASH_REMATCH
+
+          if [[ "$version_input" =~ $semver_regex ]]; then
+            echo "SemVer input '$version_input' is VALID."
+            echo "BASH_REMATCH[0] (Full match): >${BASH_REMATCH[0]}<"
+            echo "BASH_REMATCH[1] (Major): >${BASH_REMATCH[1]}<"
+            echo "BASH_REMATCH[2] (Minor): >${BASH_REMATCH[2]}<"
+            echo "BASH_REMATCH[3] (Patch): >${BASH_REMATCH[3]}<"
+            echo "BASH_REMATCH[4] (Pre-release): >${BASH_REMATCH[4]}<"
+            echo "BASH_REMATCH[5] (Build metadata): >${BASH_REMATCH[5]}<"
+          else
+            echo "SemVer input '$version_input' is INVALID."
+            if [ ${#BASH_REMATCH[@]} -gt 0 ]; then
+              echo "DEBUG: BASH_REMATCH was set despite failed match (unexpected):"
+              for i in "${!BASH_REMATCH[@]}"; do
+                echo "DEBUG: BASH_REMATCH[$i]: >${BASH_REMATCH[$i]}<"
+              done
+            else
+              echo "DEBUG: BASH_REMATCH is empty as expected on failure."
+            fi
             echo "Error: Invalid version format. Input must be a pure Semantic Version (e.g., 1.0.0, 1.2.3-beta.1)."
+            echo "Input was (length ${#version_input}): >$version_input<"
             exit 1
           fi
-          echo "SemVer input '$version_input' is valid."
         shell: bash
 
 
