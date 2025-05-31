@@ -30,6 +30,8 @@ The core of the project is the `Night.dll` library. This assembly contains:
 
 1. Ensure [mise](https://mise.jdx.dev/) is installed.
 2. Clone repository
+3. Run `mise install`
+4. Run `mise build`
 
 ### macOS Development Notes
 

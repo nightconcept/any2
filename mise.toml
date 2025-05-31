@@ -16,7 +16,7 @@ run = ["dotnet build Night.sln"]
 alias = "digest"
 description = "Run gitingest on current directory."
 run = [
-  "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/*,lib/*,.venv/*,.windsurf/*,src/SampleGame/bin/*,src/Night.Engine/bin/*,src/SampleGame/obj/*,src/Night.Engine/obj/* .",
+  "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/*,lib/*,.venv/*,.windsurf/*,src/SampleGame/bin/*,src/Night/bin/*,src/SampleGame/obj/*,src/Night/obj/*,site/_site/*,site/api/*,tests/Night.Tests/bin/*,tests/Night.Tests/obj/* .",
 ]
 
 [tasks.game]
@@ -57,3 +57,7 @@ run = [
   "dotnet test",
   "python scripts/update_api_doc.py",
 ]
+
+[tasks.docs]
+description = "Generate docs."
+run = ["dotnet docfx site/docfx.json"]
