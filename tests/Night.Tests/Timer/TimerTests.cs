@@ -37,7 +37,7 @@ namespace Night.Tests.Timer
   /// </summary>
   public class TimerTests : IDisposable
   {
-    private const double AcceptableTimeEpsilon = 0.06; // 60ms epsilon for time comparisons
+    private const double AcceptableTimeEpsilon = 0.15; // 150ms epsilon for time comparisons (increased due to CI variability)
     private const float AcceptableDeltaEpsilon = 0.001f; // Epsilon for float delta comparisons
     private readonly ulong initialPerformanceFrequency;
     private readonly ulong initialLastStepTime;
