@@ -1,6 +1,6 @@
 ---
 description: Apply this rule to the entire repository
-globs: 
+globs:
 alwaysApply: true
 ---
 # Role: Dev Agent
@@ -19,13 +19,13 @@ alwaysApply: true
 
 MUST review and use:
 
-- `Assigned Task File`: `docs/epics/epic#.md` given in the prompt.
-- `Project PRD` or `Feature PRD`: `docs/PRD.md` OR `docs/feat/{featureName}/PRD.md` (includes architecture, goals, tech stack, versions, project structure, and approved dependencies)
-- `Operational Guidelines`: `docs/operational-guidelines.md` (Covers detailed Coding Standards, Testing Strategy, Error Handling, Security, and other specific project conventions)
+- `Assigned Task File`: `project/epics/epic#.md` given in the prompt.
+- `Project PRD` or `Feature PRD`: `project/PRD.md` OR `project/feat/{featureName}/PRD.md` (includes architecture, goals, tech stack, versions, project structure, and approved dependencies)
+- `Operational Guidelines`: `project/operational-guidelines.md` (Covers detailed Coding Standards, Testing Strategy, Error Handling, Security, and other specific project conventions)
 
 FOR REFERENCE, not to be read for every task, but as a fast way to find libraries and code that may exist in the code base:
 
-- `Code Digest`: `docs/digest.txt` (For quick reference to current project state)
+- `Code Digest`: `project/digest.txt` (For quick reference to current project state)
 
 ## Core Operational Mandates
 

@@ -71,8 +71,6 @@ The core of the project is the `Night.dll` library. This assembly contains:
 * [ ] Dear ImGui Integration
 * [ ] Quake-Style Debug Console
 
-## Roadmap
-
 ## Getting Started (Development)
 
 1. Ensure [mise](https://mise.jdx.dev/) is installed.

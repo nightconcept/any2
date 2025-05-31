@@ -41,9 +41,15 @@ This project incorporates copyrighted material from the following third-party pr
 
 ### Material Design Icons
 
-- Copyright (C)  Google
+- Copyright (C) Google
 - License: Apache 2.0
 - Website: [https://github.com/google/material-design-icons](https://github.com/google/material-design-icons)
+
+### Crunch (Texture Packer)
+
+- Copyright (c) 2017 Chevy Ray Johnston
+- License: MIT
+- Website: [https://github.com/ChevyRay/crunch](https://github.com/ChevyRay/crunch)
 
 ## License Texts
 

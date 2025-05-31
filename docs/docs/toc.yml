@@ -1,4 +1,6 @@
-- name: Introduction
+- name: Home
   href: index.md
+- name: Introduction
+  href: introduction.md
 - name: Getting Started
   href: getting-started.md

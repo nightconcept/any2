@@ -272,7 +272,7 @@ graph TD
 
 ## 6. Future Considerations (Post Version 0.1.0)
 
-**Out of Scope for Version 0.1.0 (Night.Framework):** (Based on `roadmap.md` and existing "Out of Scope" items from `docs/love2d-api/modules/*.md` for modules beyond 0.1.0, and previous PRD version)
+**Out of Scope for Version 0.1.0 (Night.Framework):** (Based on `roadmap.md` and existing "Out of Scope" items from `project/love2d-api/modules/*.md` for modules beyond 0.1.0, and previous PRD version)
 
 - **Full Love2D API Parity:** Modules and features beyond those specified for v0.1.0 in `roadmap.md`. This includes:
 

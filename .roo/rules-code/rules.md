@@ -14,13 +14,13 @@
 
 MUST review and use:
 
-- `Assigned Task File`: `docs/epics/epic#.md` given in the prompt.
-- `Project PRD` or `Feature PRD`: `docs/PRD.md` OR `docs/feat/{featureName}/PRD.md` (includes architecture, goals, tech stack, versions, project structure, and approved dependencies)
-- `Operational Guidelines`: `docs/operational-guidelines.md` (Covers detailed Coding Standards, Testing Strategy, Error Handling, Security, and other specific project conventions)
+- `Assigned Task File`: `project/epics/epic#.md` given in the prompt.
+- `Project PRD` or `Feature PRD`: `project/PRD.md` OR `project/feat/{featureName}/PRD.md` (includes architecture, goals, tech stack, versions, project structure, and approved dependencies)
+- `Operational Guidelines`: `project/operational-guidelines.md` (Covers detailed Coding Standards, Testing Strategy, Error Handling, Security, and other specific project conventions)
 
 FOR REFERENCE, not to be read for every task, but as a fast way to find libraries and code that may exist in the code base:
 
-- `Code Digest`: `docs/digest.txt` (For quick reference to current project state)
+- `Code Digest`: `project/digest.txt` (For quick reference to current project state)
 
 ## Core Operational Mandates
 
@@ -31,6 +31,7 @@ FOR REFERENCE, not to be read for every task, but as a fast way to find librarie
 ## Standard Operating Workflow
 
 1. **Initialization & Preparation:**
+
 - On confirmation, update story status to `Status: In-Progress` in the story file
 - <critical_rule>Thoroughly review all "Essential Context & Reference Documents". Focus intensely on the assigned story's requirements, ACs, approved dependencies, and tasks detailed within it. Review relevant existing code *before* proposing changes.</critical_rule>
 
@@ -43,6 +44,7 @@ FOR REFERENCE, not to be read for every task, but as a fast way to find librarie
 - **Risks/Challenges:** Identify any foreseen risks or challenges
 
 3. **Implementation & Development:**
+
 - Execute assigned epic tasks/subtasks sequentially based on the approved plan
 - **Focus:** Target the specific task from the assigned epic file. No unrelated refactoring unless explicitly tasked and approved
 - **Modification Approach:**
@@ -64,6 +66,7 @@ FOR REFERENCE, not to be read for every task, but as a fast way to find librarie
 
 4. **Coding Standards (General Principles):**
   Adherence to detailed coding standards, including language-specific rules, formatting, and linting, is mandated by the `Operational Guidelines` document. The following are high-level, universal principles:
+
 - **Clarity & Maintainability:** Prioritize writing code that is clear, understandable, and maintainable
 - **Robustness & Efficiency:** Strive for robust solutions and consider performance implications. Implement error handling as specified in `Operational Guidelines`
 - **Modularity:** Keep functions and modules focused on a single responsibility. Structure code logically, adhering to the project structure defined in the `Project PRD`
@@ -74,6 +77,7 @@ FOR REFERENCE, not to be read for every task, but as a fast way to find librarie
   - Update `project/README.md` if changes involve core features, dependency modifications, or adjustments to setup/build processes
 
 5. **Handling Blockers & Clarifications (Non-Dependency):**
+
 - If ambiguities in requirements or conflicts in documentation arise:
   - First, attempt to resolve by diligently re-referencing all loaded documentation and the assigned story file
   - If the blocker persists: document the issue, your analysis, and specific questions in the story file
@@ -81,10 +85,12 @@ FOR REFERENCE, not to be read for every task, but as a fast way to find librarie
   - Await user clarification or approval. Document the resolution in the story file before proceeding
 
 6. **Pre-Completion Review & Cleanup:**
+
 - Ensure all story tasks and subtasks are marked as complete in the story file
 - Address any outstanding items based on story requirements and acceptance criteria
 
 7. **Final Handoff for User Approval:**
+
 - <important_note>Final confirmation: All implemented code and documentation meet the standards outlined in the `Operational Guidelines` and the `project/PRD.md`.</important_note>
 - Update the story status to `Status: Review` (or as per project process) in the story file
 - Provide all code and commands user needs to properly review the implemented task

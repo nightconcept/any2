@@ -1,6 +1,6 @@
 # Epic 10: Achieving Roadmap Version 0.1.0
 
-**Goal:** Implement the remaining core features and functionalities outlined for Version 0.1.0 in `docs/love2d-api/roadmap.md`. This epic focuses on API completion for the initial public feature set of Night.Framework.
+**Goal:** Implement the remaining core features and functionalities outlined for Version 0.1.0 in `project/love2d-api/roadmap.md`. This epic focuses on API completion for the initial public feature set of Night.Framework.
 
 **User Stories:**
 
@@ -14,14 +14,14 @@
 - As a game developer, I want to be able to configure basic game settings through a configuration file.
 
 **Version 0.1.0 Roadmap Items to Address:**
-(Reference: `docs/love2d-api/roadmap.md`)
+(Reference: `project/love2d-api/roadmap.md`)
 
 ## Tasks
 
 ### Phase 1: Core Framework Enhancements
 
 - [x] **Task 10.1: Implement `Night.Filesystem` (Basic)**
-  - **Description:** Create the `Night.Filesystem` static class. Implement core functions needed for 0.1.0, focusing on reading files (e.g., for `Graphics.NewImage`), checking file/directory existence. Refer to `docs/love2d-api/modules/filesystem.md` for API inspiration, but scope to essential read operations.
+  - **Description:** Create the `Night.Filesystem` static class. Implement core functions needed for 0.1.0, focusing on reading files (e.g., for `Graphics.NewImage`), checking file/directory existence. Refer to `project/love2d-api/modules/filesystem.md` for API inspiration, but scope to essential read operations.
   - **Implementation:**
     - [x] Create `Night.Filesystem` static class
     - [-] ~~Implement `Exists(string path)` - Check if a file or directory exists~~ (Replaced by `GetInfo`)
@@ -63,7 +63,7 @@
 
 - [x] **Task 10.3: Implement `Night.Timer` Module**
   - **Description:** Create the `Night.Timer` static class.
-  - [x] Implement `GetFPS()` and `GetTime()` (time since game start in seconds). Refer to `docs/love2d-api/modules/timer.md`.
+  - [x] Implement `GetFPS()` and `GetTime()` (time since game start in seconds). Refer to `project/love2d-api/modules/timer.md`.
   - [x] `GetDeltaTime()` is already available implicitly via `IGame.Update()`, but should be renamed to `GetDelta()`. (Implemented as `Night.Timer.GetDelta()`)
   - [x] Implement `GetAverageDelta()`.
   - [x] Implement `Sleep()` to pause the current thread for the specified amount of time. This function causes the entire thread to pause for the duration of the sleep. Graphics will not draw, input events will not trigger, code will not run, and the window will be unresponsive if you use this as "wait()" in the main thread.
@@ -86,7 +86,7 @@
   - **Status:** Done
 
 - [x] **Task 10.5: Extend `Night.Window` Functionality**
-  - **Description:** Implement window management functionality based on `docs/love2d-api/modules/window.md` "In Scope" items.
+  - **Description:** Implement window management functionality based on `project/love2d-api/modules/window.md` "In Scope" items.
   - **Implementation:**
     - [x] Core Methods:
       - [x] `GetDesktopDimensions(int displayIndex = 0)` - Get desktop dimensions [cite: 1280]
@@ -324,7 +324,7 @@ end
     - [x] Update `Night.Configuration.GameConfig` to include `IconPath` in `WindowConfig` (and split config classes to separate files).
     - [x] Update `Night.FrameworkLoop.Run()` (now `Framework.Run()`) to load icon from `config.json` if specified.
     - [x] Update `Night.SampleGame` to call `SetIcon` (commented out, driven by config) and include a sample icon file (user to provide actual file, config updated).
-    - [x] Update `docs/love2d-api/modules/window.md` for `SetIcon` and `GetIcon`.
+    - [x] Update `project/love2d-api/modules/window.md` for `SetIcon` and `GetIcon`.
   - **Acceptance Criteria:** Project has a logo. Sample game displays a custom window icon. `Night.Window.GetIcon()` returns the path of the set icon.
   - **Status:** In-Progress
 
@@ -397,7 +397,7 @@ end
 
   - **5. Documentation Updates:**
 
-    - [x] **`docs/PRD.md`:**
+    - [x] **`project/PRD.md`:**
 
       - [x] Update Section 3 "Technical Specifications"
 
@@ -427,7 +427,7 @@ end
 
       - [x] Ensure any "Getting Started" or API usage examples correctly reflect `using Night;` and `using Night.Engine;` and the concept of a single `Night.dll`.
 
-    - [x] **`docs/epics/*.md` (especially `epic10.md` and any active epics):**
+    - [x] **`project/epics/*.md` (especially `epic10.md` and any active epics):**
 
       - [x] Review all task descriptions and implementation details.
 
@@ -435,7 +435,7 @@ end
 
       - [x] Update references to `Night.Engine.csproj` to `Night.csproj`.
 
-    - [x] **`docs/operational-guidelines.md`:**
+    - [x] **`project/operational-guidelines.md`:**
 
       - [x] Review for any path or project name specifics that might need updating.
 

@@ -63,7 +63,7 @@ appsettings.Development.json
 .venv
 
 # DocFX generated files
-site/_site/
-site/api/
+docs/_site/
+docs/api/
 
-docs/digest.txt
+project/digest.txt
