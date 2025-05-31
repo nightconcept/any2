@@ -16,15 +16,53 @@ run = ["dotnet build Night.sln"]
 alias = "digest"
 description = "Run gitingest on current directory."
 run = [
-  "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/*,lib/*,.venv/*,.windsurf/*,src/Night.SampleGame/bin/*,src/Night.Engine/bin/*,src/Night.SampleGame/obj/*,src/Night.Engine/obj/* .",
+  "gitingest -o docs/digest.txt -e *.toml,*.txt,.roo/*,.cursor/*,build/*,.devenv/*,.direnv/*,docs/digest.txt,docs/archive/*,*.lock,bin/*,obj/*,lib/*,.venv/*,.windsurf/*,src/SampleGame/bin/*,src/Night/bin/*,src/SampleGame/obj/*,src/Night/obj/*,site/_site/*,site/api/*,tests/Night.Tests/bin/*,tests/Night.Tests/obj/* .",
 ]
 
 [tasks.game]
 alias = "game"
 description = "Run the sample game."
-run = ["dotnet run --project src/Night.SampleGame/Night.SampleGame.csproj"]
+run = ["dotnet run --project src/SampleGame/SampleGame.csproj"]
 
 [tasks.clean]
 alias = "clean"
 description = "Clean bin and obj directories."
 run = ["dotnet clean Night.sln"]
+
+[tasks.sdl]
+description = "Update SDL bindings and sync SDL libs."
+run = [
+  "git submodule update --remote lib/SDL3-CS",
+  "python scripts/sync_sdl3.py",
+]
+
+[tasks.tools]
+description = "Update tools."
+run = [
+  "git submodule update --remote lib/SDL3-CS",
+  "python scripts/update_tools.py",
+]
+
+[tasks.update-api-doc]
+description = "Update API docs."
+run = ["python scripts/update_api_doc.py"]
+
+[tasks.prepare]
+alias = "prepare"
+description = "Prepare everything before a commit."
+run = [
+  "dotnet clean Night.sln",
+  "dotnet format --verbosity diagnostic Night.sln",
+  "dotnet build Night.sln",
+  "dotnet test",
+  "python scripts/update_api_doc.py",
+]
+
+[tasks.docs]
+description = "Generate docs."
+run = ["dotnet docfx site/docfx.json"]
+
+[tasks.format]
+alias = "format"
+description = "Format files."
+run = ["dotnet format --verbosity verbose Night.sln"]

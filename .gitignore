@@ -47,6 +47,7 @@ Content/mgstats.txt
 
 # Mac
 .DS_Store
+*/.DS_Store
 .AppleDouble
 .LSOverride
 
@@ -60,3 +61,9 @@ secrets.json
 appsettings.Development.json
 
 .venv
+
+# DocFX generated files
+site/_site/
+site/api/
+
+docs/digest.txt

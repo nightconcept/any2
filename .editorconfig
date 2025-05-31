@@ -13,7 +13,6 @@ indent_size = 2
 csharp_max_line_length = 100
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = true
-csharp_preferred_using_directive_placement = outside_namespace:suggestion
 
 # Style - Naming Conventions
 dotnet_diagnostic.IDE1006.severity = error # Naming rule violation (covers PascalCase, camelCase, _camelCase based on symbols)
@@ -52,6 +51,17 @@ dotnet_style_prefer_expression_bodied_local_functions = true:suggestion
 # Quality - General
 dotnet_diagnostic.CA1822.severity = warning # Mark members as static (if no instance data is accessed)
 dotnet_diagnostic.CA2211.severity = warning # Non-constant fields should not be visible
+
+# Disable StyleCop's opinion on using directive placement, defer to csharp_preferred_using_directive_placement
+dotnet_diagnostic.SA1200.severity = none
+
+# Disable StyleCop's opinion on file name matching type name
+dotnet_diagnostic.SA1649.severity = none
+
+# StyleCop Analyzer SA1633: The file header is missing or not located at the top of the file.
+# Set to warning or error to ensure it's reported.
+dotnet_diagnostic.SA1633.severity = warning
+dotnet_diagnostic.SA1636.severity = warning
 
 # use 2-spaces for csproj
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,nativeproj,locproj}]

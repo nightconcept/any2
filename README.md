@@ -1,55 +1,111 @@
 # Night Engine
 
-A C# game engine built on top of SDL3.
+![License](https://img.shields.io/github/license/nightconcept/NightEngine)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/nightconcept/NightEngine/ci.yml)
+![GitHub last commit](https://img.shields.io/github/last-commit/nightconcept/NightEngine)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/nightconcept/NightEngine/badge)](https://scorecard.dev/viewer/?uri=github.com/nightconcept/NightEngine)
 
-This project aims to provide a simple, Love2D-inspired API for C# developers to create games and multimedia applications using the power of SDL3.
+**⚠️ WORK IN PROGRESS - NOT FOR PRODUCTION USE ⚠️**
 
-## Project Structure
+**This project is currently in active development and is considered highly experimental. APIs are subject to change, and features may be incomplete or unstable. It is not recommended for use in production environments.**
 
-- `/Night.Engine`: The core engine library.
-- `/Night.SampleGame`: A sample game demonstrating engine features.
-- `/docs`: Project documentation (PRD, tasks, etc.).
-- `/scripts`: Utility scripts (e.g., for fetching SDL3).
+A cross-platform C# game engine built on top of SDL3.
 
-## Getting Started
+## Overview
 
-(Instructions to be added once the engine is further developed)
-## macOS Development Notes
+Night Engine aims to provide a "batteries-included," in-code editor experience for game development. It consists of two main parts:
 
-### VS Code and `mise` for .NET SDK Versioning
+1. **`Night` Framework**: A heavily Love2D-inspired API for C# developers, providing a foundational layer for low-level game development tasks. This is the current focus of development. It leverages SDL3 for cross-platform capabilities. I am aiming for Love2D API parity.
+2. **`Night.Engine`** (Future): An optional, opinionated game engine built on top of the `Night` framework. It will offer higher-level systems like Scene Management, ECS (Entity Component System), and more, allowing game designers to focus on building games.
 
-If you are using `mise` to manage your .NET SDK versions on macOS, you might encounter issues where VS Code (when launched via its `.app` bundle, e.g., from Finder, Spotlight, or Raycast) does not correctly pick up the `mise`-activated .NET SDK. This can lead to:
-- Linter errors complaining about incorrect .NET versions or missing fundamental types.
-- NuGet restore failures (e.g., `NETSDK1045` error) because VS Code's C# Dev Kit attempts to use a globally installed .NET SDK (like .NET 8) instead of the project-specified one (e.g., .NET 9).
+This project also intends to be AI-friendly, with clear documentation and API design to assist non-programmer game designers.
 
-This happens because GUI-launched applications on macOS do not typically inherit the full shell environment (like `PATH` modifications) that `mise` sets up in your terminal.
+## Current Status
 
-**Solution: Wrapper Script for Launching VS Code**
+Features currently implemented:
 
-To ensure VS Code launches with the correct `mise`-managed environment, you can use a wrapper shell script. This script explicitly sets up the environment before launching VS Code.
+* **Window Management:** Creating and managing the game window.
+* **Input Handling:** Basic keyboard and mouse input.
+* **2D Graphics Rendering:** Loading and drawing sprites, clearing the screen, and presenting frames.
+* **Game Loop Structure:** A managed game loop with `Load`, `Update`, `Draw`, and `KeyPressed` callbacks.
+* **Sample Game:** A basic platformer demonstrating framework features.
+* **Documentation:** API documented.
 
-1.  **Create the script** (e.g., save as `~/vscode-launcher.sh` or `~/bin/vscode-launcher.sh`):
-    ```zsh
-    #!/bin/zsh
+## Library Structure
 
-    # Wrapper script to launch VS Code with the mise-managed environment.
+The core of the project is the `Night.dll` library. This assembly contains:
 
-    # Add mise shims directory to PATH
-    MISE_SHIMS_PATH="$HOME/.local/share/mise/shims"
-    export PATH="$MISE_SHIMS_PATH:$PATH"
+* The `Night` namespace: Provides the Love2D-inspired `Night.Framework` API.
+* The `Night.Engine` namespace: Will house the future higher-level, more opinionated game engine components. Not yet implemented.
 
-    # Optional: Navigate to your specific project directory if desired
-    # cd "/path/to/your/project"
+## Features
 
-    # Launch VS Code, passing through any arguments
-    exec code "$@"
-    ```
+### `Night` Framework
 
-2.  **Make it executable:**
+* [x] **Project Foundation & SDL3 Integration**
+* [x] **Window Management** (`Night.Window`)
+* [x] **Input Handling**
+* [x] **2D Graphics Rendering** (`Night.Graphics`)
+* [x] **Game Loop Structure** (`Night.Framework.Run`)
+* [x] **Sample Game** (`Night.SampleGame`) demonstrates framework features.
+* [ ] **Timer Module** (`Night.Timer`) - *Basic delta time is implemented, further Love2D parity planned.*
+* [ ] **Filesystem Module** (`Night.Filesystem`) - *Basic needs met by .NET System.IO, further Love2D parity planned.*
+* [ ] **Audio Module** (`Night.Audio`, `Night.Sound`)
+* [ ] **Font Module** (`Night.Font`)
+* [ ] **Joystick Module** (`Night.Joystick`)
+* [ ] **Event Module** (`Night.Event`) - *Beyond basic KeyPressed callback.*
+* [ ] **Touch Module** (`Night.Touch`)
+* [ ] **Video Module** (`Night.Video`)
+* [ ] **Data Module** (`Night.Data`)
+* [ ] **Math Module** (`Night.Math`) - *Beyond System.Math, for Love2D specific functions.*
+* [ ] **System Module** (`Night.System`) - *Beyond basic OS info.*
+* [ ] LLM friendly documentation
+* [ ] More Game samples
+
+### `Night.Engine` (Future - Higher-Level Opinionated Systems)
+
+* [ ] Manager system (Assets, Scenes, etc.)
+* [ ] Entity Component System (ECS)
+* [ ] Scene Management & Scene Graph
+* [ ] Advanced Asset Management
+* [ ] Dear ImGui Integration
+* [ ] Quake-Style Debug Console
+
+## Roadmap
+
+## Getting Started (Development)
+
+1. Ensure [mise](https://mise.jdx.dev/) is installed.
+2. Clone the repository:
+
     ```bash
-    chmod +x /path/to/your/vscode-launcher.sh
+    git clone https://github.com/nightconcept/NightEngine.git
+    cd NightEngine
     ```
 
-3.  **Configure your launcher** (e.g., Raycast, Alfred, or even a custom Dock icon) to execute this script instead of `Visual Studio Code.app` directly.
+3. Install project-specific tools and dependencies:
 
-This ensures that VS Code and its extensions (like the C# Dev Kit) inherit the correct PATH and use the .NET SDK version specified by `mise` for your project.
+    ```bash
+    mise install
+    ```
+
+4. Build the solution:
+
+    ```bash
+    mise build
+    ```
+
+5. Run the sample game (ensure this command is correct for your `mise.toml` setup):
+
+    ```bash
+    mise run sample # Or your specific command to run Night.SampleGame
+    ```
+
+## Contributing
+
+Contributions... eventually! When I feel like the code-base is in a good place, I will update contributions.
+
+## License
+
+This project is licensed under the [zlib License](LICENSE).
+See also [NOTICE.md](docs/NOTICE.md) for details on third-party software.
