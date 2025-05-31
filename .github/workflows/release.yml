@@ -38,6 +38,7 @@ jobs:
       - name: Validate Version Input (SemVer)
         run: |
           version_input="${{ github.event.inputs.version }}"
+          version_input=$(echo "$version_input" | xargs) # Trim whitespace
           semver_regex="^([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
           if [[ ! "$version_input" =~ $semver_regex ]]; then
             echo "Error: Invalid version format. Input must be a pure Semantic Version (e.g., 1.0.0, 1.2.3-beta.1)."
@@ -45,6 +46,7 @@ jobs:
           fi
           echo "SemVer input '$version_input' is valid."
         shell: bash
+
 
       - name: Update Version in .csproj
         id: update_version_csproj
