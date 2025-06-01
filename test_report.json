@@ -1,6 +1,6 @@
 {
   "reportTitle": "NightTest Engine Test Report",
-  "runTimestamp": "2025-06-01T22:40:55.6065310Z",
+  "runTimestamp": "2025-06-01T22:59:54.7957690Z",
   "commandLineArgs": [],
   "tests": [
     {
@@ -11,34 +11,69 @@
       "details": "Automated dummy scenario completed successfully after 1 second."
     },
     {
-      "name": "Dummy.Manual.Interaction",
-      "type": "Manual",
-      "status": "Failed",
-      "durationMs": 5308,
-      "details": "User pressed Escape to fail/quit."
+      "name": "Timer.GetAverageDelta",
+      "type": "Automated",
+      "status": "Passed",
+      "durationMs": 201,
+      "details": "Timer.GetAverageDelta() observed. Last reported value: 0.000031. Test ran for \u003E200ms and \u003E10 frames."
+    },
+    {
+      "name": "Timer.GetDelta",
+      "type": "Automated",
+      "status": "Passed",
+      "durationMs": 204,
+      "details": "Timer.GetDelta() test collected 6169 values. Average delta: 0.000033. Test ran for \u003E200ms and \u003E10 frames."
+    },
+    {
+      "name": "Timer.GetFPS",
+      "type": "Automated",
+      "status": "Passed",
+      "durationMs": 201,
+      "details": "Timer.GetFPS() test observed. Last reported FPS: 32689. Test ran for \u003E200ms and \u003E10 frames."
+    },
+    {
+      "name": "Timer.GetTime",
+      "type": "Automated",
+      "status": "Passed",
+      "durationMs": 501,
+      "details": "Timer.GetTime() test completed. Start: 1.624944s, End: 2.125878s. Elapsed: 0.500934s (Expected ~0.5s)."
+    },
+    {
+      "name": "Timer.Sleep",
+      "type": "Automated",
+      "status": "Passed",
+      "durationMs": 250,
+      "details": "Timer.Sleep(0.25) executed. Measured duration: 250ms. Expected ~250ms."
+    },
+    {
+      "name": "Timer.Step",
+      "type": "Automated",
+      "status": "Passed",
+      "durationMs": 201,
+      "details": "Timer.Step() called 6131 times. Average delta from Step(): 0.000004. Test ran for \u003E200ms."
     }
   ],
   "summary": {
     "filterApplied": "all",
-    "totalRegistered": 2,
-    "totalAttemptedToRun": 2,
-    "totalPassed": 1,
-    "totalFailed": 1,
+    "totalRegistered": 7,
+    "totalAttemptedToRun": 7,
+    "totalPassed": 7,
+    "totalFailed": 0,
     "totalSkipped": 0,
     "totalNotRun": 0,
     "automated": {
-      "registered": 1,
-      "attempted": 1,
-      "passed": 1,
+      "registered": 7,
+      "attempted": 7,
+      "passed": 7,
       "failed": 0,
       "skipped": 0,
       "notRun": 0
     },
     "manual": {
-      "registered": 1,
-      "attempted": 1,
+      "registered": 0,
+      "attempted": 0,
       "passed": 0,
-      "failed": 1,
+      "failed": 0,
       "skipped": 0,
       "notRun": 0
     }

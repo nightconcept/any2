@@ -23,7 +23,7 @@ namespace NightTest.Modules
       return new List<ITestScenario>
             {
                 new ConcreteDummyAutomatedTest(),
-                new ConcreteDummyManualTest() // Example of a second test in the module
+                // new ConcreteDummyManualTest() // Example of a second test in the module
             };
     }
   }

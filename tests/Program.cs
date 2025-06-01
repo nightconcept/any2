@@ -65,6 +65,7 @@ namespace NightTest
       var testModules = new List<ITestModule>
             {
                 new DummyModule(),
+                new TimerModule(),
                 // new GraphicsModule(), // Example for a future test module
                 // new InputModule(),    // Example for a future test module
             };
