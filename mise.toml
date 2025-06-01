@@ -27,7 +27,7 @@ run = ["dotnet run --project src/SampleGame/SampleGame.csproj"]
 [tasks.test]
 alias = "test"
 description = "Run the TestGame for GUI testing"
-run = ["dotnet run --project tests/TestGame.csproj"]
+run = ["dotnet run --project tests/NightTest.csproj"]
 
 [tasks.clean]
 alias = "clean"

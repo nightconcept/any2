@@ -1,84 +1,212 @@
-# Epic: TestGame Implementation and Initial Tests
+# NightTest - Task List: Infrastructure, SDL & Testing Guidance
 
-**Goal:** Establish the `Night.TestGame` project, integrate it into the solution, and implement initial tests, focusing on the `Night.Configuration` module. This will provide a dedicated environment for interactive testing of engine features.
+## 0. NightTest Infrastructure Setup
 
-**User Stories:**
+### Task 0.1: Implement Core NightTest Framework Infrastructure
 
-- As a developer, I want a dedicated `Night.TestGame` project set up and integrated into the main solution so I can easily run and debug engine tests.
-- As a developer, I want the existing `Game.cs` content in `Night.TestGame` to be cleared to provide a clean slate for new test scenarios.
-- As a developer, I want to implement specific test scenarios within `Night.TestGame` to verify the functionality of the `Night.Configuration` module, ensuring settings are loaded and applied correctly.
-- As a developer, I want `Night.TestGame` to have a `TestReporter` object that can track and output the status of exercised functionalities, as defined in `project/night-test.md`.
+- **Goal:** Establish the foundational components of the `NightTest` application, including the project structure, test scenario interface, test runner, and the main application loop to execute tests and generate reports. This task is based on the `NightTest - Product Requirements Document (Revision 1)`.
+- **Key Components from PRD:**
+  - `NightTest` C# Project (`NightTest.csproj`, `Program.cs`/`Game.cs`)
+  - `ITestScenario` interface (conceptualized in PRD)
+  - `TestRunner.cs` (for test management and reporting)
+  - Command-line argument parsing (`--run-automated`, `--report-path`)
+  - JSON report generation (`test_report.json`)
+- **Implementation Details:**
+    1. **Project Setup:**
+        - Create the `NightTest` C# project (e.g., Console App) under `/tests/NightTest/`.
+        - Ensure it references the `Night` framework/engine library.
+        - Set up basic `Program.cs` to host the `Night.Framework.Run()` loop with an `IGame` implementation tailored for test management.
+    2. **`ITestScenario` Interface:**
+        - Define `ITestScenario.cs` as per the PRD:
 
-## Tasks
+            ```csharp
+            public enum TestType { Automated, Manual }
+            public interface ITestScenario
+            {
+                string Name { get; }
+                TestType Type { get; }
+                string Description { get; }
+                void Load(Night.IGraphics graphics, /* other relevant Night systems */);
+                void Update(float deltaTime, TestRunner reporter);
+                void Draw(Night.IGraphics graphics);
+                void OnKey(Night.KeyCode key, bool isPressed, TestRunner reporter);
+                // Add other relevant IGame methods like OnMouse, Unload etc.
+            }
+            ```
 
-### Phase 1: TestGame Project Setup
+    3. **`TestRunner.cs` Implementation:**
+        - Create `TestRunner.cs`.
+        - Implement methods for:
+            - Registering an `ITestScenario`.
+            - Tracking the state of each test (Name, Type, Status: Passed/Failed/Not Run, Duration, Details).
+            - `ReportPass(string testName, string details)`
+            - `ReportFail(string testName, string details)`
+            - Executing tests based on the `--run-automated` flag.
+            - Calculating test duration.
+            - Generating the `test_report.json` file as specified in the PRD (including summary section).
+            - Generating the console/log summary.
+    4. **Main Application Logic (`Program.cs`/`Game.cs`):**
+        - Parse command-line arguments (`--run-automated`, `--report-path`).
+        - Instantiate `TestRunner`.
+        - Implement a mechanism to discover and register all `ITestScenario` implementations (e.g., using reflection to find classes implementing `ITestScenario`, or a manual registration list).
+        - In the `IGame` implementation:
+            - `Load()`: Load all registered test scenarios (or filter based on CLI args). Call `Load()` on active test scenarios.
+            - `Update(float deltaTime)`: Iterate through active test scenarios and call their `Update()` method, passing the `TestRunner` instance. Manage transitions between scenarios if they run sequentially or one at a time.
+            - `Draw()`: Call `Draw()` on the current test scenario. Optionally display test status or instructions on screen.
+            - Input methods (`OnKey`, etc.): Forward to the current test scenario.
+            - On exit/completion: Trigger `TestRunner` to generate the final `test_report.json` and console output.
+- **Acceptance Criteria:**
+  - `NightTest` application can be built and run.
+  - It can parse the `--run-automated` and `--report-path` command-line arguments.
+  - An `ITestScenario` can be created and registered.
+  - The `TestRunner` can execute registered scenarios (respecting the automated filter).
+  - A `test_report.json` file with the correct structure and a console summary are generated upon completion.
+  - The basic framework allows for subsequent tasks (like testing `Night.NightSDL`) to be implemented by creating new `ITestScenario` classes.
+- **Status:** To Do
 
-- [ ] **Task TG.1: Create and Integrate `Night.TestGame` Project**
-  - **Description:** Create a new C# project named `Night.TestGame` under the `tests/` directory. This project should be a console application that references the `Night` library. Add this project to the `Night.sln` solution file.
-  - **Implementation:**
-    - [ ] Create the directory `tests/Night.TestGame/`.
-    - [ ] Initialize a new C# console project (`Night.TestGame.csproj`) in this directory.
-    - [ ] Ensure `Night.TestGame.csproj` references the `Night` project (e.g., `<ProjectReference Include="..\..\src\Night\Night.csproj" />`).
-    - [ ] Add `Night.TestGame` to `Night.sln`.
-    - [ ] Create a basic `Program.cs` that initializes and runs a new `Game` instance using `Night.Framework.Run()`.
-    - [ ] Create a basic `Game.cs` implementing `Night.IGame` with empty `Load`, `Update`, `Draw`, `KeyPressed`, etc. methods.
-  - **Acceptance Criteria:** `Night.TestGame` project is created, added to the solution, and can be built and run, showing a blank window.
-  - **Status:** To Do
+## 1. Night Library Module Tests
 
-- [ ] **Task TG.2: Clear `Game.cs` in `Night.TestGame`**
-  - **Description:** Remove all existing game-specific logic from `tests/Night.TestGame/Game.cs` (if it was copied from `Night.SampleGame` or similar). The file should contain a minimal `IGame` implementation.
-  - **Implementation:**
-    - [ ] Edit `tests/Night.TestGame/Game.cs`.
-    - [ ] Remove all fields, properties, and non-essential logic from the `Game` class.
-    - [ ] Ensure `Load`, `Update`, `Draw`, `KeyPressed`, `KeyReleased`, `MousePressed`, `MouseReleased` methods are present but have empty bodies or minimal logging.
-  - **Acceptance Criteria:** `tests/Night.TestGame/Game.cs` contains a shell `IGame` implementation ready for test-specific code.
-  - **Status:** To Do
+### Task 1.1: Test `Night.NightSDL` Functionality
 
-### Phase 2: Configuration Module Tests
+- **Goal:** Verify the core functionality of the `Night.NightSDL` static class, ensuring its methods correctly interact with the underlying SDL3 library and report information as expected.
+- **Affected Code:** `Night.NightSDL.cs`
 
-- [ ] **Task TG.3: Implement `TestReporter` Object**
-  - **Description:** Create the `TestReporter` class as specified in `project/night-test.md`. This class will be used to track and report the status of tests.
-  - **Implementation:**
-    - [ ] Create `tests/Night.TestGame/TestReporter.cs`.
-    - [ ] Implement the `TestReporter` class with methods to:
-      - Register a test (functionality name).
-      - Mark a test as "Passed", "Failed", or "Not Run".
-      - Generate a text-based summary report.
-    - [ ] Instantiate `TestReporter` in `Game.cs`.
-  - **Acceptance Criteria:** `TestReporter.cs` is implemented and can be used by test scenarios. The report can be printed to the console at the end of the `Draw` method or on a specific key press.
-  - **Status:** To Do
+    ```csharp
+    // namespace Night
+    // {
+    //   public static class NightSDL
+    //   {
+    //     public static string GetVersion()
+    //     {
+    //       int sdl_version = SDL.GetVersion();
+    //       int major = sdl_version / 1000000;
+    //       int minor = (sdl_version / 1000) % 1000;
+    //       int patch = sdl_version % 1000;
+    //       return $"{major}.{minor}.{patch}";
+    //     }
+    //     public static string GetError()
+    //     {
+    //       return SDL.GetError();
+    //     }
+    //   }
+    // }
+    ```
 
-- [ ] **Task TG.4: Implement `Night.Configuration` Tests in `Night.TestGame`**
-  - **Description:** Create test scenarios in `Night.TestGame` to specifically validate the `Night.Configuration` module. This includes testing the loading of default values and the overriding of these values via a `config.json` file.
-  - **Implementation:**
-    - [ ] Create a `tests/Night.TestGame/ConfigurationTests.cs` (or a similar structure, perhaps a "scene" within `Game.cs`).
-    - [ ] **Test Case 4.1: Default Configuration Values**
-      - Ensure `Night.Framework.Run()` is called without a `config.json` present (or with an empty one).
-      - In `Game.Load()` or `Game.Update()`:
-        - Access `ConfigurationManager.CurrentConfig`.
-        - Verify that window title, dimensions, VSync, etc., match the default values defined in `GameConfig.cs` and its nested config classes.
-        - Use the `TestReporter` to log the pass/fail status of each check (e.g., "Default Window Title: Passed").
-    - [ ] **Test Case 4.2: `config.json` Override**
-      - Create a `tests/Night.TestGame/assets/config.json` (or similar path, ensure it's copied to output).
-      - Populate this `config.json` with specific, non-default values for:
-        - `WindowConfig.Title`
-        - `WindowConfig.Width`, `WindowConfig.Height`
-        - `WindowConfig.VSync`
-        - `WindowConfig.Fullscreen` and `WindowConfig.FullscreenType`
-        - `WindowConfig.X`, `WindowConfig.Y` (initial position)
-        - (Add other relevant config options as they become testable)
-      - Run `Night.TestGame`.
-      - In `Game.Load()` or `Game.Update()`:
-        - Access `ConfigurationManager.CurrentConfig`.
-        - Verify that the window properties (title, dimensions, VSync status, fullscreen state, position) match the values from `config.json`.
-        - Check `Window.GetTitle()`, `Window.GetMode()`, etc. to confirm settings were applied.
-        - Use the `TestReporter` to log the pass/fail status of each check (e.g., "Custom Window Title from config.json: Passed").
-    - [ ] Display the `TestReporter` output on screen or on a key press.
-  - **Acceptance Criteria:** `Night.TestGame` successfully tests default configuration loading and `config.json` overrides for key settings. The `TestReporter` correctly logs the outcomes.
-  - **Status:** To Do
+- **Test Scenarios & Implementation Details:**
+  - Create a new `ITestScenario` implementation (e.g., `NightSDLTests.cs`) within the `NightTest` project.
+  - **Scenario 1.1.1: Verify `NightSDL.GetVersion()`**
+    - **Type:** Automated
+    - **Action:**
+      - In the `Load` or `Update` method of the test scenario, call `Night.NightSDL.GetVersion()`.
+      - Call `Night.NightSDL.GetError()` immediately after to ensure no SDL error was triggered by `GetVersion()`.
+    - **Expected Result:**
+      - The returned version string should be in the format "X.Y.Z" where X, Y, and Z are non-negative integers.
+      - `NightSDL.GetError()` should return an empty string (or a previously existing error, if `SDL.ClearError()` is not called before, which might be a point for refinement in the test or `NightSDL` itself).
+    - **Reporting:**
+      - Report "Passed" if the format is correct and no new SDL error is reported.
+      - Report "Failed" otherwise, with details on the incorrect format or the SDL error message.
+  - **Scenario 1.1.2: Verify `NightSDL.GetError()` (No Error State)**
+    - **Type:** Automated
+    - **Action:**
+      - In the `Load` or `Update` method, (optionally call `SDL.ClearError()` if direct SDL calls are permissible in tests, or ensure a known good state) then call `Night.NightSDL.GetError()`.
+    - **Expected Result:**
+      - The method should return an empty string, assuming no prior SDL error has occurred and remains uncleared.
+    - **Reporting:**
+      - Report "Passed" if an empty string is returned.
+      - Report "Failed" if a non-empty string is returned (unless a preceding intentional error was triggered for testing `GetError` with an actual message).
+  - **Scenario 1.1.3: Verify `NightSDL.GetError()` (With Error State - Optional/Advanced)**
+    - **Type:** Automated (if an error can be reliably and safely triggered) or Manual
+    - **Action:**
+      - Attempt to trigger a known, non-fatal SDL error (e.g., loading a non-existent image file if that uses SDL directly and is simple to set up *before* `Night.Graphics` abstracts it). This is tricky and might be better for more direct SDL binding tests rather than `NightSDL` tests.
+      - Call `Night.NightSDL.GetError()`.
+    - **Expected Result:**
+      - The method should return a non-empty string containing the SDL error message.
+    - **Reporting:**
+      - Report "Passed" if a non-empty, relevant error string is returned.
+      - Report "Failed" otherwise.
+- **Acceptance Criteria:**
+  - All calls to `NightSDL` methods are made through one of the `IGame` interface methods (`Load`, `Update`, `Draw`, `KeyPressed`, etc.) within an `ITestScenario`.
+  - The `TestRunner` correctly logs the outcome (Passed/Failed) for each verification.
+  - The `test_report.json` includes entries for these tests.
+- **Status:** To Do
 
-### Phase 3: Future Test Expansion
+## 2. Test Writing Guidance
 
-- [ ] **Task TG.X: (Placeholder) Add Tests for Other Modules**
-  - **Description:** As new engine features are developed or existing ones are expanded, add corresponding test scenarios to `Night.TestGame`.
-  - **Status:** Ongoing
+### Task 2.1: Define Guidance for Writing `NightTest` Scenarios
+
+- **Goal:** Create a clear, documented process and set of best practices for developers (and AI assistants) to write new test scenarios using the `NightTest` framework.
+- **Content to Define:**
+    1. **Overview of `NightTest` Philosophy:**
+        - Emphasize testing through the `IGame` loop (`Load`, `Update`, `Draw`, `KeyPressed`, etc.).
+        - Explain the role of `ITestScenario` and `TestRunner`.
+        - Differentiate between "Automated" and "Manual" tests.
+    2. **Steps to Create a New Test Scenario:**
+        - Creating the `ITestScenario` class file (e.g., `MyFeatureTests.cs`).
+        - Implementing the `ITestScenario` interface:
+            - `Name`: Unique and descriptive.
+            - `Type`: `TestType.Automated` or `TestType.Manual`.
+            - `Description`: Brief explanation of what is being tested.
+            - `Load()`: For setting up resources, initial state.
+            - `Update(float deltaTime, TestRunner reporter)`: For test logic, assertions, and calls to `reporter.ReportPass()` or `reporter.ReportFail()`. This is the primary place for automated test execution.
+            - `Draw(Night.IGraphics graphics)`: For visual feedback, especially for manual tests or visual automated tests.
+            - `OnKey()`, `OnMouse()` etc.: For handling input, crucial for manual tests and some automated input simulation tests.
+            - `Unload()`: For cleaning up resources (if necessary).
+        - Registering the new scenario with the `TestRunner` (mechanism TBD - e.g., manual registration list in `Program.cs` or discovery via reflection).
+    3. **Writing Test Logic:**
+        - How to call engine APIs.
+        - How to assert conditions (e.g., checking return values, state changes).
+        - Using `TestRunner.ReportPass(string testName, string details)` and `TestRunner.ReportFail(string testName, string details)`.
+        - Structuring multiple checks within a single `ITestScenario` (e.g., one scenario might have multiple `reporter.ReportPass/Fail` calls for sub-tests, or each scenario is one specific test).
+        - Timing considerations for automated tests (e.g., allowing a few frames for an action to complete).
+    4. **Guidelines for Automated Tests:**
+        - Must run without any user interaction.
+        - Assertions must be programmatic.
+        - Should be deterministic.
+        - Focus on API return values, state changes, and non-visual outcomes primarily.
+    5. **Guidelines for Manual Tests:**
+        - Clearly describe the required user actions in the `Description` or via on-screen instructions.
+        - Provide visual feedback in `Draw()`.
+        - Use `OnKey` or other input handlers to allow the user to confirm pass/fail if necessary, or for the test to react to user input.
+        - Example: "Press Space if the sprite is red. Press Backspace if not."
+    6. **Reporting and `test_report.json`:**
+        - Briefly explain how the test results contribute to the JSON report.
+        - Importance of clear `testName` and `details` in `ReportPass/Fail`.
+    7. **Example `ITestScenario` (Simple Automated Test):**
+
+        ```csharp
+        // public class ExampleAutomatedTest : ITestScenario
+        // {
+        //     public string Name => "Night.Module.ExampleFunctionality";
+        //     public TestType Type => TestType.Automated;
+        //     public string Description => "Tests if ExampleFunctionality returns the expected value.";
+        //
+        //     private bool testDone = false;
+        //
+        //     public void Load(Night.IGraphics graphics /*...other systems...*/) { /* No setup needed */ }
+        //
+        //     public void Update(float deltaTime, TestRunner reporter)
+        //     {
+        //         if (testDone) return;
+        //
+        //         // Assume Night.Module.ExampleFunctionality() is what we're testing
+        //         var result = Night.Module.ExampleFunctionality();
+        //         if (result == "expectedValue")
+        //         {
+        //             reporter.ReportPass(Name, "ExampleFunctionality returned 'expectedValue' as expected.");
+        //         }
+        //         else
+        //         {
+        //             reporter.ReportFail(Name, $"ExampleFunctionality returned '{result}', but 'expectedValue' was expected.");
+        //         }
+        //         testDone = true;
+        //     }
+        //
+        //     public void Draw(Night.IGraphics graphics) { /* No visual feedback needed for this automated test */ }
+        //     public void OnKey(Night.KeyCode key, bool isPressed, TestRunner reporter) { /* Not used */ }
+        //     // ... other ITestScenario methods ...
+        // }
+        ```
+
+- **Output:** A new Markdown document (e.g., `TESTING_GUIDELINES.md`) in the project's `docs` or `NightTest` directory.
+- **Acceptance Criteria:** The guidelines are comprehensive enough for a developer or an AI to understand how to add new tests to the `NightTest` framework.
+- **Status:** To Do

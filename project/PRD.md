@@ -137,7 +137,6 @@ graph TD
     A --> L(.cursor);
     A --> M(.github);
     A --> N(.roo);
-    A --> O(.windsurf);
 
     G --> G1(NOTICE.md);
     G --> G2(PRD.md);
@@ -219,7 +218,9 @@ graph TD
     M --> M5(scripts);
 ```
 
-- `/docs`: Project documentation (PRD, operational guidelines, epics, API mapping, etc.).
+- `/project`: Project documentation (PRD, operational guidelines, epics, API mapping, etc.).
+
+- `/docs`: DocFx document generation files.
 
 - `/lib`: Contains `SDL3-Prebuilt/` populated by `sync_sdl3.py` and potentially other third-party libraries.
 
@@ -227,7 +228,7 @@ graph TD
 
 - `/src`: Contains all C# source code.
 
-  - `/src/Night`: C# class library project for `Night.Framework` and future `Night.Engine` components. This project references the `SDL3-CS` NuGet package and produces `Night.dll`.
+  - `/src/Night`: C# class library project for `Night` Framework and future `Night.Engine` components. This project references the `SDL3-CS` NuGet package and produces `Night.dll`.
 
     - `Night.csproj`: MSBuild project file.
 
@@ -241,17 +242,25 @@ graph TD
 
     - `/Utilities/`: Placeholder for utility classes. Contains `.gitkeep`.
 
-  - `/src/Night.SampleGame`: C# console application project demonstrating the use of `Night.Framework`.
+  - `/src/SampleGame`: C# application project demonstrating the use of `Night` Framework.
 
-    - `Night.SampleGame.csproj`: MSBuild project file. References `Night` (the `Night.dll`) and includes native SDL binary deployment logic.
+    - `SampleGame.csproj`: MSBuild project file. References `Night` (the `Night.dll`) and includes native SDL binary deployment logic.
 
     - `Program.cs`: Main entry point and `IGame` implementation for the sample game.
 
     - `Player.cs`: Player logic for the sample platformer game.
 
-    - `/Samples/Platformer.cs`: Contains an alternative or modularized `Platformer` game class.
+    - `/assets`: Game assets (images, etc.) for the sample game.
+
+  - `/tests/`: C# application project for testing `Night` Framework and future `Night.Engine` components. This will be a custom framework
+
+    - `NightTest.csproj`: MSBuild project file.
+
+    - `Program.cs`: Main entry point and `IGame` implementation for the test game.
 
     - `/assets`: Game assets (images, etc.) for the sample game.
+
+    - `TestRunner.cs`: Manages and reports the status of various tests within NightTest
 
 - `Night.sln`: Visual Studio solution file.
 

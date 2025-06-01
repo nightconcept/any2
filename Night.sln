@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleGame", "src\SampleGam
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGame", "tests\TestGame\TestGame.csproj", "{641B06AE-9C06-4B0B-A5A0-04E5825BA675}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightTest", "tests\NightTest.csproj", "{641B06AE-9C06-4B0B-A5A0-04E5825BA675}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

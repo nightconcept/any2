@@ -1,0 +1,39 @@
+{
+  "reportTitle": "NightTest Engine Test Report",
+  "runTimestamp": "2025-06-01T22:28:22.3100007Z",
+  "commandLineArgs": [],
+  "tests": [
+    {
+      "name": "Dummy.Example.Scenario",
+      "type": "Automated",
+      "status": "Passed",
+      "durationMs": 1001,
+      "details": "Dummy scenario completed successfully after 1 second."
+    }
+  ],
+  "summary": {
+    "filterApplied": "all",
+    "totalRegistered": 1,
+    "totalAttemptedToRun": 1,
+    "totalPassed": 1,
+    "totalFailed": 0,
+    "totalSkipped": 0,
+    "totalNotRun": 0,
+    "automated": {
+      "registered": 1,
+      "attempted": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    "manual": {
+      "registered": 0,
+      "attempted": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    }
+  }
+}
