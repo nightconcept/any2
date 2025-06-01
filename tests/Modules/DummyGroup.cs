@@ -1,4 +1,4 @@
-// <copyright file="DummyModule.cs" company="Night Circle">
+// <copyright file="DummyGroup.cs" company="Night Circle">
 // zlib license
 // Copyright (c) 2025 Danny Solivan, Night Circle
 // (Full license boilerplate as in other files)
@@ -6,14 +6,17 @@
 
 using System;
 using System.Collections.Generic;
+
 using Night;
+
+using NightTest.Core;
 
 namespace NightTest.Modules
 {
   /// <summary>
-  /// A module that provides dummy test cases.
+  /// A group that provides dummy test cases.
   /// </summary>
-  public class DummyModule : ITestModule
+  public class DummyGroup : ITestGroup
   {
     /// <inheritdoc/>
     public IEnumerable<ITestCase> GetTestCases()
@@ -34,7 +37,7 @@ namespace NightTest.Modules
     /// <inheritdoc/>
     public override string Name => "Dummy.Automated.Example";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated;
+    public override NightTest.Core.TestType Type => NightTest.Core.TestType.Automated;
     /// <inheritdoc/>
     public override string Description => "A dummy automated test case that runs for a short duration and then reports success.";
 
@@ -51,7 +54,7 @@ namespace NightTest.Modules
 
       if (TestStopwatch.ElapsedMilliseconds > 1000)
       {
-        CurrentStatus = TestStatus.Passed;
+        CurrentStatus = NightTest.Core.TestStatus.Passed;
         Details = "Automated dummy test case completed successfully after 1 second.";
         QuitSelf();
       }
@@ -61,12 +64,12 @@ namespace NightTest.Modules
   /// <summary>
   /// A concrete dummy test case that requires manual interaction.
   /// </summary>
-  public class ConcreteDummyManualTest : BaseTestCase
+  public class ConcreteDummyManualTest : NightTest.Core.BaseTestCase
   {
     /// <inheritdoc/>
     public override string Name => "Dummy.Manual.Interaction";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Manual;
+    public override NightTest.Core.TestType Type => NightTest.Core.TestType.Manual;
     /// <inheritdoc/>
     public override string Description => "A dummy manual test case that waits for user input (Space to Pass, Esc to Fail). Timeout after 30s.";
 
@@ -84,7 +87,7 @@ namespace NightTest.Modules
 
       if (TestStopwatch.ElapsedMilliseconds > 30000)
       {
-        CurrentStatus = TestStatus.Failed;
+        CurrentStatus = NightTest.Core.TestStatus.Failed;
         Details = "Manual test timed out after 30 seconds.";
         QuitSelf();
       }
@@ -98,13 +101,13 @@ namespace NightTest.Modules
 
       if (scancode == KeyCode.Space)
       {
-        CurrentStatus = TestStatus.Passed;
+        CurrentStatus = NightTest.Core.TestStatus.Passed;
         Details = "User pressed Space to pass.";
         QuitSelf();
       }
       else if (scancode == KeyCode.Escape)
       {
-        CurrentStatus = TestStatus.Failed;
+        CurrentStatus = NightTest.Core.TestStatus.Failed;
         Details = "User pressed Escape to fail/quit.";
         QuitSelf();
       }

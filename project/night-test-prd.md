@@ -18,9 +18,9 @@
 
 ### 2.2. Test Case Management
 
-- **Description:** Test cases are organized into "Test Modules". Each module is a class implementing the `NightTest.ITestModule` interface, which defines a method to provide a collection of individual test cases.
+- **Description:** Test cases are organized into "Test Groups". Each group is a class implementing the `NightTest.Core.ITestGroup` interface, which defines a method to provide a collection of individual test cases.
     - Each individual test case is then implemented as a class that fulfills two contracts:
-        1.  `NightTest.ITestCase`: Provides metadata like test name, type (Automated/Manual), and description. It also includes a method for the orchestrator to provide a `TestRunner` instance.
+        1.  `NightTest.Core.ITestCase`: Provides metadata like test name, type (Automated/Manual), and description. It also includes a method for the orchestrator to provide a `TestRunner` instance.
         2.  `Night.IGame`: Implements the necessary methods (`Load`, `Update`, `Draw`, input handlers, etc.) to run as a standalone game via `Night.Framework.Run()`.
 
   - Each test case is responsible for:
@@ -30,19 +30,19 @@
     - Reporting its result (name, type, status, duration, details) to the central `TestRunner` instance upon completion (typically before it signals `Night.Window.Close()`).
     - For `Manual` tests, current implementations (e.g., `ConcreteDummyManualTest`) use simple keyboard inputs (e.g., Space to pass, Escape to fail) within their own `IGame` loop. A more generalized or UI-driven approach for manual test interaction is a future consideration (see Section 6).
 
-  - `Program.cs` discovers/instantiates `ITestModule` implementations (e.g., from a predefined list within `Program.cs` itself, or by scanning assemblies in the `Modules/` directory in the future). It then calls a method on each module to get all its `ITestCase` objects.
+  - `Program.cs` (in `tests/` with namespace `NightTest`) discovers/instantiates `NightTest.Core.ITestGroup` implementations (e.g., from a predefined list within `Program.cs` itself, or by scanning assemblies in the `Modules/` directory (ideally renamed to `Groups/`) in the future). It then calls a method on each group to get all its `NightTest.Core.ITestCase` objects.
   - `Program.cs` supports a command-line argument (e.g., `--run-automated`) to filter the execution to only "automated" test cases. If the argument is not provided, all defined tests will be attempted.
 
-- **Status:** Implemented (Core Management, Module-based Execution, Basic Manual Test Input).
+- **Status:** Implemented (Core Management, Group-based Execution, Basic Manual Test Input).
 
 ### 2.3. Test Reporting Object
 
-- **Description:** A dedicated reporting object (`TestRunner.cs`) collects and aggregates results from all executed test cases.
-  - `Program.cs` instantiates `TestRunner` and provides it to each `ITestCase` before it runs.
-  - Each `ITestCase` (acting as an `IGame`) calls a method on the `TestRunner` instance (e.g., `RecordResult()`) to submit its outcome (name, type, status, duration, details) when it finishes.
-  - `TestRunner` also maintains a registry of all known test cases (even if not run due to filtering) to provide a comprehensive summary.
+- **Description:** A dedicated reporting object (`NightTest.Core.TestRunner`) collects and aggregates results from all executed test cases.
+  - `Program.cs` instantiates `NightTest.Core.TestRunner` and provides it to each `NightTest.Core.ITestCase` before it runs.
+  - Each `NightTest.Core.ITestCase` (acting as an `IGame`) calls a method on the `NightTest.Core.TestRunner` instance (e.g., `RecordResult()`) to submit its outcome (name, type, status, duration, details) when it finishes.
+  - `NightTest.Core.TestRunner` also maintains a registry of all known test cases (even if not run due to filtering) to provide a comprehensive summary.
 
-- **Output:** After all selected test cases have been processed, `Program.cs` instructs the `TestRunner` to generate:
+- **Output:** After all selected test cases have been processed, `Program.cs` instructs the `NightTest.Core.TestRunner` to generate:
 
     1. **Primary Output: `test_report.json`**: A JSON file detailing the status of all tracked tests (including executed and skipped ones).
         - Example `test_report.json` structure (updated `status` values and `skipped` counts):
@@ -161,25 +161,30 @@
 
 - **Project Structure:**
 
-  - A project directory: `/tests/NightTest/`
+  - A project directory: `/tests/` (Houses `NightTest.csproj`, `Program.cs`)
+  - Core framework files in: `/tests/Core/` (contains `ITestGroup.cs`, `ITestCase.cs`, `TestRunner.cs`, `TestTypes.cs`, `BaseTestCase.cs` - all in `NightTest.Core` namespace)
+  - Test Group implementations in: `/tests/Modules/` (or preferably `/tests/Groups/`)
 
-  - `NightTest.csproj`
+  - `NightTest.csproj` (in `/tests/`)
 
-  - `Program.cs`: Orchestrates test execution. Initializes `TestRunner`. Instantiates `ITestModule` implementations, retrieves all `ITestCase` objects from them, and then iterates through these test cases, casting them to `Night.IGame` and running each via `Night.Framework.Run()`. Parses command-line arguments. Triggers final report generation.
+  - `Program.cs` (in `/tests/`): Orchestrates test execution. Initializes `NightTest.Core.TestRunner`. Instantiates `NightTest.Core.ITestGroup` implementations, retrieves all `NightTest.Core.ITestCase` objects from them, and then iterates through these test cases, casting them to `Night.IGame` and running each via `Night.Framework.Run()`. Parses command-line arguments. Triggers final report generation.
 
-  - `TestRunner.cs`: Collects test results reported by individual test cases. Generates JSON and console reports upon request from `Program.cs`.
+  - `TestRunner.cs` (in `/tests/Core/`): Collects test results reported by individual test cases. Generates JSON and console reports upon request from `Program.cs`.
 
-  - `ITestModule.cs`: Interface defining a contract for test modules. Each module is responsible for providing a list of `ITestCase`s.
+  - `ITestGroup.cs` (in `/tests/Core/`): Interface defining a contract for test groups. Each group is responsible for providing a list of `NightTest.Core.ITestCase`s.
         ```csharp
-        // Located in NightTest/ITestModule.cs
-        public interface ITestModule
+        // Located in tests/Core/ITestGroup.cs
+        namespace NightTest.Core;
+        public interface ITestGroup
         {
             System.Collections.Generic.IEnumerable<ITestCase> GetTestCases();
         }
         ```
 
-  - `ITestCase.cs`: Interface defining metadata for a test case (Name, Type, Description) and a method `SetTestRunner(TestRunner runner)`. Classes implementing `ITestCase` are also required to implement `Night.IGame`.
+  - `ITestCase.cs` (in `/tests/Core/`): Interface defining metadata for a test case (Name, Type, Description) and a method `SetTestRunner(TestRunner runner)`. Classes implementing `ITestCase` are also required to implement `Night.IGame`.
         ```csharp
+        // Located in tests/Core/ITestCase.cs
+        namespace NightTest.Core;
         public enum TestType { Automated, Manual }
         public interface ITestCase
         {
@@ -189,8 +194,9 @@
             void SetTestRunner(TestRunner runner);
         }
         ```
+  - `TestTypes.cs` and `BaseTestCase.cs` also reside in `/tests/Core/` under the `NightTest.Core` namespace.
 
-  - Directories for different test cases/modules (e.g., `/tests/NightTest/Modules/Graphics/`, `/tests/NightTest/Modules/Input/`), each containing module classes (implementing `ITestModule`) which in turn define and provide their respective `ITestCase` classes (which implement `ITestCase` and `Night.IGame`).
+  - Directories for different test cases/groups (e.g., `/tests/Modules/Graphics/` (consider `/tests/Groups/Graphics/`), `/tests/Modules/Input/`), each containing group classes (implementing `NightTest.Core.ITestGroup`) which in turn define and provide their respective `NightTest.Core.ITestCase` classes (which implement `NightTest.Core.ITestCase` and `Night.IGame`).
 
 - **Output:**
 
@@ -202,10 +208,13 @@
 
 ```graph
 graph TD
-    A(NightTest Orchestrator - Program.cs) --> B(NightTest.csproj);
-    A --> D(TestRunner.cs); // Instantiated by Program.cs, collects results
-    A --> G(ITestCase.cs); // Interface definition
-    A --> EM(Modules/);
+    A(NightTest Orchestrator - Program.cs in tests/) --> B(NightTest.csproj in tests/);
+    A --> D(TestRunner.cs in tests/Core/); // Instantiated by Program.cs, collects results
+    A --> G(ITestCase.cs in tests/Core/); // Interface definition
+    A --> C(ITestGroup.cs in tests/Core/);
+    A --> TT(TestTypes.cs in tests/Core/);
+    A --> BTC(BaseTestCase.cs in tests/Core/);
+    A --> EM(Groups/ in tests/); // Formerly Modules/
 
     subgraph Each Test Case is an IGame
         EM --> E1(ConcreteTest1.cs); // Implements ITestCase & Night.IGame

@@ -4,7 +4,7 @@
 // (Full license boilerplate as in other files)
 // </copyright>
 
-namespace NightTest
+namespace NightTest.Core
 {
     /// <summary>
     /// Defines the contract for a runnable test case.

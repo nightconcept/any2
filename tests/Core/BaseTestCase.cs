@@ -8,7 +8,7 @@ using System;
 using System.Diagnostics;
 using Night;
 
-namespace NightTest
+namespace NightTest.Core // Updated namespace
 {
     /// <summary>
     /// Abstract base class for test cases to reduce boilerplate.

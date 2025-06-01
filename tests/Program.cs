@@ -27,6 +27,7 @@ using System.Linq;
 using Night;
 
 using NightTest.Modules;
+using NightTest.Core;
 
 namespace NightTest
 {
@@ -59,49 +60,49 @@ namespace NightTest
       Console.WriteLine($"Run automated only: {runAutomatedOnly}");
       Console.WriteLine($"Report path: {reportPath}");
 
-      var testRunner = new TestRunner(reportPath, runAutomatedOnly, args);
+      var testRunner = new NightTest.Core.TestRunner(reportPath, runAutomatedOnly, args);
 
-      // List of MODULES to load tests from.
-      var testModules = new List<ITestModule>
+      // List of GROUPS to load tests from.
+      var testGroups = new List<NightTest.Core.ITestGroup>
             {
-                new DummyModule(),
-                new TimerModule(),
-                // new GraphicsModule(), // Example for a future test module
-                // new InputModule(),    // Example for a future test module
+                new DummyGroup(),
+                new TimerGroup(),
+                // new GraphicsTest(), // Example for a future test group
+                // new InputTest(),    // Example for a future test group
             };
 
-      var allTestCasesFromModules = new List<ITestCase>();
-      foreach (var module in testModules)
+      var allTestCasesFromGroups = new List<NightTest.Core.ITestCase>();
+      foreach (var group in testGroups)
       {
         try
         {
-          allTestCasesFromModules.AddRange(module.GetTestCases());
+          allTestCasesFromGroups.AddRange(group.GetTestCases());
         }
         catch (Exception ex)
         {
           Console.ForegroundColor = ConsoleColor.DarkRed;
-          Console.WriteLine($"!! CRITICAL ERROR loading test cases from module {module.GetType().Name}: {ex.Message}");
+          Console.WriteLine($"!! CRITICAL ERROR loading test cases from group {group.GetType().Name}: {ex.Message}");
           Console.WriteLine(ex.StackTrace);
           Console.ResetColor();
-          testRunner.RecordResult("ModuleLoad", TestType.Automated, TestStatus.Failed, 0, $"Failed to load test cases: {ex.Message}");
+          testRunner.RecordResult("GroupLoad", NightTest.Core.TestType.Automated, NightTest.Core.TestStatus.Failed, 0, $"Failed to load test cases: {ex.Message}");
         }
       }
 
       // Register all discovered test cases with the runner for comprehensive reporting
-      foreach (var testCase in allTestCasesFromModules)
+      foreach (var testCase in allTestCasesFromGroups)
       {
         testRunner.AddCaseToRegistry(testCase);
       }
 
-      var testCasesToRun = new List<ITestCase>();
+      var testCasesToRun = new List<NightTest.Core.ITestCase>();
       if (runAutomatedOnly)
       {
-        testCasesToRun.AddRange(allTestCasesFromModules.Where(s => s.Type == TestType.Automated));
-        Console.WriteLine($"\n--run-automated specified. Will run {testCasesToRun.Count} automated test case(s) out of {allTestCasesFromModules.Count} discovered.");
+        testCasesToRun.AddRange(allTestCasesFromGroups.Where(s => s.Type == NightTest.Core.TestType.Automated));
+        Console.WriteLine($"\n--run-automated specified. Will run {testCasesToRun.Count} automated test case(s) out of {allTestCasesFromGroups.Count} discovered.");
       }
       else
       {
-        testCasesToRun.AddRange(allTestCasesFromModules);
+        testCasesToRun.AddRange(allTestCasesFromGroups);
         Console.WriteLine($"\nWill attempt to run all {testCasesToRun.Count} discovered test case(s).");
       }
 
@@ -125,7 +126,7 @@ namespace NightTest
             Console.WriteLine(ex.StackTrace);
             Console.ResetColor();
             // Record this catastrophic failure directly if the test case didn't get a chance to report
-            testRunner.RecordResult(testCase.Name, testCase.Type, TestStatus.Failed, 0, $"Catastrophic failure during test case execution: {ex.Message}");
+            testRunner.RecordResult(testCase.Name, testCase.Type, NightTest.Core.TestStatus.Failed, 0, $"Catastrophic failure during test case execution: {ex.Message}");
           }
         }
         else
@@ -133,7 +134,7 @@ namespace NightTest
           Console.ForegroundColor = ConsoleColor.Red;
           Console.WriteLine($"Error: Test case {testCase.Name} does not implement Night.IGame and cannot be run.");
           Console.ResetColor();
-          testRunner.RecordResult(testCase.Name, testCase.Type, TestStatus.Failed, 0, "Test case does not implement Night.IGame.");
+          testRunner.RecordResult(testCase.Name, testCase.Type, NightTest.Core.TestStatus.Failed, 0, "Test case does not implement Night.IGame.");
         }
         // Small delay between tests to make console output more readable
         System.Threading.Thread.Sleep(500);

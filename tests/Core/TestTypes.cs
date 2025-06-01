@@ -4,7 +4,7 @@
 // (Full license boilerplate as in other files)
 // </copyright>
 
-namespace NightTest
+namespace NightTest.Core
 {
     /// <summary>
     /// Represents the type of a test case.

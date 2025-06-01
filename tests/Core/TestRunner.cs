@@ -28,9 +28,11 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Night;
+// Night import might not be needed here if ITestCase and TestType are in NightTest.Core
+// using Night;
 
-namespace NightTest;
+namespace NightTest.Core // Updated namespace
+{
 
 /// <summary>
 /// Manages and reports the status of various tests within NightTest.
@@ -148,8 +150,8 @@ public class TestRunner
       tests = allReportEntries.Select(tr => new
       {
         name = tr.Name,
-        type = tr.Type.ToString(),
-        status = tr.Status.ToString(),
+        type = tr.Type.ToString(), // Uses TestType from NightTest.Core
+        status = tr.Status.ToString(), // Uses TestStatus from NightTest.Core
         durationMs = tr.DurationMs,
         details = tr.Details
       }).ToList(),
@@ -237,4 +239,5 @@ public class TestRunner
     Console.WriteLine($"  Skipped: {summary.totalSkipped} (Automated: {summary.automated.skipped}, Manual: {summary.manual.skipped})");
     Console.WriteLine($"  Not Run (Explicit): {summary.totalNotRun} (Automated: {summary.automated.notRun}, Manual: {summary.manual.notRun})");
   }
+}
 }

@@ -1,6 +1,6 @@
 {
   "reportTitle": "NightTest Engine Test Report",
-  "runTimestamp": "2025-06-01T23:21:57.2521208Z",
+  "runTimestamp": "2025-06-01T23:43:44.9048603Z",
   "commandLineArgs": [],
   "tests": [
     {
@@ -14,7 +14,7 @@
       "name": "Dummy.Manual.Interaction",
       "type": "Manual",
       "status": "Passed",
-      "durationMs": 4545,
+      "durationMs": 3209,
       "details": "User pressed Space to pass."
     },
     {
@@ -22,28 +22,28 @@
       "type": "Automated",
       "status": "Passed",
       "durationMs": 201,
-      "details": "Timer.GetAverageDelta() observed. Last reported value: 0.000027. Test ran for \u003E200ms and \u003E10 frames."
+      "details": "Timer.GetAverageDelta() observed. Last reported value: 0.000031. Test ran for \u003E200ms and \u003E10 frames."
     },
     {
       "name": "Timer.GetDelta",
       "type": "Automated",
       "status": "Passed",
       "durationMs": 203,
-      "details": "Timer.GetDelta() test collected 6558 values. Average delta from Timer.GetDelta(): 0.000031. Test ran for \u003E200ms and \u003E10 frames."
+      "details": "Timer.GetDelta() test collected 5921 values. Average delta from Timer.GetDelta(): 0.000034. Test ran for \u003E200ms and \u003E10 frames."
     },
     {
       "name": "Timer.GetFPS",
       "type": "Automated",
       "status": "Passed",
       "durationMs": 201,
-      "details": "Timer.GetFPS() test observed. Last reported FPS: 31419. Test ran for \u003E200ms and \u003E10 frames."
+      "details": "Timer.GetFPS() test observed. Last reported FPS: 30812. Test ran for \u003E200ms and \u003E10 frames."
     },
     {
       "name": "Timer.GetTime",
       "type": "Automated",
       "status": "Passed",
       "durationMs": 501,
-      "details": "Timer.GetTime() test completed. Start: 6.801654s, End: 7.302584s. Elapsed: 0.500929s (Expected ~0.5s)."
+      "details": "Timer.GetTime() test completed. Start: 5.480899s, End: 5.981820s. Elapsed: 0.500922s (Expected ~0.5s)."
     },
     {
       "name": "Timer.Sleep",
@@ -57,7 +57,7 @@
       "type": "Automated",
       "status": "Passed",
       "durationMs": 201,
-      "details": "Timer.Step() called 6611 times directly. Average delta from these calls: 0.000003. Test ran for \u003E200ms."
+      "details": "Timer.Step() called 5541 times directly. Average delta from these calls: 0.000004. Test ran for \u003E200ms."
     }
   ],
   "summary": {
