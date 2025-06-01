@@ -7,10 +7,11 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 ### Project
 
 - [x] `docfx` generation onto GitHub pages
-- [ ] Tests - Mirror lovetest and the coverage it gets
+- [ ] Tests - Mirror lovetest and the coverage it gets. Create Night.TestGame that will keep track of all the functions tested and provide a report at the end. The systems used by xUnit does not meet my needs.
 - [ ] Logo and icon - nightO)engine
 - [x] CI
-- [ ] API scraper and comparator - Compares current implementation and documentation of API vs Love2D.
+- [ ] API scraper and comparator(?) - Compares current implementation and documentation of API vs Love2D. This may not be useful as some art not important. Maybe it's more important for me to manually curate.
+- [ ] Samplegame as an e2e test.
 
 ### Modules
 

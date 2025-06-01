@@ -17,6 +17,11 @@
 
 ### Functions (Filesystem)
 
+- Append() - love.filesystem.append
+  - Append(string filename, byte[] data, long? size)
+- CreateDirectory() - love.filesystem.createDirectory
+  - CreateDirectory(string path)
+- GetAppdataDirectory() - love.filesystem.getAppdataDirectory
 - GetInfo() - love.filesystem.getInfo
   - GetInfo(string path, FileSystemInfo info)
   - GetInfo(string path, FileType filterType, FileSystemInfo info)

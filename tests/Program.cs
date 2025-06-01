@@ -1,4 +1,4 @@
-// <copyright file="VersionInfo.cs" company="Night Circle">
+// <copyright file="Program.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -20,33 +20,21 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
-namespace Night
+using Night;
+
+namespace TestGame;
+
+/// <summary>
+/// Main entry point for the TestGame.
+/// </summary>
+public static class Program
 {
   /// <summary>
-  /// Provides information about the Night library, such as its version.
+  /// The main entry point for the application.
   /// </summary>
-  public static class VersionInfo
+  [STAThread]
+  public static void Main()
   {
-    /// <summary>
-    /// Gets the full semantic version string (e.g., "1.0.0", "1.2.3-beta.1").
-    /// This value is updated by the GitHub release Action.
-    /// </summary>
-    public const string Version = "0.0.1";
-
-    /// <summary>
-    /// Gets the developer-assigned codename for the current version.
-    /// This value is manually updated by the developer.
-    /// </summary>
-    public const string CodeName = "Initial Codename"; // Placeholder
-
-    /// <summary>
-    /// Gets the Semantic Version of the Night library.
-    /// This version is set during the release process.
-    /// </summary>
-    /// <returns>The library's semantic version string.</returns>
-    public static string GetVersion()
-    {
-      return Version;
-    }
+    Framework.Run(new Game());
   }
 }

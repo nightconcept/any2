@@ -31,6 +31,28 @@ namespace Night
   /// </summary>
   public static class Filesystem
   {
+    private static string gameIdentity = "NightDefault"; // Placeholder, to be managed by SetIdentity/GetIdentity
+
+    private static string GetDefaultCRequirePath()
+    {
+      if (OperatingSystem.IsWindows())
+      {
+        return ".\\?.dll;?.dll"; // Simplified default
+      }
+      else if (OperatingSystem.IsMacOS())
+      {
+        return "./?.dylib;?.dylib"; // Simplified default
+      }
+      else if (OperatingSystem.IsLinux())
+      {
+        return "./?.so;?.so"; // Simplified default
+      }
+
+      return string.Empty; // Fallback
+    }
+
+    private static string cRequirePath = GetDefaultCRequirePath();
+
     /// <summary>
     /// Gets information about the specified file or directory.
     /// </summary>
@@ -85,6 +107,8 @@ namespace Night
       }
       catch (Exception)
       {
+        // It's often better to log the exception or handle it more specifically.
+        // For now, returning null as per original logic.
         return null;
       }
 
@@ -167,6 +191,145 @@ namespace Night
     public static string ReadText(string path)
     {
       return File.ReadAllText(path);
+    }
+
+    /// <summary>
+    /// Appends data to an existing file. If the file does not exist, it will be created.
+    /// </summary>
+    /// <param name="filename">The path to the file.</param>
+    /// <param name="data">The data to append to the file.</param>
+    /// <param name="size">The number of bytes from the data to append. If null, all data is appended.</param>
+    /// <exception cref="ArgumentNullException">Thrown if filename or data is null.</exception>
+    /// <exception cref="ArgumentException">Thrown if filename is empty.</exception>
+    /// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
+    public static void Append(string filename, byte[] data, long? size = null)
+    {
+      if (filename == null)
+      {
+        throw new ArgumentNullException(nameof(filename));
+      }
+
+      if (data == null)
+      {
+        throw new ArgumentNullException(nameof(data));
+      }
+
+      if (string.IsNullOrEmpty(filename))
+      {
+        throw new ArgumentException("Filename cannot be empty.", nameof(filename));
+      }
+
+      long bytesToWrite = data.Length;
+      if (size.HasValue)
+      {
+        if (size.Value < 0)
+        {
+          // Or throw new ArgumentOutOfRangeException(nameof(size), "Size cannot be negative.");
+          // LÖVE's documentation doesn't specify behavior for negative size.
+          // Assuming no operation for negative size, or one could throw.
+          // For now, let's be lenient and write nothing if size is negative.
+          // Consider logging this case if it's unexpected.
+          return;
+        }
+
+        bytesToWrite = Math.Min(size.Value, data.Length);
+      }
+
+      if (bytesToWrite == 0)
+      {
+        return; // Nothing to write
+      }
+
+      using (var stream = new FileStream(filename, (global::System.IO.FileMode)FileMode.Append, FileAccess.Write))
+      {
+        stream.Write(data, 0, (int)bytesToWrite);
+      }
+    }
+
+    /// <summary>
+    /// Creates a directory.
+    /// </summary>
+    /// <param name="path">The path of the directory to create.</param>
+    /// <returns>True if the directory was created, false if it already existed or an error occurred.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if path is null.</exception>
+    /// <exception cref="ArgumentException">Thrown if path is empty.</exception>
+    public static bool CreateDirectory(string path)
+    {
+      if (path == null)
+      {
+        throw new ArgumentNullException(nameof(path));
+      }
+
+      if (string.IsNullOrEmpty(path))
+      {
+        throw new ArgumentException("Path cannot be empty.", nameof(path));
+      }
+
+      if (Directory.Exists(path))
+      {
+        return false; // Already existed
+      }
+
+      try
+      {
+        _ = Directory.CreateDirectory(path); // Creates all directories in the specified path, if they don't already exist.
+        return true; // Successfully created
+      }
+      catch (Exception)
+      {
+        return false; // An error occurred
+      }
+    }
+
+    /// <summary>
+    /// Returns the application data directory.
+    /// The directory is created if it doesn't exist.
+    /// </summary>
+    /// <returns>The full path to the application data directory.</returns>
+    public static string GetAppdataDirectory()
+    {
+      string basePath;
+      if (OperatingSystem.IsWindows())
+      {
+        basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      }
+      else if (OperatingSystem.IsMacOS())
+      {
+        basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library", "Application Support");
+      }
+      else if (OperatingSystem.IsLinux())
+      {
+        basePath = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+        if (string.IsNullOrEmpty(basePath))
+        {
+          basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share");
+        }
+      }
+      else
+      {
+        // Fallback for other OSes or if above checks fail, though less specific
+        // This could also throw an UnsupportedPlatformException
+        basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        if (string.IsNullOrEmpty(basePath)) // If even ApplicationData is not available (highly unlikely for supported .NET platforms)
+        {
+          basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".NightFallback");
+        }
+      }
+
+      string appDataPath = Path.Combine(basePath, gameIdentity);
+
+      try
+      {
+        _ = Directory.CreateDirectory(appDataPath);
+      }
+      catch (Exception ex)
+      {
+        // Optional: Log the exception, but the function should still return the path
+        // as per LÖVE's getSaveDirectory behavior (it returns path, creation is best-effort)
+        Console.WriteLine($"Could not create appdata directory '{appDataPath}': {ex.Message}");
+      }
+
+      return appDataPath;
     }
   }
 }
