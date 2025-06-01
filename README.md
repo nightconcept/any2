@@ -5,9 +5,9 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/nightconcept/NightEngine)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/nightconcept/NightEngine/badge)](https://scorecard.dev/viewer/?uri=github.com/nightconcept/NightEngine)
 
-**⚠️ WORK IN PROGRESS - NOT FOR PRODUCTION USE ⚠️**
-
-**This project is currently in active development and is considered highly experimental. APIs are subject to change, and features may be incomplete or unstable. It is not recommended for use in production environments.**
+> [!WARNING]
+>⚠️ WORK IN PROGRESS - NOT FOR PRODUCTION USE ⚠️
+>This project is currently in active development and is considered highly experimental. APIs are subject to change, and features may be incomplete or unstable. It is not recommended for use in production environments.
 
 A cross-platform C# game engine built on top of SDL3.
 
@@ -20,9 +20,7 @@ Night Engine aims to provide a "batteries-included," in-code editor experience f
 
 This project also intends to be AI-friendly, with clear documentation and API design to assist non-programmer game designers.
 
-## Current Status
-
-Features currently implemented:
+## Current Features
 
 * **Window Management:** Creating and managing the game window.
 * **Input Handling:** Basic keyboard and mouse input.
@@ -38,7 +36,7 @@ The core of the project is the `Night.dll` library. This assembly contains:
 * The `Night` namespace: Provides the Love2D-inspired `Night.Framework` API.
 * The `Night.Engine` namespace: Will house the future higher-level, more opinionated game engine components. Not yet implemented.
 
-## Features
+## Feature Roadmap
 
 ### `Night` Framework
 
@@ -93,10 +91,10 @@ The core of the project is the `Night.dll` library. This assembly contains:
     mise build
     ```
 
-5. Run the sample game (ensure this command is correct for your `mise.toml` setup):
+5. Run the sample game:
 
     ```bash
-    mise run sample # Or your specific command to run Night.SampleGame
+    mise game
     ```
 
 ## Contributing
