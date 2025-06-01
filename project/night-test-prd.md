@@ -18,20 +18,22 @@
 
 ### 2.2. Test Scenario Management
 
-- **Description:** Each test scenario is implemented as a class that fulfills two contracts:
-    1.  `NightTest.ITestScenario`: Provides metadata like test name, type (Automated/Manual), and description. It also includes a method for the orchestrator to provide a `TestRunner` instance.
-    2.  `Night.IGame`: Implements the necessary methods (`Load`, `Update`, `Draw`, input handlers, etc.) to run as a standalone game via `Night.Framework.Run()`.
+- **Description:** Test scenarios are organized into "Test Modules". Each module is a class implementing the `NightTest.ITestModule` interface, which defines a method to provide a collection of individual test scenarios.
+    - Each individual test scenario is then implemented as a class that fulfills two contracts:
+        1.  `NightTest.ITestScenario`: Provides metadata like test name, type (Automated/Manual), and description. It also includes a method for the orchestrator to provide a `TestRunner` instance.
+        2.  `Night.IGame`: Implements the necessary methods (`Load`, `Update`, `Draw`, input handlers, etc.) to run as a standalone game via `Night.Framework.Run()`.
 
   - Each test scenario is responsible for:
     - Managing its own lifecycle (initialization, updates, drawing).
     - Determining its pass/fail status based on its specific test logic.
     - Measuring its own execution duration.
     - Reporting its result (name, type, status, duration, details) to the central `TestRunner` instance upon completion (typically before it signals `Night.Window.Close()`).
+    - For `Manual` tests, current implementations (e.g., `ConcreteDummyManualTest`) use simple keyboard inputs (e.g., Space to pass, Escape to fail) within their own `IGame` loop. A more generalized or UI-driven approach for manual test interaction is a future consideration (see Section 6).
 
-  - `Program.cs` discovers/instantiates these test scenarios (e.g., from a predefined list or by scanning assemblies in the `Modules/` directory in the future).
+  - `Program.cs` discovers/instantiates `ITestModule` implementations (e.g., from a predefined list within `Program.cs` itself, or by scanning assemblies in the `Modules/` directory in the future). It then calls a method on each module to get all its `ITestScenario` objects.
   - `Program.cs` supports a command-line argument (e.g., `--run-automated`) to filter the execution to only "automated" test scenarios. If the argument is not provided, all defined tests will be attempted.
 
-- **Status:** Implemented (Core Management and Execution).
+- **Status:** Implemented (Core Management, Module-based Execution, Basic Manual Test Input).
 
 ### 2.3. Test Reporting Object
 
@@ -163,12 +165,20 @@
 
   - `NightTest.csproj`
 
-  - `Program.cs`: Orchestrates test execution. Initializes `TestRunner`. Iterates through registered `ITestScenario` objects, casting them to `Night.IGame` and running each via `Night.Framework.Run()`. Parses command-line arguments. Triggers final report generation.
+  - `Program.cs`: Orchestrates test execution. Initializes `TestRunner`. Instantiates `ITestModule` implementations, retrieves all `ITestScenario` objects from them, and then iterates through these scenarios, casting them to `Night.IGame` and running each via `Night.Framework.Run()`. Parses command-line arguments. Triggers final report generation.
 
   - `TestRunner.cs`: Collects test results reported by individual scenarios. Generates JSON and console reports upon request from `Program.cs`.
 
-  - `ITestScenario.cs`: Interface defining metadata for a test scenario (Name, Type, Description) and a method `SetTestRunner(TestRunner runner)`. Classes implementing `ITestScenario` are also required to implement `Night.IGame`.
+  - `ITestModule.cs`: Interface defining a contract for test modules. Each module is responsible for providing a list of `ITestScenario`s.
+        ```csharp
+        // Located in NightTest/ITestModule.cs
+        public interface ITestModule
+        {
+            System.Collections.Generic.IEnumerable<ITestScenario> GetTestScenarios();
+        }
+        ```
 
+  - `ITestScenario.cs`: Interface defining metadata for a test scenario (Name, Type, Description) and a method `SetTestRunner(TestRunner runner)`. Classes implementing `ITestScenario` are also required to implement `Night.IGame`.
         ```csharp
         public enum TestType { Automated, Manual }
         public interface ITestScenario
@@ -180,7 +190,7 @@
         }
         ```
 
-  - Directories for different test scenarios/modules (e.g., `/tests/NightTest/Modules/Graphics/`, `/tests/NightTest/Modules/Input/`), each containing classes that implement both `ITestScenario` and `Night.IGame`.
+  - Directories for different test scenarios/modules (e.g., `/tests/NightTest/Modules/Graphics/`, `/tests/NightTest/Modules/Input/`), each containing module classes (implementing `ITestModule`) which in turn define and provide their respective `ITestScenario` classes (which implement `ITestScenario` and `Night.IGame`).
 
 - **Output:**
 
@@ -227,7 +237,7 @@ graph TD
 ## 6. Future Considerations
 
 - A simple in-game UI (e.g., using Dear ImGui) to select and run specific tests or suites, view `test_report.json` contents, and re-run failed tests.
-
+- **TODO:** Develop a standardized or UI-driven mechanism for manual test interaction, allowing users to easily signal pass/fail for tests marked as `Manual` without relying on specific key presses hardcoded into each test. This could involve a simple overlay or a dedicated input phase.
 - More sophisticated reporting formats (e.g., HTML with visual diffs or screenshots for graphics tests).
 
 - Integration with an automated testing framework that can drive UI interactions if feasible for some "manual" tests.

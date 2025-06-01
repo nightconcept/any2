@@ -27,6 +27,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
 using Night;
 
 namespace NightTest;
@@ -104,6 +105,7 @@ public class TestRunner
   private readonly bool _filterAutomatedOnly;
   private readonly string[] _commandLineArgs;
 
+  /// <inheritdoc/>
   public TestRunner(string reportPath, bool filterAutomatedOnly, string[] commandLineArgs)
   {
     _reportPath = string.IsNullOrWhiteSpace(reportPath) ? "test_report.json" : reportPath;
@@ -150,6 +152,7 @@ public class TestRunner
     Console.ResetColor();
   }
 
+  /// <inheritdoc/>
   public void GenerateReport()
   {
     Console.WriteLine($"\nGenerating final report at: {_reportPath}");
@@ -184,7 +187,8 @@ public class TestRunner
       reportTitle = "NightTest Engine Test Report",
       runTimestamp = DateTime.UtcNow.ToString("o"), // ISO 8601
       commandLineArgs = _commandLineArgs,
-      tests = allReportEntries.Select(tr => new {
+      tests = allReportEntries.Select(tr => new
+      {
         name = tr.Name,
         type = tr.Type.ToString(),
         status = tr.Status.ToString(),

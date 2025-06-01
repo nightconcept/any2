@@ -1,4 +1,4 @@
-// <copyright file="ITestScenario.cs" company="Night Circle">
+// <copyright file="PlatformerGame.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -20,43 +20,20 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 using Night;
 
-using SDL3;
-
-namespace NightTest;
+namespace SampleGame;
 
 /// <summary>
-/// Main game class for the platformer sample.
-/// Implements the <see cref="IGame"/> interface for Night.Engine integration.
+/// Provides an entry point to run the Platformer sample game.
 /// </summary>
-public interface ITestScenario
+public class PlatformerGame
 {
   /// <summary>
-  /// Gets the unique name of the test scenario.
-  /// Used for reporting.
+  /// Main method to initialize and run the Platformer game.
   /// </summary>
-  string Name { get; }
-
-  /// <summary>
-  /// Gets the type of the test (Automated or Manual).
-  /// Used for filtering and reporting.
-  /// </summary>
-  TestType Type { get; }
-
-  /// <summary>
-  /// Gets a brief description of what the test scenario covers.
-  /// </summary>
-  string Description { get; }
-
-  /// <summary>
-  /// Sets the TestRunner instance for this scenario to use for reporting results.
-  /// This will be called by the orchestrator (Program.cs) before the scenario is run.
-  /// </summary>
-  /// <param name="runner">The central TestRunner instance.</param>
-  void SetTestRunner(TestRunner runner);
+  public static void PlatformerGameMain()
+  {
+    Night.Framework.Run(new Platformer());
+  }
 }
