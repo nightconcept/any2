@@ -6,7 +6,7 @@ This document outlines the testing strategy for the `Night.Engine` project, spec
 
 The testing philosophy draws inspiration from Love2D's module-based testing approach, aiming to test each logical module of `Night.Engine` as independently as possible. We will use xUnit as the primary testing framework for C#.
 
-This plan adheres to the standards and guidelines set forth in the `operational-guidelines.md` and aligns with the project goals detailed in `PRD.md`.
+This plan adheres to the standards and guidelines set forth in the `guidelines.md` and aligns with the project goals detailed in `PRD.md`.
 
 ## 2. Testing Framework
 

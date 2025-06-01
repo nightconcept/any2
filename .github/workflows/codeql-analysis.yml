@@ -1,4 +1,4 @@
-name: "CodeQL C# Analysis"
+name: "CodeQL Analysis"
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   analyze:
-    name: Analyze C#
+    name: Analyze code
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ["csharp"]
+        language: ["csharp", "python"]
         # CodeQL supports [ csharp, cpp, go, java, javascript, python, ruby ]
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
 
@@ -52,11 +52,13 @@ jobs:
       # For .NET Core, ensure that the .NET SDK is available.
       # You might need to add a setup-dotnet step if not using a GitHub-hosted runner with it pre-installed.
       - name: Setup .NET
+        if: matrix.language == 'csharp'
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 9.0.x
 
       - name: Autobuild
+        if: matrix.language == 'csharp'
         uses: github/codeql-action/autobuild@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17
 
       - name: Perform CodeQL Analysis

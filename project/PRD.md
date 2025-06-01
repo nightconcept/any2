@@ -141,7 +141,7 @@ graph TD
 
     G --> G1(NOTICE.md);
     G --> G2(PRD.md);
-    G --> G3(operational-guidelines.md);
+    G --> G3(guidelines.md);
     G --> G4(epics);
     G4 --> G4_1(epic1.md);
     G4 --> G4_2(epic2.md);
@@ -217,7 +217,6 @@ graph TD
     M4 --> M4_5(release.yml);
     M4 --> M4_6(scorecard.yml);
     M --> M5(scripts);
-    M5 --> M5_1(determine_next_version.py);
 ```
 
 - `/docs`: Project documentation (PRD, operational guidelines, epics, API mapping, etc.).
