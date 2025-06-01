@@ -28,7 +28,7 @@ This project incorporates copyrighted material from the following third-party pr
 - License: zlib
 - Website: [https://github.com/libsdl-org/SDL_ttf](https://github.com/libsdl-org/SDL_ttf)
 - Dependency licenses:
-  - FreeType, licensed under [FTL](https://gitlab.freedesktop.org/freetype/freetype/-/blob/master/docs/FTL.TXT)
+  - FreeType, licensed under [FTL license](https://gitlab.freedesktop.org/freetype/freetype/-/blob/master/docs/FTL.TXT)
   - HarfBuzz licensed under the [MIT license](https://github.com/harfbuzz/harfbuzz/blob/main/COPYING)
   - PlutoSVG, licensed under the [MIT license](https://github.com/sammycage/plutosvg/blob/master/LICENSE)
   - PlutoVG, licensed under the [MIT license](https://github.com/sammycage/plutovg/blob/master/LICENSE)
