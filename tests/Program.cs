@@ -38,7 +38,7 @@ namespace NightTest
   {
     /// <summary>
     /// The main entry point for the application.
-    /// Orchestrates the test scenarios.
+    /// Orchestrates the test cases.
     /// </summary>
     public static void Main(string[] args)
     {
@@ -70,77 +70,76 @@ namespace NightTest
                 // new InputModule(),    // Example for a future test module
             };
 
-      var allScenariosFromModules = new List<ITestScenario>();
+      var allTestCasesFromModules = new List<ITestCase>();
       foreach (var module in testModules)
       {
         try
         {
-          allScenariosFromModules.AddRange(module.GetTestScenarios());
+          allTestCasesFromModules.AddRange(module.GetTestCases());
         }
         catch (Exception ex)
         {
           Console.ForegroundColor = ConsoleColor.DarkRed;
-          Console.WriteLine($"!! CRITICAL ERROR loading scenarios from module {module.GetType().Name}: {ex.Message}");
+          Console.WriteLine($"!! CRITICAL ERROR loading test cases from module {module.GetType().Name}: {ex.Message}");
           Console.WriteLine(ex.StackTrace);
           Console.ResetColor();
-          // Optionally, add a failed test result to the runner for this module loading failure.
-          // testRunner.RecordResult($"ModuleLoadFailure.{module.GetType().Name}", TestType.Automated, TestStatus.Failed, 0, $"Failed to load scenarios: {ex.Message}");
+          testRunner.RecordResult("ModuleLoad", TestType.Automated, TestStatus.Failed, 0, $"Failed to load test cases: {ex.Message}");
         }
       }
 
-      // Register all discovered scenarios with the runner for comprehensive reporting
-      foreach (var scenario in allScenariosFromModules)
+      // Register all discovered test cases with the runner for comprehensive reporting
+      foreach (var testCase in allTestCasesFromModules)
       {
-        testRunner.AddScenarioToRegistry(scenario);
+        testRunner.AddCaseToRegistry(testCase);
       }
 
-      var scenariosToRun = new List<ITestScenario>();
+      var testCasesToRun = new List<ITestCase>();
       if (runAutomatedOnly)
       {
-        scenariosToRun.AddRange(allScenariosFromModules.Where(s => s.Type == TestType.Automated));
-        Console.WriteLine($"\n--run-automated specified. Will run {scenariosToRun.Count} automated scenario(s) out of {allScenariosFromModules.Count} discovered.");
+        testCasesToRun.AddRange(allTestCasesFromModules.Where(s => s.Type == TestType.Automated));
+        Console.WriteLine($"\n--run-automated specified. Will run {testCasesToRun.Count} automated test case(s) out of {allTestCasesFromModules.Count} discovered.");
       }
       else
       {
-        scenariosToRun.AddRange(allScenariosFromModules);
-        Console.WriteLine($"\nWill attempt to run all {scenariosToRun.Count} discovered scenario(s).");
+        testCasesToRun.AddRange(allTestCasesFromModules);
+        Console.WriteLine($"\nWill attempt to run all {testCasesToRun.Count} discovered test case(s).");
       }
 
-      foreach (var scenario in scenariosToRun)
+      foreach (var testCase in testCasesToRun)
       {
-        Console.WriteLine($"\n--- Starting Scenario: {scenario.Name} ([{scenario.Type}]) ---");
-        scenario.SetTestRunner(testRunner); // Provide the runner to the scenario
+        Console.WriteLine($"\n--- Starting Test Case: {testCase.Name} ([{testCase.Type}]) ---");
+        testCase.SetTestRunner(testRunner); // Provide the runner to the test case
 
-        if (scenario is Night.IGame gameScenario)
+        if (testCase is Night.IGame gameTestCase)
         {
           try
           {
-            // Each scenario (which is an IGame) runs in its own Framework.Run call
-            Night.Framework.Run(gameScenario);
-            Console.WriteLine($"--- Scenario Finished: {scenario.Name} ---");
+            // Each test case (which is an IGame) runs in its own Framework.Run call
+            Night.Framework.Run(gameTestCase);
+            Console.WriteLine($"--- Test Case Finished: {testCase.Name} ---");
           }
           catch (Exception ex)
           {
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine($"!! CRITICAL ERROR during Framework.Run for scenario {scenario.Name}: {ex.Message}");
+            Console.WriteLine($"!! CRITICAL ERROR during Framework.Run for test case {testCase.Name}: {ex.Message}");
             Console.WriteLine(ex.StackTrace);
             Console.ResetColor();
-            // Record this catastrophic failure directly if the scenario didn't get a chance to report
-            testRunner.RecordResult(scenario.Name, scenario.Type, TestStatus.Failed, 0, $"Catastrophic failure during scenario execution: {ex.Message}");
+            // Record this catastrophic failure directly if the test case didn't get a chance to report
+            testRunner.RecordResult(testCase.Name, testCase.Type, TestStatus.Failed, 0, $"Catastrophic failure during test case execution: {ex.Message}");
           }
         }
         else
         {
           Console.ForegroundColor = ConsoleColor.Red;
-          Console.WriteLine($"Error: Scenario {scenario.Name} does not implement Night.IGame and cannot be run.");
+          Console.WriteLine($"Error: Test case {testCase.Name} does not implement Night.IGame and cannot be run.");
           Console.ResetColor();
-          testRunner.RecordResult(scenario.Name, scenario.Type, TestStatus.Failed, 0, "Scenario does not implement Night.IGame.");
+          testRunner.RecordResult(testCase.Name, testCase.Type, TestStatus.Failed, 0, "Test case does not implement Night.IGame.");
         }
         // Small delay between tests to make console output more readable
         System.Threading.Thread.Sleep(500);
       }
 
-      Console.WriteLine("\nAll selected scenarios have been processed.");
+      Console.WriteLine("\nAll selected test cases have been processed.");
       testRunner.GenerateReport();
 
       Console.WriteLine("NightTest Orchestrator Exiting.");

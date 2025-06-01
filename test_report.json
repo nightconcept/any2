@@ -1,6 +1,6 @@
 {
   "reportTitle": "NightTest Engine Test Report",
-  "runTimestamp": "2025-06-01T22:59:54.7957690Z",
+  "runTimestamp": "2025-06-01T23:21:57.2521208Z",
   "commandLineArgs": [],
   "tests": [
     {
@@ -8,41 +8,48 @@
       "type": "Automated",
       "status": "Passed",
       "durationMs": 1001,
-      "details": "Automated dummy scenario completed successfully after 1 second."
+      "details": "Automated dummy test case completed successfully after 1 second."
+    },
+    {
+      "name": "Dummy.Manual.Interaction",
+      "type": "Manual",
+      "status": "Passed",
+      "durationMs": 4545,
+      "details": "User pressed Space to pass."
     },
     {
       "name": "Timer.GetAverageDelta",
       "type": "Automated",
       "status": "Passed",
       "durationMs": 201,
-      "details": "Timer.GetAverageDelta() observed. Last reported value: 0.000031. Test ran for \u003E200ms and \u003E10 frames."
+      "details": "Timer.GetAverageDelta() observed. Last reported value: 0.000027. Test ran for \u003E200ms and \u003E10 frames."
     },
     {
       "name": "Timer.GetDelta",
       "type": "Automated",
       "status": "Passed",
-      "durationMs": 204,
-      "details": "Timer.GetDelta() test collected 6169 values. Average delta: 0.000033. Test ran for \u003E200ms and \u003E10 frames."
+      "durationMs": 203,
+      "details": "Timer.GetDelta() test collected 6558 values. Average delta from Timer.GetDelta(): 0.000031. Test ran for \u003E200ms and \u003E10 frames."
     },
     {
       "name": "Timer.GetFPS",
       "type": "Automated",
       "status": "Passed",
       "durationMs": 201,
-      "details": "Timer.GetFPS() test observed. Last reported FPS: 32689. Test ran for \u003E200ms and \u003E10 frames."
+      "details": "Timer.GetFPS() test observed. Last reported FPS: 31419. Test ran for \u003E200ms and \u003E10 frames."
     },
     {
       "name": "Timer.GetTime",
       "type": "Automated",
       "status": "Passed",
       "durationMs": 501,
-      "details": "Timer.GetTime() test completed. Start: 1.624944s, End: 2.125878s. Elapsed: 0.500934s (Expected ~0.5s)."
+      "details": "Timer.GetTime() test completed. Start: 6.801654s, End: 7.302584s. Elapsed: 0.500929s (Expected ~0.5s)."
     },
     {
       "name": "Timer.Sleep",
       "type": "Automated",
       "status": "Passed",
-      "durationMs": 250,
+      "durationMs": 251,
       "details": "Timer.Sleep(0.25) executed. Measured duration: 250ms. Expected ~250ms."
     },
     {
@@ -50,14 +57,14 @@
       "type": "Automated",
       "status": "Passed",
       "durationMs": 201,
-      "details": "Timer.Step() called 6131 times. Average delta from Step(): 0.000004. Test ran for \u003E200ms."
+      "details": "Timer.Step() called 6611 times directly. Average delta from these calls: 0.000003. Test ran for \u003E200ms."
     }
   ],
   "summary": {
     "filterApplied": "all",
-    "totalRegistered": 7,
-    "totalAttemptedToRun": 7,
-    "totalPassed": 7,
+    "totalRegistered": 8,
+    "totalAttemptedToRun": 8,
+    "totalPassed": 8,
     "totalFailed": 0,
     "totalSkipped": 0,
     "totalNotRun": 0,
@@ -70,9 +77,9 @@
       "notRun": 0
     },
     "manual": {
-      "registered": 0,
-      "attempted": 0,
-      "passed": 0,
+      "registered": 1,
+      "attempted": 1,
+      "passed": 1,
       "failed": 0,
       "skipped": 0,
       "notRun": 0

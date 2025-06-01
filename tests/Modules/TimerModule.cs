@@ -6,20 +6,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq; // Added for Average()
 using Night;
 
 namespace NightTest.Modules
 {
     /// <summary>
-    /// A module that provides test scenarios for the Night.Timer class.
+    /// A module that provides test cases for the Night.Timer class.
     /// </summary>
     public class TimerModule : ITestModule
     {
         /// <inheritdoc/>
-        public IEnumerable<ITestScenario> GetTestScenarios()
+        public IEnumerable<ITestCase> GetTestCases()
         {
-            return new List<ITestScenario>
+            return new List<ITestCase>
             {
                 new GetTimeTest(),
                 new GetFPSTest(),
@@ -34,391 +34,192 @@ namespace NightTest.Modules
     /// <summary>
     /// Tests the Timer.GetTime() method.
     /// </summary>
-    public class GetTimeTest : ITestScenario, Night.IGame
+    public class GetTimeTest : BaseTestCase
     {
-        private TestRunner? _runner;
-        private Stopwatch _stopwatch = new Stopwatch();
-        private bool _isDone = false;
-        private TestStatus _currentStatus = TestStatus.NotRun;
-        private string _details = "Test has not started.";
         private double _startTime = 0;
         private double _endTime = 0;
 
         /// <inheritdoc/>
-        public string Name => "Timer.GetTime";
+        public override string Name => "Timer.GetTime";
         /// <inheritdoc/>
-        public TestType Type => TestType.Automated;
+        public override TestType Type => TestType.Automated;
         /// <inheritdoc/>
-        public string Description => "Tests the Night.Timer.GetTime() method by measuring time passage.";
+        public override string Description => "Tests the Night.Timer.GetTime() method by measuring time passage.";
 
         /// <inheritdoc/>
-        public void SetTestRunner(TestRunner runner)
+        public override void Load()
         {
-            _runner = runner;
-        }
-
-        /// <inheritdoc/>
-        public void Load()
-        {
-            Console.WriteLine($"[{Type}] {Name}: Load called.");
-            _isDone = false;
-            _currentStatus = TestStatus.NotRun;
-            _details = "Test is running...";
-            _stopwatch.Reset();
-            _stopwatch.Start();
-
+            base.Load(); // Calls the base class Load to initialize stopwatch etc.
             _startTime = Night.Timer.GetTime();
             Console.WriteLine($"[{Type}] {Name}: Initial time from Timer.GetTime(): {_startTime:F6} seconds.");
         }
 
         /// <inheritdoc/>
-        public void Update(double deltaTime)
+        public override void Update(double deltaTime)
         {
-            if (_isDone) return;
+            if (IsDone) return;
 
-            if (_stopwatch.ElapsedMilliseconds > 500) // Run for 0.5 second
+            if (TestStopwatch.ElapsedMilliseconds > 500) // Run for 0.5 second
             {
                 _endTime = Night.Timer.GetTime();
                 Console.WriteLine($"[{Type}] {Name}: End time from Timer.GetTime(): {_endTime:F6} seconds.");
                 double elapsed = _endTime - _startTime;
-                _currentStatus = TestStatus.Passed;
-                _details = $"Timer.GetTime() test completed. Start: {_startTime:F6}s, End: {_endTime:F6}s. Elapsed: {elapsed:F6}s (Expected ~0.5s).";
-                _isDone = true;
+                CurrentStatus = TestStatus.Passed;
+                Details = $"Timer.GetTime() test completed. Start: {_startTime:F6}s, End: {_endTime:F6}s. Elapsed: {elapsed:F6}s (Expected ~0.5s).";
                 QuitSelf();
             }
-        }
-
-        /// <inheritdoc/>
-        public void Draw() { }
-        /// <inheritdoc/>
-        public void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat) { }
-        /// <inheritdoc/>
-        public void KeyReleased(KeySymbol key, KeyCode scancode) { }
-        /// <inheritdoc/>
-        public void MousePressed(int x, int y, MouseButton button, bool istouch, int presses) { }
-        /// <inheritdoc/>
-        public void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses) { }
-
-        private void QuitSelf()
-        {
-            _stopwatch.Stop();
-            if (_runner == null)
-            {
-                Console.WriteLine($"ERROR in {Name}: TestRunner was not set. Cannot record result.");
-                _currentStatus = TestStatus.Failed;
-                _details += " | TestRunner not available.";
-            }
-            else
-            {
-                _runner.RecordResult(Name, Type, _currentStatus, _stopwatch.ElapsedMilliseconds, _details);
-            }
-            if (Night.Window.IsOpen())
-            {
-                Night.Window.Close();
-            }
-            _isDone = true;
         }
     }
 
     /// <summary>
     /// Tests the Timer.GetFPS() method.
     /// </summary>
-    public class GetFPSTest : ITestScenario, Night.IGame
+    public class GetFPSTest : BaseTestCase
     {
-        private TestRunner? _runner;
-        private Stopwatch _stopwatch = new Stopwatch();
-        private bool _isDone = false;
-        private TestStatus _currentStatus = TestStatus.NotRun;
-        private string _details = "Test has not started.";
         private int _frameCount = 0;
 
         /// <inheritdoc/>
-        public string Name => "Timer.GetFPS";
+        public override string Name => "Timer.GetFPS";
         /// <inheritdoc/>
-        public TestType Type => TestType.Automated;
+        public override TestType Type => TestType.Automated;
         /// <inheritdoc/>
-        public string Description => "Tests the Night.Timer.GetFPS() method by observing its value over a short period.";
+        public override string Description => "Tests the Night.Timer.GetFPS() method by observing its value over a short period.";
 
         /// <inheritdoc/>
-        public void SetTestRunner(TestRunner runner)
+        public override void Load()
         {
-            _runner = runner;
-        }
-
-        /// <inheritdoc/>
-        public void Load()
-        {
-            Console.WriteLine($"[{Type}] {Name}: Load called.");
-            _isDone = false;
-            _currentStatus = TestStatus.NotRun;
-            _details = "Test is running...";
-            _stopwatch.Reset();
-            _stopwatch.Start();
+            base.Load();
             _frameCount = 0;
         }
 
         /// <inheritdoc/>
-        public void Update(double deltaTime)
+        public override void Update(double deltaTime)
         {
-            if (_isDone) return;
+            if (IsDone) return;
 
             _frameCount++;
-            int currentFps = Night.Timer.GetFPS();
-            // Console.WriteLine($"[{Type}] {Name}: Current FPS from Timer.GetFPS(): {currentFps}");
+            // int currentFps = Night.Timer.GetFPS(); // Value observed by framework
 
-            if (_frameCount > 10 && _stopwatch.ElapsedMilliseconds > 200) // Run for a bit, after a few frames
+            if (_frameCount > 10 && TestStopwatch.ElapsedMilliseconds > 200) // Run for a bit, after a few frames
             {
-                currentFps = Night.Timer.GetFPS(); // Get one last reading
-                _currentStatus = TestStatus.Passed;
-                _details = $"Timer.GetFPS() test observed. Last reported FPS: {currentFps}. Test ran for >200ms and >10 frames.";
-                _isDone = true;
+                int finalFps = Night.Timer.GetFPS(); // Get one last reading from the framework-updated value
+                CurrentStatus = TestStatus.Passed;
+                Details = $"Timer.GetFPS() test observed. Last reported FPS: {finalFps}. Test ran for >200ms and >10 frames.";
                 QuitSelf();
             }
-        }
-        /// <inheritdoc/>
-        public void Draw() { }
-        /// <inheritdoc/>
-        public void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat) { }
-        /// <inheritdoc/>
-        public void KeyReleased(KeySymbol key, KeyCode scancode) { }
-        /// <inheritdoc/>
-        public void MousePressed(int x, int y, MouseButton button, bool istouch, int presses) { }
-        /// <inheritdoc/>
-        public void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses) { }
-
-        private void QuitSelf()
-        {
-            _stopwatch.Stop();
-             if (_runner == null)
-            {
-                Console.WriteLine($"ERROR in {Name}: TestRunner was not set. Cannot record result.");
-                _currentStatus = TestStatus.Failed;
-                _details += " | TestRunner not available.";
-            }
-            else
-            {
-                _runner.RecordResult(Name, Type, _currentStatus, _stopwatch.ElapsedMilliseconds, _details);
-            }
-            if (Night.Window.IsOpen())
-            {
-                Night.Window.Close();
-            }
-            _isDone = true;
         }
     }
 
     /// <summary>
     /// Tests the Timer.GetDelta() method.
     /// </summary>
-    public class GetDeltaTest : ITestScenario, Night.IGame
+    public class GetDeltaTest : BaseTestCase
     {
-        private TestRunner? _runner;
-        private Stopwatch _stopwatch = new Stopwatch();
-        private bool _isDone = false;
-        private TestStatus _currentStatus = TestStatus.NotRun;
-        private string _details = "Test has not started.";
         private List<float> _deltas = new List<float>();
         private int _frameCount = 0;
 
         /// <inheritdoc/>
-        public string Name => "Timer.GetDelta";
+        public override string Name => "Timer.GetDelta";
         /// <inheritdoc/>
-        public TestType Type => TestType.Automated;
+        public override TestType Type => TestType.Automated;
         /// <inheritdoc/>
-        public string Description => "Tests the Night.Timer.GetDelta() method by collecting delta values.";
+        public override string Description => "Tests the Night.Timer.GetDelta() method by collecting delta values.";
 
         /// <inheritdoc/>
-        public void SetTestRunner(TestRunner runner)
+        public override void Load()
         {
-            _runner = runner;
-        }
-
-        /// <inheritdoc/>
-        public void Load()
-        {
-            Console.WriteLine($"[{Type}] {Name}: Load called.");
-            _isDone = false;
-            _currentStatus = TestStatus.NotRun;
-            _details = "Test is running...";
-            _stopwatch.Reset();
-            _stopwatch.Start();
+            base.Load();
             _deltas.Clear();
             _frameCount = 0;
         }
 
         /// <inheritdoc/>
-        public void Update(double deltaTime)
+        public override void Update(double deltaTime)
         {
-            if (_isDone) return;
+            if (IsDone) return;
             _frameCount++;
-            float currentDelta = Night.Timer.GetDelta();
+            float currentDelta = Night.Timer.GetDelta(); // Value is updated by framework's call to Timer.Step()
             _deltas.Add(currentDelta);
-            // Console.WriteLine($"[{Type}] {Name}: Current Delta from Timer.GetDelta(): {currentDelta:F6}");
 
-            if (_frameCount > 10 && _stopwatch.ElapsedMilliseconds > 200)
+            if (_frameCount > 10 && TestStopwatch.ElapsedMilliseconds > 200)
             {
                 float averageDelta = _deltas.Count > 0 ? _deltas.Average() : 0f;
-                _currentStatus = TestStatus.Passed;
-                _details = $"Timer.GetDelta() test collected {_deltas.Count} values. Average delta: {averageDelta:F6}. Test ran for >200ms and >10 frames.";
-                _isDone = true;
+                CurrentStatus = TestStatus.Passed;
+                Details = $"Timer.GetDelta() test collected {_deltas.Count} values. Average delta from Timer.GetDelta(): {averageDelta:F6}. Test ran for >200ms and >10 frames.";
                 QuitSelf();
             }
-        }
-
-        /// <inheritdoc/>
-        public void Draw() { }
-        /// <inheritdoc/>
-        public void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat) { }
-        /// <inheritdoc/>
-        public void KeyReleased(KeySymbol key, KeyCode scancode) { }
-        /// <inheritdoc/>
-        public void MousePressed(int x, int y, MouseButton button, bool istouch, int presses) { }
-        /// <inheritdoc/>
-        public void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses) { }
-
-        private void QuitSelf()
-        {
-            _stopwatch.Stop();
-            if (_runner == null)
-            {
-                Console.WriteLine($"ERROR in {Name}: TestRunner was not set. Cannot record result.");
-                _currentStatus = TestStatus.Failed;
-                _details += " | TestRunner not available.";
-            }
-            else
-            {
-                _runner.RecordResult(Name, Type, _currentStatus, _stopwatch.ElapsedMilliseconds, _details);
-            }
-            if (Night.Window.IsOpen())
-            {
-                Night.Window.Close();
-            }
-            _isDone = true;
         }
     }
 
     /// <summary>
     /// Tests the Timer.GetAverageDelta() method.
     /// </summary>
-    public class GetAverageDeltaTest : ITestScenario, Night.IGame
+    public class GetAverageDeltaTest : BaseTestCase
     {
-        private TestRunner? _runner;
-        private Stopwatch _stopwatch = new Stopwatch();
-        private bool _isDone = false;
-        private TestStatus _currentStatus = TestStatus.NotRun;
-        private string _details = "Test has not started.";
         private int _frameCount = 0;
 
         /// <inheritdoc/>
-        public string Name => "Timer.GetAverageDelta";
+        public override string Name => "Timer.GetAverageDelta";
         /// <inheritdoc/>
-        public TestType Type => TestType.Automated;
+        public override TestType Type => TestType.Automated;
         /// <inheritdoc/>
-        public string Description => "Tests the Night.Timer.GetAverageDelta() method.";
+        public override string Description => "Tests the Night.Timer.GetAverageDelta() method.";
 
         /// <inheritdoc/>
-        public void SetTestRunner(TestRunner runner)
+        public override void Load()
         {
-            _runner = runner;
-        }
-
-        /// <inheritdoc/>
-        public void Load()
-        {
-            Console.WriteLine($"[{Type}] {Name}: Load called.");
-            _isDone = false;
-            _currentStatus = TestStatus.NotRun;
-            _details = "Test is running...";
-            _stopwatch.Reset();
-            _stopwatch.Start();
+            base.Load();
             _frameCount = 0;
         }
 
         /// <inheritdoc/>
-        public void Update(double deltaTime)
+        public override void Update(double deltaTime)
         {
-            if (_isDone) return;
+            if (IsDone) return;
             _frameCount++;
-            double avgDelta = Night.Timer.GetAverageDelta();
-            // Console.WriteLine($"[{Type}] {Name}: Current Average Delta from Timer.GetAverageDelta(): {avgDelta:F6}");
+            // double avgDelta = Night.Timer.GetAverageDelta(); // Value observed by framework
 
-            if (_frameCount > 10 && _stopwatch.ElapsedMilliseconds > 200)
+            if (_frameCount > 10 && TestStopwatch.ElapsedMilliseconds > 200)
             {
-                avgDelta = Night.Timer.GetAverageDelta(); // Get one last reading
-                _currentStatus = TestStatus.Passed;
-                _details = $"Timer.GetAverageDelta() observed. Last reported value: {avgDelta:F6}. Test ran for >200ms and >10 frames.";
-                _isDone = true;
+                double finalAvgDelta = Night.Timer.GetAverageDelta(); // Get one last reading from framework-updated value
+                CurrentStatus = TestStatus.Passed;
+                Details = $"Timer.GetAverageDelta() observed. Last reported value: {finalAvgDelta:F6}. Test ran for >200ms and >10 frames.";
                 QuitSelf();
             }
-        }
-
-        /// <inheritdoc/>
-        public void Draw() { }
-        /// <inheritdoc/>
-        public void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat) { }
-        /// <inheritdoc/>
-        public void KeyReleased(KeySymbol key, KeyCode scancode) { }
-        /// <inheritdoc/>
-        public void MousePressed(int x, int y, MouseButton button, bool istouch, int presses) { }
-        /// <inheritdoc/>
-        public void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses) { }
-
-        private void QuitSelf()
-        {
-            _stopwatch.Stop();
-            if (_runner == null)
-            {
-                Console.WriteLine($"ERROR in {Name}: TestRunner was not set. Cannot record result.");
-                _currentStatus = TestStatus.Failed;
-                _details += " | TestRunner not available.";
-            }
-            else
-            {
-                _runner.RecordResult(Name, Type, _currentStatus, _stopwatch.ElapsedMilliseconds, _details);
-            }
-            if (Night.Window.IsOpen())
-            {
-                Night.Window.Close();
-            }
-            _isDone = true;
         }
     }
 
     /// <summary>
     /// Tests the Timer.Sleep() method.
     /// </summary>
-    public class SleepTest : ITestScenario, Night.IGame
+    public class SleepTest : BaseTestCase
     {
-        private TestRunner? _runner;
-        private Stopwatch _stopwatch = new Stopwatch();
-        private Stopwatch _internalStopwatch = new Stopwatch();
-        private bool _isDone = false;
-        private TestStatus _currentStatus = TestStatus.NotRun;
-        private string _details = "Test has not started.";
         private const double SleepDurationSeconds = 0.25; // Sleep for 250ms
+        // Using TestStopwatch from base class for overall test duration
+        // Need a separate stopwatch for measuring sleep itself
+        private System.Diagnostics.Stopwatch _internalStopwatch = new System.Diagnostics.Stopwatch();
 
         /// <inheritdoc/>
-        public string Name => "Timer.Sleep";
+        public override string Name => "Timer.Sleep";
         /// <inheritdoc/>
-        public TestType Type => TestType.Automated;
-        /// <inheritdoc/>
-        public string Description => $"Tests the Night.Timer.Sleep() method by sleeping for {SleepDurationSeconds}s.";
+        public override string Description => $"Tests the Night.Timer.Sleep() method by sleeping for {SleepDurationSeconds}s.";
 
         /// <inheritdoc/>
-        public void SetTestRunner(TestRunner runner)
+        public override TestType Type => TestType.Automated; // Explicitly Automated
+
+        /// <inheritdoc/>
+        public override void Load()
         {
-            _runner = runner;
-        }
-
-        /// <inheritdoc/>
-        public void Load()
-        {
+            // We don't call base.Load() here because this test essentially finishes in Load
+            // and needs to manage its own primary stopwatch for the result reporting.
             Console.WriteLine($"[{Type}] {Name}: Load called. Will attempt to sleep for {SleepDurationSeconds}s.");
-            _isDone = false;
-            _currentStatus = TestStatus.NotRun;
-            _details = "Test is running...";
-            _stopwatch.Reset();
-            _stopwatch.Start(); // Overall test duration
+            IsDone = false;
+            CurrentStatus = TestStatus.NotRun;
+            Details = "Test is running...";
+            // TestStopwatch (from base) is used by QuitSelf for the RecordResult duration.
+            // So, we start it here to measure the time taken for the Load phase itself.
+            TestStopwatch.Reset();
+            TestStopwatch.Start();
 
             _internalStopwatch.Reset();
             _internalStopwatch.Start();
@@ -428,159 +229,83 @@ namespace NightTest.Modules
             double elapsedMs = _internalStopwatch.ElapsedMilliseconds;
             Console.WriteLine($"[{Type}] {Name}: Timer.Sleep({SleepDurationSeconds}) took {elapsedMs}ms.");
 
-            // Allow a small margin for timing inaccuracies
             if (elapsedMs >= SleepDurationSeconds * 1000 * 0.9 && elapsedMs <= SleepDurationSeconds * 1000 * 1.5)
             {
-                _currentStatus = TestStatus.Passed;
-                _details = $"Timer.Sleep({SleepDurationSeconds}) executed. Measured duration: {elapsedMs}ms. Expected ~{SleepDurationSeconds * 1000}ms.";
+                CurrentStatus = TestStatus.Passed;
+                Details = $"Timer.Sleep({SleepDurationSeconds}) executed. Measured duration: {elapsedMs}ms. Expected ~{SleepDurationSeconds * 1000}ms.";
             }
             else
             {
-                _currentStatus = TestStatus.Failed;
-                _details = $"Timer.Sleep({SleepDurationSeconds}) executed. Measured duration: {elapsedMs}ms. Expected ~{SleepDurationSeconds * 1000}ms. Deviation too large.";
+                CurrentStatus = TestStatus.Failed;
+                Details = $"Timer.Sleep({SleepDurationSeconds}) executed. Measured duration: {elapsedMs}ms. Expected ~{SleepDurationSeconds * 1000}ms. Deviation too large.";
             }
-            _isDone = true;
-            QuitSelf(); // This test finishes in Load
+            // Since this test completes in Load, call QuitSelf immediately.
+            // The duration recorded will be the time spent in this Load method by TestStopwatch.
+            QuitSelf();
         }
 
         /// <inheritdoc/>
-        public void Update(double deltaTime) { /* Test finishes in Load */ }
-        /// <inheritdoc/>
-        public void Draw() { }
-        /// <inheritdoc/>
-        public void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat) { }
-        /// <inheritdoc/>
-        public void KeyReleased(KeySymbol key, KeyCode scancode) { }
-        /// <inheritdoc/>
-        public void MousePressed(int x, int y, MouseButton button, bool istouch, int presses) { }
-        /// <inheritdoc/>
-        public void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses) { }
-
-        private void QuitSelf()
+        public override void Update(double deltaTime)
         {
-            _stopwatch.Stop(); // Stops overall test timer
-            if (_runner == null)
+            // Test logic is in Load, Update is not used for this specific test.
+            if (!IsDone) // Should be done from Load
             {
-                Console.WriteLine($"ERROR in {Name}: TestRunner was not set. Cannot record result.");
-                _currentStatus = TestStatus.Failed;
-                _details += " | TestRunner not available.";
+                Details = "Test did not complete in Load as expected.";
+                CurrentStatus = TestStatus.Failed;
+                QuitSelf();
             }
-            else
-            {
-                // Use _internalStopwatch for actual sleep duration if available, otherwise overall.
-                long reportedDuration = _internalStopwatch.IsRunning ? _stopwatch.ElapsedMilliseconds : _internalStopwatch.ElapsedMilliseconds;
-                if(reportedDuration == 0 && _stopwatch.ElapsedMilliseconds > 0) reportedDuration = _stopwatch.ElapsedMilliseconds;
-
-                _runner.RecordResult(Name, Type, _currentStatus, reportedDuration, _details);
-            }
-            if (Night.Window.IsOpen())
-            {
-                Night.Window.Close();
-            }
-            _isDone = true;
         }
     }
 
     /// <summary>
     /// Tests the Timer.Step() method.
     /// </summary>
-    public class StepTest : ITestScenario, Night.IGame
+    public class StepTest : BaseTestCase
     {
-        private TestRunner? _runner;
-        private Stopwatch _stopwatch = new Stopwatch();
-        private bool _isDone = false;
-        private TestStatus _currentStatus = TestStatus.NotRun;
-        private string _details = "Test has not started.";
         private int _stepCount = 0;
         private List<double> _stepDeltas = new List<double>();
 
         /// <inheritdoc/>
-        public string Name => "Timer.Step";
+        public override string Name => "Timer.Step";
         /// <inheritdoc/>
-        public TestType Type => TestType.Automated;
+        public override TestType Type => TestType.Automated;
         /// <inheritdoc/>
-        public string Description => "Tests the Night.Timer.Step() method by calling it multiple times and observing delta values.";
+        public override string Description => "Tests the Night.Timer.Step() method by calling it multiple times and observing delta values.";
 
         /// <inheritdoc/>
-        public void SetTestRunner(TestRunner runner)
+        public override void Load()
         {
-            _runner = runner;
-        }
-
-        /// <inheritdoc/>
-        public void Load()
-        {
-            Console.WriteLine($"[{Type}] {Name}: Load called.");
-            _isDone = false;
-            _currentStatus = TestStatus.NotRun;
-            _details = "Test is running...";
-            _stopwatch.Reset();
-            _stopwatch.Start();
+            base.Load();
             _stepCount = 0;
             _stepDeltas.Clear();
 
-            // Call Step once in Load to initialize its internal state if needed, similar to how framework would.
-            // The result of this first call might be less predictable.
-            Night.Timer.Step();
+            // Framework calls Timer.Initialize(), which sets LastStepTime.
+            // Then Framework calls Timer.Step() before the first Update.
+            // So, the first Night.Timer.Step() in Update here should give a small delta.
         }
 
         /// <inheritdoc/>
-        public void Update(double deltaTime) // deltaTime here is from Framework's step
+        public override void Update(double deltaTime) // deltaTime here is from Framework's own step call
         {
-            if (_isDone) return;
+            if (IsDone) return;
 
-            // We are testing Timer.Step(), which is also what the framework uses.
-            // To get an independent measure, we can call it again or rely on the fact
-            // that the framework calls it and updates Timer.CurrentDelta.
-            // For this test, let's call it explicitly a few times.
-            // However, calling Timer.Step() multiple times per frame might not be its intended use.
-            // The framework calls Timer.Step() once per frame. This test will simulate a few frames.
+            // The framework has already called Timer.Step() and the result is in `deltaTime` / Timer.GetDelta().
+            // To test Timer.Step() somewhat independently, we can call it again.
+            // Note: The *first* call to Timer.Step() in an application's lifetime (or after a long pause)
+            // might have a larger delta if LastStepTime was zero or very old.
+            // Timer.Initialize() sets LastStepTime, and framework calls Step() before first Update.
 
-            double stepDelta = Night.Timer.Step(); // This is the primary value we are interested in from calling Step()
-            _stepDeltas.Add(stepDelta);
-            // Console.WriteLine($"[{Type}] {Name}: Timer.Step() returned: {stepDelta:F6}. Framework deltaTime: {deltaTime:F6}");
+            double directStepDelta = Night.Timer.Step(); // Call it directly to get its current calculation
+            _stepDeltas.Add(directStepDelta);
             _stepCount++;
 
-
-            if (_stepCount > 10 && _stopwatch.ElapsedMilliseconds > 200)
+            if (_stepCount > 10 && TestStopwatch.ElapsedMilliseconds > 200)
             {
-                // The values from Timer.Step() should be similar to Timer.GetDelta() after framework updates.
-                double averageStepDelta = _stepDeltas.Count > 0 ? _stepDeltas.Average() : 0.0;
-                _currentStatus = TestStatus.Passed;
-                _details = $"Timer.Step() called {_stepCount} times. Average delta from Step(): {averageStepDelta:F6}. Test ran for >200ms.";
-                _isDone = true;
+                double averageDirectStepDelta = _stepDeltas.Count > 0 ? _stepDeltas.Average() : 0.0;
+                CurrentStatus = TestStatus.Passed;
+                Details = $"Timer.Step() called {_stepCount} times directly. Average delta from these calls: {averageDirectStepDelta:F6}. Test ran for >200ms.";
                 QuitSelf();
             }
-        }
-        /// <inheritdoc/>
-        public void Draw() { }
-        /// <inheritdoc/>
-        public void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat) { }
-        /// <inheritdoc/>
-        public void KeyReleased(KeySymbol key, KeyCode scancode) { }
-        /// <inheritdoc/>
-        public void MousePressed(int x, int y, MouseButton button, bool istouch, int presses) { }
-        /// <inheritdoc/>
-        public void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses) { }
-
-        private void QuitSelf()
-        {
-            _stopwatch.Stop();
-            if (_runner == null)
-            {
-                Console.WriteLine($"ERROR in {Name}: TestRunner was not set. Cannot record result.");
-                _currentStatus = TestStatus.Failed;
-                _details += " | TestRunner not available.";
-            }
-            else
-            {
-                _runner.RecordResult(Name, Type, _currentStatus, _stopwatch.ElapsedMilliseconds, _details);
-            }
-            if (Night.Window.IsOpen())
-            {
-                Night.Window.Close();
-            }
-            _isDone = true;
         }
     }
 }

@@ -33,48 +33,6 @@ using Night;
 namespace NightTest;
 
 /// <summary>
-/// Represents the status of a test.
-/// </summary>
-public enum TestStatus
-{
-  /// <summary>
-  /// Test has not been run.
-  /// </summary>
-  NotRun,
-
-  /// <summary>
-  /// Test passed successfully.
-  /// </summary>
-  Passed,
-
-  /// <summary>
-  /// Test failed.
-  /// </summary>
-  Failed,
-
-  /// <summary>
-  /// Test was skipped.
-  /// </summary>
-  Skipped,
-}
-
-/// <summary>
-/// Represents the type of a test.
-/// </summary>
-public enum TestType
-{
-  /// <summary>
-  /// Automated test.
-  /// </summary>
-  Automated,
-
-  /// <summary>
-  /// Manual test.
-  /// </summary>
-  Manual,
-}
-
-/// <summary>
 /// Manages and reports the status of various tests within NightTest.
 /// </summary>
 public class TestRunner
@@ -100,7 +58,7 @@ public class TestRunner
   }
 
   private readonly List<TestResultData> _recordedResults = new List<TestResultData>();
-  private readonly List<(string Name, TestType Type)> _registeredScenarios = new List<(string Name, TestType Type)>();
+  private readonly List<(string Name, TestType Type)> _registeredCases = new List<(string Name, TestType Type)>();
   private readonly string _reportPath;
   private readonly bool _filterAutomatedOnly;
   private readonly string[] _commandLineArgs;
@@ -114,19 +72,19 @@ public class TestRunner
   }
 
   /// <summary>
-  /// Informs the TestRunner about a scenario that is defined and could potentially run.
-  /// This is used for the summary in the report to know all available tests.
+  /// Informs the TestRunner about a test case that is defined and could potentially run.
   /// </summary>
-  public void AddScenarioToRegistry(ITestScenario scenario)
+  /// <param name="testCase">The test case to register.</param>
+  public void AddCaseToRegistry(ITestCase testCase)
   {
-    if (scenario != null && !_registeredScenarios.Any(s => s.Name == scenario.Name))
+    if (testCase != null && !_registeredCases.Any(s => s.Name == testCase.Name))
     {
-      _registeredScenarios.Add((scenario.Name, scenario.Type));
+      _registeredCases.Add((testCase.Name, testCase.Type));
     }
   }
 
   /// <summary>
-  /// Called by an ITestScenario (which is also an IGame) when it completes its execution.
+  /// Called by an ITestCase (which is also an IGame) when it completes its execution.
   /// </summary>
   public void RecordResult(string testName, TestType testType, TestStatus status, long durationMs, string details)
   {
@@ -163,8 +121,8 @@ public class TestRunner
     // Add all actually executed and recorded results
     allReportEntries.AddRange(_recordedResults);
 
-    // Add entries for registered scenarios that were not executed (skipped)
-    foreach (var (name, type) in _registeredScenarios)
+    // Add entries for registered test cases that were not executed (skipped)
+    foreach (var (name, type) in _registeredCases)
     {
       if (!executedTestNames.Contains(name))
       {
@@ -174,7 +132,7 @@ public class TestRunner
           Type = type,
           Status = TestStatus.Skipped,
           DurationMs = 0,
-          Details = _filterAutomatedOnly && type == TestType.Manual ? "Skipped: --run-automated flag was used." : "Skipped: Scenario was not selected or did not run."
+          Details = _filterAutomatedOnly && type == TestType.Manual ? "Skipped: --run-automated flag was used." : "Skipped: Test case was not selected or did not run."
         });
       }
     }
@@ -215,7 +173,7 @@ public class TestRunner
     return new
     {
       filterApplied = _filterAutomatedOnly ? "automated_only" : "all",
-      totalRegistered = _registeredScenarios.Count,
+      totalRegistered = _registeredCases.Count,
       totalAttemptedToRun = reportEntries.Count(t => t.Status != TestStatus.Skipped), // Attempted means not skipped
       totalPassed = reportEntries.Count(t => t.Status == TestStatus.Passed),
       totalFailed = reportEntries.Count(t => t.Status == TestStatus.Failed),
@@ -223,7 +181,7 @@ public class TestRunner
       totalNotRun = reportEntries.Count(t => t.Status == TestStatus.NotRun), // Explicitly NotRun
       automated = new
       {
-        registered = _registeredScenarios.Count(s => s.Type == TestType.Automated),
+        registered = _registeredCases.Count(s => s.Type == TestType.Automated),
         attempted = reportEntries.Count(t => t.Type == TestType.Automated && t.Status != TestStatus.Skipped),
         passed = reportEntries.Count(t => t.Type == TestType.Automated && t.Status == TestStatus.Passed),
         failed = reportEntries.Count(t => t.Type == TestType.Automated && t.Status == TestStatus.Failed),
@@ -232,7 +190,7 @@ public class TestRunner
       },
       manual = new
       {
-        registered = _registeredScenarios.Count(s => s.Type == TestType.Manual),
+        registered = _registeredCases.Count(s => s.Type == TestType.Manual),
         attempted = reportEntries.Count(t => t.Type == TestType.Manual && t.Status != TestStatus.Skipped),
         passed = reportEntries.Count(t => t.Type == TestType.Manual && t.Status == TestStatus.Passed),
         failed = reportEntries.Count(t => t.Type == TestType.Manual && t.Status == TestStatus.Failed),

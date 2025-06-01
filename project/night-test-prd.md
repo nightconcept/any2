@@ -12,37 +12,37 @@
 
 ### 2.1. NightTest Foundation
 
-- **Description:** `NightTest` is a C# application. Its `Program.cs` acts as an orchestrator that iterates through a defined list of test scenarios. Each test scenario is a self-contained `Night.IGame` instance. `Program.cs` launches each selected scenario using `Night.Framework.Run()`. It also parses command-line arguments to control test execution (e.g., filtering for automated tests).
+- **Description:** `NightTest` is a C# application. Its `Program.cs` acts as an orchestrator that iterates through a defined list of test cases. Each test case is a self-contained `Night.IGame` instance. `Program.cs` launches each selected test case using `Night.Framework.Run()`. It also parses command-line arguments to control test execution (e.g., filtering for automated tests).
 
 - **Status:** Implemented (Core Orchestration).
 
-### 2.2. Test Scenario Management
+### 2.2. Test Case Management
 
-- **Description:** Test scenarios are organized into "Test Modules". Each module is a class implementing the `NightTest.ITestModule` interface, which defines a method to provide a collection of individual test scenarios.
-    - Each individual test scenario is then implemented as a class that fulfills two contracts:
-        1.  `NightTest.ITestScenario`: Provides metadata like test name, type (Automated/Manual), and description. It also includes a method for the orchestrator to provide a `TestRunner` instance.
+- **Description:** Test cases are organized into "Test Modules". Each module is a class implementing the `NightTest.ITestModule` interface, which defines a method to provide a collection of individual test cases.
+    - Each individual test case is then implemented as a class that fulfills two contracts:
+        1.  `NightTest.ITestCase`: Provides metadata like test name, type (Automated/Manual), and description. It also includes a method for the orchestrator to provide a `TestRunner` instance.
         2.  `Night.IGame`: Implements the necessary methods (`Load`, `Update`, `Draw`, input handlers, etc.) to run as a standalone game via `Night.Framework.Run()`.
 
-  - Each test scenario is responsible for:
+  - Each test case is responsible for:
     - Managing its own lifecycle (initialization, updates, drawing).
     - Determining its pass/fail status based on its specific test logic.
     - Measuring its own execution duration.
     - Reporting its result (name, type, status, duration, details) to the central `TestRunner` instance upon completion (typically before it signals `Night.Window.Close()`).
     - For `Manual` tests, current implementations (e.g., `ConcreteDummyManualTest`) use simple keyboard inputs (e.g., Space to pass, Escape to fail) within their own `IGame` loop. A more generalized or UI-driven approach for manual test interaction is a future consideration (see Section 6).
 
-  - `Program.cs` discovers/instantiates `ITestModule` implementations (e.g., from a predefined list within `Program.cs` itself, or by scanning assemblies in the `Modules/` directory in the future). It then calls a method on each module to get all its `ITestScenario` objects.
-  - `Program.cs` supports a command-line argument (e.g., `--run-automated`) to filter the execution to only "automated" test scenarios. If the argument is not provided, all defined tests will be attempted.
+  - `Program.cs` discovers/instantiates `ITestModule` implementations (e.g., from a predefined list within `Program.cs` itself, or by scanning assemblies in the `Modules/` directory in the future). It then calls a method on each module to get all its `ITestCase` objects.
+  - `Program.cs` supports a command-line argument (e.g., `--run-automated`) to filter the execution to only "automated" test cases. If the argument is not provided, all defined tests will be attempted.
 
 - **Status:** Implemented (Core Management, Module-based Execution, Basic Manual Test Input).
 
 ### 2.3. Test Reporting Object
 
-- **Description:** A dedicated reporting object (`TestRunner.cs`) collects and aggregates results from all executed test scenarios.
-  - `Program.cs` instantiates `TestRunner` and provides it to each `ITestScenario` before it runs.
-  - Each `ITestScenario` (acting as an `IGame`) calls a method on the `TestRunner` instance (e.g., `RecordResult()`) to submit its outcome (name, type, status, duration, details) when it finishes.
-  - `TestRunner` also maintains a registry of all known scenarios (even if not run due to filtering) to provide a comprehensive summary.
+- **Description:** A dedicated reporting object (`TestRunner.cs`) collects and aggregates results from all executed test cases.
+  - `Program.cs` instantiates `TestRunner` and provides it to each `ITestCase` before it runs.
+  - Each `ITestCase` (acting as an `IGame`) calls a method on the `TestRunner` instance (e.g., `RecordResult()`) to submit its outcome (name, type, status, duration, details) when it finishes.
+  - `TestRunner` also maintains a registry of all known test cases (even if not run due to filtering) to provide a comprehensive summary.
 
-- **Output:** After all selected scenarios have been processed, `Program.cs` instructs the `TestRunner` to generate:
+- **Output:** After all selected test cases have been processed, `Program.cs` instructs the `TestRunner` to generate:
 
     1. **Primary Output: `test_report.json`**: A JSON file detailing the status of all tracked tests (including executed and skipped ones).
         - Example `test_report.json` structure (updated `status` values and `skipped` counts):
@@ -133,7 +133,7 @@
 
 ### 2.4. Continuous Integration of Tests
 
-- **Description:** As new features are added to `Night` or `Night.Engine`, corresponding test scenarios (marked as "automated" or "manual") and reporting calls will be added to `NightTest`. The generated `test_report.json` will be used by CI scripts to validate that all expected automated tests pass.
+- **Description:** As new features are added to `Night` or `Night.Engine`, corresponding test cases (marked as "automated" or "manual") and reporting calls will be added to `NightTest`. The generated `test_report.json` will be used by CI scripts to validate that all expected automated tests pass.
 
 - **Status:** Ongoing.
 
@@ -155,7 +155,7 @@
 
   - **Options:**
 
-    - `--run-automated`: (Optional) If present, only test scenarios marked as "automated" will be executed.
+    - `--run-automated`: (Optional) If present, only test cases marked as "automated" will be executed.
 
     - `--report-path <filepath>`: (Optional) Specify a custom path for the `test_report.json` file.
 
@@ -165,23 +165,23 @@
 
   - `NightTest.csproj`
 
-  - `Program.cs`: Orchestrates test execution. Initializes `TestRunner`. Instantiates `ITestModule` implementations, retrieves all `ITestScenario` objects from them, and then iterates through these scenarios, casting them to `Night.IGame` and running each via `Night.Framework.Run()`. Parses command-line arguments. Triggers final report generation.
+  - `Program.cs`: Orchestrates test execution. Initializes `TestRunner`. Instantiates `ITestModule` implementations, retrieves all `ITestCase` objects from them, and then iterates through these test cases, casting them to `Night.IGame` and running each via `Night.Framework.Run()`. Parses command-line arguments. Triggers final report generation.
 
-  - `TestRunner.cs`: Collects test results reported by individual scenarios. Generates JSON and console reports upon request from `Program.cs`.
+  - `TestRunner.cs`: Collects test results reported by individual test cases. Generates JSON and console reports upon request from `Program.cs`.
 
-  - `ITestModule.cs`: Interface defining a contract for test modules. Each module is responsible for providing a list of `ITestScenario`s.
+  - `ITestModule.cs`: Interface defining a contract for test modules. Each module is responsible for providing a list of `ITestCase`s.
         ```csharp
         // Located in NightTest/ITestModule.cs
         public interface ITestModule
         {
-            System.Collections.Generic.IEnumerable<ITestScenario> GetTestScenarios();
+            System.Collections.Generic.IEnumerable<ITestCase> GetTestCases();
         }
         ```
 
-  - `ITestScenario.cs`: Interface defining metadata for a test scenario (Name, Type, Description) and a method `SetTestRunner(TestRunner runner)`. Classes implementing `ITestScenario` are also required to implement `Night.IGame`.
+  - `ITestCase.cs`: Interface defining metadata for a test case (Name, Type, Description) and a method `SetTestRunner(TestRunner runner)`. Classes implementing `ITestCase` are also required to implement `Night.IGame`.
         ```csharp
         public enum TestType { Automated, Manual }
-        public interface ITestScenario
+        public interface ITestCase
         {
             string Name { get; }
             TestType Type { get; }
@@ -190,7 +190,7 @@
         }
         ```
 
-  - Directories for different test scenarios/modules (e.g., `/tests/NightTest/Modules/Graphics/`, `/tests/NightTest/Modules/Input/`), each containing module classes (implementing `ITestModule`) which in turn define and provide their respective `ITestScenario` classes (which implement `ITestScenario` and `Night.IGame`).
+  - Directories for different test cases/modules (e.g., `/tests/NightTest/Modules/Graphics/`, `/tests/NightTest/Modules/Input/`), each containing module classes (implementing `ITestModule`) which in turn define and provide their respective `ITestCase` classes (which implement `ITestCase` and `Night.IGame`).
 
 - **Output:**
 
@@ -204,12 +204,12 @@
 graph TD
     A(NightTest Orchestrator - Program.cs) --> B(NightTest.csproj);
     A --> D(TestRunner.cs); // Instantiated by Program.cs, collects results
-    A --> G(ITestScenario.cs); // Interface definition
+    A --> G(ITestCase.cs); // Interface definition
     A --> EM(Modules/);
 
-    subgraph Each Scenario is an IGame
-        EM --> E1(ConcreteTest1.cs); // Implements ITestScenario & Night.IGame
-        EM --> E2(ConcreteTest2.cs); // Implements ITestScenario & Night.IGame
+    subgraph Each Test Case is an IGame
+        EM --> E1(ConcreteTest1.cs); // Implements ITestCase & Night.IGame
+        EM --> E2(ConcreteTest2.cs); // Implements ITestCase & Night.IGame
     end
 
     E1 -- Night.Framework.Run() --> E1_GameLoop[Own Game Loop for ConcreteTest1];
@@ -221,7 +221,7 @@ graph TD
     A -- Iterates & Runs --> E1;
     A -- Iterates & Runs --> E2;
 
-    A --> F(assets/); // For any specific assets needed for testing by scenarios
+    A --> F(assets/); // For any specific assets needed for testing by test cases
     A --> H(output/); // Default output directory for reports
     H --> I(test_report.json); // Generated by TestRunner at end
 ```
