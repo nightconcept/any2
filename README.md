@@ -105,4 +105,4 @@ Contributions... eventually! When I feel like the code-base is in a good place, 
 ## License
 
 This project is licensed under the [zlib License](LICENSE).
-See also [NOTICE.md](docs/NOTICE.md) for details on third-party software.
+See also [NOTICE.md](project/NOTICE.md) for details on third-party software.

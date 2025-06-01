@@ -24,14 +24,14 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 
 ### Callbacks - General
 
-- [ ] `love.draw`: Callback function used to draw on the screen every frame.
-- [ ] `love.load`: This function is called exactly once at the beginning of the game.
+- [x] `love.draw`: Callback function used to draw on the screen every frame.
+- [x] `love.load`: This function is called exactly once at the beginning of the game.
 - [ ] `love.run`: The main callback function, containing the main loop. A sensible default is used when left out.
-- [ ] `love.update`: Callback function used to update the state of the game every frame.
+- [x] `love.update`: Callback function used to update the state of the game every frame.
 
 ### Callbacks - Keyboard
 
-- [ ] `love.keypressed`: Callback function triggered when a key is pressed.
+- [x] `love.keypressed`: Callback function triggered when a key is pressed.
 - [ ] `love.keyreleased`: Callback function triggered when a keyboard key is released.
 
 ### Callbacks - Mouse
@@ -52,7 +52,7 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 
 ### General
 
-- [ ] Config Files: Game configuration settings.
+- [x] Config Files: Game configuration settings.
 
 ## Version 0.1.X
 
@@ -86,6 +86,7 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 ### Project
 
 - [ ] Aseprite support
+- [ ] NuGet Package
 
 ### Modules
 
@@ -152,7 +153,6 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 ### Callbacks - Window
 
 - [ ] `love.directorydropped`: Callback function triggered when a directory is dragged and dropped onto the window.
-
 - [ ] `love.filedropped`: Callback function triggered when a file is dragged and dropped onto the window.
 
 ### Callbacks - Keyboard
