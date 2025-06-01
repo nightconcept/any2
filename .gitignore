@@ -67,3 +67,8 @@ docs/_site/
 docs/api/
 
 project/digest.txt
+
+lib/SDL3-Prebuilt/linux/*
+lib/SDL3-Prebuilt/macos/*
+lib/SDL3-Prebuilt/windows/*
+tools/crunch/windows/*
