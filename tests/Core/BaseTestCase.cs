@@ -17,14 +17,52 @@ namespace NightTest.Core
   /// </summary>
   public abstract class BaseTestCase : ITestCase, IGame
   {
-    protected Stopwatch TestStopwatch { get; } = new Stopwatch();
+    /// <summary>
+    /// Gets the stopwatch used to measure the duration of the test case.
+    /// </summary>
+    public Stopwatch TestStopwatch { get; } = new Stopwatch();
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the test case has finished its execution.
+    /// </summary>
     protected bool IsDone { get; set; } = false;
+
+    /// <summary>
+    /// Gets the current status of the test case.
+    /// Its value can be asserted by xUnit test methods.
+    /// </summary>
     public TestStatus CurrentStatus { get; protected set; } = TestStatus.NotRun; // Made public for xUnit assertions
+
+    /// <summary>
+    /// Gets details about the test execution, such as error messages or success information.
+    /// Its value can be asserted by xUnit test methods.
+    /// </summary>
     public string Details { get; protected set; } = "Test has not started."; // Made public for xUnit assertions
 
-    // For Manual Test Interaction
-    protected enum ManualInputUIMode { None, AwaitingConfirmation }
+    /// <summary>
+    /// Defines the UI mode for manual test input confirmation.
+    /// </summary>
+    protected enum ManualInputUIMode
+    {
+      /// <summary>
+      /// No manual input UI is active.
+      /// </summary>
+      None,
+
+      /// <summary>
+      /// The test is awaiting user confirmation via the UI (Pass/Fail buttons).
+      /// </summary>
+      AwaitingConfirmation
+    }
+
+    /// <summary>
+    /// Gets or sets the current UI mode for manual input.
+    /// </summary>
     protected ManualInputUIMode CurrentManualInputUIMode = ManualInputUIMode.None;
+
+    /// <summary>
+    /// Gets the console prompt message displayed during manual confirmation.
+    /// </summary>
     protected string ManualConfirmationConsolePrompt { get; private set; } = string.Empty;
 
     // These are now abstract and must be implemented by derived test cases.
@@ -56,7 +94,6 @@ namespace NightTest.Core
     /// </summary>
     public virtual void Load()
     {
-      Console.WriteLine($"[{Type}] {Name}: Load called.");
       IsDone = false;
       CurrentStatus = TestStatus.NotRun;
       Details = "Test is running...";
@@ -171,13 +208,9 @@ namespace NightTest.Core
         Details = ManualConfirmationConsolePrompt + " - Test quit prematurely by user before confirmation.";
         Console.WriteLine($"MANUAL TEST '{Name}': Test quit prematurely. Marked as FAILED.");
       }
-      CurrentManualInputUIMode = ManualInputUIMode.None; // Reset state
+      CurrentManualInputUIMode = ManualInputUIMode.None;
 
       TestStopwatch.Stop();
-      // Runner.RecordResult is removed.
-      // The CurrentStatus and Details are already set.
-      // The xUnit test method will assert these values after Night.Framework.Run() completes.
-      Console.WriteLine($"Test '{Name}' completed with status: {CurrentStatus}, Details: {Details}, Duration: {TestStopwatch.ElapsedMilliseconds}ms");
 
       if (Night.Window.IsOpen())
       {

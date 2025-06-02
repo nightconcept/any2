@@ -119,6 +119,11 @@ namespace Night
         }
 
         Window.SetTitle(windowConfig.Title ?? "Night Game");
+        if (!Window.IsOpen() && modeSet) // If modeSet was true but window is not open, log SDL error
+        {
+          Console.WriteLine($"Night.Framework.Run: Window is NOT open after successful-looking SetMode call. SDL Error: {SDL.GetError()}");
+        }
+
 
         if (windowConfig.Fullscreen)
         {
@@ -165,11 +170,14 @@ namespace Night
           }
         }
 
-        // End of initial window setup
         try
         {
           // game.Load() can now use Graphics.NewImage(), and can also call Window.SetMode again to override.
           game.Load();
+          if (!Window.IsOpen())
+          {
+            Console.WriteLine($"Night.Framework.Run: Window is NOT open after game.Load() completed. SDL Error: {SDL.GetError()}");
+          }
         }
         catch (Exception e)
         {
@@ -185,7 +193,7 @@ namespace Night
         // If game.Load() called Window.Close() or failed to maintain a window, we should not continue.
         if (!Window.IsOpen())
         {
-          Console.WriteLine("Night.Framework.Run: Window is not open after game.Load(). Exiting.");
+          Console.WriteLine($"Night.Framework.Run: CRITICAL CHECK - Window is not open after game.Load() for {game.GetType().FullName}. Exiting game loop early. SDL Error if relevant: {SDL.GetError()}");
 
           // Ensure cleanup if window was closed by game.Load()
           CleanUpSDLAndWindow();

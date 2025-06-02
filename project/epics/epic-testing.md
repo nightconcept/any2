@@ -39,28 +39,41 @@
 - **Task 0.3: Adapt `ITestCase` and `BaseTestCase` for xUnit**
   - **Description:** Modify `ITestCase` and `BaseTestCase` to align with xUnit's execution model. Tests will be xUnit test methods that instantiate and run `IGame` instances.
   - **Implementation:**
-    - [ ] Review `ITestCase`: Determine if the interface is still fully needed or if its properties (Name, Type, Description) can be primarily managed by xUnit attributes (`[Fact]`, `[Trait]`) on test methods.
+    - [x] Review `ITestCase`: Determine if the interface is still fully needed or if its properties (Name, Type, Description) can be primarily managed by xUnit attributes (`[Fact]`, `[Trait]`) on test methods. (Decision: `ITestCase` as is remains useful for defining core metadata contract for test classes.)
     - [x] Modify `BaseTestCase`:
       - [x] Remove `SetTestRunner(TestRunner runner)` method and `TestRunner` dependency.
       - [x] `RecordPass`/`RecordFail` logic is removed from `QuitSelf`. `BaseTestCase` now sets `CurrentStatus` and `Details` (which are public get, protected set) that the xUnit test method wrapper will assert.
       - [x] `Name`, `Type`, `Description` properties in `BaseTestCase` are now `abstract public get`.
-      - [ ] For failures, `BaseTestCase` (or the `IGame` test itself) could throw specific exceptions that xUnit test methods can catch and assert on, or simply let unhandled exceptions propagate to fail the xUnit test. (This part is still to be fully addressed by ensuring test cases correctly throw or set status).
-      - [ ] The `TestStopwatch` for duration can still be useful; its result can be logged using `ITestOutputHelper` in the xUnit test method. (Logging part to be implemented with xUnit wrappers).
-  - **Acceptance Criteria:** `BaseTestCase` no longer relies on the custom `TestRunner`. `IGame` test outcomes (pass/fail/error) can be effectively translated into xUnit test results. Derived classes are forced to implement `Name`, `Type`, `Description`.
-  - **Status:** In Progress
+      - [x] For failures, `BaseTestCase` (or the `IGame` test itself) will either let unhandled exceptions propagate (failing the xUnit test) or set `CurrentStatus` to `Failed` for logical failures, which will be asserted by the xUnit wrapper.
+      - [x] The `TestStopwatch` for duration is available in `BaseTestCase`; its result will be logged using `ITestOutputHelper` in xUnit wrapper methods (as part of Task 0.4).
+  - **Acceptance Criteria:** `BaseTestCase` no longer relies on the custom `TestRunner`. `IGame` test outcomes (pass/fail/error) can be effectively translated into xUnit test results. Derived classes are forced to implement `Name`, `Type`, `Description`. `ITestCase` interface is confirmed suitable.
+  - **Status:** Done
 
 - **Task 0.4: Create Initial xUnit Test Wrappers**
   - **Description:** Create example xUnit test methods that instantiate and run existing or new `IGame`-based test cases.
   - **Implementation:**
-    - [ ] Create a new C# test class (e.g., `GraphicsTests.cs`) in the `tests/Groups/Graphics/` directory.
-    - [ ] Inside this class, define xUnit test methods (e.g., `[Fact] public void Run_GraphicsClearColorTest()`).
-    - [ ] Each xUnit test method will:
+    - [x] Create a new C# test class (e.g., `GraphicsTests.cs`) in the `tests/Groups/Graphics/` directory.
+    - [x] Inside this class, define xUnit test methods (e.g., `[Fact] public void Run_GraphicsClearColorTest()`).
+    - [x] Each xUnit test method will:
       - Instantiate the corresponding `IGame` test case (e.g., `var myTest = new GraphicsClearColorTest();`).
       - (If needed) Inject `ITestOutputHelper` for logging.
       - Call `Night.Framework.Run(myTest);`.
       - After `Run` completes, use xUnit assertions (`Assert.True()`, `Assert.Equal()`, etc.) based on the outcome of the `IGame` test (e.g., checking a status property set by `BaseTestCase` or the `IGame` itself).
   - **Acceptance Criteria:** At least one existing `IGame` test can be successfully executed via an xUnit test method. Test results are reported by xUnit.
-  - **Status:** To Do
+  - **Status:** Done
+
+- **Task 0.5: Create xUnit Test Wrappers for Timer Tests**
+  - **Description:** Create xUnit test methods for the `IGame`-based test cases defined in `tests/Groups/TimerGroup.cs`.
+  - **Implementation:**
+    - [x] Create a new C# test class (e.g., `TimerTests.cs`) in the `tests/Groups/` directory.
+    - [x] Inside this class, define xUnit test methods for each test case in `TimerGroup.cs` (e.g., `Run_GetTimeTest`, `Run_GetFPSTest`, etc.).
+    - [x] Each xUnit test method will:
+      - Instantiate the corresponding `IGame` test case (e.g., `var getTimeTest = new GetTimeTest();`).
+      - Inject `ITestOutputHelper` for logging.
+      - Call `Night.Framework.Run(getTimeTest);`.
+      - After `Run` completes, use xUnit assertions to check `CurrentStatus` and log details.
+  - **Acceptance Criteria:** All `IGame` tests from `TimerGroup.cs` can be successfully executed via xUnit test methods. Test results are reported by xUnit.
+  - **Status:** Done
 
 ### Phase 1: NightTest Architectural Enhancements
 

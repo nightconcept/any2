@@ -279,7 +279,7 @@ namespace Night
       }
       else if (OperatingSystem.IsLinux())
       {
-        basePath = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+        basePath = Environment.GetEnvironmentVariable("XDG_DATA_HOME") ?? string.Empty;
         if (string.IsNullOrEmpty(basePath))
         {
           basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share");
@@ -290,7 +290,9 @@ namespace Night
         // Fallback for other OSes or if above checks fail, though less specific
         // This could also throw an UnsupportedPlatformException
         basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        if (string.IsNullOrEmpty(basePath)) // If even ApplicationData is not available (highly unlikely for supported .NET platforms)
+
+        // If even ApplicationData is not available (highly unlikely for supported .NET platforms)
+        if (string.IsNullOrEmpty(basePath))
         {
           basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".NightFallback");
         }

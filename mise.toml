@@ -26,8 +26,13 @@ run = ["dotnet run --project src/SampleGame/SampleGame.csproj"]
 
 [tasks.test]
 alias = "test"
-description = "Run the TestGame for GUI testing"
-run = ["dotnet run --project tests/NightTest.csproj"]
+description = "Run automated tests"
+run = ["dotnet test --filter TestType=Automated"]
+
+[tasks.manual-test]
+alias = "man-test"
+description = "Run manual tests"
+run = ["dotnet test --filter TestType=Manual"]
 
 [tasks.clean]
 alias = "clean"

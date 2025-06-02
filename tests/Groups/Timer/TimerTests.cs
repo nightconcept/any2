@@ -6,38 +6,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq; // Added for Average()
+using System.Linq;
 
 using Night;
 
-using NightTest.Core; // Added for ITestGroup, ITestCase, BaseTestCase, TestType, TestStatus
+using NightTest.Core;
 
 namespace NightTest.Groups
 {
   /// <summary>
-  /// A group that provides test cases for the Night.Timer class.
-  /// </summary>
-  public class TimerGroup : ITestGroup // Explicitly NightTest.Core
-  {
-    /// <inheritdoc/>
-    public IEnumerable<ITestCase> GetTestCases() // Explicitly NightTest.Core
-    {
-      return new List<ITestCase> // Explicitly NightTest.Core
-            {
-                new GetTimeTest(),
-                new GetFPSTest(),
-                new GetDeltaTest(),
-                new GetAverageDeltaTest(),
-                new SleepTest(),
-                new StepTest(),
-            };
-    }
-  }
-
-  /// <summary>
   /// Tests the Timer.GetTime() method.
   /// </summary>
-  public class GetTimeTest : BaseTestCase // Explicitly NightTest.Core
+  public class GetTimeTest : BaseTestCase
   {
     private double _startTime = 0;
     private double _endTime = 0;
@@ -45,16 +25,15 @@ namespace NightTest.Groups
     /// <inheritdoc/>
     public override string Name => "Timer.GetTime";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated; // Explicitly NightTest.Core
+    public override TestType Type => TestType.Automated;
     /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.GetTime() method by measuring time passage.";
 
     /// <inheritdoc/>
     public override void Load()
     {
-      base.Load(); // Calls the base class Load to initialize stopwatch etc.
+      base.Load();
       _startTime = Night.Timer.GetTime();
-      Console.WriteLine($"[{Type}] {Name}: Initial time from Timer.GetTime(): {_startTime:F6} seconds.");
     }
 
     /// <inheritdoc/>
@@ -62,12 +41,11 @@ namespace NightTest.Groups
     {
       if (IsDone) return;
 
-      if (TestStopwatch.ElapsedMilliseconds > 500) // Run for 0.5 second
+      if (TestStopwatch.ElapsedMilliseconds > 500)
       {
         _endTime = Night.Timer.GetTime();
-        Console.WriteLine($"[{Type}] {Name}: End time from Timer.GetTime(): {_endTime:F6} seconds.");
         double elapsed = _endTime - _startTime;
-        CurrentStatus = TestStatus.Passed; // Explicitly NightTest.Core
+        CurrentStatus = TestStatus.Passed;
         Details = $"Timer.GetTime() test completed. Start: {_startTime:F6}s, End: {_endTime:F6}s. Elapsed: {elapsed:F6}s (Expected ~0.5s).";
         QuitSelf();
       }
@@ -77,14 +55,14 @@ namespace NightTest.Groups
   /// <summary>
   /// Tests the Timer.GetFPS() method.
   /// </summary>
-  public class GetFPSTest : BaseTestCase // Explicitly NightTest.Core
+  public class GetFPSTest : BaseTestCase
   {
     private int _frameCount = 0;
 
     /// <inheritdoc/>
     public override string Name => "Timer.GetFPS";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated; // Explicitly NightTest.Core
+    public override TestType Type => TestType.Automated;
     /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.GetFPS() method by observing its value over a short period.";
 
@@ -101,12 +79,11 @@ namespace NightTest.Groups
       if (IsDone) return;
 
       _frameCount++;
-      // int currentFps = Night.Timer.GetFPS(); // Value observed by framework
 
       if (_frameCount > 10 && TestStopwatch.ElapsedMilliseconds > 200) // Run for a bit, after a few frames
       {
         int finalFps = Night.Timer.GetFPS(); // Get one last reading from the framework-updated value
-        CurrentStatus = TestStatus.Passed; // Explicitly NightTest.Core
+        CurrentStatus = TestStatus.Passed;
         Details = $"Timer.GetFPS() test observed. Last reported FPS: {finalFps}. Test ran for >200ms and >10 frames.";
         QuitSelf();
       }
@@ -116,7 +93,7 @@ namespace NightTest.Groups
   /// <summary>
   /// Tests the Timer.GetDelta() method.
   /// </summary>
-  public class GetDeltaTest : BaseTestCase // Explicitly NightTest.Core
+  public class GetDeltaTest : BaseTestCase
   {
     private List<float> _deltas = new List<float>();
     private int _frameCount = 0;
@@ -124,7 +101,7 @@ namespace NightTest.Groups
     /// <inheritdoc/>
     public override string Name => "Timer.GetDelta";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated; // Explicitly NightTest.Core
+    public override TestType Type => TestType.Automated;
     /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.GetDelta() method by collecting delta values.";
 
@@ -147,7 +124,7 @@ namespace NightTest.Groups
       if (_frameCount > 10 && TestStopwatch.ElapsedMilliseconds > 200)
       {
         float averageDelta = _deltas.Count > 0 ? _deltas.Average() : 0f;
-        CurrentStatus = TestStatus.Passed; // Explicitly NightTest.Core
+        CurrentStatus = TestStatus.Passed;
         Details = $"Timer.GetDelta() test collected {_deltas.Count} values. Average delta from Timer.GetDelta(): {averageDelta:F6}. Test ran for >200ms and >10 frames.";
         QuitSelf();
       }
@@ -157,14 +134,14 @@ namespace NightTest.Groups
   /// <summary>
   /// Tests the Timer.GetAverageDelta() method.
   /// </summary>
-  public class GetAverageDeltaTest : BaseTestCase // Explicitly NightTest.Core
+  public class GetAverageDeltaTest : BaseTestCase
   {
     private int _frameCount = 0;
 
     /// <inheritdoc/>
     public override string Name => "Timer.GetAverageDelta";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated; // Explicitly NightTest.Core
+    public override TestType Type => TestType.Automated;
     /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.GetAverageDelta() method.";
 
@@ -185,7 +162,7 @@ namespace NightTest.Groups
       if (_frameCount > 10 && TestStopwatch.ElapsedMilliseconds > 200)
       {
         double finalAvgDelta = Night.Timer.GetAverageDelta(); // Get one last reading from framework-updated value
-        CurrentStatus = TestStatus.Passed; // Explicitly NightTest.Core
+        CurrentStatus = TestStatus.Passed;
         Details = $"Timer.GetAverageDelta() observed. Last reported value: {finalAvgDelta:F6}. Test ran for >200ms and >10 frames.";
         QuitSelf();
       }
@@ -195,7 +172,7 @@ namespace NightTest.Groups
   /// <summary>
   /// Tests the Timer.Sleep() method.
   /// </summary>
-  public class SleepTest : BaseTestCase // Explicitly NightTest.Core
+  public class SleepTest : BaseTestCase
   {
     private const double SleepDurationSeconds = 0.25; // Sleep for 250ms
                                                       // Using TestStopwatch from base class for overall test duration
@@ -208,16 +185,16 @@ namespace NightTest.Groups
     public override string Description => $"Tests the Night.Timer.Sleep() method by sleeping for {SleepDurationSeconds}s.";
 
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated; // Explicitly NightTest.Core // Explicitly Automated
+    public override TestType Type => TestType.Automated; // Explicitly Automated
 
     /// <inheritdoc/>
     public override void Load()
     {
       // We don't call base.Load() here because this test essentially finishes in Load
       // and needs to manage its own primary stopwatch for the result reporting.
-      Console.WriteLine($"[{Type}] {Name}: Load called. Will attempt to sleep for {SleepDurationSeconds}s.");
+
       IsDone = false;
-      CurrentStatus = TestStatus.NotRun; // Explicitly NightTest.Core
+      CurrentStatus = TestStatus.NotRun;
       Details = "Test is running...";
       // TestStopwatch (from base) is used by QuitSelf for the RecordResult duration.
       // So, we start it here to measure the time taken for the Load phase itself.
@@ -230,16 +207,15 @@ namespace NightTest.Groups
       _internalStopwatch.Stop();
 
       double elapsedMs = _internalStopwatch.ElapsedMilliseconds;
-      Console.WriteLine($"[{Type}] {Name}: Timer.Sleep({SleepDurationSeconds}) took {elapsedMs}ms.");
 
       if (elapsedMs >= SleepDurationSeconds * 1000 * 0.9 && elapsedMs <= SleepDurationSeconds * 1000 * 1.5)
       {
-        CurrentStatus = TestStatus.Passed; // Explicitly NightTest.Core
+        CurrentStatus = TestStatus.Passed;
         Details = $"Timer.Sleep({SleepDurationSeconds}) executed. Measured duration: {elapsedMs}ms. Expected ~{SleepDurationSeconds * 1000}ms.";
       }
       else
       {
-        CurrentStatus = TestStatus.Failed; // Explicitly NightTest.Core
+        CurrentStatus = TestStatus.Failed;
         Details = $"Timer.Sleep({SleepDurationSeconds}) executed. Measured duration: {elapsedMs}ms. Expected ~{SleepDurationSeconds * 1000}ms. Deviation too large.";
       }
       // Since this test completes in Load, call QuitSelf immediately.
@@ -254,7 +230,7 @@ namespace NightTest.Groups
       if (!IsDone) // Should be done from Load
       {
         Details = "Test did not complete in Load as expected.";
-        CurrentStatus = TestStatus.Failed; // Explicitly NightTest.Core
+        CurrentStatus = TestStatus.Failed;
         QuitSelf();
       }
     }
@@ -263,7 +239,7 @@ namespace NightTest.Groups
   /// <summary>
   /// Tests the Timer.Step() method.
   /// </summary>
-  public class StepTest : BaseTestCase // Explicitly NightTest.Core
+  public class StepTest : BaseTestCase
   {
     private int _stepCount = 0;
     private List<double> _stepDeltas = new List<double>();
@@ -271,7 +247,7 @@ namespace NightTest.Groups
     /// <inheritdoc/>
     public override string Name => "Timer.Step";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated; // Explicitly NightTest.Core
+    public override TestType Type => TestType.Automated;
     /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.Step() method by calling it multiple times and observing delta values.";
 
@@ -305,7 +281,7 @@ namespace NightTest.Groups
       if (_stepCount > 10 && TestStopwatch.ElapsedMilliseconds > 200)
       {
         double averageDirectStepDelta = _stepDeltas.Count > 0 ? _stepDeltas.Average() : 0.0;
-        CurrentStatus = TestStatus.Passed; // Explicitly NightTest.Core
+        CurrentStatus = TestStatus.Passed;
         Details = $"Timer.Step() called {_stepCount} times directly. Average delta from these calls: {averageDirectStepDelta:F6}. Test ran for >200ms.";
         QuitSelf();
       }
