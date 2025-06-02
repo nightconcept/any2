@@ -15,18 +15,31 @@ namespace NightTest.Core
   /// Abstract base class for test cases to reduce boilerplate.
   /// Implements ITestCase and Night.IGame.
   /// </summary>
-  public abstract class BaseTestCase : ITestCase, Night.IGame // Renamed from BaseTestScenario, implements ITestCase
+  public abstract class BaseTestCase : ITestCase, IGame
   {
-    protected TestRunner? Runner { get; private set; }
     protected Stopwatch TestStopwatch { get; } = new Stopwatch();
     protected bool IsDone { get; set; } = false;
-    protected TestStatus CurrentStatus { get; set; } = TestStatus.NotRun;
-    protected string Details { get; set; } = "Test has not started.";
+    public TestStatus CurrentStatus { get; protected set; } = TestStatus.NotRun; // Made public for xUnit assertions
+    public string Details { get; protected set; } = "Test has not started."; // Made public for xUnit assertions
 
     // For Manual Test Interaction
     protected enum ManualInputUIMode { None, AwaitingConfirmation }
     protected ManualInputUIMode CurrentManualInputUIMode = ManualInputUIMode.None;
     protected string ManualConfirmationConsolePrompt { get; private set; } = string.Empty;
+
+    // These are now abstract and must be implemented by derived test cases.
+    /// <inheritdoc/>
+    public abstract string Name { get; }
+    /// <inheritdoc/>
+    public abstract TestType Type { get; }
+    /// <inheritdoc/>
+    public abstract string Description { get; }
+
+    // Removed: SetTestRunner method and Runner field, as TestRunner is no longer used.
+    // public void SetTestRunner(TestRunner runner) { /* old implementation */ }
+    // protected TestRunner Runner { get; private set; }
+
+
     private Night.Rectangle _passButtonRect;
     private Night.Rectangle _failButtonRect;
     private const int ButtonWidth = 120;
@@ -35,20 +48,6 @@ namespace NightTest.Core
     private static readonly Night.Color PassButtonColor = new Night.Color(0, 180, 0); // Darker Green
     private static readonly Night.Color FailButtonColor = new Night.Color(200, 0, 0); // Darker Red
     private static readonly Night.Color ButtonBorderColor = Night.Color.White;
-
-
-    /// <inheritdoc/>
-    public abstract string Name { get; }
-    /// <inheritdoc/>
-    public abstract TestType Type { get; }
-    /// <inheritdoc/>
-    public abstract string Description { get; }
-
-    /// <inheritdoc/>
-    public void SetTestRunner(TestRunner runner)
-    {
-      Runner = runner;
-    }
 
     /// <summary>
     /// Called when the test case is loaded. Reset state here.
@@ -175,22 +174,10 @@ namespace NightTest.Core
       CurrentManualInputUIMode = ManualInputUIMode.None; // Reset state
 
       TestStopwatch.Stop();
-      if (Runner == null)
-      {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"ERROR in {Name}: TestRunner was not set. Cannot record result.");
-        Console.ResetColor();
-        // Ensure critical error is reflected if status wasn't already Failed
-        if (CurrentStatus != TestStatus.Failed)
-        {
-          CurrentStatus = TestStatus.Failed; // Override if it was e.g. Passed but runner is null
-          Details = "Critical Error: TestRunner not available. Original outcome lost. " + Details;
-        }
-      }
-      else
-      {
-        Runner.RecordResult(Name, Type, CurrentStatus, TestStopwatch.ElapsedMilliseconds, Details);
-      }
+      // Runner.RecordResult is removed.
+      // The CurrentStatus and Details are already set.
+      // The xUnit test method will assert these values after Night.Framework.Run() completes.
+      Console.WriteLine($"Test '{Name}' completed with status: {CurrentStatus}, Details: {Details}, Duration: {TestStopwatch.ElapsedMilliseconds}ms");
 
       if (Night.Window.IsOpen())
       {

@@ -21,32 +21,33 @@
 - **Task 0.1: Integrate xUnit Framework**
   - **Description:** Add xUnit (xunit, xunit.runner.visualstudio) NuGet packages to the `NightTest.csproj`. This will establish xUnit as the primary test runner.
   - **Implementation:**
-    - [ ] Add `xunit` NuGet package.
-    - [ ] Add `xunit.runner.visualstudio` NuGet package to enable test discovery and execution in Visual Studio and by `dotnet test`.
-    - [ ] Add `Microsoft.NET.Test.Sdk` NuGet package.
-  - **Acceptance Criteria:** The `NightTest` project can compile with xUnit dependencies. Tests can be discovered by the xUnit runner.
-  - **Status:** To Do
+    - [x] Add `xunit` NuGet package.
+    - [x] Add `xunit.runner.visualstudio` NuGet package to enable test discovery and execution in Visual Studio and by `dotnet test`.
+    - [x] Add `Microsoft.NET.Test.Sdk` NuGet package.
+  - **Acceptance Criteria:** The `NightTest` project can compile with xUnit dependencies. Tests can be discovered by the xUnit runner. The `NightTest.csproj` OutputType is `Library`.
+  - **Status:** Done
 
 - **Task 0.2: Remove Custom Test Orchestration and Reporting**
   - **Description:** Remove the custom `TestRunner` and `Program.cs` test orchestration logic, as xUnit will now handle test discovery, execution, and reporting.
   - **Implementation:**
-    - [ ] Delete `tests/Core/TestRunner.cs`.
-    - [ ] Delete `tests/Program.cs` or strip it down if it contains other essential non-test-running logic (unlikely for a test project).
-    - [ ] Remove any command-line argument parsing related to the old runner.
+    - [x] Delete `tests/Core/TestRunner.cs`.
+    - [x] Delete `tests/Program.cs` or strip it down if it contains other essential non-test-running logic (unlikely for a test project).
+    - [x] Remove any command-line argument parsing related to the old runner.
   - **Acceptance Criteria:** Custom test execution and reporting code is removed. The project relies on xUnit for these functions.
-  - **Status:** To Do
+  - **Status:** Done
 
 - **Task 0.3: Adapt `ITestCase` and `BaseTestCase` for xUnit**
   - **Description:** Modify `ITestCase` and `BaseTestCase` to align with xUnit's execution model. Tests will be xUnit test methods that instantiate and run `IGame` instances.
   - **Implementation:**
     - [ ] Review `ITestCase`: Determine if the interface is still fully needed or if its properties (Name, Type, Description) can be primarily managed by xUnit attributes (`[Fact]`, `[Trait]`) on test methods.
-    - [ ] Modify `BaseTestCase`:
-      - Remove `SetTestRunner(TestRunner runner)` method and `TestRunner` dependency.
-      - `RecordPass`/`RecordFail` methods will need to be re-thought. Instead of reporting to a `TestRunner`, `BaseTestCase` should facilitate making assertions within the xUnit test method that wraps the `IGame` execution. This might involve the `IGame` test setting internal status flags or properties that the xUnit test method can assert against after `Night.Framework.Run()` completes.
-      - For failures, `BaseTestCase` (or the `IGame` test itself) could throw specific exceptions that xUnit test methods can catch and assert on, or simply let unhandled exceptions propagate to fail the xUnit test.
-      - The `TestStopwatch` for duration can still be useful; its result can be logged using `ITestOutputHelper` in the xUnit test method.
-  - **Acceptance Criteria:** `BaseTestCase` no longer relies on the custom `TestRunner`. `IGame` test outcomes (pass/fail/error) can be effectively translated into xUnit test results.
-  - **Status:** To Do
+    - [x] Modify `BaseTestCase`:
+      - [x] Remove `SetTestRunner(TestRunner runner)` method and `TestRunner` dependency.
+      - [x] `RecordPass`/`RecordFail` logic is removed from `QuitSelf`. `BaseTestCase` now sets `CurrentStatus` and `Details` (which are public get, protected set) that the xUnit test method wrapper will assert.
+      - [x] `Name`, `Type`, `Description` properties in `BaseTestCase` are now `abstract public get`.
+      - [ ] For failures, `BaseTestCase` (or the `IGame` test itself) could throw specific exceptions that xUnit test methods can catch and assert on, or simply let unhandled exceptions propagate to fail the xUnit test. (This part is still to be fully addressed by ensuring test cases correctly throw or set status).
+      - [ ] The `TestStopwatch` for duration can still be useful; its result can be logged using `ITestOutputHelper` in the xUnit test method. (Logging part to be implemented with xUnit wrappers).
+  - **Acceptance Criteria:** `BaseTestCase` no longer relies on the custom `TestRunner`. `IGame` test outcomes (pass/fail/error) can be effectively translated into xUnit test results. Derived classes are forced to implement `Name`, `Type`, `Description`.
+  - **Status:** In Progress
 
 - **Task 0.4: Create Initial xUnit Test Wrappers**
   - **Description:** Create example xUnit test methods that instantiate and run existing or new `IGame`-based test cases.

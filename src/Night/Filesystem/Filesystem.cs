@@ -33,26 +33,6 @@ namespace Night
   {
     private static string gameIdentity = "NightDefault"; // Placeholder, to be managed by SetIdentity/GetIdentity
 
-    private static string GetDefaultCRequirePath()
-    {
-      if (OperatingSystem.IsWindows())
-      {
-        return ".\\?.dll;?.dll"; // Simplified default
-      }
-      else if (OperatingSystem.IsMacOS())
-      {
-        return "./?.dylib;?.dylib"; // Simplified default
-      }
-      else if (OperatingSystem.IsLinux())
-      {
-        return "./?.so;?.so"; // Simplified default
-      }
-
-      return string.Empty; // Fallback
-    }
-
-    private static string cRequirePath = GetDefaultCRequirePath();
-
     /// <summary>
     /// Gets information about the specified file or directory.
     /// </summary>
