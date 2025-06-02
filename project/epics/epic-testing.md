@@ -171,3 +171,15 @@
     - [x] Filtering for "automated" tests will be done using xUnit's mechanisms, e.g., `dotnet test --filter "TestType=Automated"` if `[Trait("TestType", "Automated")]` is used.
   - **Acceptance Criteria:** The CI workflow successfully builds and runs tests in the `NightTest` project using `dotnet test`. The workflow step correctly fails if `dotnet test` indicates test failures.
   - **Status:** Done
+
+### Phase 3: Code Coverage and Reporting
+
+- **Task 3.1: Implement Code Coverage and Coveralls Integration**
+  - **Description:** Add code coverage collection to the `NightTest` project and integrate with Coveralls.io for reporting coverage metrics in the CI pipeline.
+  - **Implementation:**
+    - [ ] Add `coverlet.collector` and `coverlet.msbuild` NuGet packages to `tests/NightTest.csproj`.
+    - [ ] Update the `dotnet test` command in `.github/workflows/ci.yml` to collect coverage information (e.g., using `/p:CollectCoverage=true /p:CoverletOutputFormat=opencover`).
+    - [ ] Add a step in `.github/workflows/ci.yml` to upload coverage reports to Coveralls.io using the `coverallsapp/github-action`.
+    - [ ] Ensure the Coveralls step is configured with the appropriate `github-token`.
+  - **Acceptance Criteria:** Code coverage is collected during CI test runs. Coverage reports are successfully uploaded to and viewable on Coveralls.io. The `NightTest.csproj` and `.github/workflows/ci.yml` files are updated accordingly.
+  - **Status:** To Do

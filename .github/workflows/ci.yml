@@ -33,4 +33,14 @@ jobs:
       run: dotnet build Night.sln --configuration Release --no-restore
 
     - name: Run Tests
-      run: dotnet test --configuration Release --no-build --filter "TestType=Automated"
+      run: >
+        dotnet test Night.sln --configuration Release --no-build --filter "TestType=Automated"
+        /p:CollectCoverage=true
+        /p:CoverletOutputFormat=opencover
+        /p:Exclude="[xunit.*]*%2c[*.Tests]*%2c[NightTest]*"
+
+    - name: Upload coverage to Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: './tests/coverage.opencover.xml' # Adjust if your output path/filename is different
