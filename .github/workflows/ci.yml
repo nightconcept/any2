@@ -39,8 +39,9 @@ jobs:
         /p:CoverletOutputFormat=opencover
         /p:Exclude="[xunit.*]*%2c[*.Tests]*%2c[NightTest]*"
 
-    - name: Upload coverage to Coveralls
-      uses: coverallsapp/github-action@v2
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: './tests/coverage.opencover.xml' # Adjust if your output path/filename is different
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./tests/coverage.opencover.xml
+        fail_ci_if_error: true
