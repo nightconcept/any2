@@ -55,11 +55,12 @@ namespace NightTest.Core
 
     /// <summary>
     /// Performs the specific load logic for the test case.
-    /// Derived classes must override this method to implement their core load behavior.
+    /// Derived classes can override this method to implement their core load behavior.
     /// This method is called by the <see cref="InternalLoad"/> method, which is ultimately
     /// invoked via the <see cref="IGame.Load"/> explicit interface implementation.
+    /// Base implementation is empty.
     /// </summary>
-    protected abstract void Load();
+    protected virtual void Load() { }
 
     /// <summary>
     /// Intermediate virtual method that can be overridden by specialized base classes
@@ -133,11 +134,37 @@ namespace NightTest.Core
     }
 
     /// <summary>
-    /// Called every frame to draw the test case.
-    /// Base implementation handles drawing of manual confirmation UI if active.
+    /// Performs the specific draw logic for the test case.
+    /// Derived classes can override this method to implement their core draw behavior.
+    /// This method is called by the <see cref="InternalDraw"/> method, which is ultimately
+    /// invoked via the <see cref="IGame.Draw"/> explicit interface implementation.
+    /// Base implementation is empty.
     /// </summary>
-    public virtual void Draw()
-    { }
+    protected virtual void Draw() { }
+
+    /// <summary>
+    /// Intermediate virtual method that can be overridden by specialized base classes
+    /// (like <see cref="BaseManualTestCase"/>) to inject logic before or after
+    /// the concrete test's <see cref="Draw()"/> method is called.
+    /// By default, it directly calls the concrete <see cref="Draw()"/>.
+    /// </summary>
+    protected virtual void InternalDraw()
+    {
+      // Calls the abstract Draw implemented by concrete test classes
+      this.Draw();
+    }
+
+    // Explicit interface implementation for IGame.Draw
+    /// <summary>
+    /// Draws the test case. This is the entry point called by the test runner
+    /// or game loop, fulfilling the <see cref="IGame"/> interface.
+    /// It calls <see cref="InternalDraw"/>.
+    /// </summary>
+    void IGame.Draw()
+    {
+      // Call the virtual InternalDraw, allowing intermediate classes to intercept.
+      this.InternalDraw();
+    }
 
     /// <summary>
     /// Called when a key is pressed. Default is empty.

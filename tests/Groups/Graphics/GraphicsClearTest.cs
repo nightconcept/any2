@@ -19,7 +19,6 @@ namespace NightTest.Groups.Graphics
   public class GraphicsClearColorTest : BaseManualTestCase
   {
     private readonly Color _skyBlue = new Color(135, 206, 235);
-    private bool _promptRequested = false;
 
     /// <inheritdoc/>
     public override string Name => "Graphics.Clear";
@@ -36,21 +35,13 @@ namespace NightTest.Groups.Graphics
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (!_promptRequested && TestStopwatch.ElapsedMilliseconds > ManualTestPromptDelayMilliseconds)
-      {
-        RequestManualConfirmation("Is the screen cleared to a SKY BLUE color (like a clear daytime sky)?");
-        _promptRequested = true;
-      }
+      RequestManualConfirmation("Is the screen cleared to a SKY BLUE color (like a clear daytime sky)?");
     }
 
     /// <inheritdoc/>
-    public override void Draw()
+    protected override void Draw()
     {
       Night.Graphics.Clear(_skyBlue);
-
-      base.Draw();
-
-      Night.Graphics.Present();
     }
   }
 }

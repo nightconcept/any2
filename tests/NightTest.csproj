@@ -8,7 +8,7 @@
     <LangVersion>13.0</LangVersion>
     <RootNamespace>NightTest</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/TestGame.xml</DocumentationFile>
+    <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/NightTest.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

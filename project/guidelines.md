@@ -6,14 +6,8 @@ The "Night" engine project will ALWAYS adhere to the **Google C# Style Guide**. 
   - **Indentation:** 2 spaces, no tabs.
   - **Column Limit:** 100 characters.
   - **Whitespace, Braces, Line Wrapping:** Adhere to the detailed rules in the Google C# Style Guide. This includes rules like no line break before an opening brace, and braces used even when optional.
-  - **Tooling:**
-    - `dotnet format` will be used to help enforce formatting rules.
-    - An `.editorconfig` file will be added to the project root, configured to align with the Google C# Style Guide's formatting and style rules (e.g., indentation, column limit, using directives order).
   - Format the `using` directives with specific spacing. Place all System.* directives first, followed by a blank line. Then, group other using directives (like third-party libraries or project-specific namespaces) logically, and insert a blank line between each distinct group. For example, list System usings, then a blank line, then Night usings, then a blank line, then SDL3 usings, rather than listing them all contiguously.
   -`using` directives should NEVER have any comments associated with them or on the same line
-- **Linting:**
-  - **Tooling:** Utilize Roslyn Analyzers provided with the .NET SDK.
-  - The `.editorconfig` file will be configured to enable and set the severity of analyzer rules to align with the principles of the Google C# Style Guide. This includes rules related to naming, organization, and other code quality aspects.
 - **Naming Conventions:**
   - **General Rules Summary:**
     - Names of classes, methods, enumerations, public fields, public properties, namespaces: `PascalCase`.
@@ -23,19 +17,91 @@ The "Night" engine project will ALWAYS adhere to the **Google C# Style Guide**. 
     - For casing, a “word” is anything written without internal spaces, including acronyms (e.g., `MyRpc` not `MyRPC`).
     - Names of interfaces start with `I` (e.g., `IInterface`).
     - Filenames and directory names are `PascalCase` (e.g., `MyFile.cs`).
-  - **Project Specific (API Design):** When naming public API elements for "Night" intended to mirror Love2D functions (e.g., `love.window.setTitle`), use the `PascalCase` version adhering to the above rules (e.g., `Night.Window.SetTitle(...)`).
 - **Code Organization:**
   - **Modifier Order:** `public protected internal private new abstract virtual override sealed static readonly extern unsafe volatile async`.
   - **Namespace `using` Declarations:** Place at the top of the file, before any namespace declarations. Order alphabetically, with `System` imports always first.
   - **Class Member Ordering:** Follow the prescribed order: Nested types, static/const/readonly fields, instance fields/properties, constructors/finalizers, methods. Within each group, elements are ordered by access: Public, Internal, Protected internal, Protected, Private.
 - **Key Principles (Project-Specific additions and emphasis):**
-  - **API Design (Night Engine):** Strive for an API design that is idiomatic to C# while closely mirroring the spirit, structure, and ease of use of the Love2D API for the features being implemented.
+  - **API Design (Night framework and Night Engine):** Strive for an API design that is idiomatic to C# while closely mirroring the spirit, structure, and ease of use of the Love2D API for the features being implemented.
   - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
-  - **Scope Adherence:** Focus strictly on implementing the agreed-upon features (0-4) for this prototype.
-- **Testing (if applicable for prototype):**
-  - **Primary Integration Test:** The `Night.SampleGame` project will serve as the main method for testing the integration and functionality of the `Night.Framework`/`Night.Engine` features. Write the necessary code to test out new functionality in the SampleGame project to allow the user to manually verify. The `Program.cs` file in the SampleGame project is the best place to put this code.
-  - **Unit Tests (Optional):** Consider adding basic unit tests for any complex internal helper functions or critical non-P/Invoke logic within `Night.Framework`.
-  - **Manual Verification:** Manual testing of the sample game against the defined user actions and outcomes for each feature in the PRD will be essential.
+
+## NightTest Framework Testing Guidelines
+
+This section outlines how to write tests for the `Night` framework using the `NightTest` project. The testing approach combines xUnit for test execution and orchestration with custom `IGame` implementations for the actual test logic.
+
+**1. Core Concepts & Directory Structure:**
+
+- **xUnit Test Classes (Test Groups):**
+  - These classes are responsible for running one or more `IGame` test cases.
+  - They reside in subdirectories under [`tests/Groups/`](tests/Groups/) (e.g., [`tests/Groups/Timer/TimerGroup.cs`](tests/Groups/Timer/TimerGroup.cs), [`tests/Groups/Graphics/GraphicsGroup.cs`](tests/Groups/Graphics/GraphicsGroup.cs)).
+  - They **must** inherit from [`NightTest.Core.TestGroup`](tests/Core/TestGroup.cs).
+  - They use xUnit's `[Fact]` attribute to define individual test methods. Each `[Fact]` method typically runs one specific `IGame` test case.
+- **`IGame` Test Case Classes:**
+  - These classes contain the actual test logic and implement `Night.IGame` and [`NightTest.Core.ITestCase`](tests/Core/ITestCase.cs).
+  - They **must** inherit from [`NightTest.Core.BaseTestCase`](tests/Core/BaseTestCase.cs) or [`NightTest.Core.BaseManualTestCase`](tests/Core/BaseManualTestCase.cs).
+  - They are typically located alongside their corresponding xUnit test class or in a related file (e.g., `TimerTests.cs` contains multiple `IGame` test cases like `GetTimeTest`, run by `TimerGroup.cs`).
+- **Core Infrastructure:**
+  - [`tests/Core/`](tests/Core/): Contains base classes and core types for the testing framework.
+    - [`ITestCase.cs`](tests/Core/ITestCase.cs): Interface defining metadata for an `IGame` test case.
+    - [`BaseTestCase.cs`](tests/Core/BaseTestCase.cs): Base class for automated `IGame` test cases, providing common functionality (stopwatch, status tracking, completion helpers).
+    - [`BaseManualTestCase.cs`](tests/Core/BaseManualTestCase.cs): Base class for manual `IGame` test cases, extending `BaseTestCase` with UI for manual pass/fail confirmation.
+    - [`TestGroup.cs`](tests/Core/TestGroup.cs): Base class for xUnit test classes, providing the `Run_TestCase` helper method.
+    - [`TestTypes.cs`](tests/Core/TestTypes.cs): Enums for `TestType` (Automated, Manual) and `TestStatus` (NotRun, Passed, Failed, Skipped).
+
+**2. Workflow for Adding New Tests:**
+
+**Step 1: Create the `IGame` Test Case Class**
+
+For each specific feature or function you want to test (e.g., a new `Night.Graphics` method):
+
+- **Location:** Create the class in a relevant file within a subdirectory of `tests/Groups/` (e.g., for a new graphics test, it might go in `tests/Groups/Graphics/NewGraphicsFeatureTest.cs` or be added to an existing file like `GraphicsTests.cs` if it contains multiple small test case classes).
+- **Inheritance:**
+  - For automated tests: Inherit from [`NightTest.Core.BaseTestCase`](tests/Core/BaseTestCase.cs).
+  - For tests requiring manual user confirmation: Inherit from [`NightTest.Core.BaseManualTestCase`](tests/Core/BaseManualTestCase.cs).
+- **Implement `ITestCase` Properties (Abstract in `BaseTestCase`):**
+  - `public override string Name { get; }`: Provide a unique, descriptive name (e.g., `"Graphics.DrawSpriteAlpha"`).
+  - `public override string Description { get; }`: Describe what the test does.
+  - The `Type` property is automatically set to `TestType.Automated` by `BaseTestCase` or `TestType.Manual` by `BaseManualTestCase`.
+- **Implement `IGame` Logic (Override methods from `BaseTestCase`):**
+  - `protected override void Load()`: Initialize resources, set up initial state for your test.
+  - `protected override void Update(double deltaTime)`: Implement the core test logic.
+    - Use helper methods from `BaseTestCase` like `CheckCompletionAfterDuration()` or `CheckCompletionAfterFrames()` to define pass/fail conditions and automatically set `CurrentStatus`, `Details`, and call `EndTest()`.
+    - For manual tests inheriting from `BaseManualTestCase`, call `RequestManualConfirmation("Your question to the user?")` when ready for user input. The base class handles the UI and timeout.
+  - `protected override void Draw()`: Implement any rendering needed for the test to be visually inspected or to function.
+  - `public override void KeyPressed(...)`, `MousePressed(...)`, etc.: Override if your test needs specific input handling beyond what `BaseManualTestCase` provides.
+- **Test Completion:**
+  - Ensure your test logic eventually leads to `CurrentStatus` being set (e.g., to `TestStatus.Passed` or `TestStatus.Failed`) and `Details` populated.
+  - The `EndTest()` method (called by completion helpers or directly) will stop the `TestStopwatch` and call `Night.Window.Close()`, which signals the `Night.Framework.Run()` method (invoked by `TestGroup.Run_TestCase`) to return.
+
+**Step 2: Create/Update the xUnit Test Class (Test Group)**
+
+For each "module" or logical grouping of tests (e.g., `Timer`, `Graphics`, `MyModule` corresponding to a `Night` namespace like `Night.Timer`):
+
+- **Location:** Ensure an xUnit test class exists in the corresponding subdirectory under `tests/Groups/` (e.g., `tests/Groups/MyModule/MyModuleGroup.cs`). If it doesn't exist for a new module, create it. The filename should typically be `[ModuleName]Group.cs`.
+- **Inheritance:** The class **must** inherit from [`NightTest.Core.TestGroup`](tests/Core/TestGroup.cs).
+- **Constructor:** It must have a constructor that accepts `Xunit.Abstractions.ITestOutputHelper outputHelper` and passes it to the `base(outputHelper)` constructor.
+- **Add `[Fact]` Method:** For each new `IGame` test case you created in Step 1, add a new public void method annotated with `[Fact]`.
+  - **Naming:** Conventionally, `Run_YourIGameTestCaseName()` (e.g., `Run_MyAutomatedFeatureTest()`).
+  - **Implementation:**
+        1. Call `Run_TestCase(new MyAutomatedFeatureTest());`. This method is inherited from `NightTest.Core.TestGroup` and handles the execution, logging, and assertion.
+  - **Traits:** Add `[Trait("TestType", "Automated")]` or `[Trait("TestType", "Manual")]` to the `[Fact]` method. This should match the `Type` of the `IGame` test case being run (which is determined by whether it inherits `BaseTestCase` or `BaseManualTestCase`) and is used for filtering tests via the xUnit runner.
+
+**3. Running Tests:**
+
+- Tests can be run using the .NET CLI (`dotnet test`) or through the Test Explorer in Visual Studio.
+- Use xUnit's filtering capabilities to run specific tests (e.g., `dotnet test --filter TestType=Automated`).
+
+**4. Key Considerations:**
+
+- **`Run_TestCase` Method:** The `NightTest.Core.TestGroup.Run_TestCase` method will:
+  - Log the start and end of the `IGame` test case using `ITestOutputHelper`.
+  - Call `Night.Framework.Run(testCase)`, which blocks until the `IGame` test case calls `Night.Window.Close()` (typically via `EndTest()` in `BaseTestCase`).
+  - Log the `CurrentStatus`, `Details`, and `TestStopwatch.ElapsedMilliseconds` from the `BaseTestCase` instance.
+  - Assert that `testCase.CurrentStatus == TestStatus.Passed`. If not, the xUnit test will fail.
+- **Error Handling:** Unhandled exceptions during `Night.Framework.Run(testCase)` are caught by `Run_TestCase`, which will then call `testCase.RecordFailure()` and fail the xUnit test.
+- **Clarity and Focus:** Each `IGame` test case should be focused on testing a specific piece of functionality. The `Name` and `Description` properties should clearly state its purpose.
+
+By following these guidelines, tests for the `Night` framework can be added systematically, leveraging the provided base classes and xUnit integration.
 
 ## Mapping Native SDL3 Functions to SDL3-CS (C#) Bindings
 
@@ -109,4 +175,3 @@ Be aware of common C# idioms used in the bindings:
             - Check how the C# structs for relevant types (e.g., `SDL.Surface` in `lib/SDL3-CS/SDL3-CS/SDL/Video/surface/Surface.cs`) are defined to understand how to access their members (like `Width`, `Height`) after marshalling an `IntPtr`.
         3. **Consider Intermediate Steps:** Sometimes, an extension library might require or work more reliably with an intermediate step. For example, instead of directly loading an image to an `SDL_Texture`, loading it to an `SDL_Surface` first (using a function from the image extension library), then getting information from the `SDL_Surface` (which is a well-defined core SDL structure), and finally creating the `SDL_Texture` from the `SDL_Surface` using a core SDL function (e.g., `SDL.CreateTextureFromSurface()`) can be a more robust approach. Remember to manage the lifecycle of intermediate objects (like freeing the `SDL_Surface` after the texture is created).
         4. **Error Checking:** Always check return values from SDL functions. For functions from extension libraries, use the standard `SDL.GetError()` to retrieve error messages, as specific `Extension.GetError()` functions may not exist or be necessary.
-By understanding these conventions and the structure of the `lib/SDL3-CS` library, an AI (or human developer) can more effectively locate and utilize the C# equivalents of native SDL3 functionalities.

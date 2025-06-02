@@ -36,6 +36,7 @@ namespace NightTest.Core
     /// Gets or sets the current UI mode for manual input.
     /// </summary>
     protected ManualInputUIMode CurrentManualInputUIMode = ManualInputUIMode.None;
+    protected bool _confirmationPromptActive;
 
     /// <summary>
     /// Gets the console prompt message displayed during manual confirmation.
@@ -76,6 +77,7 @@ namespace NightTest.Core
       // Perform BaseManualTestCase specific initialization
       CurrentManualInputUIMode = ManualInputUIMode.None;
       ManualConfirmationConsolePrompt = string.Empty;
+      _confirmationPromptActive = false;
 
       // Call the base InternalLoad, which will in turn call the concrete test's Load() method.
       base.InternalLoad();
@@ -111,11 +113,19 @@ namespace NightTest.Core
       }
     }
 
-    /// <inheritdoc/>
-    public override void Draw()
+    /// <summary>
+    /// Overrides the internal draw hook from <see cref="BaseTestCase"/>
+    /// to allow the concrete test's <see cref="BaseTestCase.Draw()"/> method to run first,
+    /// then draws manual test-specific UI elements (like Pass/Fail buttons),
+    /// and finally calls <see cref="Night.Graphics.Present()"/>.
+    /// This method is sealed to ensure this control flow.
+    /// </summary>
+    protected sealed override void InternalDraw()
     {
-      base.Draw();
+      // First, call the base InternalDraw, which will execute the concrete test's Draw() method.
+      base.InternalDraw();
 
+      // Then, draw BaseManualTestCase specific UI elements.
       if (CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
       {
         // Ensure button rects are calculated if window is valid
@@ -143,7 +153,12 @@ namespace NightTest.Core
           Graphics.Rectangle(DrawMode.Line, _failButtonRect.X, _failButtonRect.Y, _failButtonRect.Width, _failButtonRect.Height);
         }
       }
+
+      // Finally, present the graphics for all manual tests.
+      Night.Graphics.Present();
     }
+
+    // Note: The public override Draw() is removed as its logic is now in InternalDraw().
 
     /// <inheritdoc/>
     public override void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
@@ -212,22 +227,26 @@ namespace NightTest.Core
         return;
       }
 
-      this.ManualConfirmationConsolePrompt = consolePrompt;
-      this.CurrentManualInputUIMode = ManualInputUIMode.AwaitingConfirmation;
-      Console.ForegroundColor = ConsoleColor.Cyan;
-      Console.WriteLine($"\n--- MANUAL CONFIRMATION REQUIRED for test: '{Name}' ---");
-      Console.ResetColor();
-      Console.WriteLine(this.ManualConfirmationConsolePrompt);
-      Console.WriteLine("Please observe the game window. Click the GREEN box to PASS, or the RED box to FAIL.");
-      Console.WriteLine("(Alternatively, press ESCAPE to fail and quit this specific test.)");
-
-      // Attempt to calculate button positions immediately if window is available
-      if (Window.IsOpen())
+      if (!_confirmationPromptActive && TestStopwatch.ElapsedMilliseconds > ManualTestPromptDelayMilliseconds)
       {
-        var windowMode = Window.GetMode();
-        if (windowMode.Width > 0 && windowMode.Height > 0)
+        _confirmationPromptActive = true;
+        this.ManualConfirmationConsolePrompt = consolePrompt;
+        this.CurrentManualInputUIMode = ManualInputUIMode.AwaitingConfirmation;
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"\n--- MANUAL CONFIRMATION REQUIRED for test: '{Name}' ---");
+        Console.ResetColor();
+        Console.WriteLine(this.ManualConfirmationConsolePrompt);
+        Console.WriteLine("Please observe the game window. Click the GREEN box to PASS, or the RED box to FAIL.");
+        Console.WriteLine("(Alternatively, press ESCAPE to fail and quit this specific test.)");
+
+        // Attempt to calculate button positions immediately if window is available
+        if (Window.IsOpen())
         {
-          CalculateButtonPositions(windowMode.Width, windowMode.Height);
+          var windowMode = Window.GetMode();
+          if (windowMode.Width > 0 && windowMode.Height > 0)
+          {
+            CalculateButtonPositions(windowMode.Width, windowMode.Height);
+          }
         }
       }
     }

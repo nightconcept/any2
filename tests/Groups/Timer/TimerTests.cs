@@ -49,6 +49,8 @@ namespace NightTest.Groups.Timer
           return $"Timer.GetTime() test completed. Start: {_startTime:F6}s, End: {_endTime:F6}s. Elapsed: {elapsed:F6}s (Expected ~0.5s).";
         });
     }
+
+    // Draw() override removed, will use empty BaseTestCase.Draw()
   }
 
   /// <summary>
@@ -60,12 +62,6 @@ namespace NightTest.Groups.Timer
     public override string Name => "Timer.GetFPS";
     /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.GetFPS() method by observing its value over a short period.";
-
-    /// <inheritdoc/>
-    protected override void Load()
-    {
-      // No specific load logic needed beyond base setup for this test.
-    }
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
@@ -136,12 +132,6 @@ namespace NightTest.Groups.Timer
     public override string Description => "Tests the Night.Timer.GetAverageDelta() method.";
 
     /// <inheritdoc/>
-    protected override void Load()
-    {
-      // No specific load logic needed beyond base setup for this test.
-    }
-
-    /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
       double finalAvgDelta = 0;
@@ -181,9 +171,6 @@ namespace NightTest.Groups.Timer
     /// <inheritdoc/>
     protected override void Load()
     {
-      // The common setup in BaseTestCase (via IGame.Load -> InternalLoad) has already run.
-      // This test essentially finishes its core logic here.
-
       _internalStopwatch.Reset();
       _internalStopwatch.Start();
       Night.Timer.Sleep(SleepDurationSeconds);
