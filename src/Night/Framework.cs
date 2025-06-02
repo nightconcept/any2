@@ -119,11 +119,12 @@ namespace Night
         }
 
         Window.SetTitle(windowConfig.Title ?? "Night Game");
-        if (!Window.IsOpen() && modeSet) // If modeSet was true but window is not open, log SDL error
+
+        // If modeSet was true but window is not open, log SDL error
+        if (!Window.IsOpen() && modeSet)
         {
           Console.WriteLine($"Night.Framework.Run: Window is NOT open after successful-looking SetMode call. SDL Error: {SDL.GetError()}");
         }
-
 
         if (windowConfig.Fullscreen)
         {
@@ -386,7 +387,7 @@ namespace Night
 
     private static void HandleGameException(Exception e, IGame? gameInstance)
     {
-      inErrorState = true; // Signal that we are now in an error state.
+      inErrorState = true;
 
       var customHandler = Night.Error.GetHandler();
       if (customHandler != null)

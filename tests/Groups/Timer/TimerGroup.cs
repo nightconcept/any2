@@ -1,4 +1,4 @@
-// <copyright file="TimerTests.cs" company="Night Circle">
+// <copyright file="TimerGroup.cs" company="Night Circle">
 // zlib license
 // Copyright (c) 2025 Danny Solivan, Night Circle
 // This software is provided 'as-is', without any express or implied
@@ -22,106 +22,85 @@ using System;
 
 using Night;
 
-using NightTest.Core; // For TestStatus, BaseTestCase
-// Assuming Timer test case classes like GetTimeTest are in NightTest.Groups namespace
-using NightTest.Groups;
+using NightTest.Core;
 
 
 using Xunit;
 using Xunit.Abstractions;
 
-namespace NightTest.Groups // Matching the namespace of TimerGroup.cs and its inner classes
+namespace NightTest.Groups.Timer
 {
   /// <summary>
   /// Contains xUnit tests for Timer related IGame test cases.
   /// </summary>
-  public class TimerTests
+  public class TimerGroup : TestGroup
   {
-    private readonly ITestOutputHelper _outputHelper;
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="TimerTests"/> class.
+    /// Initializes a new instance of the <see cref="TimerGroup"/> class.
     /// </summary>
     /// <param name="outputHelper">The xUnit test output helper for logging.</param>
-    public TimerTests(ITestOutputHelper outputHelper)
+    public TimerGroup(ITestOutputHelper outputHelper) : base(outputHelper)
     {
-      this._outputHelper = outputHelper;
-    }
-
-    private void RunTest(BaseTestCase testCase)
-    {
-      _outputHelper.WriteLine($"Starting IGame test: {testCase.Name}");
-      _outputHelper.WriteLine($"  Description: {testCase.Description}");
-      _outputHelper.WriteLine($"  Type: {testCase.Type}");
-
-      Night.Framework.Run(testCase);
-
-      _outputHelper.WriteLine($"IGame test '{testCase.Name}' completed.");
-      _outputHelper.WriteLine($"  Status: {testCase.CurrentStatus}");
-      _outputHelper.WriteLine($"  Details: {testCase.Details}");
-      _outputHelper.WriteLine($"  Duration: {testCase.TestStopwatch.ElapsedMilliseconds}ms");
-
-      Assert.Equal(TestStatus.Passed, testCase.CurrentStatus);
     }
 
     /// <summary>
-    /// Runs the GetTimeTest IGame instance via xUnit.
+    /// Runs the GetTimeTest IGame instance.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_GetTimeTest()
     {
-      RunTest(new GetTimeTest());
+      Run_TestCase(new GetTimeTest());
     }
 
     /// <summary>
-    /// Runs the GetFPSTest IGame instance via xUnit.
+    /// Runs the GetFPSTest IGame instance.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_GetFPSTest()
     {
-      RunTest(new GetFPSTest());
+      Run_TestCase(new GetFPSTest());
     }
 
     /// <summary>
-    /// Runs the GetDeltaTest IGame instance via xUnit.
+    /// Runs the GetDeltaTest IGame instance.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_GetDeltaTest()
     {
-      RunTest(new GetDeltaTest());
+      Run_TestCase(new GetDeltaTest());
     }
 
     /// <summary>
-    /// Runs the GetAverageDeltaTest IGame instance via xUnit.
+    /// Runs the GetAverageDeltaTest IGame instance.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_GetAverageDeltaTest()
     {
-      RunTest(new GetAverageDeltaTest());
+      Run_TestCase(new GetAverageDeltaTest());
     }
 
     /// <summary>
-    /// Runs the SleepTest IGame instance via xUnit.
+    /// Runs the SleepTest IGame instance.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_SleepTest()
     {
-      RunTest(new SleepTest());
+      Run_TestCase(new SleepTest());
     }
 
     /// <summary>
-    /// Runs the StepTest IGame instance via xUnit.
+    /// Runs the StepTest IGame instance.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_StepTest()
     {
-      RunTest(new StepTest());
+      Run_TestCase(new StepTest());
     }
   }
 }

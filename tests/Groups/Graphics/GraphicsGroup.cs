@@ -32,17 +32,14 @@ namespace NightTest.Groups.Graphics
   /// <summary>
   /// Contains xUnit tests for Graphics related IGame test cases.
   /// </summary>
-  public class GraphicsTests
+  public class GraphicsTests : TestGroup
   {
-    private readonly ITestOutputHelper _outputHelper;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="GraphicsTests"/> class.
     /// </summary>
     /// <param name="outputHelper">The xUnit test output helper for logging.</param>
-    public GraphicsTests(ITestOutputHelper outputHelper)
+    public GraphicsTests(ITestOutputHelper outputHelper) : base(outputHelper)
     {
-      this._outputHelper = outputHelper;
     }
 
     /// <summary>
@@ -52,26 +49,7 @@ namespace NightTest.Groups.Graphics
     [Trait("TestType", "Manual")]
     public void Run_GraphicsClearColorTest()
     {
-      var graphicsTest = new GraphicsClearColorTest();
-
-      _outputHelper.WriteLine($"Starting IGame test: {graphicsTest.Name}");
-      _outputHelper.WriteLine($"Description: {graphicsTest.Description}");
-      _outputHelper.WriteLine($"Type: {graphicsTest.Type}");
-
-      // Run the IGame test case
-      // This will block until the Night.Window is closed by the test itself (e.g., via QuitSelf)
-      Night.Framework.Run(graphicsTest);
-
-      // After the test run completes, log its results and assert its status
-      _outputHelper.WriteLine($"IGame test '{graphicsTest.Name}' completed.");
-      _outputHelper.WriteLine($"  Status: {graphicsTest.CurrentStatus}");
-      _outputHelper.WriteLine($"  Details: {graphicsTest.Details}");
-      _outputHelper.WriteLine($"  Duration: {graphicsTest.TestStopwatch.ElapsedMilliseconds}ms");
-
-      // Assert that the test passed (or whatever the expected outcome is for this manual test)
-      // For a manual test, "Passed" means the user confirmed it passed.
-      // "Failed" could mean user confirmed fail, it timed out, or was quit prematurely.
-      Assert.Equal(TestStatus.Passed, graphicsTest.CurrentStatus);
+      Run_TestCase(new GraphicsClearColorTest());
     }
   }
 }

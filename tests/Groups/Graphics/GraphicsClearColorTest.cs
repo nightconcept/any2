@@ -16,9 +16,9 @@ namespace NightTest.Groups.Graphics
   /// Tests the Graphics.Clear() method with a specific color.
   /// Requires manual confirmation that the color is correct.
   /// </summary>
-  public class GraphicsClearColorTest : BaseTestCase
+  public class GraphicsClearColorTest : BaseManualTestCase
   {
-    private readonly Night.Color _skyBlue = new Night.Color(135, 206, 235);
+    private readonly Color _skyBlue = new Color(135, 206, 235);
     private bool _promptRequested = false;
 
     /// <inheritdoc/>
@@ -41,35 +41,26 @@ namespace NightTest.Groups.Graphics
     /// <inheritdoc/>
     public override void Update(double deltaTime)
     {
-      if (IsDone)
+      // Call base update to handle IsDone checks and manual test timeout
+      base.Update(deltaTime);
+      if (IsDone) // Check again in case base.Update finished the test
       {
         return;
       }
 
-      // Request manual confirmation once after a short delay to ensure window is visible
-      if (!_promptRequested && TestStopwatch.ElapsedMilliseconds > 200)
+      // Request manual confirmation once after a short delay (using value from base) to ensure window is visible
+      if (!_promptRequested && TestStopwatch.ElapsedMilliseconds > ManualTestPromptDelayMilliseconds)
       {
         RequestManualConfirmation("Is the screen cleared to a SKY BLUE color (like a clear daytime sky)?");
         _promptRequested = true;
-      }
-
-      // Manual tests rely on user input (handled by BaseTestCase) or timeout.
-      // Add a timeout for manual tests to prevent them from running indefinitely.
-      if (TestStopwatch.ElapsedMilliseconds > 30000 && CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation) // 30 second timeout
-      {
-        Console.WriteLine($"MANUAL TEST '{Name}': Timed out after 30 seconds.");
-        CurrentStatus = TestStatus.Failed;
-        Details = ManualConfirmationConsolePrompt + " - Test timed out.";
-        QuitSelf();
       }
     }
 
     /// <inheritdoc/>
     public override void Draw()
     {
-      Night.Graphics.Clear(_skyBlue); // Clear to sky blue
+      Night.Graphics.Clear(_skyBlue);
 
-      // Base.Draw() will handle drawing Pass/Fail buttons if manual confirmation is active
       base.Draw();
 
       Night.Graphics.Present();
@@ -78,16 +69,13 @@ namespace NightTest.Groups.Graphics
     /// <inheritdoc/>
     public override void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
     {
-      if (IsDone || isRepeat) return;
-
-      // Allow ESC to fail the test if in confirmation mode
-      if (CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation && scancode == KeyCode.Escape)
+      base.KeyPressed(key, scancode, isRepeat);
+      if (IsDone)
       {
-        Console.WriteLine($"MANUAL TEST '{Name}': FAILED by user pressing ESCAPE.");
-        CurrentStatus = TestStatus.Failed;
-        Details = ManualConfirmationConsolePrompt + " - User pressed ESCAPE to fail.";
-        QuitSelf();
+        return;
       }
+      // Custom key handling for this specific test can go here, if any.
+      // The ESC to fail logic is now handled in BaseTestCase.KeyPressed()
     }
   }
 }

@@ -97,26 +97,26 @@
 - **Task 1.3: Implement and Utilize `BaseTestCase`**
   - **Description:** Create and flesh out the `tests/Core/BaseTestCase.cs` as per PRD ([`project/night-test-prd.md:165`](project/night-test-prd.md:165), [`project/night-test-prd.md:197`](project/night-test-prd.md:197)) and `project/testing-plan.md`.
   - **Implementation:**
-    - [ ] Create `tests/Core/BaseTestCase.cs` inheriting from `Night.IGame` and implementing `NightTest.Core.ITestCase`.
-    - [ ] Provide default (virtual) implementations for all `Night.IGame` methods.
-    - [ ] Implement common `ITestCase` properties (e.g., `Name`, `Type`, `Description` can be abstract or virtual with default).
-    - [ ] Include a `System.Diagnostics.Stopwatch` (`TestStopwatch`) for measuring total test duration, started in `Load()` and stopped before reporting.
-    - [ ] Implement `QuitSelf()` method that signals the test is done, records the duration, and calls `Night.Window.Close()`.
-    - [ ] `BaseTestCase` will need methods that allow the `IGame` to signal its outcome (e.g., setting internal status properties like `ActualTestStatus` and `FailureDetails`). The xUnit test method wrapping the `IGame` will then use these properties to make assertions.
-    - [ ] Remove `SetTestRunner()` and any `TestRunner` dependency.
-    - [ ] Refactor existing test cases to inherit from `BaseTestCase`.
+    - [x] Create `tests/Core/BaseTestCase.cs` inheriting from `Night.IGame` and implementing `NightTest.Core.ITestCase`.
+    - [x] Provide default (virtual) implementations for all `Night.IGame` methods.
+    - [x] Implement common `ITestCase` properties (e.g., `Name`, `Type`, `Description` can be abstract or virtual with default).
+    - [x] Include a `System.Diagnostics.Stopwatch` (`TestStopwatch`) for measuring total test duration, started in `Load()` and stopped before reporting.
+    - [x] Implement `QuitSelf()` method that signals the test is done, records the duration, and calls `Night.Window.Close()`.
+    - [x] `BaseTestCase` will need methods that allow the `IGame` to signal its outcome (e.g., setting internal status properties like `ActualTestStatus` and `FailureDetails`). The xUnit test method wrapping the `IGame` will then use these properties to make assertions.
+    - [x] Remove `SetTestRunner()` and any `TestRunner` dependency.
+    - [x] Refactor existing test cases to inherit from `BaseTestCase`.
   - **Acceptance Criteria:** `BaseTestCase.cs` is implemented and provides useful common functionality. Existing and new test cases inherit from it, reducing boilerplate.
-  - **Status:** To Do
+  - **Status:** Complete
 
 - **Task 1.4: Refactor Directory Structure: `Modules` to `Groups`**
   - **Description:** Rename the `tests/Modules/` directory to `tests/Groups/` to align with `ITestGroup` terminology, as suggested in [`project/night-test-prd.md:33`](project/night-test-prd.md:33) and [`project/night-test-prd.md:166`](project/night-test-prd.md:166). Update all relevant namespaces and references.
   - **Implementation:**
     - [x] Rename directory `tests/Modules` to `tests/Groups`.
     - [x] Update namespaces in all test group and test case files previously within `tests/Groups/`.
-    - [ ] Update `tests/NightTest.csproj` if needed to reflect new paths or if `Program.cs` is removed.
+    - [x] Update `tests/NightTest.csproj` if needed to reflect new paths or if `Program.cs` is removed.
     - [ ] Update documentation (`project/night-test-prd.md`, `project/testing-plan.md`) to consistently refer to `tests/Groups/` and reflect the xUnit changes.
   - **Acceptance Criteria:** Directory is renamed. All code, documentation, and xUnit discovery mechanisms reflect the new `Groups` naming.
-  - **Status:** To Do
+  - **Status:** Complete
 
 - **Task 1.5: Clarify and Refactor `tests/Game.cs`**
   - **Description:** Determine the precise role of the existing [`tests/Game.cs`](tests/Game.cs:1). If its functionality is better suited for `BaseTestCase` or it's a redundant example, refactor or remove it.
@@ -126,16 +126,16 @@
     - [ ] If it's intended as a very simple, standalone example of an `IGame` for testing the host, ensure it's minimal and perhaps rename it (e.g., `ExampleHostedTest.cs`) and include it in a relevant `ITestGroup` if it's meant to be run as a test. (N/A as it's not used)
     - [x] If its functionality becomes entirely redundant after `BaseTestCase` implementation and other refactorings, remove [`tests/Game.cs`](tests/Game.cs:1) and update any references. (Decision: Remove the file.)
   - **Acceptance Criteria:** The role of [`tests/Game.cs`](tests/Game.cs:1) is clarified. The codebase is cleaner, and any useful generic logic is consolidated in `BaseTestCase`.
-  - **Status:** To Do
+  - **Status:** Complete
 
 - **Task 1.6: Enhance Error Handling within Test Cases and `BaseTestCase`**
   - **Description:** Ensure that test cases, particularly through `BaseTestCase`, robustly report failures to xUnit, especially in the event of unexpected exceptions during test logic or from `Night.Framework` calls.
   - **Implementation:**
-    - [ ] `BaseTestCase` (or the xUnit test method wrapping it) should implement a top-level try-catch mechanism around the execution of the `IGame`'s `Load`, `Update`, and `Draw` methods (or a central test execution method if applicable).
-    - [ ] Any unhandled exception caught should cause the xUnit test to fail. xUnit automatically captures exception details.
-    - [ ] For non-exception failures determined by the `IGame`'s logic, `BaseTestCase` should set status properties that the xUnit test method can assert, causing an `Assert.Fail()` or similar if the status is `Failed`.
+    - [x] `BaseTestCase` (or the xUnit test method wrapping it) should implement a top-level try-catch mechanism around the execution of the `IGame`'s `Load`, `Update`, and `Draw` methods (or a central test execution method if applicable). (Implemented in xUnit wrapper methods)
+    - [x] Any unhandled exception caught should cause the xUnit test to fail. xUnit automatically captures exception details. (Ensured by rethrowing from wrapper)
+    - [x] For non-exception failures determined by the `IGame`'s logic, `BaseTestCase` should set status properties that the xUnit test method can assert, causing an `Assert.Fail()` or similar if the status is `Failed`. (Existing functionality)
   - **Acceptance Criteria:** xUnit test results accurately reflect test failures caused by unhandled exceptions or assertion failures within the test case execution, providing error messages and stack traces via standard xUnit reporting.
-  - **Status:** To Do
+  - **Status:** Done
 
 - **Task 1.7: Test-Specific Configuration (Optional Enhancement)**
   - **Description:** Investigate and optionally implement a mechanism allowing individual test cases or test groups to load specific configuration files (e.g., a `test_config.json` alongside the test case file).
@@ -171,14 +171,4 @@
     - [ ] Add arguments for `dotnet test` as needed, e.g., `--logger "trx;LogFileName=test_results.trx"` to generate a standard TRX report file.
     - [ ] Filtering for "automated" tests will be done using xUnit's mechanisms, e.g., `dotnet test --filter "TestType=Automated"` if `[Trait("TestType", "Automated")]` is used.
   - **Acceptance Criteria:** The CI workflow successfully builds and runs tests in the `NightTest` project using `dotnet test`. The workflow step correctly fails if `dotnet test` indicates test failures.
-  - **Status:** To Do
-
-- **Task 2.3: Archive xUnit Test Results (e.g., TRX) in CI Workflow**
-  - **Description:** Add a step to the [`.github/workflows/ci.yml`](.github/workflows/ci.yml:1) workflow to upload the standard xUnit test result file (e.g., TRX) generated by `dotnet test` as a build artifact.
-  - **Implementation:**
-    - [ ] Add a new step using `actions/upload-artifact@v4` (or a later version).
-    - [ ] Configure this step to upload the test result file (e.g., `test_results.trx` if specified in the logger argument to `dotnet test`).
-    - [ ] Set the `if: always()` condition for this step to ensure the report is uploaded even if previous steps (like test execution) fail.
-    - [ ] Assign a clear name to the artifact, incorporating the matrix OS if applicable (e.g., `night-test-results-${{ matrix.os }}`).
-  - **Acceptance Criteria:** The xUnit test result file (e.g., TRX) is available as a downloadable artifact for each CI run, allowing for inspection of test results using standard tools.
   - **Status:** To Do
