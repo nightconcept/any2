@@ -158,17 +158,16 @@
 - **Task 2.1: Ensure CI Uses `dotnet test` for Exit Codes**
   - **Description:** The `dotnet test` command, used by xUnit, inherently returns appropriate exit codes (0 for success, non-zero for failures). This task is to ensure the CI script correctly uses `dotnet test` and relies on its standard exit codes.
   - **Implementation:**
-    - [ ] Verify that the CI workflow (Task 2.2) uses `dotnet test tests/NightTest.csproj ...`.
-    - [ ] No custom exit code logic is needed in `NightTest` itself.
+    - [x] Verify that the CI workflow (Task 2.2) uses `dotnet test tests/NightTest.csproj ...`.
+    - [x] No custom exit code logic is needed in `NightTest` itself.
   - **Acceptance Criteria:** The CI job step running `dotnet test` will correctly pass or fail based on the exit code from `dotnet test`.
-  - **Status:** To Do
+  - **Status:** Done
 
 - **Task 2.2: Update `.github/workflows/ci.yml` to Run NightTest via `dotnet test`**
   - **Description:** Modify the existing GitHub Actions CI workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml:1)) to build the `NightTest` project and execute its tests using `dotnet test`.
   - **Implementation:**
-    - [ ] Ensure the `NightTest.csproj` is built as part of the solution build or with a separate `dotnet build tests/NightTest.csproj --configuration Release --no-restore` step.
-    - [ ] Modify the "Run Tests" step to use `dotnet test tests/NightTest.csproj --configuration Release --no-build`.
-    - [ ] Add arguments for `dotnet test` as needed, e.g., `--logger "trx;LogFileName=test_results.trx"` to generate a standard TRX report file.
-    - [ ] Filtering for "automated" tests will be done using xUnit's mechanisms, e.g., `dotnet test --filter "TestType=Automated"` if `[Trait("TestType", "Automated")]` is used.
+    - [x] Ensure the `NightTest.csproj` is built as part of the solution build or with a separate `dotnet build tests/NightTest.csproj --configuration Release --no-restore` step.
+    - [x] Modify the "Run Tests" step to use `dotnet test tests/NightTest.csproj --configuration Release --no-build`.
+    - [x] Filtering for "automated" tests will be done using xUnit's mechanisms, e.g., `dotnet test --filter "TestType=Automated"` if `[Trait("TestType", "Automated")]` is used.
   - **Acceptance Criteria:** The CI workflow successfully builds and runs tests in the `NightTest` project using `dotnet test`. The workflow step correctly fails if `dotnet test` indicates test failures.
-  - **Status:** To Do
+  - **Status:** Done

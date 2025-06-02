@@ -1,7 +1,23 @@
 // <copyright file="BaseManualTestCase.cs" company="Night Circle">
 // zlib license
+//
 // Copyright (c) 2025 Danny Solivan, Night Circle
-// (Full license boilerplate as in other files)
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -16,6 +32,29 @@ namespace NightTest.Core
   /// </summary>
   public abstract class BaseManualTestCase : BaseTestCase
   {
+    // Constants
+    private const int ButtonWidth = 120;
+    private const int ButtonHeight = 50;
+    private const int ButtonPadding = 20;
+    private static readonly Color PassButtonColor = new Color(0, 180, 0); // Green
+    private static readonly Color FailButtonColor = new Color(200, 0, 0); // Red
+    private static readonly Color ButtonBorderColor = Color.White;
+
+    // Private Fields
+
+    /// <summary>
+    /// The current UI mode for manual input.
+    /// </summary>
+    private ManualInputUIMode currentManualInputUIMode = ManualInputUIMode.None;
+
+    /// <summary>
+    /// A value indicating whether the confirmation prompt is currently active.
+    /// </summary>
+    private bool confirmationPromptActive;
+
+    private Rectangle passButtonRect;
+    private Rectangle failButtonRect;
+
     /// <summary>
     /// Defines the UI mode for manual test input confirmation.
     /// </summary>
@@ -29,14 +68,11 @@ namespace NightTest.Core
       /// <summary>
       /// The test is awaiting user confirmation via the UI (Pass/Fail buttons).
       /// </summary>
-      AwaitingConfirmation
+      AwaitingConfirmation,
     }
 
-    /// <summary>
-    /// Gets or sets the current UI mode for manual input.
-    /// </summary>
-    protected ManualInputUIMode CurrentManualInputUIMode = ManualInputUIMode.None;
-    protected bool _confirmationPromptActive;
+    /// <inheritdoc/>
+    public override TestType Type => TestType.Manual;
 
     /// <summary>
     /// Gets the console prompt message displayed during manual confirmation.
@@ -55,16 +91,58 @@ namespace NightTest.Core
     protected double ManualTestPromptDelayMilliseconds { get; } = 200;
 
     /// <inheritdoc/>
-    public override TestType Type => TestType.Manual;
+    public override void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
+    {
+      base.KeyPressed(key, scancode, isRepeat);
+      if (this.IsDone || isRepeat)
+      {
+        return;
+      }
 
-    private Rectangle _passButtonRect;
-    private Rectangle _failButtonRect;
-    private const int ButtonWidth = 120;
-    private const int ButtonHeight = 50;
-    private const int ButtonPadding = 20;
-    private static readonly Color PassButtonColor = new Color(0, 180, 0); // Green
-    private static readonly Color FailButtonColor = new Color(200, 0, 0); // Red
-    private static readonly Color ButtonBorderColor = Color.White;
+      // Handling for ESC key to fail manual tests during confirmation
+      if (this.Type == TestType.Manual && this.currentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation && scancode == KeyCode.Escape)
+      {
+        Console.WriteLine($"MANUAL TEST '{this.Name}': FAILED by user pressing ESCAPE.");
+        this.CurrentStatus = TestStatus.Failed;
+        this.Details = this.ManualConfirmationConsolePrompt + " - User pressed ESCAPE to fail.";
+        this.EndTest();
+        return; // Test is over
+      }
+    }
+
+    /// <inheritdoc/>
+    public override void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
+    {
+      base.MousePressed(x, y, button, istouch, presses);
+      if (this.IsDone)
+      {
+        return;
+      }
+
+      if (this.currentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation && button == MouseButton.Left && !istouch)
+      {
+        if (this.passButtonRect.Width > 0 && // Ensure buttons are initialized
+            x >= this.passButtonRect.X && x <= this.passButtonRect.X + this.passButtonRect.Width &&
+            y >= this.passButtonRect.Y && y <= this.passButtonRect.Y + this.passButtonRect.Height)
+        {
+          Console.WriteLine($"MANUAL TEST '{this.Name}': PASSED by user click.");
+          this.CurrentStatus = TestStatus.Passed;
+          this.Details = this.ManualConfirmationConsolePrompt + " - User confirmed: PASSED.";
+          this.currentManualInputUIMode = ManualInputUIMode.None;
+          this.EndTest();
+        }
+        else if (this.failButtonRect.Width > 0 && // Ensure buttons are initialized
+                 x >= this.failButtonRect.X && x <= this.failButtonRect.X + this.failButtonRect.Width &&
+                 y >= this.failButtonRect.Y && y <= this.failButtonRect.Y + this.failButtonRect.Height)
+        {
+          Console.WriteLine($"MANUAL TEST '{this.Name}': FAILED by user click.");
+          this.CurrentStatus = TestStatus.Failed;
+          this.Details = this.ManualConfirmationConsolePrompt + " - User confirmed: FAILED.";
+          this.currentManualInputUIMode = ManualInputUIMode.None;
+          this.EndTest();
+        }
+      }
+    }
 
     /// <summary>
     /// Overrides the internal load hook from <see cref="BaseTestCase"/>
@@ -75,9 +153,9 @@ namespace NightTest.Core
     protected sealed override void InternalLoad()
     {
       // Perform BaseManualTestCase specific initialization
-      CurrentManualInputUIMode = ManualInputUIMode.None;
-      ManualConfirmationConsolePrompt = string.Empty;
-      _confirmationPromptActive = false;
+      this.currentManualInputUIMode = ManualInputUIMode.None;
+      this.ManualConfirmationConsolePrompt = string.Empty;
+      this.confirmationPromptActive = false;
 
       // Call the base InternalLoad, which will in turn call the concrete test's Load() method.
       base.InternalLoad();
@@ -93,21 +171,21 @@ namespace NightTest.Core
     protected sealed override void InternalUpdate(double deltaTime)
     {
       // Handle timeout for manual tests
-      if (this.Type == TestType.Manual && CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
+      if (this.Type == TestType.Manual && this.currentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
       {
-        if (TestStopwatch.ElapsedMilliseconds > ManualTestTimeoutMilliseconds)
+        if (this.TestStopwatch.ElapsedMilliseconds > this.ManualTestTimeoutMilliseconds)
         {
-          Console.WriteLine($"MANUAL TEST '{Name}': Timed out after {ManualTestTimeoutMilliseconds / 1000} seconds.");
-          CurrentStatus = TestStatus.Failed;
-          Details = ManualConfirmationConsolePrompt + " - Test timed out.";
-          EndTest();
+          Console.WriteLine($"MANUAL TEST '{this.Name}': Timed out after {this.ManualTestTimeoutMilliseconds / 1000} seconds.");
+          this.CurrentStatus = TestStatus.Failed;
+          this.Details = this.ManualConfirmationConsolePrompt + " - Test timed out.";
+          this.EndTest();
           return; // Test is over
         }
       }
 
       // If not timed out or otherwise completed, call the base InternalUpdate,
       // which will in turn call the concrete test's Update() method.
-      if (!IsDone)
+      if (!this.IsDone)
       {
         base.InternalUpdate(deltaTime);
       }
@@ -126,31 +204,31 @@ namespace NightTest.Core
       base.InternalDraw();
 
       // Then, draw BaseManualTestCase specific UI elements.
-      if (CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
+      if (this.currentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
       {
         // Ensure button rects are calculated if window is valid
-        if (_passButtonRect.Width == 0 && Window.IsOpen())
+        if (this.passButtonRect.Width == 0 && Window.IsOpen())
         {
           var windowMode = Window.GetMode();
           if (windowMode.Width > 0 && windowMode.Height > 0)
           {
-            CalculateButtonPositions(windowMode.Width, windowMode.Height);
+            this.CalculateButtonPositions(windowMode.Width, windowMode.Height);
           }
         }
 
-        if (_passButtonRect.Width > 0)
+        if (this.passButtonRect.Width > 0)
         {
           // Draw Pass Button (Green)
           Graphics.SetColor(PassButtonColor);
-          Graphics.Rectangle(DrawMode.Fill, _passButtonRect.X, _passButtonRect.Y, _passButtonRect.Width, _passButtonRect.Height);
+          Graphics.Rectangle(DrawMode.Fill, this.passButtonRect.X, this.passButtonRect.Y, this.passButtonRect.Width, this.passButtonRect.Height);
           Graphics.SetColor(ButtonBorderColor); // Border
-          Graphics.Rectangle(DrawMode.Line, _passButtonRect.X, _passButtonRect.Y, _passButtonRect.Width, _passButtonRect.Height);
+          Graphics.Rectangle(DrawMode.Line, this.passButtonRect.X, this.passButtonRect.Y, this.passButtonRect.Width, this.passButtonRect.Height);
 
           // Draw Fail Button (Red)
           Graphics.SetColor(FailButtonColor);
-          Graphics.Rectangle(DrawMode.Fill, _failButtonRect.X, _failButtonRect.Y, _failButtonRect.Width, _failButtonRect.Height);
+          Graphics.Rectangle(DrawMode.Fill, this.failButtonRect.X, this.failButtonRect.Y, this.failButtonRect.Width, this.failButtonRect.Height);
           Graphics.SetColor(ButtonBorderColor); // Border
-          Graphics.Rectangle(DrawMode.Line, _failButtonRect.X, _failButtonRect.Y, _failButtonRect.Width, _failButtonRect.Height);
+          Graphics.Rectangle(DrawMode.Line, this.failButtonRect.X, this.failButtonRect.Y, this.failButtonRect.Width, this.failButtonRect.Height);
         }
       }
 
@@ -159,60 +237,6 @@ namespace NightTest.Core
     }
 
     // Note: The public override Draw() is removed as its logic is now in InternalDraw().
-
-    /// <inheritdoc/>
-    public override void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
-    {
-      base.KeyPressed(key, scancode, isRepeat);
-      if (IsDone || isRepeat)
-      {
-        return;
-      }
-
-      // Handling for ESC key to fail manual tests during confirmation
-      if (this.Type == TestType.Manual && CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation && scancode == KeyCode.Escape)
-      {
-        Console.WriteLine($"MANUAL TEST '{Name}': FAILED by user pressing ESCAPE.");
-        CurrentStatus = TestStatus.Failed;
-        Details = ManualConfirmationConsolePrompt + " - User pressed ESCAPE to fail.";
-        EndTest();
-        return; // Test is over
-      }
-    }
-
-    /// <inheritdoc/>
-    public override void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
-    {
-      base.MousePressed(x, y, button, istouch, presses);
-      if (IsDone)
-      {
-        return;
-      }
-
-      if (CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation && button == MouseButton.Left && !istouch)
-      {
-        if (_passButtonRect.Width > 0 && // Ensure buttons are initialized
-            x >= _passButtonRect.X && x <= _passButtonRect.X + _passButtonRect.Width &&
-            y >= _passButtonRect.Y && y <= _passButtonRect.Y + _passButtonRect.Height)
-        {
-          Console.WriteLine($"MANUAL TEST '{Name}': PASSED by user click.");
-          CurrentStatus = TestStatus.Passed;
-          Details = ManualConfirmationConsolePrompt + " - User confirmed: PASSED.";
-          CurrentManualInputUIMode = ManualInputUIMode.None;
-          EndTest();
-        }
-        else if (_failButtonRect.Width > 0 && // Ensure buttons are initialized
-                 x >= _failButtonRect.X && x <= _failButtonRect.X + _failButtonRect.Width &&
-                 y >= _failButtonRect.Y && y <= _failButtonRect.Y + _failButtonRect.Height)
-        {
-          Console.WriteLine($"MANUAL TEST '{Name}': FAILED by user click.");
-          CurrentStatus = TestStatus.Failed;
-          Details = ManualConfirmationConsolePrompt + " - User confirmed: FAILED.";
-          CurrentManualInputUIMode = ManualInputUIMode.None;
-          EndTest();
-        }
-      }
-    }
 
     /// <summary>
     /// Initiates a manual confirmation step for the test.
@@ -223,17 +247,17 @@ namespace NightTest.Core
     {
       if (this.Type != TestType.Manual)
       {
-        Console.WriteLine($"Warning: RequestManualConfirmation called for a non-manual test: {Name}. Ignoring.");
+        Console.WriteLine($"Warning: RequestManualConfirmation called for a non-manual test: {this.Name}. Ignoring.");
         return;
       }
 
-      if (!_confirmationPromptActive && TestStopwatch.ElapsedMilliseconds > ManualTestPromptDelayMilliseconds)
+      if (!this.confirmationPromptActive && this.TestStopwatch.ElapsedMilliseconds > this.ManualTestPromptDelayMilliseconds)
       {
-        _confirmationPromptActive = true;
+        this.confirmationPromptActive = true;
         this.ManualConfirmationConsolePrompt = consolePrompt;
-        this.CurrentManualInputUIMode = ManualInputUIMode.AwaitingConfirmation;
+        this.currentManualInputUIMode = ManualInputUIMode.AwaitingConfirmation;
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine($"\n--- MANUAL CONFIRMATION REQUIRED for test: '{Name}' ---");
+        Console.WriteLine($"\n--- MANUAL CONFIRMATION REQUIRED for test: '{this.Name}' ---");
         Console.ResetColor();
         Console.WriteLine(this.ManualConfirmationConsolePrompt);
         Console.WriteLine("Please observe the game window. Click the GREEN box to PASS, or the RED box to FAIL.");
@@ -245,41 +269,52 @@ namespace NightTest.Core
           var windowMode = Window.GetMode();
           if (windowMode.Width > 0 && windowMode.Height > 0)
           {
-            CalculateButtonPositions(windowMode.Width, windowMode.Height);
+            this.CalculateButtonPositions(windowMode.Width, windowMode.Height);
           }
         }
       }
     }
 
+    /// <inheritdoc/>
+    protected override void EndTest()
+    {
+      if (this.IsDone)
+      {
+        return;
+      }
+
+      // If a manual test is quit externally (e.g. ESC key in test case) before confirmation,
+      // and status hasn't been set by button click, mark as failed.
+      if (this.Type == TestType.Manual && this.currentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation && this.CurrentStatus == TestStatus.NotRun)
+      {
+        this.CurrentStatus = TestStatus.Failed;
+        this.Details = this.ManualConfirmationConsolePrompt + " - Test quit prematurely by user before confirmation.";
+        Console.WriteLine($"MANUAL TEST '{this.Name}': Test quit prematurely. Marked as FAILED.");
+      }
+
+      this.currentManualInputUIMode = ManualInputUIMode.None; // Ensure this is reset before base call
+
+      base.EndTest();
+    }
+
+    // Private Methods
     private void CalculateButtonPositions(int windowWidth, int windowHeight)
     {
       int totalButtonsWidth = (ButtonWidth * 2) + ButtonPadding;
       int startX = (windowWidth - totalButtonsWidth) / 2;
-      if (startX < ButtonPadding) startX = ButtonPadding; // Ensure buttons are not off-screen left
+      if (startX < ButtonPadding)
+      {
+        startX = ButtonPadding; // Ensure buttons are not off-screen left
+      }
 
       int buttonY = windowHeight - ButtonHeight - ButtonPadding;
-      if (buttonY < ButtonPadding) buttonY = ButtonPadding; // Ensure buttons are not off-screen bottom
-
-      _passButtonRect = new Rectangle(startX, buttonY, ButtonWidth, ButtonHeight);
-      _failButtonRect = new Rectangle(startX + ButtonWidth + ButtonPadding, buttonY, ButtonWidth, ButtonHeight);
-    }
-
-    /// <inheritdoc/>
-    protected override void EndTest()
-    {
-      if (IsDone) return;
-
-      // If a manual test is quit externally (e.g. ESC key in test case) before confirmation,
-      // and status hasn't been set by button click, mark as failed.
-      if (this.Type == TestType.Manual && CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation && CurrentStatus == TestStatus.NotRun)
+      if (buttonY < ButtonPadding)
       {
-        CurrentStatus = TestStatus.Failed;
-        Details = ManualConfirmationConsolePrompt + " - Test quit prematurely by user before confirmation.";
-        Console.WriteLine($"MANUAL TEST '{Name}': Test quit prematurely. Marked as FAILED.");
+        buttonY = ButtonPadding; // Ensure buttons are not off-screen bottom
       }
-      CurrentManualInputUIMode = ManualInputUIMode.None; // Ensure this is reset before base call
 
-      base.EndTest();
+      this.passButtonRect = new Rectangle(startX, buttonY, ButtonWidth, ButtonHeight);
+      this.failButtonRect = new Rectangle(startX + ButtonWidth + ButtonPadding, buttonY, ButtonWidth, ButtonHeight);
     }
   }
 }

@@ -33,4 +33,4 @@ jobs:
       run: dotnet build Night.sln --configuration Release --no-restore
 
     - name: Run Tests
-      run: dotnet test tests/Night.Tests/Night.Tests.csproj --no-build --configuration Release
+      run: dotnet test --configuration Release --no-build --filter "TestType=Automated"

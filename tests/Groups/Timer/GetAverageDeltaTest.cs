@@ -1,4 +1,4 @@
-// <copyright file="GraphicsClearTest.cs" company="Night Circle">
+// <copyright file="GetAverageDeltaTest.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -20,44 +20,43 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
-using System;
-
 using Night;
 
 using NightTest.Core;
 
-namespace NightTest.Groups.Graphics
+namespace NightTest.Groups.Timer
 {
   /// <summary>
-  /// Tests the Graphics.Clear() method with a specific color.
-  /// Requires manual confirmation that the color is correct.
+  /// Tests the Timer.GetAverageDelta() method.
   /// </summary>
-  public class GraphicsClearColorTest : BaseManualTestCase
+  public class GetAverageDeltaTest : BaseTestCase
   {
-    private readonly Color skyBlue = new Color(135, 206, 235);
+    /// <inheritdoc/>
+    public override string Name => "Timer.GetAverageDelta";
 
     /// <inheritdoc/>
-    public override string Name => "Graphics.Clear";
-
-    /// <inheritdoc/>
-    public override string Description => "Tests clearing the screen to sky blue (135, 206, 235). User must confirm color.";
-
-    /// <inheritdoc/>
-    protected override void Load()
-    {
-      this.Details = "Test running, displaying sky blue color.";
-    }
+    public override string Description => "Tests the Night.Timer.GetAverageDelta() method.";
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      this.RequestManualConfirmation("Is the screen cleared to a SKY BLUE color (like a clear daytime sky)?");
-    }
+      double finalAvgDelta = 0;
 
-    /// <inheritdoc/>
-    protected override void Draw()
-    {
-      Night.Graphics.Clear(this.skyBlue);
+      _ = this.CheckCompletionAfterDuration(
+        201, // > 200ms
+        successCondition: () =>
+        {
+          if (this.CurrentFrameCount > 10)
+          {
+            finalAvgDelta = Night.Timer.GetAverageDelta();
+            return true;
+          }
+
+          return false;
+        },
+        passDetails: () => $"Timer.GetAverageDelta() observed. Last reported value: {finalAvgDelta:F6}. Test ran for >200ms and >10 frames.",
+        failDetailsTimeout: null,
+        failDetailsCondition: () => "Timer.GetAverageDelta() test failed: Did not exceed 10 frames within 200ms.");
     }
   }
 }

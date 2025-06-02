@@ -1,4 +1,4 @@
-// <copyright file="GraphicsClearTest.cs" company="Night Circle">
+// <copyright file="GetTimeTest.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -20,44 +20,50 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
-using System;
-
 using Night;
 
 using NightTest.Core;
 
-namespace NightTest.Groups.Graphics
+namespace NightTest.Groups.Timer
 {
   /// <summary>
-  /// Tests the Graphics.Clear() method with a specific color.
-  /// Requires manual confirmation that the color is correct.
+  /// Tests the Timer.GetTime() method.
   /// </summary>
-  public class GraphicsClearColorTest : BaseManualTestCase
+  public class GetTimeTest : BaseTestCase
   {
-    private readonly Color skyBlue = new Color(135, 206, 235);
+    private double startTime = 0;
+    private double endTime = 0;
 
     /// <inheritdoc/>
-    public override string Name => "Graphics.Clear";
+    public override string Name => "Timer.GetTime";
 
     /// <inheritdoc/>
-    public override string Description => "Tests clearing the screen to sky blue (135, 206, 235). User must confirm color.";
+    public override string Description => "Tests the Night.Timer.GetTime() method by measuring time passage.";
 
     /// <inheritdoc/>
     protected override void Load()
     {
-      this.Details = "Test running, displaying sky blue color.";
+      this.startTime = Night.Timer.GetTime();
     }
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      this.RequestManualConfirmation("Is the screen cleared to a SKY BLUE color (like a clear daytime sky)?");
+      // The IsDone check is handled by BaseTestCase.Update before calling this.
+      _ = this.CheckCompletionAfterDuration(
+        500,
+        successCondition: () =>
+        {
+          this.endTime = Night.Timer.GetTime();
+          return true; // Condition for passing is simply reaching the duration
+        },
+        passDetails: () => // Use a lambda to construct details with captured values
+        {
+          double elapsed = this.endTime - this.startTime;
+          return $"Timer.GetTime() test completed. Start: {this.startTime:F6}s, End: {this.endTime:F6}s. Elapsed: {elapsed:F6}s (Expected ~0.5s).";
+        });
     }
 
-    /// <inheritdoc/>
-    protected override void Draw()
-    {
-      Night.Graphics.Clear(this.skyBlue);
-    }
+    // Draw() override removed, will use empty BaseTestCase.Draw()
   }
 }

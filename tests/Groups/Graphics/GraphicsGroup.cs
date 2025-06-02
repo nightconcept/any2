@@ -1,6 +1,8 @@
-// <copyright file="GraphicsTests.cs" company="Night Circle">
+// <copyright file="GraphicsGroup.cs" company="Night Circle">
 // zlib license
+//
 // Copyright (c) 2025 Danny Solivan, Night Circle
+//
 // This software is provided 'as-is', without any express or implied
 // warranty. In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -38,7 +40,8 @@ namespace NightTest.Groups.Graphics
     /// Initializes a new instance of the <see cref="GraphicsTests"/> class.
     /// </summary>
     /// <param name="outputHelper">The xUnit test output helper for logging.</param>
-    public GraphicsTests(ITestOutputHelper outputHelper) : base(outputHelper)
+    public GraphicsTests(ITestOutputHelper outputHelper)
+      : base(outputHelper)
     {
     }
 
@@ -49,7 +52,7 @@ namespace NightTest.Groups.Graphics
     [Trait("TestType", "Manual")]
     public void Run_GraphicsClearColorTest()
     {
-      Run_TestCase(new GraphicsClearColorTest());
+      this.Run_TestCase(new GraphicsClearColorTest());
     }
   }
 }

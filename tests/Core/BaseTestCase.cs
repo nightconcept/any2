@@ -1,7 +1,23 @@
 // <copyright file="BaseTestCase.cs" company="Night Circle">
 // zlib license
+//
 // Copyright (c) 2025 Danny Solivan, Night Circle
-// (Full license boilerplate as in other files)
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
 using System;
@@ -17,10 +33,35 @@ namespace NightTest.Core
   /// </summary>
   public abstract class BaseTestCase : ITestCase, IGame
   {
+    // Public Properties
+
     /// <summary>
     /// Gets the stopwatch used to measure the duration of the test case.
     /// </summary>
     public Stopwatch TestStopwatch { get; } = new Stopwatch();
+
+    /// <summary>
+    /// Gets or sets the current status of the test case.
+    /// Its value can be asserted by xUnit test methods.
+    /// </summary>
+    public TestStatus CurrentStatus { get; protected set; } = TestStatus.NotRun;
+
+    /// <summary>
+    /// Gets or sets details about the test execution, such as error messages or success information.
+    /// Its value can be asserted by xUnit test methods.
+    /// </summary>
+    public string Details { get; protected set; } = "Test has not started.";
+
+    /// <inheritdoc/>
+    public abstract string Name { get; }
+
+    /// <inheritdoc/>
+    public virtual TestType Type => TestType.Automated;
+
+    /// <inheritdoc/>
+    public abstract string Description { get; }
+
+    // Protected Properties
 
     /// <summary>
     /// Gets or sets a value indicating whether the test case has finished its execution.
@@ -28,30 +69,122 @@ namespace NightTest.Core
     protected bool IsDone { get; set; } = false;
 
     /// <summary>
-    /// Gets the current status of the test case.
-    /// Its value can be asserted by xUnit test methods.
-    /// </summary>
-    public TestStatus CurrentStatus { get; protected set; } = TestStatus.NotRun;
-
-    /// <summary>
-    /// Gets details about the test execution, such as error messages or success information.
-    /// Its value can be asserted by xUnit test methods.
-    /// </summary>
-    public string Details { get; protected set; } = "Test has not started.";
-
-
-    /// <summary>
     /// Gets the current frame count since the test started. Incremented in Update.
     /// </summary>
-    protected int currentFrameCount = 0;
+    protected int CurrentFrameCount { get; private set; } = 0;
 
-    // These are now abstract and must be implemented by derived test cases.
-    /// <inheritdoc/>
-    public abstract string Name { get; }
-    /// <inheritdoc/>
-    public virtual TestType Type => TestType.Automated;
-    /// <inheritdoc/>
-    public abstract string Description { get; }
+    /// <summary>
+    /// Loads and initializes the test case. This is the entry point called by the test runner
+    /// or game loop, fulfilling the <see cref="IGame"/> interface.
+    /// It performs common base setup and then calls <see cref="InternalLoad"/>.
+    /// </summary>
+    void IGame.Load()
+    {
+      this.IsDone = false;
+      this.CurrentStatus = TestStatus.NotRun;
+      this.Details = "Test is running...";
+      this.CurrentFrameCount = 0;
+      this.TestStopwatch.Reset();
+      this.TestStopwatch.Start();
+
+      // Call the virtual InternalLoad, allowing intermediate classes to intercept.
+      this.InternalLoad();
+    }
+
+    /// <summary>
+    /// Updates the test case logic. This is the entry point called by the test runner
+    /// or game loop, fulfilling the <see cref="IGame"/> interface.
+    /// </summary>
+    /// <param name="deltaTime">Time elapsed since the last frame.</param>
+    void IGame.Update(double deltaTime)
+    {
+      if (this.IsDone)
+      {
+        return;
+      }
+
+      this.CurrentFrameCount++;
+
+      // Call the virtual InternalUpdate, allowing intermediate classes to intercept.
+      this.InternalUpdate(deltaTime);
+    }
+
+    /// <summary>
+    /// Draws the test case. This is the entry point called by the test runner
+    /// or game loop, fulfilling the <see cref="IGame"/> interface.
+    /// It calls <see cref="InternalDraw"/>.
+    /// </summary>
+    void IGame.Draw()
+    {
+      // Call the virtual InternalDraw, allowing intermediate classes to intercept.
+      this.InternalDraw();
+    }
+
+    /// <summary>
+    /// Called when a key is pressed. Default is empty.
+    /// </summary>
+    /// <param name="key">The key symbol that was pressed.</param>
+    /// <param name="scancode">The physical key code.</param>
+    /// <param name="isRepeat">True if this is a key repeat event, false otherwise.</param>
+    public virtual void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
+    {
+      if (this.IsDone || isRepeat)
+      {
+        return;
+      }
+    }
+
+    /// <summary>
+    /// Called when a key is released. Default is empty.
+    /// </summary>
+    /// <param name="key">The key symbol that was released.</param>
+    /// <param name="scancode">The physical key code.</param>
+    public virtual void KeyReleased(KeySymbol key, KeyCode scancode)
+    {
+    }
+
+    /// <summary>
+    /// Called when a mouse button is pressed.
+    /// Base implementation handles clicks for manual confirmation UI.
+    /// </summary>
+    /// <param name="x">The x-coordinate of the mouse click.</param>
+    /// <param name="y">The y-coordinate of the mouse click.</param>
+    /// <param name="button">The mouse button that was pressed.</param>
+    /// <param name="istouch">True if the event was generated by a touch input, false otherwise.</param>
+    /// <param name="presses">The number of clicks, 1 for single-click, 2 for double-click, etc.</param>
+    public virtual void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
+    {
+    }
+
+    /// <summary>
+    /// Called when a mouse button is released. Default is empty.
+    /// </summary>
+    /// <param name="x">The x-coordinate of the mouse release.</param>
+    /// <param name="y">The y-coordinate of the mouse release.</param>
+    /// <param name="button">The mouse button that was released.</param>
+    /// <param name="istouch">True if the event was generated by a touch input, false otherwise.</param>
+    /// <param name="presses">The number of clicks (usually 1 for release, but can be higher for some systems/drivers if tracking click counts on release).</param>
+    public virtual void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses)
+    {
+    }
+
+    /// <summary>
+    /// Public method to record a test failure, typically called by an xUnit wrapper when an exception occurs.
+    /// </summary>
+    /// <param name="failureDetails">Specific details about the failure.</param>
+    /// <param name="ex">The exception that caused the failure, if any.</param>
+    public void RecordFailure(string failureDetails, Exception? ex = null)
+    {
+      this.CurrentStatus = TestStatus.Failed;
+      if (ex != null)
+      {
+        this.Details = $"{failureDetails} - Exception: {ex.GetType().Name}: {ex.Message}";
+      }
+      else
+      {
+        this.Details = failureDetails;
+      }
+    }
 
     /// <summary>
     /// Performs the specific load logic for the test case.
@@ -60,7 +193,9 @@ namespace NightTest.Core
     /// invoked via the <see cref="IGame.Load"/> explicit interface implementation.
     /// Base implementation is empty.
     /// </summary>
-    protected virtual void Load() { }
+    protected virtual void Load()
+    {
+    }
 
     /// <summary>
     /// Intermediate virtual method that can be overridden by specialized base classes
@@ -72,25 +207,6 @@ namespace NightTest.Core
     {
       // Calls the abstract Load implemented by concrete test classes
       this.Load();
-    }
-
-    // Explicit interface implementation for IGame.Load
-    /// <summary>
-    /// Loads and initializes the test case. This is the entry point called by the test runner
-    /// or game loop, fulfilling the <see cref="IGame"/> interface.
-    /// It performs common base setup and then calls <see cref="InternalLoad"/>.
-    /// </summary>
-    void IGame.Load()
-    {
-      IsDone = false;
-      CurrentStatus = TestStatus.NotRun;
-      Details = "Test is running...";
-      currentFrameCount = 0;
-      TestStopwatch.Reset();
-      TestStopwatch.Start();
-
-      // Call the virtual InternalLoad, allowing intermediate classes to intercept.
-      this.InternalLoad();
     }
 
     /// <summary>
@@ -114,25 +230,6 @@ namespace NightTest.Core
       this.Update(deltaTime);
     }
 
-    // Explicit interface implementation for IGame.Update
-    /// <summary>
-    /// Updates the test case logic. This is the entry point called by the test runner
-    /// or game loop, fulfilling the <see cref="IGame"/> interface.
-    /// </summary>
-    /// <param name="deltaTime">Time elapsed since the last frame.</param>
-    void IGame.Update(double deltaTime)
-    {
-      if (IsDone)
-      {
-        return;
-      }
-
-      currentFrameCount++;
-
-      // Call the virtual InternalUpdate, allowing intermediate classes to intercept.
-      this.InternalUpdate(deltaTime);
-    }
-
     /// <summary>
     /// Performs the specific draw logic for the test case.
     /// Derived classes can override this method to implement their core draw behavior.
@@ -140,7 +237,9 @@ namespace NightTest.Core
     /// invoked via the <see cref="IGame.Draw"/> explicit interface implementation.
     /// Base implementation is empty.
     /// </summary>
-    protected virtual void Draw() { }
+    protected virtual void Draw()
+    {
+    }
 
     /// <summary>
     /// Intermediate virtual method that can be overridden by specialized base classes
@@ -154,64 +253,6 @@ namespace NightTest.Core
       this.Draw();
     }
 
-    // Explicit interface implementation for IGame.Draw
-    /// <summary>
-    /// Draws the test case. This is the entry point called by the test runner
-    /// or game loop, fulfilling the <see cref="IGame"/> interface.
-    /// It calls <see cref="InternalDraw"/>.
-    /// </summary>
-    void IGame.Draw()
-    {
-      // Call the virtual InternalDraw, allowing intermediate classes to intercept.
-      this.InternalDraw();
-    }
-
-    /// <summary>
-    /// Called when a key is pressed. Default is empty.
-    /// </summary>
-    public virtual void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
-    {
-      if (IsDone || isRepeat)
-      {
-        return;
-      }
-    }
-
-    /// <summary>
-    /// Called when a key is released. Default is empty.
-    /// </summary>
-    public virtual void KeyReleased(KeySymbol key, KeyCode scancode) { }
-
-    /// <summary>
-    /// Called when a mouse button is pressed.
-    /// Base implementation handles clicks for manual confirmation UI.
-    /// </summary>
-    public virtual void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
-    { }
-
-    /// <summary>
-    /// Called when a mouse button is released. Default is empty.
-    /// </summary>
-    public virtual void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses) { }
-
-    /// <summary>
-    /// Public method to record a test failure, typically called by an xUnit wrapper when an exception occurs.
-    /// </summary>
-    /// <param name="failureDetails">Specific details about the failure.</param>
-    /// <param name="ex">The exception that caused the failure, if any.</param>
-    public void RecordFailure(string failureDetails, Exception? ex = null)
-    {
-      CurrentStatus = TestStatus.Failed;
-      if (ex != null)
-      {
-        Details = $"{failureDetails} - Exception: {ex.GetType().Name}: {ex.Message}";
-      }
-      else
-      {
-        Details = failureDetails;
-      }
-    }
-
     /// <summary>
     /// Helper method to stop the stopwatch, record results, and close the window.
     /// Call this when your test logic determines completion (pass or fail).
@@ -219,15 +260,19 @@ namespace NightTest.Core
     /// </summary>
     protected virtual void EndTest()
     {
-      if (IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
 
-      TestStopwatch.Stop();
+      this.TestStopwatch.Stop();
 
       if (Night.Window.IsOpen())
       {
         Night.Window.Close();
       }
-      IsDone = true;
+
+      this.IsDone = true;
     }
 
     /// <summary>
@@ -247,24 +292,30 @@ namespace NightTest.Core
       Func<string>? failDetailsTimeout = null,
       Func<string>? failDetailsCondition = null)
     {
-      if (IsDone) return true; // Already done, report as handled
+      if (this.IsDone)
+      {
+        return true; // Already done, report as handled
+      }
 
-      if (TestStopwatch.ElapsedMilliseconds >= milliseconds)
+      if (this.TestStopwatch.ElapsedMilliseconds >= milliseconds)
       {
         if (successCondition == null || successCondition())
         {
-          CurrentStatus = TestStatus.Passed;
-          Details = passDetails != null ? passDetails() : "Test passed: Met condition or reached duration.";
+          this.CurrentStatus = TestStatus.Passed;
+          this.Details = passDetails != null ? passDetails() : "Test passed: Met condition or reached duration.";
         }
         else
         {
-          CurrentStatus = TestStatus.Failed;
+          this.CurrentStatus = TestStatus.Failed;
+
           // If condition failed, use failDetailsCondition, otherwise (timeout without specific condition failure) use failDetailsTimeout
-          Details = failDetailsCondition != null ? failDetailsCondition() : (failDetailsTimeout != null ? failDetailsTimeout() : "Test failed: Condition not met or timed out.");
+          this.Details = failDetailsCondition != null ? failDetailsCondition() : (failDetailsTimeout != null ? failDetailsTimeout() : "Test failed: Condition not met or timed out.");
         }
-        EndTest();
+
+        this.EndTest();
         return true; // Test completed
       }
+
       return false; // Test not yet completed
     }
 
@@ -285,24 +336,30 @@ namespace NightTest.Core
       Func<string>? failDetailsFrameLimit = null,
       Func<string>? failDetailsCondition = null)
     {
-      if (IsDone) return true; // Already done, report as handled
+      if (this.IsDone)
+      {
+        return true; // Already done, report as handled
+      }
 
-      if (currentFrameCount >= frameCount)
+      if (this.CurrentFrameCount >= frameCount)
       {
         if (successCondition == null || successCondition())
         {
-          CurrentStatus = TestStatus.Passed;
-          Details = passDetails != null ? passDetails() : "Test passed: Met condition or reached frame limit.";
+          this.CurrentStatus = TestStatus.Passed;
+          this.Details = passDetails != null ? passDetails() : "Test passed: Met condition or reached frame limit.";
         }
         else
         {
-          CurrentStatus = TestStatus.Failed;
+          this.CurrentStatus = TestStatus.Failed;
+
           // If condition failed, use failDetailsCondition, otherwise (timeout without specific condition failure) use failDetailsFrameLimit
-          Details = failDetailsCondition != null ? failDetailsCondition() : (failDetailsFrameLimit != null ? failDetailsFrameLimit() : "Test failed: Condition not met or frame limit exceeded.");
+          this.Details = failDetailsCondition != null ? failDetailsCondition() : (failDetailsFrameLimit != null ? failDetailsFrameLimit() : "Test failed: Condition not met or frame limit exceeded.");
         }
-        EndTest();
+
+        this.EndTest();
         return true; // Test completed
       }
+
       return false; // Test not yet completed
     }
   }

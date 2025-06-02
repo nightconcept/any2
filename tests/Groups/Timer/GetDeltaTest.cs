@@ -1,4 +1,4 @@
-// <copyright file="GraphicsClearTest.cs" company="Night Circle">
+// <copyright file="GetDeltaTest.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -20,44 +20,49 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
-using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using Night;
 
 using NightTest.Core;
 
-namespace NightTest.Groups.Graphics
+namespace NightTest.Groups.Timer
 {
   /// <summary>
-  /// Tests the Graphics.Clear() method with a specific color.
-  /// Requires manual confirmation that the color is correct.
+  /// Tests the Timer.GetDelta() method.
   /// </summary>
-  public class GraphicsClearColorTest : BaseManualTestCase
+  public class GetDeltaTest : BaseTestCase
   {
-    private readonly Color skyBlue = new Color(135, 206, 235);
+    private List<float> deltas = new List<float>();
 
     /// <inheritdoc/>
-    public override string Name => "Graphics.Clear";
+    public override string Name => "Timer.GetDelta";
 
     /// <inheritdoc/>
-    public override string Description => "Tests clearing the screen to sky blue (135, 206, 235). User must confirm color.";
+    public override string Description => "Tests the Night.Timer.GetDelta() method by collecting delta values.";
 
     /// <inheritdoc/>
     protected override void Load()
     {
-      this.Details = "Test running, displaying sky blue color.";
+      this.deltas.Clear();
     }
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      this.RequestManualConfirmation("Is the screen cleared to a SKY BLUE color (like a clear daytime sky)?");
-    }
+      this.deltas.Add(Night.Timer.GetDelta()); // Collect delta each frame this update is called
 
-    /// <inheritdoc/>
-    protected override void Draw()
-    {
-      Night.Graphics.Clear(this.skyBlue);
+      _ = this.CheckCompletionAfterDuration(
+        201, // > 200ms
+        successCondition: () => this.CurrentFrameCount > 10,
+        passDetails: () =>
+        {
+          float averageDelta = this.deltas.Count > 0 ? this.deltas.Average() : 0f;
+          return $"Timer.GetDelta() test collected {this.deltas.Count} values. Average delta from Timer.GetDelta(): {averageDelta:F6}. Test ran for >200ms and >10 frames.";
+        },
+        failDetailsTimeout: null,
+        failDetailsCondition: () => "Timer.GetDelta() test failed: Did not exceed 10 frames collecting deltas within 200ms.");
     }
   }
 }

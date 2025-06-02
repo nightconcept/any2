@@ -1,6 +1,8 @@
 // <copyright file="TimerGroup.cs" company="Night Circle">
 // zlib license
+//
 // Copyright (c) 2025 Danny Solivan, Night Circle
+//
 // This software is provided 'as-is', without any express or implied
 // warranty. In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -24,7 +26,6 @@ using Night;
 
 using NightTest.Core;
 
-
 using Xunit;
 using Xunit.Abstractions;
 
@@ -39,7 +40,8 @@ namespace NightTest.Groups.Timer
     /// Initializes a new instance of the <see cref="TimerGroup"/> class.
     /// </summary>
     /// <param name="outputHelper">The xUnit test output helper for logging.</param>
-    public TimerGroup(ITestOutputHelper outputHelper) : base(outputHelper)
+    public TimerGroup(ITestOutputHelper outputHelper)
+      : base(outputHelper)
     {
     }
 
@@ -50,7 +52,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_GetTimeTest()
     {
-      Run_TestCase(new GetTimeTest());
+      this.Run_TestCase(new GetTimeTest());
     }
 
     /// <summary>
@@ -60,7 +62,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_GetFPSTest()
     {
-      Run_TestCase(new GetFPSTest());
+      this.Run_TestCase(new GetFPSTest());
     }
 
     /// <summary>
@@ -70,7 +72,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_GetDeltaTest()
     {
-      Run_TestCase(new GetDeltaTest());
+      this.Run_TestCase(new GetDeltaTest());
     }
 
     /// <summary>
@@ -80,7 +82,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_GetAverageDeltaTest()
     {
-      Run_TestCase(new GetAverageDeltaTest());
+      this.Run_TestCase(new GetAverageDeltaTest());
     }
 
     /// <summary>
@@ -90,7 +92,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_SleepTest()
     {
-      Run_TestCase(new SleepTest());
+      this.Run_TestCase(new SleepTest());
     }
 
     /// <summary>
@@ -100,7 +102,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_StepTest()
     {
-      Run_TestCase(new StepTest());
+      this.Run_TestCase(new StepTest());
     }
   }
 }
