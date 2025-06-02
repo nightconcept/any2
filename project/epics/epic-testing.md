@@ -7,30 +7,75 @@
 - As a Developer, I want `NightTest` to dynamically discover test groups so that adding new tests is more modular and requires no orchestrator modification.
 - As a Developer, I want a clear and standardized way to interact with manual tests so that they are easier to execute and less prone to specific keybinding issues.
 - As a Developer, I want individual test cases or groups to be able to manage their own configurations if needed, for greater flexibility.
-- As a Developer, I want test cases to report failures robustly, even in case of crashes, so that `test_report.json` is always informative.
-- As a Developer, I want a well-defined `BaseTestCase` to reduce boilerplate and provide common utilities for writing tests.
+- As a Developer, I want test cases to report failures robustly, even in case of crashes, so that xUnit test results are always informative.
+- As a Developer, I want a well-defined `BaseTestCase` to reduce boilerplate and provide common utilities for writing tests compatible with xUnit.
 - As a Developer, I want the `NightTest` project structure to be clean and consistently named (e.g., `Groups/` instead of `Modules/`).
-- As a CI System, I want to build and run `NightTest` automated tests and fail the build if any tests fail.
-- As a Developer, I want the CI system to archive the `test_report.json` for inspection.
-- As a Developer, I want `NightTest.exe` to return an appropriate exit code based on test results for CI integration.
+- As a CI System, I want to build and run `NightTest` automated tests using `dotnet test` and fail the build if any tests fail.
+- As a Developer, I want the CI system to archive standard xUnit test result artifacts (e.g., TRX files) for inspection.
+- As a Developer, I want `dotnet test` to return an appropriate exit code based on test results for CI integration.
 
 ## Tasks
 
+### Phase 0: xUnit Integration & Core Refactoring
+
+- **Task 0.1: Integrate xUnit Framework**
+  - **Description:** Add xUnit (xunit, xunit.runner.visualstudio) NuGet packages to the `NightTest.csproj`. This will establish xUnit as the primary test runner.
+  - **Implementation:**
+    - [ ] Add `xunit` NuGet package.
+    - [ ] Add `xunit.runner.visualstudio` NuGet package to enable test discovery and execution in Visual Studio and by `dotnet test`.
+    - [ ] Add `Microsoft.NET.Test.Sdk` NuGet package.
+  - **Acceptance Criteria:** The `NightTest` project can compile with xUnit dependencies. Tests can be discovered by the xUnit runner.
+  - **Status:** To Do
+
+- **Task 0.2: Remove Custom Test Orchestration and Reporting**
+  - **Description:** Remove the custom `TestRunner` and `Program.cs` test orchestration logic, as xUnit will now handle test discovery, execution, and reporting.
+  - **Implementation:**
+    - [ ] Delete `tests/Core/TestRunner.cs`.
+    - [ ] Delete `tests/Program.cs` or strip it down if it contains other essential non-test-running logic (unlikely for a test project).
+    - [ ] Remove any command-line argument parsing related to the old runner.
+  - **Acceptance Criteria:** Custom test execution and reporting code is removed. The project relies on xUnit for these functions.
+  - **Status:** To Do
+
+- **Task 0.3: Adapt `ITestCase` and `BaseTestCase` for xUnit**
+  - **Description:** Modify `ITestCase` and `BaseTestCase` to align with xUnit's execution model. Tests will be xUnit test methods that instantiate and run `IGame` instances.
+  - **Implementation:**
+    - [ ] Review `ITestCase`: Determine if the interface is still fully needed or if its properties (Name, Type, Description) can be primarily managed by xUnit attributes (`[Fact]`, `[Trait]`) on test methods.
+    - [ ] Modify `BaseTestCase`:
+      - Remove `SetTestRunner(TestRunner runner)` method and `TestRunner` dependency.
+      - `RecordPass`/`RecordFail` methods will need to be re-thought. Instead of reporting to a `TestRunner`, `BaseTestCase` should facilitate making assertions within the xUnit test method that wraps the `IGame` execution. This might involve the `IGame` test setting internal status flags or properties that the xUnit test method can assert against after `Night.Framework.Run()` completes.
+      - For failures, `BaseTestCase` (or the `IGame` test itself) could throw specific exceptions that xUnit test methods can catch and assert on, or simply let unhandled exceptions propagate to fail the xUnit test.
+      - The `TestStopwatch` for duration can still be useful; its result can be logged using `ITestOutputHelper` in the xUnit test method.
+  - **Acceptance Criteria:** `BaseTestCase` no longer relies on the custom `TestRunner`. `IGame` test outcomes (pass/fail/error) can be effectively translated into xUnit test results.
+  - **Status:** To Do
+
+- **Task 0.4: Create Initial xUnit Test Wrappers**
+  - **Description:** Create example xUnit test methods that instantiate and run existing or new `IGame`-based test cases.
+  - **Implementation:**
+    - [ ] Create a new C# test class (e.g., `GraphicsTests.cs`) in the `tests/Groups/Graphics/` directory.
+    - [ ] Inside this class, define xUnit test methods (e.g., `[Fact] public void Run_GraphicsClearColorTest()`).
+    - [ ] Each xUnit test method will:
+      - Instantiate the corresponding `IGame` test case (e.g., `var myTest = new GraphicsClearColorTest();`).
+      - (If needed) Inject `ITestOutputHelper` for logging.
+      - Call `Night.Framework.Run(myTest);`.
+      - After `Run` completes, use xUnit assertions (`Assert.True()`, `Assert.Equal()`, etc.) based on the outcome of the `IGame` test (e.g., checking a status property set by `BaseTestCase` or the `IGame` itself).
+  - **Acceptance Criteria:** At least one existing `IGame` test can be successfully executed via an xUnit test method. Test results are reported by xUnit.
+  - **Status:** To Do
+
 ### Phase 1: NightTest Architectural Enhancements
 
-- **Task 1.1: Implement Dynamic Test Discovery**
-  - **Description:** Modify `tests/Program.cs` to scan assemblies in `tests/Groups/` (currently `tests/Modules/`) for classes implementing `NightTest.Core.ITestGroup` instead of relying on manual instantiation and registration. This aligns with the PRD suggestion ([`project/night-test-prd.md:33`](project/night-test-prd.md:33)).
+- **Task 1.1: Verify xUnit Test Discovery and Organization**
+  - **Description:** Ensure xUnit correctly discovers all `IGame`-based tests wrapped by xUnit test methods. `ITestGroup` may no longer be necessary for discovery, as xUnit uses attributes and class/method structure. Test organization will rely on xUnit's features (e.g., test classes, `[Trait]` attributes).
   - **Implementation:**
-    - [x] Update `tests/Program.cs` to use reflection to find all types implementing `NightTest.Core.ITestGroup` in the relevant assembly/assemblies.
-    - [x] Instantiate discovered groups and collect their test cases.
-  - **Acceptance Criteria:** `tests/Program.cs` dynamically discovers all test groups. New test groups added to the `tests/Groups/` directory are automatically included in test runs without manual changes to `tests/Program.cs`.
-  - **Status:** Done
+    - [ ] Confirm that all `[Fact]` or `[Theory]` methods that wrap `IGame` instances are discovered by `dotnet test` and/or the Test Explorer in Visual Studio.
+    - [ ] Evaluate the role of `ITestGroup`. If its primary purpose was discovery and grouping for the custom runner, it might be deprecated or removed. Test organization can be achieved by structuring xUnit test classes within namespaces and using `[Trait]` attributes for categorization (e.g., `[Trait("Category", "Graphics")]`, `[Trait("TestType", "Manual")]`).
+  - **Acceptance Criteria:** All `IGame` tests are discoverable and runnable via xUnit. A clear strategy for organizing tests using xUnit conventions is in place. `ITestGroup`'s role is clarified or it's removed if redundant.
+  - **Status:** To Do (was Done, but needs re-evaluation with xUnit)
 
 - **Task 1.2: Standardize Manual Test Interaction**
   - **Description:** Develop a standardized mechanism for manual test pass/fail input, as per the future consideration in [`project/night-test-prd.md:31`](project/night-test-prd.md:31) and [`project/night-test-prd.md:249`](project/night-test-prd.md:249). This moves away from hardcoded keys specific to each manual test.
   - **Implementation:**
-    - [x] Design a simple UI overlay (e.g., using `Night.Graphics` to draw "Pass"/"Fail" text/buttons and listen for mouse clicks on them) or a dedicated input phase managed by `BaseTestCase` or the `TestRunner`. (Implemented in `BaseTestCase` with clickable rectangles for Pass/Fail).
-    - [x] Update `BaseTestCase` (Task 1.3) to include logic for this standardized interaction. (Done as part of this task for the UI elements and input handling).
+    - [x] Design a simple UI overlay (e.g., using `Night.Graphics` to draw "Pass"/"Fail" text/buttons and listen for mouse clicks on them) or a dedicated input phase managed by `BaseTestCase`. (Implemented in `BaseTestCase` with clickable rectangles for Pass/Fail - `TestRunner` part is no longer applicable).
+    - [x] Update `BaseTestCase` (Task 0.3, formerly 1.3) to include logic for this standardized interaction. (Done as part of this task for the UI elements and input handling).
     - [x] Refactor existing manual tests (e.g., `ConcreteDummyManualTest` if it exists) to use the new mechanism. (A new test `GraphicsClearColorTest` was created using this mechanism, and `ConcreteDummyManualTest` was removed).
   - **Acceptance Criteria:** Manual tests use a consistent and clear method for user input to signal pass or fail. A sample test demonstrates this. Existing dummy manual tests are removed or refactored.
   - **Status:** Done
@@ -43,8 +88,8 @@
     - [ ] Implement common `ITestCase` properties (e.g., `Name`, `Type`, `Description` can be abstract or virtual with default).
     - [ ] Include a `System.Diagnostics.Stopwatch` (`TestStopwatch`) for measuring total test duration, started in `Load()` and stopped before reporting.
     - [ ] Implement `QuitSelf()` method that signals the test is done, records the duration, and calls `Night.Window.Close()`.
-    - [ ] Provide common utility methods for reporting results to the `TestRunner` (e.g., `RecordPass(string details)`, `RecordFail(string details, Exception e = null)`). These methods would set `CurrentStatus` and `Details` properties.
-    - [ ] Ensure it correctly receives and stores the `TestRunner` instance via `SetTestRunner()`.
+    - [ ] `BaseTestCase` will need methods that allow the `IGame` to signal its outcome (e.g., setting internal status properties like `ActualTestStatus` and `FailureDetails`). The xUnit test method wrapping the `IGame` will then use these properties to make assertions.
+    - [ ] Remove `SetTestRunner()` and any `TestRunner` dependency.
     - [ ] Refactor existing test cases to inherit from `BaseTestCase`.
   - **Acceptance Criteria:** `BaseTestCase.cs` is implemented and provides useful common functionality. Existing and new test cases inherit from it, reducing boilerplate.
   - **Status:** To Do
@@ -54,9 +99,9 @@
   - **Implementation:**
     - [x] Rename directory `tests/Modules` to `tests/Groups`.
     - [x] Update namespaces in all test group and test case files previously within `tests/Groups/`.
-    - [ ] Update `tests/Program.cs` (especially if dynamic discovery from Task 1.1 is implemented) to look in `tests/Groups/`.
-    - [ ] Update documentation (`project/night-test-prd.md`, `project/testing-plan.md`) to consistently refer to `tests/Groups/`.
-  - **Acceptance Criteria:** Directory is renamed. All code, documentation, and discovery mechanisms reflect the new `Groups` naming.
+    - [ ] Update `tests/NightTest.csproj` if needed to reflect new paths or if `Program.cs` is removed.
+    - [ ] Update documentation (`project/night-test-prd.md`, `project/testing-plan.md`) to consistently refer to `tests/Groups/` and reflect the xUnit changes.
+  - **Acceptance Criteria:** Directory is renamed. All code, documentation, and xUnit discovery mechanisms reflect the new `Groups` naming.
   - **Status:** To Do
 
 - **Task 1.5: Clarify and Refactor `tests/Game.cs`**
@@ -70,11 +115,12 @@
   - **Status:** To Do
 
 - **Task 1.6: Enhance Error Handling within Test Cases and `BaseTestCase`**
-  - **Description:** Ensure that test cases, particularly through `BaseTestCase`, robustly report failures to the `TestRunner`, especially in the event of unexpected exceptions during test logic or from `Night.Framework` calls.
+  - **Description:** Ensure that test cases, particularly through `BaseTestCase`, robustly report failures to xUnit, especially in the event of unexpected exceptions during test logic or from `Night.Framework` calls.
   - **Implementation:**
-    - [ ] `BaseTestCase` should implement a top-level try-catch mechanism around the execution of `Load`, `Update`, and `Draw` (or a central test execution method if applicable).
-    - [ ] Any unhandled exception caught by `BaseTestCase` should result in the test being marked as `TestStatus.Failed`, with exception details included in the `Details` property reported to the `TestRunner`.
-  - **Acceptance Criteria:** The `test_report.json` accurately reflects test failures caused by unhandled exceptions within the test case execution, providing error messages and stack traces where possible.
+    - [ ] `BaseTestCase` (or the xUnit test method wrapping it) should implement a top-level try-catch mechanism around the execution of the `IGame`'s `Load`, `Update`, and `Draw` methods (or a central test execution method if applicable).
+    - [ ] Any unhandled exception caught should cause the xUnit test to fail. xUnit automatically captures exception details.
+    - [ ] For non-exception failures determined by the `IGame`'s logic, `BaseTestCase` should set status properties that the xUnit test method can assert, causing an `Assert.Fail()` or similar if the status is `Failed`.
+  - **Acceptance Criteria:** xUnit test results accurately reflect test failures caused by unhandled exceptions or assertion failures within the test case execution, providing error messages and stack traces via standard xUnit reporting.
   - **Status:** To Do
 
 - **Task 1.7: Test-Specific Configuration (Optional Enhancement)**
@@ -95,31 +141,30 @@
 
 ### Phase 2: CI Integration for NightTest
 
-- **Task 2.1: Modify `NightTest/Program.cs` for CI-Friendly Exit Codes**
-  - **Description:** Update the `Main` method in `tests/Program.cs` to return an appropriate exit code: 0 if all selected automated tests pass, and a non-zero value (e.g., 1) if any selected automated tests fail or if critical errors occur in the test orchestrator.
+- **Task 2.1: Ensure CI Uses `dotnet test` for Exit Codes**
+  - **Description:** The `dotnet test` command, used by xUnit, inherently returns appropriate exit codes (0 for success, non-zero for failures). This task is to ensure the CI script correctly uses `dotnet test` and relies on its standard exit codes.
   - **Implementation:**
-    - [ ] After `testRunner.GenerateReport()` in `tests/Program.cs`, query the `TestRunner` instance for the count of failed automated tests and any critical orchestrator errors.
-    - [ ] Set `Environment.ExitCode` to 0 or 1 based on this information.
-  - **Acceptance Criteria:** `NightTest.exe` (or equivalent executable) returns 0 if all automated tests pass, and 1 (or another non-zero code) if there are any automated test failures or critical errors.
+    - [ ] Verify that the CI workflow (Task 2.2) uses `dotnet test tests/NightTest.csproj ...`.
+    - [ ] No custom exit code logic is needed in `NightTest` itself.
+  - **Acceptance Criteria:** The CI job step running `dotnet test` will correctly pass or fail based on the exit code from `dotnet test`.
   - **Status:** To Do
 
-- **Task 2.2: Update `.github/workflows/ci.yml` to Run NightTest**
-  - **Description:** Modify the existing GitHub Actions CI workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml:1)) to build and execute the `NightTest` application.
+- **Task 2.2: Update `.github/workflows/ci.yml` to Run NightTest via `dotnet test`**
+  - **Description:** Modify the existing GitHub Actions CI workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml:1)) to build the `NightTest` project and execute its tests using `dotnet test`.
   - **Implementation:**
-    - [ ] Add a new step after the main solution build ("Build Solution") to specifically build the `NightTest` project: `dotnet build tests/NightTest.csproj --configuration Release --no-restore`.
-    - [ ] Modify the "Run Tests" step:
-      - Remove the current `dotnet test tests/Night.Tests/Night.Tests.csproj` command.
-      - Add commands to execute the compiled `NightTest` application. This path will vary by OS (e.g., `tests/bin/Release/net9.0/NightTest.exe` on Windows, `tests/bin/Release/net9.0/NightTest` on Linux/macOS).
-      - Pass the command-line arguments `--run-automated --report-path test_report.json` to the `NightTest` executable.
-  - **Acceptance Criteria:** The CI workflow successfully builds the `NightTest` project. The "Run Tests" step executes `NightTest.exe --run-automated`. The workflow step correctly fails if `NightTest.exe` returns a non-zero exit code (due to Task 2.1).
+    - [ ] Ensure the `NightTest.csproj` is built as part of the solution build or with a separate `dotnet build tests/NightTest.csproj --configuration Release --no-restore` step.
+    - [ ] Modify the "Run Tests" step to use `dotnet test tests/NightTest.csproj --configuration Release --no-build`.
+    - [ ] Add arguments for `dotnet test` as needed, e.g., `--logger "trx;LogFileName=test_results.trx"` to generate a standard TRX report file.
+    - [ ] Filtering for "automated" tests will be done using xUnit's mechanisms, e.g., `dotnet test --filter "TestType=Automated"` if `[Trait("TestType", "Automated")]` is used.
+  - **Acceptance Criteria:** The CI workflow successfully builds and runs tests in the `NightTest` project using `dotnet test`. The workflow step correctly fails if `dotnet test` indicates test failures.
   - **Status:** To Do
 
-- **Task 2.3: Archive `test_report.json` in CI Workflow**
-  - **Description:** Add a step to the [`.github/workflows/ci.yml`](.github/workflows/ci.yml:1) workflow to upload the `test_report.json` file generated by `NightTest` as a build artifact.
+- **Task 2.3: Archive xUnit Test Results (e.g., TRX) in CI Workflow**
+  - **Description:** Add a step to the [`.github/workflows/ci.yml`](.github/workflows/ci.yml:1) workflow to upload the standard xUnit test result file (e.g., TRX) generated by `dotnet test` as a build artifact.
   - **Implementation:**
-    - [ ] Add a new step using `actions/upload-artifact@v3` (or a later version).
-    - [ ] Configure this step to upload the `test_report.json` file.
+    - [ ] Add a new step using `actions/upload-artifact@v4` (or a later version).
+    - [ ] Configure this step to upload the test result file (e.g., `test_results.trx` if specified in the logger argument to `dotnet test`).
     - [ ] Set the `if: always()` condition for this step to ensure the report is uploaded even if previous steps (like test execution) fail.
-    - [ ] Assign a clear name to the artifact, incorporating the matrix OS if applicable (e.g., `night-test-report-${{ matrix.os }}`).
-  - **Acceptance Criteria:** The `test_report.json` file is available as a downloadable artifact for each CI run, allowing for inspection of test results.
+    - [ ] Assign a clear name to the artifact, incorporating the matrix OS if applicable (e.g., `night-test-results-${{ matrix.os }}`).
+  - **Acceptance Criteria:** The xUnit test result file (e.g., TRX) is available as a downloadable artifact for each CI run, allowing for inspection of test results using standard tools.
   - **Status:** To Do
