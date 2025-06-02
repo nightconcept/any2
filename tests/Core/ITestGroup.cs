@@ -18,6 +18,6 @@ namespace NightTest.Core
     /// Gets all test cases provided by this group.
     /// </summary>
     /// <returns>A collection of <see cref="ITestCase"/> objects.</returns>
-    System.Collections.Generic.IEnumerable<ITestCase> GetTestCases();
+    IEnumerable<ITestCase> GetTestCases();
   }
 }

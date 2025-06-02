@@ -105,7 +105,7 @@ namespace Night
     /// Gets or sets a value indicating whether VSync is enabled.
     /// </summary>
     [JsonPropertyName("vsync")]
-    public bool VSync { get; set; } = true; // LÖVE default
+    public bool VSync { get; set; } = false; // True currently breaks the refresh
 
     /// <summary>
     /// Gets or sets a value indicating whether to enable high-DPI mode if available.

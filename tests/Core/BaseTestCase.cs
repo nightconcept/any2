@@ -54,11 +54,32 @@ namespace NightTest.Core
     public abstract string Description { get; }
 
     /// <summary>
-    /// Called when the test case is loaded. Reset state here.
-    /// Base implementation starts stopwatch and sets initial status.
-    /// Override and call base.Load() if you need custom Load logic before stopwatch starts.
+    /// Performs the specific load logic for the test case.
+    /// Derived classes must override this method to implement their core load behavior.
+    /// This method is called by the <see cref="InternalLoad"/> method, which is ultimately
+    /// invoked via the <see cref="IGame.Load"/> explicit interface implementation.
     /// </summary>
-    public virtual void Load()
+    protected abstract void Load();
+
+    /// <summary>
+    /// Intermediate virtual method that can be overridden by specialized base classes
+    /// (like <see cref="BaseManualTestCase"/>) to inject logic before or after
+    /// the concrete test's <see cref="Load()"/> method is called.
+    /// By default, it directly calls the concrete <see cref="Load()"/>.
+    /// </summary>
+    protected virtual void InternalLoad()
+    {
+      // Calls the abstract Load implemented by concrete test classes
+      this.Load();
+    }
+
+    // Explicit interface implementation for IGame.Load
+    /// <summary>
+    /// Loads and initializes the test case. This is the entry point called by the test runner
+    /// or game loop, fulfilling the <see cref="IGame"/> interface.
+    /// It performs common base setup and then calls <see cref="InternalLoad"/>.
+    /// </summary>
+    void IGame.Load()
     {
       IsDone = false;
       CurrentStatus = TestStatus.NotRun;
@@ -66,15 +87,39 @@ namespace NightTest.Core
       currentFrameCount = 0;
       TestStopwatch.Reset();
       TestStopwatch.Start();
+
+      // Call the virtual InternalLoad, allowing intermediate classes to intercept.
+      this.InternalLoad();
     }
 
     /// <summary>
-    /// Called every frame to update the test case's logic.
-    /// This method is non-virtual and acts as the main update loop,
-    /// dispatching to UpdateAutomated or UpdateManual based on test type.
+    /// Performs the specific update logic for the test case.
+    /// Derived classes must override this method to implement their core update behavior.
+    /// This method is called by the <see cref="IGame.Update"/> explicit interface implementation.
     /// </summary>
     /// <param name="deltaTime">Time elapsed since the last frame.</param>
-    public void Update(double deltaTime)
+    protected abstract void Update(double deltaTime);
+
+    /// <summary>
+    /// Intermediate virtual method that can be overridden by specialized base classes
+    /// (like <see cref="BaseManualTestCase"/>) to inject logic before or after
+    /// the concrete test's <see cref="Update(double)"/> method is called.
+    /// By default, it directly calls the concrete <see cref="Update(double)"/>.
+    /// </summary>
+    /// <param name="deltaTime">Time elapsed since the last frame.</param>
+    protected virtual void InternalUpdate(double deltaTime)
+    {
+      // Calls the abstract Update implemented by concrete test classes (e.g., GraphicsClearColorTest or automated tests)
+      this.Update(deltaTime);
+    }
+
+    // Explicit interface implementation for IGame.Update
+    /// <summary>
+    /// Updates the test case logic. This is the entry point called by the test runner
+    /// or game loop, fulfilling the <see cref="IGame"/> interface.
+    /// </summary>
+    /// <param name="deltaTime">Time elapsed since the last frame.</param>
+    void IGame.Update(double deltaTime)
     {
       if (IsDone)
       {
@@ -83,40 +128,8 @@ namespace NightTest.Core
 
       currentFrameCount++;
 
-      // Dispatch to type-specific update logic
-      if (this.Type == TestType.Automated)
-      {
-        UpdateAutomated(deltaTime);
-      }
-      else if (this.Type == TestType.Manual)
-      {
-        UpdateManual(deltaTime);
-      }
-    }
-
-    /// <summary>
-    /// Override this method in derived automated test cases to implement
-    /// frame-specific logic for the automated test.
-    /// This is called by the main Update loop if Type is Automated.
-    /// </summary>
-    /// <param name="deltaTime">Time elapsed since the last frame.</param>
-    protected virtual void UpdateAutomated(double deltaTime)
-    {
-      // Base implementation is empty.
-      // Automated tests will override this.
-    }
-
-    /// <summary>
-    /// Override this method in derived manual test case hierarchies (like BaseManualTestCase)
-    /// to implement frame-specific logic for manual tests.
-    /// This is called by the main Update loop if Type is Manual.
-    /// </summary>
-    /// <param name="deltaTime">Time elapsed since the last frame.</param>
-    protected virtual void UpdateManual(double deltaTime)
-    {
-      // Base implementation is empty.
-      // BaseManualTestCase will override this, and specific manual tests
-      // will override it further down the chain.
+      // Call the virtual InternalUpdate, allowing intermediate classes to intercept.
+      this.InternalUpdate(deltaTime);
     }
 
     /// <summary>

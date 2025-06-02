@@ -35,7 +35,7 @@ namespace NightTest.Core
     /// </summary>
     public void Run_TestCase(BaseTestCase testCase)
     {
-      Assert.NotNull(testCase); // Ensure testCase is not null at the start
+      Assert.NotNull(testCase);
 
       _outputHelper.WriteLine($"Starting IGame test: {testCase.Name}");
       _outputHelper.WriteLine($"  Description: {testCase.Description}");
@@ -44,7 +44,7 @@ namespace NightTest.Core
       try
       {
         // Run the IGame test case
-        // This will block until the Night.Window is closed by the test itself (e.g., via QuitSelf)
+        // This will block until the Night.Window is closed by the test itself (e.g., via EndTest)
         Night.Framework.Run(testCase);
       }
       catch (Exception ex)

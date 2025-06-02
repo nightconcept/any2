@@ -65,16 +65,30 @@ namespace NightTest.Core
     private static readonly Color FailButtonColor = new Color(200, 0, 0); // Red
     private static readonly Color ButtonBorderColor = Color.White;
 
-    /// <inheritdoc/>
-    public override void Load()
+    /// <summary>
+    /// Overrides the internal load hook from <see cref="BaseTestCase"/>
+    /// to inject manual test-specific initialization logic
+    /// before allowing the concrete test's <see cref="BaseTestCase.Load()"/> method to run.
+    /// This method is sealed to ensure this control flow.
+    /// </summary>
+    protected sealed override void InternalLoad()
     {
-      base.Load();
+      // Perform BaseManualTestCase specific initialization
       CurrentManualInputUIMode = ManualInputUIMode.None;
       ManualConfirmationConsolePrompt = string.Empty;
+
+      // Call the base InternalLoad, which will in turn call the concrete test's Load() method.
+      base.InternalLoad();
     }
 
-    /// <inheritdoc/>
-    protected override void UpdateManual(double deltaTime)
+    /// <summary>
+    /// Overrides the internal update hook from <see cref="BaseTestCase"/>
+    /// to inject manual test-specific logic, such as timeout checks,
+    /// before allowing the concrete test's <see cref="BaseTestCase.Update(double)"/> method to run.
+    /// This method is sealed to ensure this control flow.
+    /// </summary>
+    /// <param name="deltaTime">Time elapsed since the last frame.</param>
+    protected sealed override void InternalUpdate(double deltaTime)
     {
       // Handle timeout for manual tests
       if (this.Type == TestType.Manual && CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
@@ -87,6 +101,13 @@ namespace NightTest.Core
           EndTest();
           return; // Test is over
         }
+      }
+
+      // If not timed out or otherwise completed, call the base InternalUpdate,
+      // which will in turn call the concrete test's Update() method.
+      if (!IsDone)
+      {
+        base.InternalUpdate(deltaTime);
       }
     }
 

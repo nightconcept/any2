@@ -28,15 +28,13 @@ namespace NightTest.Groups.Graphics
     public override string Description => "Tests clearing the screen to sky blue (135, 206, 235). User must confirm color.";
 
     /// <inheritdoc/>
-    public override void Load()
+    protected override void Load()
     {
-      base.Load();
-
       Details = "Test running, displaying sky blue color.";
     }
 
     /// <inheritdoc/>
-    protected override void UpdateManual(double deltaTime)
+    protected override void Update(double deltaTime)
     {
       if (!_promptRequested && TestStopwatch.ElapsedMilliseconds > ManualTestPromptDelayMilliseconds)
       {
