@@ -31,13 +31,13 @@ namespace NightTest.Core
     /// Gets the current status of the test case.
     /// Its value can be asserted by xUnit test methods.
     /// </summary>
-    public TestStatus CurrentStatus { get; protected set; } = TestStatus.NotRun; // Made public for xUnit assertions
+    public TestStatus CurrentStatus { get; protected set; } = TestStatus.NotRun;
 
     /// <summary>
     /// Gets details about the test execution, such as error messages or success information.
     /// Its value can be asserted by xUnit test methods.
     /// </summary>
-    public string Details { get; protected set; } = "Test has not started."; // Made public for xUnit assertions
+    public string Details { get; protected set; } = "Test has not started.";
 
 
     /// <summary>
@@ -49,7 +49,7 @@ namespace NightTest.Core
     /// <inheritdoc/>
     public abstract string Name { get; }
     /// <inheritdoc/>
-    public abstract TestType Type { get; }
+    public virtual TestType Type => TestType.Automated;
     /// <inheritdoc/>
     public abstract string Description { get; }
 
@@ -70,10 +70,11 @@ namespace NightTest.Core
 
     /// <summary>
     /// Called every frame to update the test case's logic.
-    /// This MUST be implemented by deriving test classes.
+    /// This method is non-virtual and acts as the main update loop,
+    /// dispatching to UpdateAutomated or UpdateManual based on test type.
     /// </summary>
     /// <param name="deltaTime">Time elapsed since the last frame.</param>
-    public virtual void Update(double deltaTime)
+    public void Update(double deltaTime)
     {
       if (IsDone)
       {
@@ -82,25 +83,41 @@ namespace NightTest.Core
 
       currentFrameCount++;
 
-
-      // Call specific update logic for automated tests
+      // Dispatch to type-specific update logic
       if (this.Type == TestType.Automated)
       {
-        OnUpdateAutomated(deltaTime);
+        UpdateAutomated(deltaTime);
       }
-      // For manual tests, their Update override in a BaseManualTestCase-derived class
-      // will call base.Update() which now calls this, and then BaseManualTestCase.Update()
-      // will handle its specific logic.
+      else if (this.Type == TestType.Manual)
+      {
+        UpdateManual(deltaTime);
+      }
     }
 
     /// <summary>
-    /// Provides a dedicated update method for automated test logic.
-    /// Called by the base Update method if the test Type is Automated and IsDone is false.
-    /// Derived classes should override this method for their automated test update logic.
+    /// Override this method in derived automated test cases to implement
+    /// frame-specific logic for the automated test.
+    /// This is called by the main Update loop if Type is Automated.
     /// </summary>
     /// <param name="deltaTime">Time elapsed since the last frame.</param>
-    protected virtual void OnUpdateAutomated(double deltaTime)
-    { }
+    protected virtual void UpdateAutomated(double deltaTime)
+    {
+      // Base implementation is empty.
+      // Automated tests will override this.
+    }
+
+    /// <summary>
+    /// Override this method in derived manual test case hierarchies (like BaseManualTestCase)
+    /// to implement frame-specific logic for manual tests.
+    /// This is called by the main Update loop if Type is Manual.
+    /// </summary>
+    /// <param name="deltaTime">Time elapsed since the last frame.</param>
+    protected virtual void UpdateManual(double deltaTime)
+    {
+      // Base implementation is empty.
+      // BaseManualTestCase will override this, and specific manual tests
+      // will override it further down the chain.
+    }
 
     /// <summary>
     /// Called every frame to draw the test case.
@@ -160,7 +177,7 @@ namespace NightTest.Core
     /// Call this when your test logic determines completion (pass or fail).
     /// Ensure CurrentStatus and Details are set appropriately before calling.
     /// </summary>
-    protected virtual void QuitSelf()
+    protected virtual void EndTest()
     {
       if (IsDone) return;
 
@@ -175,7 +192,7 @@ namespace NightTest.Core
 
     /// <summary>
     /// Checks if the test should complete based on a duration.
-    /// Sets CurrentStatus, Details, and calls QuitSelf if completion occurs.
+    /// Sets CurrentStatus, Details, and calls EndTest if completion occurs.
     /// </summary>
     /// <param name="milliseconds">The duration in milliseconds to wait.</param>
     /// <param name="successCondition">An optional function that must return true for the test to pass. If null, test passes on timeout.</param>
@@ -205,7 +222,7 @@ namespace NightTest.Core
           // If condition failed, use failDetailsCondition, otherwise (timeout without specific condition failure) use failDetailsTimeout
           Details = failDetailsCondition != null ? failDetailsCondition() : (failDetailsTimeout != null ? failDetailsTimeout() : "Test failed: Condition not met or timed out.");
         }
-        QuitSelf();
+        EndTest();
         return true; // Test completed
       }
       return false; // Test not yet completed
@@ -213,7 +230,7 @@ namespace NightTest.Core
 
     /// <summary>
     /// Checks if the test should complete based on a number of frames.
-    /// Sets CurrentStatus, Details, and calls QuitSelf if completion occurs.
+    /// Sets CurrentStatus, Details, and calls EndTest if completion occurs.
     /// </summary>
     /// <param name="frameCount">The number of frames to wait.</param>
     /// <param name="successCondition">An optional function that must return true for the test to pass. If null, test passes after frameCount.</param>
@@ -243,7 +260,7 @@ namespace NightTest.Core
           // If condition failed, use failDetailsCondition, otherwise (timeout without specific condition failure) use failDetailsFrameLimit
           Details = failDetailsCondition != null ? failDetailsCondition() : (failDetailsFrameLimit != null ? failDetailsFrameLimit() : "Test failed: Condition not met or frame limit exceeded.");
         }
-        QuitSelf();
+        EndTest();
         return true; // Test completed
       }
       return false; // Test not yet completed

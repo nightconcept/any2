@@ -6,7 +6,7 @@
 
 using System;
 
-using Night; // Assuming Night.Color, Night.Rectangle, Night.Graphics, Night.Window, KeyCode, MouseButton are here
+using Night;
 
 namespace NightTest.Core
 {
@@ -53,14 +53,17 @@ namespace NightTest.Core
     /// </summary>
     protected double ManualTestPromptDelayMilliseconds { get; } = 200;
 
-    private Night.Rectangle _passButtonRect;
-    private Night.Rectangle _failButtonRect;
+    /// <inheritdoc/>
+    public override TestType Type => TestType.Manual;
+
+    private Rectangle _passButtonRect;
+    private Rectangle _failButtonRect;
     private const int ButtonWidth = 120;
     private const int ButtonHeight = 50;
     private const int ButtonPadding = 20;
-    private static readonly Night.Color PassButtonColor = new Night.Color(0, 180, 0); // Darker Green
-    private static readonly Night.Color FailButtonColor = new Night.Color(200, 0, 0); // Darker Red
-    private static readonly Night.Color ButtonBorderColor = Night.Color.White;
+    private static readonly Color PassButtonColor = new Color(0, 180, 0); // Green
+    private static readonly Color FailButtonColor = new Color(200, 0, 0); // Red
+    private static readonly Color ButtonBorderColor = Color.White;
 
     /// <inheritdoc/>
     public override void Load()
@@ -71,14 +74,8 @@ namespace NightTest.Core
     }
 
     /// <inheritdoc/>
-    public override void Update(double deltaTime)
+    protected override void UpdateManual(double deltaTime)
     {
-      base.Update(deltaTime);
-      if (IsDone)
-      {
-        return;
-      }
-
       // Handle timeout for manual tests
       if (this.Type == TestType.Manual && CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
       {
@@ -87,13 +84,10 @@ namespace NightTest.Core
           Console.WriteLine($"MANUAL TEST '{Name}': Timed out after {ManualTestTimeoutMilliseconds / 1000} seconds.");
           CurrentStatus = TestStatus.Failed;
           Details = ManualConfirmationConsolePrompt + " - Test timed out.";
-          QuitSelf();
+          EndTest();
           return; // Test is over
         }
       }
-      // Note: OnUpdateAutomated is not called here as this class is for manual tests.
-      // Manual tests will implement their specific update logic directly in their override if needed,
-      // or rely on interaction for completion.
     }
 
     /// <inheritdoc/>
@@ -104,9 +98,9 @@ namespace NightTest.Core
       if (CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
       {
         // Ensure button rects are calculated if window is valid
-        if (_passButtonRect.Width == 0 && Night.Window.IsOpen())
+        if (_passButtonRect.Width == 0 && Window.IsOpen())
         {
-          var windowMode = Night.Window.GetMode();
+          var windowMode = Window.GetMode();
           if (windowMode.Width > 0 && windowMode.Height > 0)
           {
             CalculateButtonPositions(windowMode.Width, windowMode.Height);
@@ -116,16 +110,16 @@ namespace NightTest.Core
         if (_passButtonRect.Width > 0) // Only draw if rects are valid
         {
           // Draw Pass Button (Green)
-          Night.Graphics.SetColor(PassButtonColor);
-          Night.Graphics.Rectangle(Night.DrawMode.Fill, _passButtonRect.X, _passButtonRect.Y, _passButtonRect.Width, _passButtonRect.Height);
-          Night.Graphics.SetColor(ButtonBorderColor); // Border
-          Night.Graphics.Rectangle(Night.DrawMode.Line, _passButtonRect.X, _passButtonRect.Y, _passButtonRect.Width, _passButtonRect.Height);
+          Graphics.SetColor(PassButtonColor);
+          Graphics.Rectangle(DrawMode.Fill, _passButtonRect.X, _passButtonRect.Y, _passButtonRect.Width, _passButtonRect.Height);
+          Graphics.SetColor(ButtonBorderColor); // Border
+          Graphics.Rectangle(DrawMode.Line, _passButtonRect.X, _passButtonRect.Y, _passButtonRect.Width, _passButtonRect.Height);
 
           // Draw Fail Button (Red)
-          Night.Graphics.SetColor(FailButtonColor);
-          Night.Graphics.Rectangle(Night.DrawMode.Fill, _failButtonRect.X, _failButtonRect.Y, _failButtonRect.Width, _failButtonRect.Height);
-          Night.Graphics.SetColor(ButtonBorderColor); // Border
-          Night.Graphics.Rectangle(Night.DrawMode.Line, _failButtonRect.X, _failButtonRect.Y, _failButtonRect.Width, _failButtonRect.Height);
+          Graphics.SetColor(FailButtonColor);
+          Graphics.Rectangle(DrawMode.Fill, _failButtonRect.X, _failButtonRect.Y, _failButtonRect.Width, _failButtonRect.Height);
+          Graphics.SetColor(ButtonBorderColor); // Border
+          Graphics.Rectangle(DrawMode.Line, _failButtonRect.X, _failButtonRect.Y, _failButtonRect.Width, _failButtonRect.Height);
         }
       }
     }
@@ -133,8 +127,8 @@ namespace NightTest.Core
     /// <inheritdoc/>
     public override void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
     {
-      base.KeyPressed(key, scancode, isRepeat); // Call base for IsDone check
-      if (IsDone || isRepeat) // Check again as base might have set IsDone
+      base.KeyPressed(key, scancode, isRepeat);
+      if (IsDone || isRepeat)
       {
         return;
       }
@@ -145,7 +139,7 @@ namespace NightTest.Core
         Console.WriteLine($"MANUAL TEST '{Name}': FAILED by user pressing ESCAPE.");
         CurrentStatus = TestStatus.Failed;
         Details = ManualConfirmationConsolePrompt + " - User pressed ESCAPE to fail.";
-        QuitSelf();
+        EndTest();
         return; // Test is over
       }
     }
@@ -153,7 +147,7 @@ namespace NightTest.Core
     /// <inheritdoc/>
     public override void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
     {
-      base.MousePressed(x, y, button, istouch, presses); // Call base for any future generic mouse logic
+      base.MousePressed(x, y, button, istouch, presses);
       if (IsDone)
       {
         return;
@@ -169,7 +163,7 @@ namespace NightTest.Core
           CurrentStatus = TestStatus.Passed;
           Details = ManualConfirmationConsolePrompt + " - User confirmed: PASSED.";
           CurrentManualInputUIMode = ManualInputUIMode.None;
-          QuitSelf();
+          EndTest();
         }
         else if (_failButtonRect.Width > 0 && // Ensure buttons are initialized
                  x >= _failButtonRect.X && x <= _failButtonRect.X + _failButtonRect.Width &&
@@ -179,7 +173,7 @@ namespace NightTest.Core
           CurrentStatus = TestStatus.Failed;
           Details = ManualConfirmationConsolePrompt + " - User confirmed: FAILED.";
           CurrentManualInputUIMode = ManualInputUIMode.None;
-          QuitSelf();
+          EndTest();
         }
       }
     }
@@ -207,9 +201,9 @@ namespace NightTest.Core
       Console.WriteLine("(Alternatively, press ESCAPE to fail and quit this specific test.)");
 
       // Attempt to calculate button positions immediately if window is available
-      if (Night.Window.IsOpen())
+      if (Window.IsOpen())
       {
-        var windowMode = Night.Window.GetMode();
+        var windowMode = Window.GetMode();
         if (windowMode.Width > 0 && windowMode.Height > 0)
         {
           CalculateButtonPositions(windowMode.Width, windowMode.Height);
@@ -226,12 +220,12 @@ namespace NightTest.Core
       int buttonY = windowHeight - ButtonHeight - ButtonPadding;
       if (buttonY < ButtonPadding) buttonY = ButtonPadding; // Ensure buttons are not off-screen bottom
 
-      _passButtonRect = new Night.Rectangle(startX, buttonY, ButtonWidth, ButtonHeight);
-      _failButtonRect = new Night.Rectangle(startX + ButtonWidth + ButtonPadding, buttonY, ButtonWidth, ButtonHeight);
+      _passButtonRect = new Rectangle(startX, buttonY, ButtonWidth, ButtonHeight);
+      _failButtonRect = new Rectangle(startX + ButtonWidth + ButtonPadding, buttonY, ButtonWidth, ButtonHeight);
     }
 
     /// <inheritdoc/>
-    protected override void QuitSelf()
+    protected override void EndTest()
     {
       if (IsDone) return;
 
@@ -245,7 +239,7 @@ namespace NightTest.Core
       }
       CurrentManualInputUIMode = ManualInputUIMode.None; // Ensure this is reset before base call
 
-      base.QuitSelf(); // Call base to stop stopwatch, close window, set IsDone
+      base.EndTest();
     }
   }
 }

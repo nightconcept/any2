@@ -25,8 +25,6 @@ namespace NightTest.Groups.Timer
     /// <inheritdoc/>
     public override string Name => "Timer.GetTime";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated;
-    /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.GetTime() method by measuring time passage.";
 
     /// <inheritdoc/>
@@ -37,7 +35,7 @@ namespace NightTest.Groups.Timer
     }
 
     /// <inheritdoc/>
-    protected override void OnUpdateAutomated(double deltaTime)
+    protected override void UpdateAutomated(double deltaTime)
     {
       // The IsDone check is handled by BaseTestCase.Update before calling this.
       _ = CheckCompletionAfterDuration(500,
@@ -64,8 +62,6 @@ namespace NightTest.Groups.Timer
     /// <inheritdoc/>
     public override string Name => "Timer.GetFPS";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated;
-    /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.GetFPS() method by observing its value over a short period.";
 
     /// <inheritdoc/>
@@ -75,7 +71,7 @@ namespace NightTest.Groups.Timer
     }
 
     /// <inheritdoc/>
-    protected override void OnUpdateAutomated(double deltaTime)
+    protected override void UpdateAutomated(double deltaTime)
     {
       // The IsDone check and currentFrameCount increment are handled by BaseTestCase.Update
       int finalFps = 0; // To capture FPS in the success condition
@@ -107,8 +103,6 @@ namespace NightTest.Groups.Timer
     /// <inheritdoc/>
     public override string Name => "Timer.GetDelta";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated;
-    /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.GetDelta() method by collecting delta values.";
 
     /// <inheritdoc/>
@@ -119,7 +113,7 @@ namespace NightTest.Groups.Timer
     }
 
     /// <inheritdoc/>
-    protected override void OnUpdateAutomated(double deltaTime)
+    protected override void UpdateAutomated(double deltaTime)
     {
       _deltas.Add(Night.Timer.GetDelta()); // Collect delta each frame this update is called
 
@@ -146,8 +140,6 @@ namespace NightTest.Groups.Timer
     /// <inheritdoc/>
     public override string Name => "Timer.GetAverageDelta";
     /// <inheritdoc/>
-    public override TestType Type => TestType.Automated;
-    /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.GetAverageDelta() method.";
 
     /// <inheritdoc/>
@@ -157,7 +149,7 @@ namespace NightTest.Groups.Timer
     }
 
     /// <inheritdoc/>
-    protected override void OnUpdateAutomated(double deltaTime)
+    protected override void UpdateAutomated(double deltaTime)
     {
       // The IsDone check and currentFrameCount increment are handled by BaseTestCase.Update
       double finalAvgDelta = 0;
@@ -194,8 +186,7 @@ namespace NightTest.Groups.Timer
     /// <inheritdoc/>
     public override string Description => $"Tests the Night.Timer.Sleep() method by sleeping for {SleepDurationSeconds}s.";
 
-    /// <inheritdoc/>
-    public override TestType Type => TestType.Automated; // Explicitly Automated
+    // Type is inherited as Automated from BaseTestCase
 
     /// <inheritdoc/>
     public override void Load()
@@ -206,7 +197,7 @@ namespace NightTest.Groups.Timer
       IsDone = false;
       CurrentStatus = TestStatus.NotRun;
       Details = "Test is running...";
-      // TestStopwatch (from base) is used by QuitSelf for the RecordResult duration.
+      // TestStopwatch (from base) is used by EndTest for the RecordResult duration.
       // So, we start it here to measure the time taken for the Load phase itself.
       TestStopwatch.Reset();
       TestStopwatch.Start();
@@ -228,19 +219,19 @@ namespace NightTest.Groups.Timer
         CurrentStatus = TestStatus.Failed;
         Details = $"Timer.Sleep({SleepDurationSeconds}) executed. Measured duration: {elapsedMs}ms. Expected ~{SleepDurationSeconds * 1000}ms. Deviation too large.";
       }
-      // Since this test completes in Load, call QuitSelf immediately.
+      // Since this test completes in Load, call EndTest immediately.
       // The duration recorded will be the time spent in this Load method by TestStopwatch.
-      QuitSelf();
+      EndTest();
     }
 
     /// <inheritdoc/>
-    protected override void OnUpdateAutomated(double deltaTime)
+    protected override void UpdateAutomated(double deltaTime)
     {
       if (!IsDone)
       {
         Details = "Test did not complete in Load as expected.";
         CurrentStatus = TestStatus.Failed;
-        QuitSelf(); // Ensure it quits if it somehow reaches here and isn't done.
+        EndTest(); // Ensure it quits if it somehow reaches here and isn't done.
       }
     }
   }
@@ -255,8 +246,6 @@ namespace NightTest.Groups.Timer
 
     /// <inheritdoc/>
     public override string Name => "Timer.Step";
-    /// <inheritdoc/>
-    public override TestType Type => TestType.Automated;
     /// <inheritdoc/>
     public override string Description => "Tests the Night.Timer.Step() method by calling it multiple times and observing delta values.";
 
@@ -273,7 +262,7 @@ namespace NightTest.Groups.Timer
     }
 
     /// <inheritdoc/>
-    protected override void OnUpdateAutomated(double deltaTime)
+    protected override void UpdateAutomated(double deltaTime)
     {
       // The framework has already called Timer.Step() and the result is in `deltaTime` / Timer.GetDelta().
       // To test Timer.Step() somewhat independently, we can call it again.

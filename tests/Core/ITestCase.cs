@@ -10,7 +10,7 @@ namespace NightTest.Core
   /// Defines the contract for a runnable test case.
   /// Test cases must also implement Night.IGame to be executed by the framework.
   /// </summary>
-  public interface ITestCase // Renamed from ITestScenario
+  public interface ITestCase
   {
     /// <summary>
     /// Gets the unique name of the test case.

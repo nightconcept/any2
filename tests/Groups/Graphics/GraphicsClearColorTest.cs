@@ -25,9 +25,6 @@ namespace NightTest.Groups.Graphics
     public override string Name => "Graphics.Clear.SkyBlueColor";
 
     /// <inheritdoc/>
-    public override TestType Type => TestType.Manual;
-
-    /// <inheritdoc/>
     public override string Description => "Tests clearing the screen to sky blue (135, 206, 235). User must confirm color.";
 
     /// <inheritdoc/>
@@ -39,15 +36,8 @@ namespace NightTest.Groups.Graphics
     }
 
     /// <inheritdoc/>
-    public override void Update(double deltaTime)
+    protected override void UpdateManual(double deltaTime)
     {
-      // Call base update to handle IsDone checks and manual test timeout
-      base.Update(deltaTime);
-      if (IsDone) // Check again in case base.Update finished the test
-      {
-        return;
-      }
-
       // Request manual confirmation once after a short delay (using value from base) to ensure window is visible
       if (!_promptRequested && TestStopwatch.ElapsedMilliseconds > ManualTestPromptDelayMilliseconds)
       {
