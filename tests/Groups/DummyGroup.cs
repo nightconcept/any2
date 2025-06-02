@@ -11,7 +11,7 @@ using Night;
 
 using NightTest.Core;
 
-namespace NightTest.Modules
+namespace NightTest.Groups
 {
   /// <summary>
   /// A group that provides dummy test cases.

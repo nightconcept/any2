@@ -23,10 +23,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection; // Added for dynamic discovery
 
 using Night;
 
-using NightTest.Modules;
+using NightTest.Groups; // Assuming TimerGroup is also in this namespace or similar
 using NightTest.Core;
 
 namespace NightTest
@@ -62,14 +63,40 @@ namespace NightTest
 
       var testRunner = new NightTest.Core.TestRunner(reportPath, runAutomatedOnly, args);
 
-      // List of GROUPS to load tests from.
-      var testGroups = new List<NightTest.Core.ITestGroup>
+      // Dynamically discover test groups
+      var testGroups = new List<NightTest.Core.ITestGroup>();
+      Assembly assembly = Assembly.GetExecutingAssembly();
+      Type iTestGroupType = typeof(NightTest.Core.ITestGroup);
+
+      Console.WriteLine($"\nDiscovering test groups in assembly: {assembly.FullName}...");
+      foreach (Type type in assembly.GetTypes())
+      {
+        if (iTestGroupType.IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+        {
+          try
+          {
+            var groupInstance = Activator.CreateInstance(type) as NightTest.Core.ITestGroup;
+            if (groupInstance != null)
             {
-                new DummyGroup(),
-                new TimerGroup(),
-                // new GraphicsTest(), // Example for a future test group
-                // new InputTest(),    // Example for a future test group
-            };
+              testGroups.Add(groupInstance);
+              Console.WriteLine($"- Discovered and added test group: {type.FullName}");
+            }
+            else
+            {
+              Console.ForegroundColor = ConsoleColor.Yellow;
+              Console.WriteLine($"Warning: Could not create instance of ITestGroup type: {type.FullName}");
+              Console.ResetColor();
+            }
+          }
+          catch (Exception ex)
+          {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine($"Warning: Error instantiating test group {type.FullName}: {ex.Message}");
+            Console.ResetColor();
+          }
+        }
+      }
+      Console.WriteLine($"Finished discovery. Found {testGroups.Count} group(s).\n");
 
       var allTestCasesFromGroups = new List<NightTest.Core.ITestCase>();
       foreach (var group in testGroups)
