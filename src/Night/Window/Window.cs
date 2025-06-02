@@ -195,13 +195,42 @@ namespace Night
         return false;
       }
 
-      renderer = SDL.CreateRenderer(window, null);
+      renderer = SDL.CreateRenderer(window, null); // Try default/hardware renderer first
       if (renderer == nint.Zero)
       {
-        SDL.DestroyWindow(window);
-        window = nint.Zero;
-        isWindowOpen = false;
-        return false;
+        string defaultRendererError = SDL.GetError() ?? "Unknown error";
+        Console.WriteLine($"Night.Window.SetMode: Failed to create default renderer: {defaultRendererError}. Attempting software renderer.");
+        _ = SDL.ClearError(); // Clear error before trying software path
+
+        nint surface = SDL.GetWindowSurface(window);
+        if (surface == nint.Zero)
+        {
+          string windowSurfaceError = SDL.GetError() ?? "Unknown error";
+          Console.WriteLine($"Night.Window.SetMode: Failed to get window surface for software renderer: {windowSurfaceError}");
+          SDL.DestroyWindow(window);
+          window = nint.Zero;
+          isWindowOpen = false;
+          return false;
+        }
+
+        renderer = SDL.CreateSoftwareRenderer(surface);
+        // Note: We don't need to explicitly free the surface obtained by GetWindowSurface
+        // if it's the primary window surface, as SDL manages its lifetime with the window.
+        // However, if we were creating other surfaces, we'd need to free them.
+        // For safety, one might call SDL.UpdateWindowSurface(window) after rendering if using this path,
+        // but typical rendering will go through the renderer to textures.
+
+        if (renderer == nint.Zero)
+        {
+          string softwareRendererError = SDL.GetError() ?? "Unknown error";
+          Console.WriteLine($"Night.Window.SetMode: Failed to create software renderer: {softwareRendererError}");
+          SDL.DestroyWindow(window); // Surface is tied to window, destroying window handles it.
+          window = nint.Zero;
+          isWindowOpen = false;
+          return false;
+        }
+
+        Console.WriteLine("Night.Window.SetMode: Successfully created software renderer.");
       }
 
       isWindowOpen = true;

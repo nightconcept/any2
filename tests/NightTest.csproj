@@ -9,6 +9,7 @@
     <RootNamespace>NightTest</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/NightTest.xml</DocumentationFile>
+    <NoWarn>$(NoWarn);SA1402</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

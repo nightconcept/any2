@@ -21,7 +21,9 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Security;
 
 namespace Night
 {
@@ -312,6 +314,32 @@ namespace Night
       }
 
       return appDataPath;
+    }
+
+    /// <summary>
+    /// Returns an iterator function that iterates over all the lines in a file.
+    /// </summary>
+    /// <param name="filePath">The name (and path) of the file.</param>
+    /// <returns>An enumerable collection of strings, where each string is a line in the file.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if filePath is null.</exception>
+    /// <exception cref="ArgumentException">Thrown if filePath is empty.</exception>
+    /// <exception cref="FileNotFoundException">Thrown if the file specified in filePath was not found.</exception>
+    /// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
+    /// <exception cref="System.Security.SecurityException">Thrown if the caller does not have the required permission.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the caller does not have the required permission, or path specified a directory, or the caller does not have read access.</exception>
+    public static IEnumerable<string> Lines(string filePath)
+    {
+      if (filePath == null)
+      {
+        throw new ArgumentNullException(nameof(filePath));
+      }
+
+      if (string.IsNullOrEmpty(filePath))
+      {
+        throw new ArgumentException("File path cannot be empty.", nameof(filePath));
+      }
+
+      return File.ReadLines(filePath);
     }
   }
 }
