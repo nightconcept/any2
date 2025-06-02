@@ -57,8 +57,6 @@ namespace NightTest.Groups.Timer
   /// </summary>
   public class GetFPSTest : BaseTestCase
   {
-    // _frameCount is removed as currentFrameCount is now in BaseTestCase
-
     /// <inheritdoc/>
     public override string Name => "Timer.GetFPS";
     /// <inheritdoc/>
@@ -73,7 +71,6 @@ namespace NightTest.Groups.Timer
     /// <inheritdoc/>
     protected override void UpdateAutomated(double deltaTime)
     {
-      // The IsDone check and currentFrameCount increment are handled by BaseTestCase.Update
       int finalFps = 0; // To capture FPS in the success condition
 
       _ = CheckCompletionAfterDuration(201, // > 200ms
@@ -87,7 +84,7 @@ namespace NightTest.Groups.Timer
           return false;
         },
         passDetails: () => $"Timer.GetFPS() test observed. Last reported FPS: {finalFps}. Test ran for >200ms and >10 frames.",
-        failDetailsTimeout: null, // Explicitly null for clarity, though default
+        failDetailsTimeout: null,
         failDetailsCondition: () => "Timer.GetFPS() test failed: Did not exceed 10 frames within 200ms."
       );
     }
@@ -124,7 +121,7 @@ namespace NightTest.Groups.Timer
           float averageDelta = _deltas.Count > 0 ? _deltas.Average() : 0f;
           return $"Timer.GetDelta() test collected {_deltas.Count} values. Average delta from Timer.GetDelta(): {averageDelta:F6}. Test ran for >200ms and >10 frames.";
         },
-        failDetailsTimeout: null, // Explicitly null
+        failDetailsTimeout: null,
         failDetailsCondition: () => "Timer.GetDelta() test failed: Did not exceed 10 frames collecting deltas within 200ms."
       );
     }
@@ -135,8 +132,6 @@ namespace NightTest.Groups.Timer
   /// </summary>
   public class GetAverageDeltaTest : BaseTestCase
   {
-    // _frameCount is removed as currentFrameCount is now in BaseTestCase
-
     /// <inheritdoc/>
     public override string Name => "Timer.GetAverageDelta";
     /// <inheritdoc/>
@@ -151,7 +146,6 @@ namespace NightTest.Groups.Timer
     /// <inheritdoc/>
     protected override void UpdateAutomated(double deltaTime)
     {
-      // The IsDone check and currentFrameCount increment are handled by BaseTestCase.Update
       double finalAvgDelta = 0;
 
       _ = CheckCompletionAfterDuration(201, // > 200ms
@@ -165,7 +159,7 @@ namespace NightTest.Groups.Timer
           return false;
         },
         passDetails: () => $"Timer.GetAverageDelta() observed. Last reported value: {finalAvgDelta:F6}. Test ran for >200ms and >10 frames.",
-        failDetailsTimeout: null, // Explicitly null
+        failDetailsTimeout: null,
         failDetailsCondition: () => "Timer.GetAverageDelta() test failed: Did not exceed 10 frames within 200ms."
       );
     }
@@ -185,8 +179,6 @@ namespace NightTest.Groups.Timer
     public override string Name => "Timer.Sleep";
     /// <inheritdoc/>
     public override string Description => $"Tests the Night.Timer.Sleep() method by sleeping for {SleepDurationSeconds}s.";
-
-    // Type is inherited as Automated from BaseTestCase
 
     /// <inheritdoc/>
     public override void Load()
@@ -281,7 +273,7 @@ namespace NightTest.Groups.Timer
           double averageDirectStepDelta = _stepDeltas.Count > 0 ? _stepDeltas.Average() : 0.0;
           return $"Timer.Step() called {_stepCount} times directly. Average delta from these calls: {averageDirectStepDelta:F6}. Test ran for >200ms.";
         },
-        failDetailsTimeout: null, // Explicitly null
+        failDetailsTimeout: null,
         failDetailsCondition: () => "Timer.Step() test failed: Did not make >10 direct calls within 200ms."
       );
     }

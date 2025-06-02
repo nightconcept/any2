@@ -93,7 +93,7 @@ namespace NightTest.Core
     /// <inheritdoc/>
     public override void Draw()
     {
-      base.Draw(); // Call base for any future generic drawing logic
+      base.Draw();
 
       if (CurrentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
       {
@@ -107,7 +107,7 @@ namespace NightTest.Core
           }
         }
 
-        if (_passButtonRect.Width > 0) // Only draw if rects are valid
+        if (_passButtonRect.Width > 0)
         {
           // Draw Pass Button (Green)
           Graphics.SetColor(PassButtonColor);

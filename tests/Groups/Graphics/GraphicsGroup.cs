@@ -30,7 +30,7 @@ using Xunit.Abstractions;
 namespace NightTest.Groups.Graphics
 {
   /// <summary>
-  /// Contains xUnit tests for Graphics related IGame test cases.
+  /// Contains tests for Graphics related IGame test cases.
   /// </summary>
   public class GraphicsTests : TestGroup
   {
@@ -43,7 +43,7 @@ namespace NightTest.Groups.Graphics
     }
 
     /// <summary>
-    /// Runs the GraphicsClearColorTest IGame instance via xUnit.
+    /// Runs the GraphicsClearColorTest IGame instance.
     /// </summary>
     [Fact]
     [Trait("TestType", "Manual")]

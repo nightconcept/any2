@@ -31,7 +31,7 @@ using Xunit.Abstractions;
 namespace NightTest.Groups.Timer
 {
   /// <summary>
-  /// Contains xUnit tests for Timer related IGame test cases.
+  /// Contains tests for Timer related IGame test cases.
   /// </summary>
   public class TimerGroup : TestGroup
   {

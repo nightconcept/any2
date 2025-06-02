@@ -22,7 +22,7 @@ namespace NightTest.Groups.Graphics
     private bool _promptRequested = false;
 
     /// <inheritdoc/>
-    public override string Name => "Graphics.Clear.SkyBlueColor";
+    public override string Name => "Graphics.Clear";
 
     /// <inheritdoc/>
     public override string Description => "Tests clearing the screen to sky blue (135, 206, 235). User must confirm color.";
@@ -31,14 +31,13 @@ namespace NightTest.Groups.Graphics
     public override void Load()
     {
       base.Load();
-      // Initial details, will be updated by manual confirmation result
+
       Details = "Test running, displaying sky blue color.";
     }
 
     /// <inheritdoc/>
     protected override void UpdateManual(double deltaTime)
     {
-      // Request manual confirmation once after a short delay (using value from base) to ensure window is visible
       if (!_promptRequested && TestStopwatch.ElapsedMilliseconds > ManualTestPromptDelayMilliseconds)
       {
         RequestManualConfirmation("Is the screen cleared to a SKY BLUE color (like a clear daytime sky)?");
@@ -54,18 +53,6 @@ namespace NightTest.Groups.Graphics
       base.Draw();
 
       Night.Graphics.Present();
-    }
-
-    /// <inheritdoc/>
-    public override void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
-    {
-      base.KeyPressed(key, scancode, isRepeat);
-      if (IsDone)
-      {
-        return;
-      }
-      // Custom key handling for this specific test can go here, if any.
-      // The ESC to fail logic is now handled in BaseTestCase.KeyPressed()
     }
   }
 }
