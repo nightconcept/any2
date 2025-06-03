@@ -153,63 +153,84 @@ jobs:
 
       - name: Prepare SDL3 Prebuilt Binaries
         run: |
-          echo "Looking for SDL3 prebuilt binary ZIP files in lib/SDL3-Prebuilt..."
+          echo "Looking for SDL3 prebuilt binary ZIP files in platform-specific subdirectories under lib/SDL3-Prebuilt..."
           SDL_PREBUILT_DIR="lib/SDL3-Prebuilt"
 
-          # Ensure unzip is available (GitHub Actions ubuntu-latest usually has it)
           if ! command -v unzip &> /dev/null; then
             echo "Error: unzip command not found. Please ensure it's installed on the runner."
             exit 1
           fi
 
           # Linux
-          if [ -f "$SDL_PREBUILT_DIR/linux.zip" ]; then
-            echo "Extracting Linux binaries from $SDL_PREBUILT_DIR/linux.zip..."
-            mkdir -p "$SDL_PREBUILT_DIR/linux"
-            unzip -qo "$SDL_PREBUILT_DIR/linux.zip" -d "$SDL_PREBUILT_DIR/linux/"
-            echo "Extracted Linux binaries."
-          elif [ -f "$SDL_PREBUILT_DIR/linux-binaries.zip" ]; then
-            echo "Extracting Linux binaries from $SDL_PREBUILT_DIR/linux-binaries.zip..."
-            mkdir -p "$SDL_PREBUILT_DIR/linux"
-            unzip -qo "$SDL_PREBUILT_DIR/linux-binaries.zip" -d "$SDL_PREBUILT_DIR/linux/"
-            echo "Extracted Linux binaries."
+          TARGET_ZIP_BASENAME_LINUX="linux"
+          TARGET_PLATFORM_DIR_LINUX="linux"
+          PLATFORM_DIR_PATH_LINUX="$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR_LINUX"
+          PLATFORM_ARCHIVE_PATH_LINUX="$PLATFORM_DIR_PATH_LINUX/$TARGET_ZIP_BASENAME_LINUX.zip"
+          PLATFORM_ARCHIVE_ALT_PATH_LINUX="$PLATFORM_DIR_PATH_LINUX/$TARGET_ZIP_BASENAME_LINUX-binaries.zip"
+          EXTRACTION_DIR_LINUX="$PLATFORM_DIR_PATH_LINUX"
+
+          echo "Attempting to extract for $TARGET_PLATFORM_DIR_LINUX from $PLATFORM_DIR_PATH_LINUX into $EXTRACTION_DIR_LINUX..."
+          mkdir -p "$EXTRACTION_DIR_LINUX" # Ensure platform directory exists
+          if [ -f "$PLATFORM_ARCHIVE_PATH_LINUX" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR_LINUX binaries from $PLATFORM_ARCHIVE_PATH_LINUX..."
+            unzip -qo "$PLATFORM_ARCHIVE_PATH_LINUX" -d "$EXTRACTION_DIR_LINUX/"
+            echo "Extracted $TARGET_PLATFORM_DIR_LINUX binaries from $PLATFORM_ARCHIVE_PATH_LINUX."
+          elif [ -f "$PLATFORM_ARCHIVE_ALT_PATH_LINUX" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR_LINUX binaries from $PLATFORM_ARCHIVE_ALT_PATH_LINUX..."
+            unzip -qo "$PLATFORM_ARCHIVE_ALT_PATH_LINUX" -d "$EXTRACTION_DIR_LINUX/"
+            echo "Extracted $TARGET_PLATFORM_DIR_LINUX binaries from $PLATFORM_ARCHIVE_ALT_PATH_LINUX."
           else
-            echo "Info: No Linux SDL binaries ZIP found (checked for linux.zip and linux-binaries.zip)."
+            echo "Info: No $TARGET_PLATFORM_DIR_LINUX SDL binaries ZIP found (checked for $PLATFORM_ARCHIVE_PATH_LINUX and $PLATFORM_ARCHIVE_ALT_PATH_LINUX)."
           fi
 
           # macOS
-          if [ -f "$SDL_PREBUILT_DIR/macos.zip" ]; then
-            echo "Extracting macOS binaries from $SDL_PREBUILT_DIR/macos.zip..."
-            mkdir -p "$SDL_PREBUILT_DIR/macos"
-            unzip -qo "$SDL_PREBUILT_DIR/macos.zip" -d "$SDL_PREBUILT_DIR/macos/"
-            echo "Extracted macOS binaries."
-          elif [ -f "$SDL_PREBUILT_DIR/macos-binaries.zip" ]; then
-            echo "Extracting macOS binaries from $SDL_PREBUILT_DIR/macos-binaries.zip..."
-            mkdir -p "$SDL_PREBUILT_DIR/macos"
-            unzip -qo "$SDL_PREBUILT_DIR/macos-binaries.zip" -d "$SDL_PREBUILT_DIR/macos/"
-            echo "Extracted macOS binaries."
+          TARGET_ZIP_BASENAME_MACOS="macos"
+          TARGET_PLATFORM_DIR_MACOS="macos"
+          PLATFORM_DIR_PATH_MACOS="$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR_MACOS"
+          PLATFORM_ARCHIVE_PATH_MACOS="$PLATFORM_DIR_PATH_MACOS/$TARGET_ZIP_BASENAME_MACOS.zip"
+          PLATFORM_ARCHIVE_ALT_PATH_MACOS="$PLATFORM_DIR_PATH_MACOS/$TARGET_ZIP_BASENAME_MACOS-binaries.zip"
+          EXTRACTION_DIR_MACOS="$PLATFORM_DIR_PATH_MACOS"
+
+          echo "Attempting to extract for $TARGET_PLATFORM_DIR_MACOS from $PLATFORM_DIR_PATH_MACOS into $EXTRACTION_DIR_MACOS..."
+          mkdir -p "$EXTRACTION_DIR_MACOS" # Ensure platform directory exists
+          if [ -f "$PLATFORM_ARCHIVE_PATH_MACOS" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR_MACOS binaries from $PLATFORM_ARCHIVE_PATH_MACOS..."
+            unzip -qo "$PLATFORM_ARCHIVE_PATH_MACOS" -d "$EXTRACTION_DIR_MACOS/"
+            echo "Extracted $TARGET_PLATFORM_DIR_MACOS binaries from $PLATFORM_ARCHIVE_PATH_MACOS."
+          elif [ -f "$PLATFORM_ARCHIVE_ALT_PATH_MACOS" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR_MACOS binaries from $PLATFORM_ARCHIVE_ALT_PATH_MACOS..."
+            unzip -qo "$PLATFORM_ARCHIVE_ALT_PATH_MACOS" -d "$EXTRACTION_DIR_MACOS/"
+            echo "Extracted $TARGET_PLATFORM_DIR_MACOS binaries from $PLATFORM_ARCHIVE_ALT_PATH_MACOS."
           else
-            echo "Info: No macOS SDL binaries ZIP found (checked for macos.zip and macos-binaries.zip)."
+            echo "Info: No $TARGET_PLATFORM_DIR_MACOS SDL binaries ZIP found (checked for $PLATFORM_ARCHIVE_PATH_MACOS and $PLATFORM_ARCHIVE_ALT_PATH_MACOS)."
           fi
 
           # Windows
-          if [ -f "$SDL_PREBUILT_DIR/windows.zip" ]; then
-            echo "Extracting Windows binaries from $SDL_PREBUILT_DIR/windows.zip..."
-            mkdir -p "$SDL_PREBUILT_DIR/windows"
-            unzip -qo "$SDL_PREBUILT_DIR/windows.zip" -d "$SDL_PREBUILT_DIR/windows/"
-            echo "Extracted Windows binaries."
-          elif [ -f "$SDL_PREBUILT_DIR/windows-binaries.zip" ]; then
-            echo "Extracting Windows binaries from $SDL_PREBUILT_DIR/windows-binaries.zip..."
-            mkdir -p "$SDL_PREBUILT_DIR/windows"
-            unzip -qo "$SDL_PREBUILT_DIR/windows-binaries.zip" -d "$SDL_PREBUILT_DIR/windows/"
-            echo "Extracted Windows binaries."
+          TARGET_ZIP_BASENAME_WINDOWS="windows"
+          TARGET_PLATFORM_DIR_WINDOWS="windows"
+          PLATFORM_DIR_PATH_WINDOWS="$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR_WINDOWS"
+          PLATFORM_ARCHIVE_PATH_WINDOWS="$PLATFORM_DIR_PATH_WINDOWS/$TARGET_ZIP_BASENAME_WINDOWS.zip"
+          PLATFORM_ARCHIVE_ALT_PATH_WINDOWS="$PLATFORM_DIR_PATH_WINDOWS/$TARGET_ZIP_BASENAME_WINDOWS-binaries.zip"
+          EXTRACTION_DIR_WINDOWS="$PLATFORM_DIR_PATH_WINDOWS"
+
+          echo "Attempting to extract for $TARGET_PLATFORM_DIR_WINDOWS from $PLATFORM_DIR_PATH_WINDOWS into $EXTRACTION_DIR_WINDOWS..."
+          mkdir -p "$EXTRACTION_DIR_WINDOWS" # Ensure platform directory exists
+          if [ -f "$PLATFORM_ARCHIVE_PATH_WINDOWS" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR_WINDOWS binaries from $PLATFORM_ARCHIVE_PATH_WINDOWS..."
+            unzip -qo "$PLATFORM_ARCHIVE_PATH_WINDOWS" -d "$EXTRACTION_DIR_WINDOWS/"
+            echo "Extracted $TARGET_PLATFORM_DIR_WINDOWS binaries from $PLATFORM_ARCHIVE_PATH_WINDOWS."
+          elif [ -f "$PLATFORM_ARCHIVE_ALT_PATH_WINDOWS" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR_WINDOWS binaries from $PLATFORM_ARCHIVE_ALT_PATH_WINDOWS..."
+            unzip -qo "$PLATFORM_ARCHIVE_ALT_PATH_WINDOWS" -d "$EXTRACTION_DIR_WINDOWS/"
+            echo "Extracted $TARGET_PLATFORM_DIR_WINDOWS binaries from $PLATFORM_ARCHIVE_ALT_PATH_WINDOWS."
           else
-            echo "Info: No Windows SDL binaries ZIP found (checked for windows.zip and windows-binaries.zip)."
+            echo "Info: No $TARGET_PLATFORM_DIR_WINDOWS SDL binaries ZIP found (checked for $PLATFORM_ARCHIVE_PATH_WINDOWS and $PLATFORM_ARCHIVE_ALT_PATH_WINDOWS)."
           fi
 
           echo "Final listing of contents in $SDL_PREBUILT_DIR after extraction attempts:"
           ls -R "$SDL_PREBUILT_DIR"
         shell: bash
+
       - name: Build Solution
         run: dotnet build "${{ env.SOLUTION_FILE_PATH }}" -c Release /p:Version="${{ github.event.inputs.version }}"
 

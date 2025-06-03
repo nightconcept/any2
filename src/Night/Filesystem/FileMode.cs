@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Night
+namespace Night.Filesystem
 {
   /// <summary>
   /// Represents the different modes you can open a File in.
@@ -42,31 +42,6 @@ namespace Night
     /// <summary>
     /// Open a file for append.
     /// </summary>
-    Append,
-
-    /// <summary>
-    /// Do not open a file (represents a closed file.)
-    /// </summary>
-    Close,
-
-    /// <summary>
-    /// Open a file for write.
-    /// </summary>
-    W = Write,
-
-    /// <summary>
-    /// Open a file for read.
-    /// </summary>
-    R = Read,
-
-    /// <summary>
-    /// Open a file for append.
-    /// </summary>
-    A = Append,
-
-    /// <summary>
-    /// Do not open a file (represents a closed file.)
-    /// </summary>
-    C = Close,
+    Append
   }
 }

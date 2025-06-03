@@ -30,48 +30,57 @@ jobs:
       - name: Prepare SDL3 Prebuilt Binaries
         run: |
           echo "Runner OS: ${{ runner.os }}"
-          echo "Looking for SDL3 prebuilt binary ZIP files in lib/SDL3-Prebuilt..."
+          echo "Looking for SDL3 prebuilt binary ZIP files in platform-specific subdirectories under lib/SDL3-Prebuilt..."
           SDL_PREBUILT_DIR="lib/SDL3-Prebuilt"
 
           if ! command -v unzip &> /dev/null; then
             echo "Error: unzip command not found on ${{ runner.os }}. Please ensure it's installed or use an alternative extraction method for this OS."
             # For Windows, if unzip is not in PATH for bash, you might need to use PowerShell:
             # if [[ "${{ runner.os }}" == "Windows" ]]; then
-            #   powershell -Command "if (Test-Path '$SDL_PREBUILT_DIR/windows.zip') { Expand-Archive -Path '$SDL_PREBUILT_DIR/windows.zip' -DestinationPath '$SDL_PREBUILT_DIR/windows' -Force } elseif (Test-Path '$SDL_PREBUILT_DIR/windows-binaries.zip') { Expand-Archive -Path '$SDL_PREBUILT_DIR/windows-binaries.zip' -DestinationPath '$SDL_PREBUILT_DIR/windows' -Force }"
+            #   powershell -Command "if (Test-Path '$SDL_PREBUILT_DIR/windows/windows.zip') { Expand-Archive -Path '$SDL_PREBUILT_DIR/windows/windows.zip' -DestinationPath '$SDL_PREBUILT_DIR/windows' -Force } elseif (Test-Path '$SDL_PREBUILT_DIR/windows/windows-binaries.zip') { Expand-Archive -Path '$SDL_PREBUILT_DIR/windows/windows-binaries.zip' -DestinationPath '$SDL_PREBUILT_DIR/windows' -Force }"
             # fi
             exit 1
           fi
 
           TARGET_ZIP_BASENAME=""
-          TARGET_PLATFORM_DIR=""
+          TARGET_PLATFORM_DIR_NAME="" # Renamed to avoid confusion with full path
 
           if [[ "${{ runner.os }}" == "Linux" ]]; then
             TARGET_ZIP_BASENAME="linux"
-            TARGET_PLATFORM_DIR="linux"
+            TARGET_PLATFORM_DIR_NAME="linux"
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
             TARGET_ZIP_BASENAME="macos"
-            TARGET_PLATFORM_DIR="macos"
+            TARGET_PLATFORM_DIR_NAME="macos"
           elif [[ "${{ runner.os }}" == "Windows" ]]; then
             TARGET_ZIP_BASENAME="windows"
-            TARGET_PLATFORM_DIR="windows"
+            TARGET_PLATFORM_DIR_NAME="windows"
           else
             echo "Warning: Unknown runner OS '${{ runner.os }}'. Cannot determine which SDL3 binaries to extract."
           fi
 
-          if [ -n "$TARGET_ZIP_BASENAME" ]; then
-            echo "Attempting to extract for $TARGET_PLATFORM_DIR using base name $TARGET_ZIP_BASENAME..."
-            if [ -f "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME.zip" ]; then
-              echo "Extracting $TARGET_PLATFORM_DIR binaries from $SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME.zip..."
-              mkdir -p "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR"
-              unzip -qo "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME.zip" -d "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR/"
-              echo "Extracted $TARGET_PLATFORM_DIR binaries from $TARGET_ZIP_BASENAME.zip."
-            elif [ -f "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME-binaries.zip" ]; then
-              echo "Extracting $TARGET_PLATFORM_DIR binaries from $SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME-binaries.zip..."
-              mkdir -p "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR"
-              unzip -qo "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME-binaries.zip" -d "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR/"
-              echo "Extracted $TARGET_PLATFORM_DIR binaries from $TARGET_ZIP_BASENAME-binaries.zip."
+          if [ -n "$TARGET_PLATFORM_DIR_NAME" ]; then
+            # Define the full path to the platform-specific directory
+            PLATFORM_DIR_PATH="$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR_NAME"
+            # Define the expected archive names within that platform directory
+            PLATFORM_ARCHIVE_PATH="$PLATFORM_DIR_PATH/$TARGET_ZIP_BASENAME.zip"
+            PLATFORM_ARCHIVE_ALT_PATH="$PLATFORM_DIR_PATH/$TARGET_ZIP_BASENAME-binaries.zip"
+            # The extraction directory is the platform-specific directory itself
+            EXTRACTION_DIR="$PLATFORM_DIR_PATH"
+
+            echo "Attempting to extract for $TARGET_PLATFORM_DIR_NAME from $PLATFORM_DIR_PATH into $EXTRACTION_DIR..."
+            # Ensure the extraction directory itself exists.
+            mkdir -p "$EXTRACTION_DIR"
+
+            if [ -f "$PLATFORM_ARCHIVE_PATH" ]; then
+              echo "Extracting $TARGET_PLATFORM_DIR_NAME binaries from $PLATFORM_ARCHIVE_PATH..."
+              unzip -qo "$PLATFORM_ARCHIVE_PATH" -d "$EXTRACTION_DIR/"
+              echo "Extracted $TARGET_PLATFORM_DIR_NAME binaries from $PLATFORM_ARCHIVE_PATH."
+            elif [ -f "$PLATFORM_ARCHIVE_ALT_PATH" ]; then
+              echo "Extracting $TARGET_PLATFORM_DIR_NAME binaries from $PLATFORM_ARCHIVE_ALT_PATH..."
+              unzip -qo "$PLATFORM_ARCHIVE_ALT_PATH" -d "$EXTRACTION_DIR/"
+              echo "Extracted $TARGET_PLATFORM_DIR_NAME binaries from $PLATFORM_ARCHIVE_ALT_PATH."
             else
-              echo "Info: No $TARGET_PLATFORM_DIR SDL binaries ZIP found (checked for $TARGET_ZIP_BASENAME.zip and $TARGET_ZIP_BASENAME-binaries.zip in $SDL_PREBUILT_DIR)."
+              echo "Info: No $TARGET_PLATFORM_DIR_NAME SDL binaries ZIP found (checked for $PLATFORM_ARCHIVE_PATH and $PLATFORM_ARCHIVE_ALT_PATH). Build might fail if these are required."
             fi
           fi
 
