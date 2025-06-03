@@ -88,6 +88,12 @@
 - KeyCode
 - KeySymbol
 
+## Log
+
+### Enums (Log)
+
+- LogLevel
+
 ## Mouse
 
 ### Functions (Mouse)
