@@ -57,7 +57,7 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
-- name: Prepare SDL3 Prebuilt Binaries (for C#)
+      - name: Prepare SDL3 Prebuilt Binaries (for C#)
         if: matrix.language == 'csharp'
         run: |
           echo "Runner OS is ubuntu-latest. Looking for Linux SDL3 prebuilt binary ZIP files in lib/SDL3-Prebuilt..."

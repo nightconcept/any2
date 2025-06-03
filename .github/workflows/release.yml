@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Semantic Version for the release (e.g., 1.0.0, 1.0.0-beta.1). This is the pure SemVer.'
+        description: "Semantic Version for the release (e.g., 1.0.0, 1.0.0-beta.1). This is the pure SemVer."
         required: true
         type: string
 
@@ -29,12 +29,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Required to analyze history
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: "9.0.x"
 
       - name: Validate Version Input (SemVer)
         run: |
@@ -84,7 +84,6 @@ jobs:
             exit 1
           fi
         shell: bash
-
 
       - name: Update Version in .csproj
         id: update_version_csproj
@@ -152,7 +151,7 @@ jobs:
           echo "Pushed tag ${{ steps.update_version_csproj.outputs.version_tag }} to remote."
         shell: bash
 
-- name: Prepare SDL3 Prebuilt Binaries
+      - name: Prepare SDL3 Prebuilt Binaries
         run: |
           echo "Looking for SDL3 prebuilt binary ZIP files in lib/SDL3-Prebuilt..."
           SDL_PREBUILT_DIR="lib/SDL3-Prebuilt"
