@@ -62,6 +62,7 @@ alias = "prepare"
 description = "Prepare everything before a commit."
 run = [
   "dotnet clean Night.sln",
+  "dotnet tool restore",
   "dotnet format --verbosity diagnostic Night.sln",
   "dotnet build Night.sln",
   "dotnet test --filter TestType=Automated",

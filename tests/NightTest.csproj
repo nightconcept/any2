@@ -7,6 +7,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>13.0</LangVersion>
     <RootNamespace>NightTest</RootNamespace>
+<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/NightTest.xml</DocumentationFile>
     <NoWarn>$(NoWarn);SA1402</NoWarn>
