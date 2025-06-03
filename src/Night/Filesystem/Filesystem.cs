@@ -25,6 +25,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security;
 
+using Night.Log;
+
 namespace Night
 {
   /// <summary>
@@ -33,6 +35,7 @@ namespace Night
   /// </summary>
   public static class Filesystem
   {
+    private static readonly ILogger logger = LogManager.GetLogger("Night.Filesystem.Filesystem");
     private static string gameIdentity = "NightDefault"; // Placeholder, to be managed by SetIdentity/GetIdentity
 
     /// <summary>
@@ -87,10 +90,9 @@ namespace Night
           return null;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        // It's often better to log the exception or handle it more specifically.
-        // For now, returning null as per original logic.
+        logger.Error($"Error getting file info for path '{path}'.", ex);
         return null;
       }
 
@@ -257,8 +259,9 @@ namespace Night
         _ = Directory.CreateDirectory(path); // Creates all directories in the specified path, if they don't already exist.
         return true; // Successfully created
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        logger.Error($"Error creating directory '{path}'.", ex);
         return false; // An error occurred
       }
     }
@@ -308,9 +311,7 @@ namespace Night
       }
       catch (Exception ex)
       {
-        // Optional: Log the exception, but the function should still return the path
-        // as per LÖVE's getSaveDirectory behavior (it returns path, creation is best-effort)
-        Console.WriteLine($"Could not create appdata directory '{appDataPath}': {ex.Message}");
+        logger.Warn($"Could not create appdata directory '{appDataPath}': {ex.Message}");
       }
 
       return appDataPath;

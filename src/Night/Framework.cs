@@ -28,6 +28,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 using Night;
+using Night.Log;
 
 using SDL3;
 
@@ -42,6 +43,7 @@ namespace Night
     private const int MaxDeltaHistorySamples = 60; // Store up to 1 second of deltas at 60fps
 
     private static readonly object SdlLock = new object(); // Thread synchronization for SDL operations
+    private static readonly ILogger Logger = LogManager.GetLogger("Framework");
     private static bool isSdlInitialized = false; // Tracks if SDL is currently active globally
     private static SDL.InitFlags initializedSubsystemsFlags = 0;
 
@@ -68,7 +70,7 @@ namespace Night
     {
       if (game == null)
       {
-        Console.WriteLine("Night.Framework.Run: gameLogic cannot be null.");
+        Logger.Error("gameLogic cannot be null.");
         return;
       }
 
@@ -93,13 +95,13 @@ namespace Night
         bool isTestingEnvironment = IsTestingEnvironment();
         if (isTestingEnvironment)
         {
-          Console.WriteLine("Night.Framework.Run: Testing environment detected. Setting SDL video driver to 'dummy'.");
+          Logger.Info("Testing environment detected. Setting SDL video driver to 'dummy'.");
 
           // Set the video driver to "dummy" for headless testing environments
           // This resolves "No available video device" errors in CI/CD systems
           _ = SDL.SetHint(SDL.Hints.VideoDriver, "dummy");
 
-          Console.WriteLine("Night.Framework.Run: Testing environment detected. Setting SDL render driver to 'software'.");
+          Logger.Info("Testing environment detected. Setting SDL render driver to 'software'.");
 
           // Force software rendering to avoid OpenGL/GLES initialization issues in headless environments
           _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
@@ -109,26 +111,26 @@ namespace Night
         {
           if (!isSdlInitialized)
           {
-            Console.WriteLine("Night.Framework.Run: Global isSdlInitialized is false. Attempting SDL.Init().");
+            Logger.Debug("Global isSdlInitialized is false. Attempting SDL.Init().");
             initializedSubsystemsFlags = SDL.InitFlags.Video | SDL.InitFlags.Events;
             if (!SDL.Init(initializedSubsystemsFlags))
             {
-              Console.WriteLine($"Night.Framework.Run: SDL_Init failed: {SDL.GetError()}");
+              Logger.Error($"SDL_Init failed: {SDL.GetError()}");
               return;
             }
 
-            Console.WriteLine("Night.Framework.Run: SDL.Init() successful.");
+            Logger.Info("SDL.Init() successful.");
             isSdlInitialized = true;
             sdlSuccessfullyInitializedThisRun = true;
           }
           else
           {
-            Console.WriteLine("Night.Framework.Run: Global isSdlInitialized is true. Skipping SDL.Init().");
+            Logger.Debug("Global isSdlInitialized is true. Skipping SDL.Init().");
           }
         }
 
         IsInputInitialized = (initializedSubsystemsFlags & SDL.InitFlags.Events) == SDL.InitFlags.Events;
-        Console.WriteLine($"Night.Framework.Run: IsInputInitialized set to {IsInputInitialized}.");
+        Logger.Debug($"IsInputInitialized set to {IsInputInitialized}.");
 
         SDL.WindowFlags sdlFlags = 0;
         if (windowConfig.Resizable)
@@ -146,62 +148,62 @@ namespace Night
           sdlFlags |= SDL.WindowFlags.HighPixelDensity;
         }
 
-        Console.WriteLine($"Night.Framework.Run: Calling Window.SetMode with Width={windowConfig.Width}, Height={windowConfig.Height}, Flags={sdlFlags}");
+        Logger.Debug($"Calling Window.SetMode with Width={windowConfig.Width}, Height={windowConfig.Height}, Flags={sdlFlags}");
 
         bool modeSet = Window.SetMode(windowConfig.Width, windowConfig.Height, sdlFlags);
-        Console.WriteLine($"Night.Framework.Run: Window.SetMode returned {modeSet}.");
+        Logger.Debug($"Window.SetMode returned {modeSet}.");
 
         if (!modeSet)
         {
-          Console.WriteLine($"Night.Framework.Run: Window.SetMode returned false. Window.Handle: {Window.Handle}, Window.IsOpen(): {Window.IsOpen()}. SDL Error: {SDL.GetError()}");
+          Logger.Error($"Window.SetMode returned false. Window.Handle: {Window.Handle}, Window.IsOpen(): {Window.IsOpen()}. SDL Error: {SDL.GetError()}");
           return;
         }
 
         Window.SetTitle(windowConfig.Title ?? "Night Game");
-        Console.WriteLine($"Night.Framework.Run: Window title set to '{Window.GetMode().Title}'.");
+        Logger.Info($"Window title set to '{Window.GetMode().Title}'.");
 
         if (!Window.IsOpen())
         {
           // This condition implies modeSet was true, but IsOpen is now false.
-          Console.WriteLine($"Night.Framework.Run: Window.IsOpen() is false AFTER modeSet was true and title was set. Window.Handle: {Window.Handle}. SDL Error: {SDL.GetError()}");
+          Logger.Warn($"Window.IsOpen() is false AFTER modeSet was true and title was set. Window.Handle: {Window.Handle}. SDL Error: {SDL.GetError()}");
         }
         else
         {
-          Console.WriteLine($"Night.Framework.Run: Window.IsOpen() is true after SetMode and SetTitle. Window.Handle: {Window.Handle}");
+          Logger.Debug($"Window.IsOpen() is true after SetMode and SetTitle. Window.Handle: {Window.Handle}");
         }
 
         if (windowConfig.Fullscreen)
         {
-          Console.WriteLine($"Night.Framework.Run: Attempting to set fullscreen: {windowConfig.FullscreenType}.");
+          Logger.Debug($"Attempting to set fullscreen: {windowConfig.FullscreenType}.");
           FullscreenType fsType = windowConfig.FullscreenType.ToLowerInvariant() == "exclusive"
                                     ? FullscreenType.Exclusive
                                     : FullscreenType.Desktop;
           if (!Window.SetFullscreen(true, fsType))
           {
-            Console.WriteLine($"Night.Framework.Run: Failed to set initial fullscreen mode from configuration: {SDL.GetError()}");
+            Logger.Warn($"Failed to set initial fullscreen mode from configuration: {SDL.GetError()}");
           }
           else
           {
-            Console.WriteLine($"Night.Framework.Run: SetFullscreen successful.");
+            Logger.Debug($"SetFullscreen successful.");
           }
         }
 
         if (Window.RendererPtr != nint.Zero)
         {
-          Console.WriteLine($"Night.Framework.Run: Attempting to set VSync: {windowConfig.VSync}.");
+          Logger.Debug($"Attempting to set VSync: {windowConfig.VSync}.");
           if (!SDL.SetRenderVSync(Window.RendererPtr, windowConfig.VSync ? 1 : 0))
           {
-            Console.WriteLine($"Night.Framework.Run: Failed to set initial VSync mode from configuration: {SDL.GetError()}");
+            Logger.Warn($"Failed to set initial VSync mode from configuration: {SDL.GetError()}");
           }
           else
           {
-            Console.WriteLine($"Night.Framework.Run: SetRenderVSync successful.");
+            Logger.Debug($"SetRenderVSync successful.");
           }
         }
 
         if (windowConfig.X.HasValue && windowConfig.Y.HasValue && Window.Handle != nint.Zero)
         {
-          Console.WriteLine($"Night.Framework.Run: Setting window position to X={windowConfig.X.Value}, Y={windowConfig.Y.Value}.");
+          Logger.Debug($"Setting window position to X={windowConfig.X.Value}, Y={windowConfig.Y.Value}.");
           _ = SDL.SetWindowPosition(Window.Handle, windowConfig.X.Value, windowConfig.Y.Value);
         }
 
@@ -213,30 +215,30 @@ namespace Night
             iconFullPath = Path.Combine(AppContext.BaseDirectory, iconFullPath);
           }
 
-          Console.WriteLine($"Night.Framework.Run: Setting window icon from '{iconFullPath}'.");
+          Logger.Debug($"Setting window icon from '{iconFullPath}'.");
           if (!Window.SetIcon(iconFullPath))
           {
-            Console.WriteLine($"Night.Framework.Run: Failed to set window icon from configuration: '{iconFullPath}'. Check path and image format.");
+            Logger.Warn($"Failed to set window icon from configuration: '{iconFullPath}'. Check path and image format.");
           }
           else
           {
-            Console.WriteLine($"Night.Framework.Run: Window icon set successfully.");
+            Logger.Debug($"Window icon set successfully.");
           }
         }
 
-        Console.WriteLine($"Night.Framework.Run: Proceeding to game.Load(). Window.IsOpen(): {Window.IsOpen()}, Window.Handle: {Window.Handle}");
+        Logger.Info($"Proceeding to game.Load(). Window.IsOpen(): {Window.IsOpen()}, Window.Handle: {Window.Handle}");
         try
         {
           game.Load();
-          Console.WriteLine($"Night.Framework.Run: game.Load() completed. Window.IsOpen(): {Window.IsOpen()}, Window.Handle: {Window.Handle}");
+          Logger.Info($"game.Load() completed. Window.IsOpen(): {Window.IsOpen()}, Window.Handle: {Window.Handle}");
           if (!Window.IsOpen())
           {
-            Console.WriteLine($"Night.Framework.Run: Window is NOT open after game.Load() completed. SDL Error: {SDL.GetError()}");
+            Logger.Error($"Window is NOT open after game.Load() completed. SDL Error: {SDL.GetError()}");
           }
         }
         catch (Exception e)
         {
-          Console.WriteLine($"Night.Framework.Run: Exception during game.Load(): {e.Message}");
+          Logger.Error($"Exception during game.Load(): {e.Message}", e);
           HandleGameException(e, game);
           if (inErrorState)
           {
@@ -246,11 +248,11 @@ namespace Night
 
         if (!Window.IsOpen())
         {
-          Console.WriteLine($"Night.Framework.Run: CRITICAL CHECK - Window is not open after game.Load() for {game.GetType().FullName}. Exiting game loop early. SDL Error if relevant: {SDL.GetError()}");
+          Logger.Fatal($"CRITICAL CHECK - Window is not open after game.Load() for {game.GetType().FullName}. Exiting game loop early. SDL Error if relevant: {SDL.GetError()}");
           return;
         }
 
-        Console.WriteLine($"Night.Framework.Run: Starting main loop. Window.IsOpen(): {Window.IsOpen()}");
+        Logger.Info($"Starting main loop. Window.IsOpen(): {Window.IsOpen()}");
         Night.Timer.Initialize();
         frameCount = 0;
         fpsTimeAccumulator = 0.0;
@@ -371,48 +373,48 @@ namespace Night
           }
         }
 
-        Console.WriteLine($"Night.Framework.Run: Main loop ended. Window.IsOpen(): {Window.IsOpen()}, inErrorState: {inErrorState}");
+        Logger.Info($"Main loop ended. Window.IsOpen(): {Window.IsOpen()}, inErrorState: {inErrorState}");
       }
       catch (Exception ex)
       {
-        Console.WriteLine($"Night.Framework.Run: An UNEXPECTED FRAMEWORK error occurred: {ex.ToString()}");
+        Logger.Fatal($"An UNEXPECTED FRAMEWORK error occurred: {ex.ToString()}", ex);
         HandleGameException(ex, null);
       }
       finally
       {
-        Console.WriteLine($"Night.Framework.Run: Entering finally block. sdlSuccessfullyInitializedThisRun: {sdlSuccessfullyInitializedThisRun}, isSdlInitialized (static): {isSdlInitialized}");
+        Logger.Debug($"Entering finally block. sdlSuccessfullyInitializedThisRun: {sdlSuccessfullyInitializedThisRun}, isSdlInitialized (static): {isSdlInitialized}");
         Window.Shutdown();
 
         lock (SdlLock)
         {
           if (sdlSuccessfullyInitializedThisRun)
           {
-            Console.WriteLine($"Night.Framework.Run: SDL was initialized this run. Quitting SDL subsystems and SDL.");
+            Logger.Info($"SDL was initialized this run. Quitting SDL subsystems and SDL.");
             if (initializedSubsystemsFlags != 0)
             {
               SDL.QuitSubSystem(initializedSubsystemsFlags);
-              Console.WriteLine($"Night.Framework.Run: QuitSubSystem({initializedSubsystemsFlags}) called.");
+              Logger.Debug($"QuitSubSystem({initializedSubsystemsFlags}) called.");
               initializedSubsystemsFlags = 0;
             }
 
             SDL.Quit();
-            Console.WriteLine($"Night.Framework.Run: SDL.Quit() called.");
+            Logger.Info($"SDL.Quit() called.");
             isSdlInitialized = false;
           }
           else
           {
-            Console.WriteLine($"Night.Framework.Run: SDL was not initialized this run or Init failed. Skipping SDL.Quit(). Global isSdlInitialized: {isSdlInitialized}");
+            Logger.Debug($"SDL was not initialized this run or Init failed. Skipping SDL.Quit(). Global isSdlInitialized: {isSdlInitialized}");
           }
         }
 
         IsInputInitialized = false;
-        Console.WriteLine($"Night.Framework.Run: Exiting finally block. IsInputInitialized: {IsInputInitialized}, isSdlInitialized (static): {isSdlInitialized}");
+        Logger.Debug($"Exiting finally block. IsInputInitialized: {IsInputInitialized}, isSdlInitialized (static): {isSdlInitialized}");
       }
     }
 
     private static void HandleGameException(Exception e, IGame? gameInstance)
     {
-      Console.WriteLine($"Night.Framework.HandleGameException: Error: {e.Message}");
+      Logger.Error($"HandleGameException: Error: {e.Message}", e);
       inErrorState = true;
       var customHandler = Night.Error.GetHandler();
       if (customHandler != null)
@@ -427,8 +429,8 @@ namespace Night
         }
         catch (Exception exHandler)
         {
-          Console.WriteLine($"Night.Framework.Run: CRITICAL: Exception in custom error handler: {exHandler.ToString()}");
-          Console.WriteLine($"Night.Framework.Run: Original game error: {e.ToString()}");
+          Logger.Fatal($"CRITICAL: Exception in custom error handler: {exHandler.ToString()}", exHandler);
+          Logger.Error($"Original game error: {e.ToString()}", e);
           if (Window.IsOpen())
           {
             Window.Close();
@@ -443,27 +445,27 @@ namespace Night
 
     private static void DefaultErrorHandler(Exception e, IGame? gameInstance)
     {
-      Console.Error.WriteLine("--- Night Engine: Default Error Handler ---");
-      Console.Error.WriteLine($"An error occurred in the game: {e.GetType().Name}");
-      Console.Error.WriteLine($"Message: {e.Message}");
-      Console.Error.WriteLine("Stack Trace:");
-      Console.Error.WriteLine(e.StackTrace);
-      Console.Error.WriteLine("-------------------------------------------");
+      Logger.Error("--- Night Engine: Default Error Handler ---");
+      Logger.Error($"An error occurred in the game: {e.GetType().Name}", e);
+      Logger.Error($"Message: {e.Message}");
+      Logger.Error("Stack Trace:");
+      Logger.Error(e.StackTrace ?? "No stack trace available");
+      Logger.Error("-------------------------------------------");
 
       bool canDrawError = false;
       try
       {
         if (!Window.IsOpen() || (Window.RendererPtr == nint.Zero))
         {
-          Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window or Graphics not initialized. Attempting to set mode...");
+          Logger.Warn("(DefaultErrorHandler): Window or Graphics not initialized. Attempting to set mode...");
           if (Window.SetMode(800, 600, SDL.WindowFlags.Resizable))
           {
-            Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window mode set to 800x600.");
+            Logger.Info("(DefaultErrorHandler): Window mode set to 800x600.");
             canDrawError = Window.RendererPtr != nint.Zero;
           }
           else
           {
-            Console.WriteLine($"Night.Framework.Run (DefaultErrorHandler): Failed to set window mode. SDL Error: {SDL.GetError()}");
+            Logger.Error($"(DefaultErrorHandler): Failed to set window mode. SDL Error: {SDL.GetError()}");
           }
         }
         else
@@ -480,7 +482,7 @@ namespace Night
       }
       catch (Exception resetEx)
       {
-        Console.Error.WriteLine($"Night.Framework.Run (DefaultErrorHandler): Exception during state reset: {resetEx.ToString()}");
+        Logger.Error($"(DefaultErrorHandler): Exception during state reset: {resetEx.ToString()}", resetEx);
         canDrawError = false;
       }
 
@@ -526,7 +528,7 @@ namespace Night
         }
         catch (Exception drawEx)
         {
-          Console.Error.WriteLine($"Night.Framework.Run (DefaultErrorHandler): Exception during error display loop: {drawEx.ToString()}");
+          Logger.Error($"(DefaultErrorHandler): Exception during error display loop: {drawEx.ToString()}", drawEx);
         }
       }
 

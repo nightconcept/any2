@@ -25,6 +25,10 @@ The "Night" engine project will ALWAYS adhere to the **Google C# Style Guide**. 
   - **API Design (Night framework and Night Engine):** Strive for an API design that is idiomatic to C# while closely mirroring the spirit, structure, and ease of use of the Love2D API for the features being implemented.
   - **Clarity over Premature Optimization:** For the prototype, prioritize clear, understandable, and maintainable code.
 
+- **Logging:** Utilize the `Night.Log.LogManager` to obtain logger instances (e.g., `LogManager.GetLogger("MyCategory")`).
+    Use appropriate log levels (`Info`, `Debug`, `Warn`, `Error`, `Fatal`) for messages.
+    Refer to `project/epics/logger-tasks.md` for sink configuration and advanced usage.
+
 ## NightTest Framework Testing Guidelines
 
 This section outlines how to write tests for the `Night` framework using the `NightTest` project. The testing approach combines xUnit for test execution and orchestration with custom `IGame` implementations for the actual test logic.

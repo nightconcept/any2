@@ -278,47 +278,65 @@ The current diagnostic output in the `Night` library relies on `System.Console.W
 
 ### Phase 5: Integration and Refactoring
 
--   [ ] **Task 5.1:** Integrate `LogManager` into `Night.Framework`.
+-   [In-Progress] **Task 5.1:** Integrate `LogManager` into `Night.Framework`.
     -   *Details:* Initialize `LogManager` (e.g., set default `MinLevel`). Potentially expose a way for the game to add its own sinks if ever needed in the future (though initially internal).
--   [ ] **Task 5.2:** Refactor `Framework.cs` to use the new logging system.
+-   [In-Progress] **Task 5.2:** Refactor `Framework.cs` to use the new logging system.
     -   *Details:* Replace all `Console.WriteLine` calls with `LogManager.GetLogger("Framework").Info(...)` or other appropriate levels/methods.
--   [ ] **Task 5.3:** (Optional Stretch) Identify and refactor other `Console.WriteLine` calls in the `Night` library.
--   [ ] **Task 5.4:** Write manual tests/verification steps for Integration and Refactoring.
+    -   *Note:* Exclude "Night Engine: v...", "SDL: v...", "Platform: ...", "Framework: ..." from conversion; these should remain `System.Console.WriteLine`.
+-   [ ] **Task 5.3:** (TODO, DO LATER) Identify and refactor other `Console.WriteLine` calls in the `Night` library.
+-   [In-Progress] **Task 5.4:** Write manual tests/verification steps for Integration and Refactoring.
 
 #### Manual Verification Steps for Phase 5
 
 *Prerequisites: The `Night` engine/framework should be runnable, at least to the point where `Framework.cs` executes its initialization and main loop logic.*
 
 1.  **Configuration for Test:**
-    *   Configure the logging system (e.g., via code in `Main` or `Game.Load`, or through `ConfigurationManager` if that's the chosen method) to:
-        *   Enable `SystemConsoleSink`.
-        *   Set global minimum log level to `LogLevel.Trace` or `LogLevel.Debug` to capture detailed framework messages.
-        *   (Optional) Enable `FileSink` to a known file path for persistent log checking.
-2.  **Run the Application:** Execute a simple application or test case that uses `Night.Framework.Run()`.
-3.  **Observe Logs from `Framework.cs`:**
-    *   Check the console output (and file log, if configured).
-    *   Look for messages that were previously `Console.WriteLine` in `Framework.cs`. Examples:
-        *   "Night Engine: v..."
-        *   "SDL: v..."
-        *   "Platform: ..."
-        *   "Framework: ..."
-        *   "Night.Framework.Run: Testing environment detected..." (if applicable)
-        *   "Night.Framework.Run: Global isSdlInitialized is false..."
-        *   "Night.Framework.Run: SDL_Init failed..." (if an error is forced)
-        *   "Night.Framework.Run: Calling Window.SetMode..."
-        *   "Night.Framework.Run: Window.SetMode returned..."
-        *   "Night.Framework.Run: Proceeding to game.Load()..."
-        *   "Night.Framework.Run: Starting main loop..."
-        *   Event handling messages (if any were converted from `Console.WriteLine`).
-        *   Error messages handled by `HandleGameException` or `DefaultErrorHandler` (if they were converted).
-    *   Verify these messages are now formatted by the logging system (e.g., include timestamp, level, category "Framework").
-4.  **Verify Log Levels and Categories:**
-    *   Ensure the logged messages from `Framework.cs` use appropriate log levels (e.g., Info for general information, Debug for verbose details, Error for errors).
-    *   Confirm the category is correctly set (e.g., "Framework", or more specific categories if used within `Framework.cs`).
-5.  **Test Specific Scenarios:**
-    *   If `Framework.cs` had `Console.WriteLine` for specific error conditions (e.g., SDL init failure), try to trigger those conditions (if feasible in a test environment) and verify the errors are logged via the new system.
-    *   Test window creation, fullscreen changes, VSync changes, etc., and look for corresponding log messages that replace previous console outputs.
-6.  **(If Task 5.3 was done) Verify Other Refactored Areas:** If other parts of the `Night` library were refactored, run tests or application parts that exercise those areas and check for expected log outputs.
+    *   Ensure your `SampleGame` (or test harness) configures the `LogManager` appropriately. For thorough testing of `Framework.cs` logs:
+        *   Enable `SystemConsoleSink` (e.g., `LogManager.EnableSystemConsoleSink(true);`).
+        *   Set global minimum log level to `LogLevel.Trace` or `LogLevel.Debug` (e.g., `LogManager.MinLevel = LogLevel.Trace;`). This will ensure all messages from `Framework.cs` are captured.
+        *   (Optional) Enable `FileSink` to a known file path for persistent log checking (e.g., `LogManager.ConfigureFileSink("framework_test.log", LogLevel.Trace);`).
+2.  **Run the Application:** Execute `SampleGame` or a simple test case that uses `Night.Framework.Run()`.
+3.  **Observe Console Output - Excluded Lines:**
+    *   Verify that the following lines are printed directly to the console, **without** logger formatting (i.e., no timestamp, level, or category prefix):
+        *   `Night Engine: v...` (with the correct version)
+        *   `SDL: v...` (with the correct version)
+        *   `Platform: ...` (with correct platform details)
+        *   `Framework: ...` (with correct framework description)
+4.  **Observe Logs from `Framework.cs` (Logger Formatted):**
+    *   Check the console output (and file log, if configured) for messages originating from `Framework.cs`.
+    *   Verify that all messages *other than the excluded lines above* are now formatted by the logging system. This means they should include:
+        *   Timestamp (UTC)
+        *   Log Level (e.g., INF, DBG, ERR, FTL)
+        *   Category Name (should be "Framework")
+        *   The log message itself.
+    *   **Examples of messages to look for (now logger-formatted):**
+        *   "Testing environment detected. Setting SDL video driver to 'dummy'." (if applicable)
+        *   "Global isSdlInitialized is false. Attempting SDL.Init()."
+        *   "SDL_Init failed: [SDL Error Message]" (if an error is forced/occurs)
+        *   "SDL.Init() successful."
+        *   "IsInputInitialized set to [true/false]."
+        *   "Calling Window.SetMode with Width=[w], Height=[h], Flags=[f]"
+        *   "Window.SetMode returned [true/false]."
+        *   "Window title set to '[Actual Title]'."
+        *   "Proceeding to game.Load()..."
+        *   "game.Load() completed."
+        *   "Starting main loop."
+        *   "Main loop ended."
+        *   Messages from `HandleGameException` and `DefaultErrorHandler` (e.g., "HandleGameException: Error: [Message]", "--- Night Engine: Default Error Handler ---").
+5.  **Verify Log Levels and Categories:**
+    *   Ensure the logged messages from `Framework.cs` (excluding the direct `Console.WriteLine` calls) use appropriate log levels:
+        *   General operational information: `Info`
+        *   Detailed diagnostic information: `Debug`
+        *   Recoverable errors/warnings: `Warn` or `Error`
+        *   Critical/unrecoverable errors: `Error` or `Fatal`
+    *   Confirm the `CategoryName` for these logs is consistently "Framework".
+6.  **Test Specific Scenarios (Error Handling):**
+    *   If feasible, try to induce an error that would be caught by `HandleGameException` or `DefaultErrorHandler` in `Framework.cs`.
+        *   Example: Throw an exception within `game.Load()` or `game.Update()` in your test game.
+    *   Verify that the error messages are logged by the "Framework" logger with an appropriate error level (e.g., `Error`, `Fatal`) and include exception details.
+    *   Verify that the `DefaultErrorHandler`'s own diagnostic messages (e.g., "Window or Graphics not initialized", "Failed to set window mode") are also logged via the "Framework" logger.
+7.  **(If Task 5.3 was done) Verify Other Refactored Areas:** (This step remains for future completion of 5.3) If other parts of the `Night` library were refactored, run tests or application parts that exercise those areas and check for expected log outputs.
+8.  **Cleanup (if `FileSink` was used):** Delete any log files created during the test (e.g., `framework_test.log`).
 
 ### Phase 6: Documentation and Review
 
