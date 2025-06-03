@@ -89,14 +89,14 @@ The current diagnostic output in the `Night` library relies on `System.Console.W
 
 ### Phase 2: LogManager and Basic Sinks
 
--   [ ] **Task 2.1:** Implement `LogManager` static class.
+-   [x] **Task 2.1:** Implement `LogManager` static class.
     -   *Responsibilities:* Manage list of `ILogSink`s, provide `GetLogger(string categoryName)`, global minimum log level (`MinLevel`), methods `AddSink(ILogSink sink)`, `RemoveSink(ILogSink sink)`, `ClearSinks()`.
     -   *Details:* `GetLogger` should return an `ILogger` instance (e.g., `Logger` class from Task 1.5). Internal method to dispatch `LogEntry` to all active sinks if `entry.Level >= MinLevel`.
     -   *File(s):* `Night/Log/LogManager.cs`
--   [ ] **Task 2.2:** Implement `SystemConsoleSink` (implements `ILogSink`).
+-   [x] **Task 2.2:** Implement `SystemConsoleSink` (implements `ILogSink`).
     -   *Details:* Writes formatted `LogEntry` to `System.Console`. Ensure it can be added/removed via `LogManager`. *Crucially, this sink should not be added by default.*
     -   *File(s):* `Night/Log/Sinks/SystemConsoleSink.cs`
--   [ ] **Task 2.3:** Implement `MemorySink` (implements `ILogSink`).
+-   [x] **Task 2.3:** Implement `MemorySink` (implements `ILogSink`).
     -   *Details:* Stores a configurable number of recent `LogEntry` objects in a thread-safe collection (e.g., `ConcurrentQueue` with size limit). Provides a method to retrieve buffered entries.
     -   *File(s):* `Night/Log/Sinks/MemorySink.cs`
 -   [ ] **Task 2.4:** Write manual tests/verification steps for LogManager and Basic Sinks.
@@ -137,13 +137,13 @@ The current diagnostic output in the `Night` library relies on `System.Console.W
 
 ### Phase 3: Advanced Sinks
 
--   [ ] **Task 3.1:** Implement `FileSink` (implements `ILogSink`).
+-   [x] **Task 3.1:** Implement `FileSink` (implements `ILogSink`).
     -   *Details:* Writes formatted `LogEntry` to a specified file. Path should be configurable. Handles file I/O safely. Ensure it can be added/removed.
     -   *File(s):* `Night/Log/Sinks/FileSink.cs`
--   [ ] **Task 3.2:** Implement `InGameConsoleSink` (implements `ILogSink`).
+-   [x] **Task 3.2:** Implement `InGameConsoleSink` (implements `ILogSink`).
     -   *Details:* Buffers `LogEntry` objects in a thread-safe collection. Provides a way for a UI to access these messages (e.g., a public method to retrieve the buffer or an event).
     -   *File(s):* `Night/Log/Sinks/InGameConsoleSink.cs`
--   [ ] **Task 3.3:** Write manual tests/verification steps for Advanced Sinks.
+-   [x] **Task 3.3:** Write manual tests/verification steps for Advanced Sinks.
 
 #### Manual Verification Steps for Phase 3
 
