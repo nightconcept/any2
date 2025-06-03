@@ -1,4 +1,4 @@
-// <copyright file="FileMode.cs" company="Night Circle">
+// <copyright file="NightFile.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -21,27 +21,17 @@
 // </copyright>
 
 using System;
+using System.IO;
 
 namespace Night
 {
-  /// <summary>
-  /// Represents the different modes you can open a File in.
-  /// </summary>
-  public enum FileMode
+  public class NightFile : IDisposable
   {
-    /// <summary>
-    /// Open a file for read.
-    /// </summary>
-    Read,
-
-    /// <summary>
-    /// Open a file for write.
-    /// </summary>
-    Write,
-
-    /// <summary>
-    /// Open a file for append.
-    /// </summary>
-    Append,
+    // Placeholder for IDisposable implementation
+    public void Dispose()
+    {
+      // TODO: Implement resource cleanup
+      GC.SuppressFinalize(this);
+    }
   }
 }
