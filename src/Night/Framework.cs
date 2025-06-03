@@ -94,11 +94,13 @@ namespace Night
         if (isTestingEnvironment)
         {
           Console.WriteLine("Night.Framework.Run: Testing environment detected. Setting SDL video driver to 'dummy'.");
+
           // Set the video driver to "dummy" for headless testing environments
           // This resolves "No available video device" errors in CI/CD systems
           _ = SDL.SetHint(SDL.Hints.VideoDriver, "dummy");
 
           Console.WriteLine("Night.Framework.Run: Testing environment detected. Setting SDL render driver to 'software'.");
+
           // Force software rendering to avoid OpenGL/GLES initialization issues in headless environments
           _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
         }

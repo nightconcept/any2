@@ -14,6 +14,7 @@
 ### Types (Filesystem)
 
 - FileSystemInfo
+- NightFile
 
 ### Functions (Filesystem)
 
@@ -35,6 +36,7 @@
 
 ### Enums (Filesystem)
 
+- BufferMode
 - FileMode
 - FileType
 
