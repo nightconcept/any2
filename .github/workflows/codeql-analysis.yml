@@ -57,6 +57,38 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
+- name: Prepare SDL3 Prebuilt Binaries (for C#)
+        if: matrix.language == 'csharp'
+        run: |
+          echo "Runner OS is ubuntu-latest. Looking for Linux SDL3 prebuilt binary ZIP files in lib/SDL3-Prebuilt..."
+          SDL_PREBUILT_DIR="lib/SDL3-Prebuilt"
+
+          if ! command -v unzip &> /dev/null; then
+            echo "Error: unzip command not found. Please ensure it's installed on the runner."
+            exit 1
+          fi
+
+          TARGET_ZIP_BASENAME="linux"
+          TARGET_PLATFORM_DIR="linux"
+
+          echo "Attempting to extract for $TARGET_PLATFORM_DIR using base name $TARGET_ZIP_BASENAME..."
+          if [ -f "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME.zip" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR binaries from $SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR"
+            unzip -qo "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME.zip" -d "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR/"
+            echo "Extracted $TARGET_PLATFORM_DIR binaries from $TARGET_ZIP_BASENAME.zip."
+          elif [ -f "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME-binaries.zip" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR binaries from $SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME-binaries.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR"
+            unzip -qo "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME-binaries.zip" -d "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR/"
+            echo "Extracted $TARGET_PLATFORM_DIR binaries from $TARGET_ZIP_BASENAME-binaries.zip."
+          else
+            echo "Info: No $TARGET_PLATFORM_DIR SDL binaries ZIP found (checked for $TARGET_ZIP_BASENAME.zip and $TARGET_ZIP_BASENAME-binaries.zip in $SDL_PREBUILT_DIR). Build might fail if these are required."
+          fi
+
+          echo "Final listing of contents in $SDL_PREBUILT_DIR after extraction attempts:"
+          ls -R "$SDL_PREBUILT_DIR"
+        shell: bash
       - name: Autobuild
         if: matrix.language == 'csharp'
         uses: github/codeql-action/autobuild@60168efe1c415ce0f5521ea06d5c2062adbeed1b # v3.28.17

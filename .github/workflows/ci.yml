@@ -26,6 +26,57 @@ jobs:
     - name: Check Formatting
       run: dotnet format --verify-no-changes --verbosity diagnostic Night.sln
 
+- name: Prepare SDL3 Prebuilt Binaries
+      run: |
+        echo "Runner OS: ${{ runner.os }}"
+        echo "Looking for SDL3 prebuilt binary ZIP files in lib/SDL3-Prebuilt..."
+        SDL_PREBUILT_DIR="lib/SDL3-Prebuilt"
+
+        if ! command -v unzip &> /dev/null; then
+          echo "Error: unzip command not found on ${{ runner.os }}. Please ensure it's installed or use an alternative extraction method for this OS."
+          # For Windows, if unzip is not in PATH for bash, you might need to use PowerShell:
+          # if [[ "${{ runner.os }}" == "Windows" ]]; then
+          #   powershell -Command "if (Test-Path '$SDL_PREBUILT_DIR/windows.zip') { Expand-Archive -Path '$SDL_PREBUILT_DIR/windows.zip' -DestinationPath '$SDL_PREBUILT_DIR/windows' -Force } elseif (Test-Path '$SDL_PREBUILT_DIR/windows-binaries.zip') { Expand-Archive -Path '$SDL_PREBUILT_DIR/windows-binaries.zip' -DestinationPath '$SDL_PREBUILT_DIR/windows' -Force }"
+          # fi
+          exit 1
+        fi
+
+        TARGET_ZIP_BASENAME=""
+        TARGET_PLATFORM_DIR=""
+
+        if [[ "${{ runner.os }}" == "Linux" ]]; then
+          TARGET_ZIP_BASENAME="linux"
+          TARGET_PLATFORM_DIR="linux"
+        elif [[ "${{ runner.os }}" == "macOS" ]]; then
+          TARGET_ZIP_BASENAME="macos"
+          TARGET_PLATFORM_DIR="macos"
+        elif [[ "${{ runner.os }}" == "Windows" ]]; then
+          TARGET_ZIP_BASENAME="windows"
+          TARGET_PLATFORM_DIR="windows"
+        else
+          echo "Warning: Unknown runner OS '${{ runner.os }}'. Cannot determine which SDL3 binaries to extract."
+        fi
+
+        if [ -n "$TARGET_ZIP_BASENAME" ]; then
+          echo "Attempting to extract for $TARGET_PLATFORM_DIR using base name $TARGET_ZIP_BASENAME..."
+          if [ -f "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME.zip" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR binaries from $SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR"
+            unzip -qo "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME.zip" -d "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR/"
+            echo "Extracted $TARGET_PLATFORM_DIR binaries from $TARGET_ZIP_BASENAME.zip."
+          elif [ -f "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME-binaries.zip" ]; then
+            echo "Extracting $TARGET_PLATFORM_DIR binaries from $SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME-binaries.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR"
+            unzip -qo "$SDL_PREBUILT_DIR/$TARGET_ZIP_BASENAME-binaries.zip" -d "$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR/"
+            echo "Extracted $TARGET_PLATFORM_DIR binaries from $TARGET_ZIP_BASENAME-binaries.zip."
+          else
+            echo "Info: No $TARGET_PLATFORM_DIR SDL binaries ZIP found (checked for $TARGET_ZIP_BASENAME.zip and $TARGET_ZIP_BASENAME-binaries.zip in $SDL_PREBUILT_DIR)."
+          fi
+        fi
+
+        echo "Final listing of contents in $SDL_PREBUILT_DIR after extraction attempts:"
+        ls -R "$SDL_PREBUILT_DIR"
+      shell: bash
     - name: Restore dependencies
       run: dotnet restore Night.sln
 
