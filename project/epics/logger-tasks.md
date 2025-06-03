@@ -175,7 +175,7 @@ The current diagnostic output in the `Night` library relies on `System.Console.W
     -   *Details:* Review and use appropriate synchronization primitives (`lock`, `ConcurrentDictionary`, `ConcurrentQueue`, etc.) where necessary.
 -   [x] **Task 4.2:** Implement error handling within sinks.
     -   *Details:* A failure in one sink (e.g., file I/O error in `FileSink`) should not stop other sinks or crash the application. Consider logging such errors to `System.Diagnostics.Trace` or a fallback mechanism.
--   [x] **Task 4.3:** Design and implement sink configuration mechanism.
+-   [ ] **Task 4.3:** Design and implement sink configuration mechanism.
     -   *Details:* Determine how sinks like `FileSink` (path) and `SystemConsoleSink` (enable/disable) will be configured. This could be through methods on `LogManager` or by reading from `ConfigurationManager` if appropriate for internal use.
     -   *Example:* `LogManager.EnableSystemConsoleSink()`, `LogManager.ConfigureFileSink(string path, LogLevel minLevelForFile)`.
 -   [x] **Task 4.4:** Write manual tests/verification steps for Thread Safety, Error Handling, and Configuration.
@@ -362,3 +362,4 @@ The current diagnostic output in the `Night` library relies on `System.Console.W
 
 -   Initial decision: Logging module will reside entirely within the `Night` namespace and its components marked as `internal` where appropriate if they are not meant to be part of the engine's public API yet.
 -   Configuration for opt-in sinks (`SystemConsoleSink`, `FileSink`) needs careful design to be user-friendly for developers using the Night engine, even if initially for internal Night library use.
+-   2025-06-03: Identified missing sink configuration methods in `LogManager` (`EnableSystemConsoleSink`, `IsSystemConsoleSinkEnabled`, `ConfigureFileSink`, `DisableFileSink`) despite Task 4.3 being marked complete. These methods are required by `SampleGame` and manual tests. Planning to implement them.
