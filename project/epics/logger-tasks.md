@@ -2,7 +2,7 @@
 
 **User Story:** As a Night Engine developer, I want a flexible and extensible logging module so that I can easily output diagnostic messages to various configurable destinations (file, in-game console, memory, system console) with control over log levels and sink activation, replacing the current `System.Console.WriteLine` usage.
 
-**Status:** Review
+**Status:** In-Progress
 
 **Priority:** High
 
@@ -171,55 +171,110 @@ The current diagnostic output in the `Night` library relies on `System.Console.W
 
 ### Phase 4: Thread Safety, Error Handling, and Configuration
 
--   [ ] **Task 4.1:** Ensure thread safety for `LogManager` and all sink operations.
+-   [x] **Task 4.1:** Ensure thread safety for `LogManager` and all sink operations.
     -   *Details:* Review and use appropriate synchronization primitives (`lock`, `ConcurrentDictionary`, `ConcurrentQueue`, etc.) where necessary.
--   [ ] **Task 4.2:** Implement error handling within sinks.
+-   [x] **Task 4.2:** Implement error handling within sinks.
     -   *Details:* A failure in one sink (e.g., file I/O error in `FileSink`) should not stop other sinks or crash the application. Consider logging such errors to `System.Diagnostics.Trace` or a fallback mechanism.
--   [ ] **Task 4.3:** Design and implement sink configuration mechanism.
+-   [x] **Task 4.3:** Design and implement sink configuration mechanism.
     -   *Details:* Determine how sinks like `FileSink` (path) and `SystemConsoleSink` (enable/disable) will be configured. This could be through methods on `LogManager` or by reading from `ConfigurationManager` if appropriate for internal use.
     -   *Example:* `LogManager.EnableSystemConsoleSink()`, `LogManager.ConfigureFileSink(string path, LogLevel minLevelForFile)`.
--   [ ] **Task 4.4:** Write manual tests/verification steps for Thread Safety, Error Handling, and Configuration.
+-   [x] **Task 4.4:** Write manual tests/verification steps for Thread Safety, Error Handling, and Configuration.
 
 #### Manual Verification Steps for Phase 4
 
-1.  **Thread Safety:**
-    *   Create a test program that initializes `LogManager` with multiple sinks (e.g., `SystemConsoleSink`, `FileSink`, `MemorySink`).
+*Prerequisites: A simple test harness or a temporary console application where you can call `LogManager` methods and simulate multi-threading.*
+
+1.  **Thread Safety (`LogManager` and Sinks):**
+    *   Initialize `LogManager`.
+    *   Call `LogManager.EnableSystemConsoleSink(true)`.
+    *   Call `LogManager.ConfigureFileSink("thread_test_log.txt", LogLevel.Trace)`.
+    *   Create an instance of `MemorySink` (e.g., `var memorySink = new MemorySink(capacity: 2000);`) and add it using `LogManager.AddSink(memorySink)`.
     *   Spawn several threads (e.g., 5-10 threads).
-    *   In each thread, create a logger instance (e.g., `LogManager.GetLogger($"Thread-{threadId}")`) and log a significant number of messages (e.g., 100-1000) in a loop.
-    *   *Observe:*
-        *   Console output (if `SystemConsoleSink` is active): Check for garbled messages or interleaved lines that indicate race conditions. Some interleaving of *whole messages* is expected and fine.
-        *   File output (`FileSink`): Check the log file for corruption, garbled lines, or missing messages.
-        *   `MemorySink`: Retrieve entries and check for consistency and completeness (considering its capacity).
-        *   Application stability: Ensure no exceptions related to concurrent access are thrown and the application doesn't deadlock.
-2.  **Sink Error Handling:**
-    *   (Requires ability to simulate sink failure, e.g., by modifying a sink temporarily or setting up a specific failing scenario).
-    *   Add `FileSink` configured to a valid path, and `SystemConsoleSink`.
-    *   Log a message; verify output to both.
-    *   Simulate an error in `FileSink` (e.g., make the log file read-only, or if `FileSink` has an internal method to force a failure on next write for testing).
-    *   Log another message.
+    *   In each thread:
+        *   Get a logger instance: `var logger = LogManager.GetLogger($"Thread-{Thread.CurrentThread.ManagedThreadId}");`
+        *   Log a significant number of messages (e.g., 100-200 messages) in a loop with varying log levels: `logger.Info($"Message {i} from thread.");`, `logger.Debug($"Debug message {i}");`
+    *   Wait for all threads to complete.
+    *   *Observe & Verify:*
+        *   **Application Stability:** The application completes without deadlocks or exceptions related to concurrent access.
+        *   **Console Output (`SystemConsoleSink`):**
+            *   Messages from different threads should appear. Some interleaving of *complete log messages* is expected and acceptable.
+            *   Individual log messages should not be garbled (e.g., parts of one message mixed with parts of another within the same line).
+        *   **File Output (`FileSink` - `thread_test_log.txt`):**
+            *   Open `thread_test_log.txt`.
+            *   Verify that the file is not corrupted.
+            *   Verify that messages from all threads are present and correctly formatted.
+            *   The total number of messages should roughly correspond to (num_threads * num_messages_per_thread) that meet the `LogLevel.Trace` criteria.
+        *   **`MemorySink` Output:**
+            *   Retrieve entries: `var entries = memorySink.GetEntries();`
+            *   Verify that the number of entries is as expected (up to its capacity).
+            *   Check a sample of entries for consistency (correct timestamp, level, category, message).
+    *   Clean up: `LogManager.DisableFileSink(); LogManager.ClearSinks(); File.Delete("thread_test_log.txt");`
+
+2.  **Sink Error Handling (Focus on `FileSink`):**
+    *   Initialize `LogManager`.
+    *   Call `LogManager.EnableSystemConsoleSink(true)`.
+    *   Configure `FileSink` to a valid path: `LogManager.ConfigureFileSink("error_test_log.txt", LogLevel.Info);`
+    *   Log a message: `LogManager.GetLogger("ErrorTest").Info("Initial message - should go to console and file.");`
+    *   Verify the message appears on the console and in `error_test_log.txt`.
+    *   **Simulate `FileSink` Write Error:**
+        *   Make `error_test_log.txt` read-only (e.g., using file system permissions or `File.SetAttributes("error_test_log.txt", FileAttributes.ReadOnly)`).
+        *   Alternatively, if testing `FileSink`'s initialization error: try `LogManager.ConfigureFileSink("Z:\\non_existent_drive\\error_init_test.txt");` (assuming Z: is not a valid writable drive).
+    *   Log another message: `LogManager.GetLogger("ErrorTest").Warn("Second message - should go to console, FileSink might fail.");`
     *   *Verify:*
-        *   The message still appears in `SystemConsoleSink`.
-        *   The application does not crash.
-        *   If a fallback logging mechanism for sink errors is implemented (e.g., to `System.Diagnostics.Trace`), check for an error message indicating the `FileSink` failure.
-    *   Restore `FileSink` to normal operation. Log another message and verify it writes to the file again.
+        *   The second message *still appears* in the `SystemConsoleSink` output.
+        *   The application *does not crash*.
+        *   Check `System.Diagnostics.Trace` output (e.g., in IDE's debug output window or a configured trace listener). An error message indicating the `FileSink` failure (e.g., "Access to the path... is denied" or "Could not find a part of the path...") should be present.
+    *   **Restore `FileSink` Operation:**
+        *   If read-only was set: `File.SetAttributes("error_test_log.txt", FileAttributes.Normal);`
+        *   If a bad path was used for init, reconfigure to a valid one: `LogManager.ConfigureFileSink("error_test_log_restored.txt", LogLevel.Info);`
+    *   Log a third message: `LogManager.GetLogger("ErrorTest").Info("Third message - should go to console and new/restored file.");`
+    *   Verify the third message appears on the console and in the (newly configured or now writable) file log.
+    *   Clean up: `LogManager.DisableFileSink(); LogManager.EnableSystemConsoleSink(false); File.Delete("error_test_log.txt"); File.Delete("error_test_log_restored.txt");` (handle potential delete errors if files didn't exist).
+
 3.  **Sink Configuration Mechanism:**
     *   **`SystemConsoleSink` Enable/Disable:**
-        *   If using a method like `LogManager.EnableSystemConsoleSink(bool enabled)`:
-            *   Call `LogManager.EnableSystemConsoleSink(true)`. Log a message. Verify console output.
-            *   Call `LogManager.EnableSystemConsoleSink(false)`. Log a message. Verify no console output.
-        *   If using `ConfigurationManager`: Modify the configuration source to enable/disable the console sink, re-initialize/re-read config in `LogManager` (if applicable), and test.
-    *   **`FileSink` Configuration (Path, Level):**
-        *   If using methods like `LogManager.ConfigureFileSink(string path, LogLevel minLevel)`:
-            *   Call `LogManager.ConfigureFileSink("path1.log", LogLevel.Info)`. Log Debug, Info, Warn messages. Verify only Info and Warn messages go to "path1.log".
-            *   Call `LogManager.ConfigureFileSink("path2.log", LogLevel.Debug)`. Log Debug, Info messages. Verify Debug and Info messages go to "path2.log". (Ensure old sinks are cleared or removed if `ConfigureFileSink` replaces).
-        *   If using `ConfigurationManager`: Modify config for file path and level, re-initialize/re-read, and test.
-    *   **Global `LogManager.MinLevel` vs. Sink-Specific Level:**
-        *   Set `LogManager.MinLevel = LogLevel.Warning`.
-        *   Configure `FileSink` with `minLevelForFile = LogLevel.Debug` (or a level lower than global).
-        *   Log Debug, Info, Warning messages. Verify only Warning messages appear in the file (due to global filter).
-        *   Set `LogManager.MinLevel = LogLevel.Trace`.
-        *   Configure `FileSink` with `minLevelForFile = LogLevel.Info`.
-        *   Log Debug, Info, Warning messages. Verify Info and Warning messages appear in the file (FileSink filters Debug, global allows all).
+        *   `LogManager.EnableSystemConsoleSink(true);`
+        *   `LogManager.GetLogger("ConsoleTest").Info("Message 1: Console On");` -> Verify console output.
+        *   `LogManager.IsSystemConsoleSinkEnabled()` -> Verify returns `true`.
+        *   `LogManager.EnableSystemConsoleSink(false);`
+        *   `LogManager.GetLogger("ConsoleTest").Info("Message 2: Console Off");` -> Verify *no* console output for this message.
+        *   `LogManager.IsSystemConsoleSinkEnabled()` -> Verify returns `false`.
+        *   `LogManager.EnableSystemConsoleSink(true);`
+        *   `LogManager.GetLogger("ConsoleTest").Info("Message 3: Console On Again");` -> Verify console output.
+    *   **`FileSink` Configuration (Path, Level) & Disable:**
+        *   `LogManager.ConfigureFileSink("file_config_A.log", LogLevel.Information);`
+        *   `var logger = LogManager.GetLogger("FileConfigTest");`
+        *   `logger.Debug("File A - Debug (should not appear)");`
+        *   `logger.Info("File A - Info (should appear)");`
+        *   `logger.Warn("File A - Warn (should appear)");`
+        *   Verify `file_config_A.log` contains only Info and Warn messages.
+        *   `LogManager.ConfigureFileSink("file_config_B.log", LogLevel.Debug);` (This implicitly disables/replaces the sink for `file_config_A.log`)
+        *   `logger.Debug("File B - Debug (should appear)");`
+        *   `logger.Info("File B - Info (should appear)");`
+        *   Verify `file_config_B.log` contains Debug and Info messages. Verify `file_config_A.log` is no longer being written to.
+        *   `LogManager.DisableFileSink();`
+        *   `logger.Error("File B - Error (should not appear in file after disable)");`
+        *   Verify `file_config_B.log` does not contain the error message.
+        *   Clean up: `File.Delete("file_config_A.log"); File.Delete("file_config_B.log");`
+    *   **Global `LogManager.MinLevel` vs. `FileSink` Specific Level:**
+        *   `LogManager.EnableSystemConsoleSink(true);` // For easy observation
+        *   `LogManager.MinLevel = LogLevel.Warning;`
+        *   `LogManager.ConfigureFileSink("file_level_test.log", LogLevel.Debug);` // FileSink wants Debug and up
+        *   `var levelLogger = LogManager.GetLogger("LevelTest");`
+        *   `levelLogger.Debug("Global Warn, File Debug - Debug Msg (File: No, Global: No)");`
+        *   `levelLogger.Info("Global Warn, File Debug - Info Msg (File: No, Global: No)");`
+        *   `levelLogger.Warn("Global Warn, File Debug - Warn Msg (File: Yes, Global: Yes)");`
+        *   `levelLogger.Error("Global Warn, File Debug - Error Msg (File: Yes, Global: Yes)");`
+        *   Verify `file_level_test.log` contains only Warn and Error messages (because global `MinLevel` is `Warning`).
+        *   Verify console also only shows Warn and Error messages.
+        *   `LogManager.MinLevel = LogLevel.Trace;`
+        *   `LogManager.ConfigureFileSink("file_level_test2.log", LogLevel.Information);` // FileSink wants Info and up
+        *   `levelLogger.Debug("Global Trace, File Info - Debug Msg (File: No, Global: Yes)");`
+        *   `levelLogger.Info("Global Trace, File Info - Info Msg (File: Yes, Global: Yes)");`
+        *   `levelLogger.Warn("Global Trace, File Info - Warn Msg (File: Yes, Global: Yes)");`
+        *   Verify `file_level_test2.log` contains Info and Warn messages (FileSink filters Debug, global allows all).
+        *   Verify console shows Debug, Info, and Warn messages.
+        *   Clean up: `LogManager.DisableFileSink(); LogManager.EnableSystemConsoleSink(false); File.Delete("file_level_test.log"); File.Delete("file_level_test2.log");`
 
 ### Phase 5: Integration and Refactoring
 

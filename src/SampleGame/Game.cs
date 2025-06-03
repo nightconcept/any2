@@ -25,6 +25,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Night;
 using Night.Log;
@@ -96,271 +98,282 @@ public class Game : IGame
     Console.WriteLine($"Attempted to set icon from Game.Load. Current icon: {Window.GetIcon()}");
 
     // Run Logger Phase 2 Verification
-    //RunLoggerPhase2Verification();
+    // RunLoggerPhase2Verification();
 
     // Run Logger Phase 3 Verification
-    //RunLoggerPhase3Verification();
+    // RunLoggerPhase3Verification();
+
+    // Run Logger Phase 4 Verification
+    RunLoggerPhase4Verification();
   }
 
-  private static void RunLoggerPhase2Verification()
+  // Helper for collision detection (AABB)
+  private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
   {
-    Console.WriteLine("\n--- Running Logger Phase 2 Verification ---");
-    var initialLogger = LogManager.GetLogger("InitialTest"); // Used for some initial tests
+    // True if the rectangles are overlapping
+    return rect1.X < rect2.X + rect2.Width &&
+           rect1.X + rect1.Width > rect2.X &&
+           rect1.Y < rect2.Y + rect2.Height &&
+           rect1.Y + rect1.Height > rect2.Y;
+  }
 
-    // --- 1. LogManager.GetLogger() ---
-    Console.WriteLine("\n1. Testing LogManager.GetLogger()...");
-    var logger1A = LogManager.GetLogger("TestCategory1");
-    Console.WriteLine($"  Got logger1A for 'TestCategory1': {(logger1A != null ? "OK" : "FAIL")}");
-    var logger1B = LogManager.GetLogger("TestCategory1");
-    Console.WriteLine($"  Got logger1B for 'TestCategory1': {(logger1B != null ? "OK" : "FAIL")}");
-    Console.WriteLine($"  logger1A == logger1B: {object.ReferenceEquals(logger1A, logger1B)} (Expected: True)");
-    var logger2 = LogManager.GetLogger("TestCategory2");
-    Console.WriteLine($"  Got logger2 for 'TestCategory2': {(logger2 != null ? "OK" : "FAIL")}");
-    Console.WriteLine($"  logger1A == logger2: {object.ReferenceEquals(logger1A, logger2)} (Expected: False)");
+  private static void RunLoggerPhase4Verification()
+  {
+    Console.WriteLine("\n--- Running Logger Phase 4 Verification ---");
+    LogManager.MinLevel = LogLevel.Trace; // Ensure a baseline for tests
 
-    // --- 2. SystemConsoleSink (Opt-In Behavior) ---
-    Console.WriteLine("\n2. Testing SystemConsoleSink (Opt-In Behavior)...");
-    Console.WriteLine("  Logging 'Test message 1 (should NOT appear on console)'...");
-    initialLogger.Info("Test message 1 (should NOT appear on console)");
-    Console.WriteLine("  (Check console output above. Message should NOT be present.)");
-
-    var systemConsoleSink = new SystemConsoleSink();
-    LogManager.AddSink(systemConsoleSink);
-    Console.WriteLine("  Added SystemConsoleSink.");
-    Console.WriteLine("  Logging 'Hello Console! (should APPEAR on console)'...");
-    initialLogger.Info("Hello Console! (should APPEAR on console)");
-    Console.WriteLine("  (Check console output above. Message SHOULD be present.)");
-
-    LogManager.RemoveSink(systemConsoleSink);
-    Console.WriteLine("  Removed SystemConsoleSink.");
-    Console.WriteLine("  Logging 'Test message 2 (should NOT appear on console after removal)'...");
-    initialLogger.Info("Test message 2 (should NOT appear on console after removal)");
-    Console.WriteLine("  (Check console output above. Message should NOT be present.)");
-
-    // --- 3. MemorySink ---
-    Console.WriteLine("\n3. Testing MemorySink...");
-    var memorySink = new MemorySink(capacity: 5);
-    LogManager.AddSink(memorySink);
-    Console.WriteLine("  Added MemorySink (capacity 5).");
-    var memLogger = LogManager.GetLogger("MemoryTest");
-    Console.WriteLine("  Logging 6 messages (Msg1 to Msg6) to MemoryTest logger...");
-    for (int i = 1; i <= 6; i++)
+    // --- 1. Thread Safety ---
+    Console.WriteLine("\n1. Testing Thread Safety (`LogManager` and Sinks)...");
+    LogManager.ClearSinks(); // Start clean
+    LogManager.EnableSystemConsoleSink(true);
+    string threadTestLogFile = "thread_test_log.txt";
+    if (File.Exists(threadTestLogFile))
     {
-      memLogger.Info($"Msg{i}");
+      File.Delete(threadTestLogFile);
     }
 
-    var entries = memorySink.GetEntries().ToList();
-    Console.WriteLine($"  Retrieved {entries.Count} entries from MemorySink (Expected: 5)");
-    if (entries.Count == 5)
+    LogManager.ConfigureFileSink(threadTestLogFile, LogLevel.Trace);
+    var memorySinkThreadTest = new MemorySink(capacity: 2000);
+    LogManager.AddSink(memorySinkThreadTest);
+    Console.WriteLine("  Configured SystemConsoleSink, FileSink (thread_test_log.txt), and MemorySink (cap 2000).");
+
+    int numThreads = 5;
+    int messagesPerThread = 100;
+    List<Task> tasks = new List<Task>();
+
+    Console.WriteLine($"  Spawning {numThreads} threads, each logging {messagesPerThread} messages...");
+    for (int t = 0; t < numThreads; t++)
     {
-      bool correctEntries = true;
-      for (int i = 0; i < 5; i++)
+      tasks.Add(Task.Run(() =>
       {
-        if (entries[i].Message != $"Msg{i + 2}")
+        var logger = LogManager.GetLogger($"Thread-{Thread.CurrentThread.ManagedThreadId}");
+        for (int i = 0; i < messagesPerThread; i++)
         {
-          correctEntries = false;
-          Console.WriteLine($"    FAIL: Entry {i} is '{entries[i].Message}', expected 'Msg{i + 2}'");
+          logger.Info($"Message {i} from thread {Thread.CurrentThread.ManagedThreadId}.");
+          if (i % 10 == 0)
+          {
+            logger.Debug($"Debug detail {i} from thread {Thread.CurrentThread.ManagedThreadId}.");
+          }
+
+          if (i % 25 == 0)
+          {
+            logger.Warn($"Warning {i} from thread {Thread.CurrentThread.ManagedThreadId}!");
+          }
         }
-
-        Console.WriteLine($"    Entry {i}: [{entries[i].TimestampUtc:o}] [{entries[i].Level}] [{entries[i].CategoryName}] {entries[i].Message}");
-      }
-
-      Console.WriteLine($"  Content matches 'Msg2' through 'Msg6': {(correctEntries ? "OK" : "FAIL")}");
+      }));
     }
-    else
+
+    Task.WhenAll(tasks).GetAwaiter().GetResult(); // Wait for all threads to complete
+    Console.WriteLine("  All threads completed.");
+
+    Console.WriteLine("\n  VERIFY Thread Safety:");
+    Console.WriteLine("  - Application Stability: Should have completed without deadlocks or exceptions.");
+    Console.WriteLine("  - Console Output: Messages from different threads should appear. Complete messages should not be garbled (some interleaving of whole messages is OK).");
+    Console.WriteLine($"  - File Output ('{threadTestLogFile}'):");
+    Console.WriteLine("    - File should not be corrupted.");
+    Console.WriteLine("    - Messages from all threads should be present and formatted correctly.");
+    Console.WriteLine($"    - Total messages should be around {numThreads * messagesPerThread} (adjust for debug/warn counts).");
+    Console.WriteLine("  - MemorySink Output:");
+    var threadEntries = memorySinkThreadTest.GetEntries().ToList();
+    Console.WriteLine($"    - Retrieved {threadEntries.Count} entries (Expected up to {memorySinkThreadTest.GetEntries().Count()}). Check for consistency.");
+    Console.WriteLine("  (Press Enter to continue after verification...)");
+    _ = Console.ReadLine();
+
+    LogManager.DisableFileSink();
+    LogManager.ClearSinks(); // Clears memory sink too
+    if (File.Exists(threadTestLogFile))
     {
-      Console.WriteLine("  FAIL: Incorrect number of entries retrieved.");
-      foreach (var entry in entries)
-      {
-        Console.WriteLine($"    Unexpected Entry: [{entry.TimestampUtc:o}] [{entry.Level}] [{entry.CategoryName}] {entry.Message}");
-      }
+      File.Delete(threadTestLogFile);
     }
 
-    LogManager.RemoveSink(memorySink); // Clean up for next test
-    Console.WriteLine("  Removed MemorySink.");
+    Console.WriteLine("  Cleaned up thread safety test resources.");
 
-    // --- 4. Global Minimum Log Level (LogManager.MinLevel) ---
-    Console.WriteLine("\n4. Testing Global Minimum Log Level (LogManager.MinLevel)...");
-    LogManager.AddSink(systemConsoleSink); // Re-add for this test
-    Console.WriteLine("  Added SystemConsoleSink for MinLevel test.");
-    var levelTestLogger = LogManager.GetLogger("LevelTest");
-
-    LogManager.MinLevel = LogLevel.Warning;
-    Console.WriteLine($"  Set LogManager.MinLevel = LogLevel.Warning ({LogManager.MinLevel}).");
-    Console.WriteLine("  Logging Debug A, Info A, Warn A. Expect only Warn A.");
-    levelTestLogger.Debug("Debug A (should NOT appear)");
-    levelTestLogger.Info("Info A (should NOT appear)");
-    levelTestLogger.Warn("Warning A (SHOULD appear)");
-    Console.WriteLine("  (Check console output for 'Warning A' ONLY from this batch.)");
-
-    LogManager.MinLevel = LogLevel.Trace;
-    Console.WriteLine($"  Set LogManager.MinLevel = LogLevel.Trace ({LogManager.MinLevel}).");
-    Console.WriteLine("  Logging Debug B. Expect Debug B to appear.");
-    levelTestLogger.Debug("Debug B (SHOULD appear)");
-    Console.WriteLine("  (Check console output for 'Debug B' from this batch.)");
-    LogManager.RemoveSink(systemConsoleSink); // Clean up
-    Console.WriteLine("  Removed SystemConsoleSink after MinLevel test.");
-
-    // --- 5. ClearSinks() ---
-    Console.WriteLine("\n5. Testing ClearSinks()...");
-    LogManager.AddSink(systemConsoleSink);
-    LogManager.AddSink(memorySink); // MemorySink was removed, re-add with default capacity
-    Console.WriteLine("  Added SystemConsoleSink and new MemorySink.");
-    var clearTestLogger = LogManager.GetLogger("ClearTest");
-    Console.WriteLine("  Logging 'Message before ClearSinks (should appear/be captured)'...");
-    clearTestLogger.Info("Message before ClearSinks (should appear/be captured)");
-    Console.WriteLine("  (Check console for message, MemorySink will have 1 entry)");
-    var entriesBeforeClear = memorySink.GetEntries().Count();
-    Console.WriteLine($"  MemorySink entries before clear: {entriesBeforeClear} (Expected 1)");
-
+    // --- 2. Sink Error Handling (FileSink) ---
+    Console.WriteLine("\n2. Testing Sink Error Handling (FileSink)...");
     LogManager.ClearSinks();
-    Console.WriteLine("  Called LogManager.ClearSinks().");
-    Console.WriteLine("  Logging 'Message after ClearSinks (should NOT appear/be captured)'...");
-    clearTestLogger.Info("Message after ClearSinks (should NOT appear/be captured)");
-    Console.WriteLine("  (Check console for NO new message. MemorySink should still have its old entries or be empty if re-created differently).");
-    var entriesAfterClear = memorySink.GetEntries().Count(); // This memorySink instance is now orphaned from LogManager
-    Console.WriteLine($"  Orphaned MemorySink entries after clear: {entriesAfterClear} (Expected: {entriesBeforeClear}, as it's no longer managed)");
-
-    // To properly test MemorySink after ClearSinks, we'd need to re-add it or check a fresh one.
-    // The current test confirms no *new* messages go to *any* sink.
-    // Let's add the system console sink back to see if it's truly cleared.
-    LogManager.AddSink(systemConsoleSink);
-    Console.WriteLine("  Re-added SystemConsoleSink.");
-    Console.WriteLine("  Logging 'Message after ClearSinks and re-adding SystemConsoleSink (should appear)'...");
-    clearTestLogger.Info("Message after ClearSinks and re-adding SystemConsoleSink (should appear)");
-    Console.WriteLine("  (Check console for this message.)");
-    LogManager.ClearSinks(); // Final cleanup
-
-    Console.WriteLine("\n--- Logger Phase 2 Verification Complete ---");
-  }
-
-  private static void RunLoggerPhase3Verification()
-  {
-    Console.WriteLine("\n--- Running Logger Phase 3 Verification ---");
-    var fileTestLogger = LogManager.GetLogger("FileTest");
-    var gameConsoleTestLogger = LogManager.GetLogger("GameConsoleTest");
-    string testLogFilePath = "test_log.txt";
-
-    // Ensure a clean slate for sinks if any were left from previous tests or game init
-    LogManager.ClearSinks();
-
-    // For verification, let's also re-add SystemConsoleSink to see logs in console simultaneously
-    var systemConsoleSinkForP3 = new SystemConsoleSink();
-    LogManager.AddSink(systemConsoleSinkForP3);
-    Console.WriteLine("  (Added SystemConsoleSink for Phase 3 verification visibility)");
-
-    // --- 1. FileSink ---
-    Console.WriteLine("\n1. Testing FileSink...");
-    if (File.Exists(testLogFilePath))
+    LogManager.EnableSystemConsoleSink(true);
+    string errorTestLogFile = "error_test_log.txt";
+    if (File.Exists(errorTestLogFile))
     {
-      File.Delete(testLogFilePath);
-      Console.WriteLine($"  Deleted existing '{testLogFilePath}'.");
+      File.Delete(errorTestLogFile);
     }
 
-    var fileSink = new FileSink(testLogFilePath);
-    LogManager.AddSink(fileSink);
-    Console.WriteLine($"  Added FileSink, logging to '{testLogFilePath}'.");
+    LogManager.ConfigureFileSink(errorTestLogFile, LogLevel.Information);
+    var errorLogger = LogManager.GetLogger("ErrorTest");
 
-    Console.WriteLine("  Logging several messages to FileTest logger...");
-    fileTestLogger.Info("Log to file - Info message.");
-    fileTestLogger.Warn("Log to file - Warning message.");
+    Console.WriteLine("  Logging 'Initial message - should go to console and file.'");
+    errorLogger.Info("Initial message - should go to console and file.");
+    Console.WriteLine($"  (Verify console and '{errorTestLogFile}'. Press Enter...)");
+    _ = Console.ReadLine();
+
+    Console.WriteLine($"  Simulating FileSink Write Error by making '{errorTestLogFile}' read-only...");
     try
     {
-      throw new InvalidOperationException("Dummy exception for file log.");
+      File.SetAttributes(errorTestLogFile, FileAttributes.ReadOnly);
+      Console.WriteLine($"  '{errorTestLogFile}' is now read-only.");
     }
     catch (Exception ex)
     {
-      fileTestLogger.Error("Log to file - Error message with exception!", ex);
+      Console.WriteLine($"  Could not set file to read-only: {ex.Message}. Skipping read-only part of test.");
     }
 
-    fileTestLogger.Debug("Log to file - Debug message (will appear if MinLevel is Trace/Debug).");
-
-    Console.WriteLine($"  Please open '{testLogFilePath}' and verify:");
-    Console.WriteLine("    - The file was created.");
-    Console.WriteLine("    - All logged messages are present.");
-    Console.WriteLine("    - Each entry is formatted correctly (timestamp, level, category, message, exception details).");
-    Console.WriteLine("  (Press Enter to continue after checking the file...)");
+    Console.WriteLine("  Logging 'Second message - should go to console, FileSink might fail.'");
+    errorLogger.Warn("Second message - should go to console, FileSink might fail.");
+    Console.WriteLine("\n  VERIFY Sink Error Handling:");
+    Console.WriteLine("  - Second message SHOULD appear in SystemConsoleSink output.");
+    Console.WriteLine("  - Application should NOT crash.");
+    Console.WriteLine("  - Check System.Diagnostics.Trace output (IDE Debug Output) for a FileSink error message (e.g., 'Access to the path... is denied').");
+    Console.WriteLine("  (Press Enter to continue...)");
     _ = Console.ReadLine();
 
-    Console.WriteLine("  Logging more messages to append...");
-    fileTestLogger.Info("Appending another info message to file.");
-    fileTestLogger.Fatal("Appending a fatal message to file!");
-    Console.WriteLine($"  Please re-check '{testLogFilePath}' to ensure messages were appended.");
-    Console.WriteLine("  (Press Enter to continue after checking the file...)");
+    Console.WriteLine("  Restoring FileSink Operation...");
+    try
+    {
+      File.SetAttributes(errorTestLogFile, FileAttributes.Normal);
+      Console.WriteLine($"  '{errorTestLogFile}' attributes set to Normal.");
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"  Could not reset file attributes: {ex.Message}.");
+    }
+
+    // To be absolutely sure, reconfigure, which creates a new stream writer.
+    LogManager.ConfigureFileSink(errorTestLogFile, LogLevel.Information);
+
+    Console.WriteLine("  Logging 'Third message - should go to console and restored file.'");
+    errorLogger.Info("Third message - should go to console and restored file.");
+    Console.WriteLine($"  (Verify console and '{errorTestLogFile}' for the third message. Press Enter...)");
     _ = Console.ReadLine();
 
-    LogManager.RemoveSink(fileSink);
-    Console.WriteLine("  Removed FileSink.");
-    Console.WriteLine("  Logging a message that should NOT go to file...");
-    fileTestLogger.Info("This message should NOT be in test_log.txt.");
-    Console.WriteLine($"  Please verify '{testLogFilePath}' was NOT modified with the last message.");
-    Console.WriteLine("  (Press Enter to continue after checking the file...)");
+    LogManager.DisableFileSink();
+    LogManager.EnableSystemConsoleSink(false); // Disable for next test section
+    if (File.Exists(errorTestLogFile))
+    {
+      File.Delete(errorTestLogFile);
+    }
+
+    Console.WriteLine("  Cleaned up sink error handling test resources.");
+
+    // --- 3. Sink Configuration Mechanism ---
+    Console.WriteLine("\n3. Testing Sink Configuration Mechanism...");
+    LogManager.ClearSinks();
+    var configLogger = LogManager.GetLogger("ConfigTest");
+
+    Console.WriteLine("  Testing SystemConsoleSink Enable/Disable:");
+    LogManager.EnableSystemConsoleSink(true);
+    Console.WriteLine("  SystemConsoleSink enabled. Logging 'Msg1: Console On'.");
+    configLogger.Info("Msg1: Console On");
+    Console.WriteLine($"  IsSystemConsoleSinkEnabled: {LogManager.IsSystemConsoleSinkEnabled()} (Expected: True)");
+    Console.WriteLine("  (Verify 'Msg1' in console. Press Enter...)");
     _ = Console.ReadLine();
 
-    // Optional: Test with an invalid/unwritable path (conceptual for now as per epic)
-    Console.WriteLine("  (Conceptual: Testing FileSink with an unwritable path would log an internal error via System.Diagnostics.Trace, not crash).");
+    LogManager.EnableSystemConsoleSink(false);
+    Console.WriteLine("  SystemConsoleSink disabled. Logging 'Msg2: Console Off'.");
+    configLogger.Info("Msg2: Console Off (SHOULD NOT APPEAR)");
+    Console.WriteLine($"  IsSystemConsoleSinkEnabled: {LogManager.IsSystemConsoleSinkEnabled()} (Expected: False)");
+    Console.WriteLine("  (Verify 'Msg2' NOT in console. Press Enter...)");
+    _ = Console.ReadLine();
 
-    // --- 2. InGameConsoleSink ---
-    Console.WriteLine("\n2. Testing InGameConsoleSink...");
-    var gameConsoleSink = new InGameConsoleSink(capacity: 10);
-    LogManager.AddSink(gameConsoleSink);
-    Console.WriteLine("  Added InGameConsoleSink (capacity 10).");
+    LogManager.EnableSystemConsoleSink(true);
+    Console.WriteLine("  SystemConsoleSink re-enabled. Logging 'Msg3: Console On Again'.");
+    configLogger.Info("Msg3: Console On Again");
+    Console.WriteLine("  (Verify 'Msg3' in console. Press Enter...)");
+    _ = Console.ReadLine();
+    LogManager.EnableSystemConsoleSink(false); // Disable for next part
 
-    Console.WriteLine("  Logging 12 messages (IGMsg1 to IGMsg12) to GameConsoleTest logger...");
-    for (int i = 1; i <= 12; i++)
+    Console.WriteLine("\n  Testing FileSink Configuration (Path, Level) & Disable:");
+    string fileConfigA = "file_config_A.log";
+    string fileConfigB = "file_config_B.log";
+    if (File.Exists(fileConfigA))
     {
-      gameConsoleTestLogger.Info($"IGMsg{i}");
+      File.Delete(fileConfigA);
     }
 
-    var gameConsoleEntries = gameConsoleSink.GetEntries().ToList();
-    Console.WriteLine($"  Retrieved {gameConsoleEntries.Count} entries from InGameConsoleSink (Expected: 10)");
-    if (gameConsoleEntries.Count == 10)
+    if (File.Exists(fileConfigB))
     {
-      bool correctGameEntries = true;
-      for (int i = 0; i < 10; i++)
-      {
-        if (gameConsoleEntries[i].Message != $"IGMsg{i + 3}") // Expecting IGMsg3 to IGMsg12
-        {
-          correctGameEntries = false;
-          Console.WriteLine($"    FAIL: Entry {i} is '{gameConsoleEntries[i].Message}', expected 'IGMsg{i + 3}'");
-        }
-
-        Console.WriteLine($"    Entry {i}: [{gameConsoleEntries[i].TimestampUtc:o}] [{gameConsoleEntries[i].Level}] [{gameConsoleEntries[i].CategoryName}] {gameConsoleEntries[i].Message}");
-      }
-
-      Console.WriteLine($"  Content matches 'IGMsg3' through 'IGMsg12': {(correctGameEntries ? "OK" : "FAIL")}");
-    }
-    else
-    {
-      Console.WriteLine("  FAIL: Incorrect number of entries retrieved from InGameConsoleSink.");
-      foreach (var entry in gameConsoleEntries)
-      {
-        Console.WriteLine($"    Unexpected Entry: [{entry.TimestampUtc:o}] [{entry.Level}] [{entry.CategoryName}] {entry.Message}");
-      }
+      File.Delete(fileConfigB);
     }
 
-    LogManager.RemoveSink(gameConsoleSink);
-    Console.WriteLine("  Removed InGameConsoleSink.");
+    LogManager.ConfigureFileSink(fileConfigA, LogLevel.Information);
+    Console.WriteLine($"  Configured FileSink to '{fileConfigA}', MinLevel: Information.");
+    configLogger.Debug("File A - Debug (should NOT appear)");
+    configLogger.Info("File A - Info (should appear)");
+    configLogger.Warn("File A - Warn (should appear)");
+    Console.WriteLine($"  (Verify '{fileConfigA}' contains Info and Warn messages. Press Enter...)");
+    _ = Console.ReadLine();
 
-    // Cleanup SystemConsoleSink added for P3 verification
-    LogManager.RemoveSink(systemConsoleSinkForP3);
-    Console.WriteLine("  (Removed SystemConsoleSink used for Phase 3 verification visibility)");
+    LogManager.ConfigureFileSink(fileConfigB, LogLevel.Debug);
+    Console.WriteLine($"  Configured FileSink to '{fileConfigB}', MinLevel: Debug. ('{fileConfigA}' should be closed).");
+    configLogger.Debug("File B - Debug (should appear)");
+    configLogger.Info("File B - Info (should appear)");
+    Console.WriteLine($"  (Verify '{fileConfigB}' contains Debug and Info. '{fileConfigA}' not modified. Press Enter...)");
+    _ = Console.ReadLine();
 
-    // Final cleanup of the test log file
-    if (File.Exists(testLogFilePath))
+    LogManager.DisableFileSink();
+    Console.WriteLine("  FileSink disabled.");
+    configLogger.Error("File B - Error (should NOT appear in file after disable)");
+    Console.WriteLine($"  (Verify '{fileConfigB}' does NOT contain the error message. Press Enter...)");
+    _ = Console.ReadLine();
+    if (File.Exists(fileConfigA))
     {
-      try
-      {
-        File.Delete(testLogFilePath);
-        Console.WriteLine($"  Cleaned up '{testLogFilePath}'.");
-      }
-      catch (Exception ex)
-      {
-        Console.WriteLine($"  Warning: Could not delete '{testLogFilePath}'. Error: {ex.Message}");
-      }
+      File.Delete(fileConfigA);
     }
 
-    Console.WriteLine("\n--- Logger Phase 3 Verification Complete ---");
+    if (File.Exists(fileConfigB))
+    {
+      File.Delete(fileConfigB);
+    }
+
+    Console.WriteLine("\n  Testing Global LogManager.MinLevel vs. FileSink Specific Level:");
+    LogManager.EnableSystemConsoleSink(true); // For easy observation
+    string fileLevelTest1 = "file_level_test1.log";
+    string fileLevelTest2 = "file_level_test2.log";
+    if (File.Exists(fileLevelTest1))
+    {
+      File.Delete(fileLevelTest1);
+    }
+
+    if (File.Exists(fileLevelTest2))
+    {
+      File.Delete(fileLevelTest2);
+    }
+
+    LogManager.MinLevel = LogLevel.Warning;
+    LogManager.ConfigureFileSink(fileLevelTest1, LogLevel.Debug); // FileSink wants Debug and up
+    Console.WriteLine($"  Global MinLevel: Warning. FileSink ('{fileLevelTest1}') MinLevel: Debug.");
+    var levelLogger = LogManager.GetLogger("LevelInteractionTest");
+    levelLogger.Debug("GL:Warn, FS:Debug - Debug Msg (Console: No, File: No)");
+    levelLogger.Info("GL:Warn, FS:Debug - Info Msg (Console: No, File: No)");
+    levelLogger.Warn("GL:Warn, FS:Debug - Warn Msg (Console: Yes, File: Yes)");
+    levelLogger.Error("GL:Warn, FS:Debug - Error Msg (Console: Yes, File: Yes)");
+    Console.WriteLine($"  (Verify console and '{fileLevelTest1}' show ONLY Warn & Error. Press Enter...)");
+    _ = Console.ReadLine();
+
+    LogManager.MinLevel = LogLevel.Trace;
+    LogManager.ConfigureFileSink(fileLevelTest2, LogLevel.Information); // FileSink wants Info and up
+    Console.WriteLine($"  Global MinLevel: Trace. FileSink ('{fileLevelTest2}') MinLevel: Information.");
+    levelLogger.Debug("GL:Trace, FS:Info - Debug Msg (Console: Yes, File: No)");
+    levelLogger.Info("GL:Trace, FS:Info - Info Msg (Console: Yes, File: Yes)");
+    levelLogger.Warn("GL:Trace, FS:Info - Warn Msg (Console: Yes, File: Yes)");
+    Console.WriteLine($"  (Verify console shows Debug,Info,Warn. '{fileLevelTest2}' shows Info,Warn. Press Enter...)");
+    _ = Console.ReadLine();
+
+    LogManager.DisableFileSink();
+    LogManager.EnableSystemConsoleSink(false);
+    if (File.Exists(fileLevelTest1))
+    {
+      File.Delete(fileLevelTest1);
+    }
+
+    if (File.Exists(fileLevelTest2))
+    {
+      File.Delete(fileLevelTest2);
+    }
+
+    LogManager.MinLevel = LogLevel.Information; // Reset global min level
+    Console.WriteLine("  Cleaned up level interaction test resources.");
+
+    Console.WriteLine("\n--- Logger Phase 4 Verification Complete ---");
   }
 
   /// <summary>
@@ -543,16 +556,4 @@ public class Game : IGame
 
     // --- End Night.Window Demo ---
   }
-
-  // Helper for collision detection (AABB)
-  private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
-  {
-    // True if the rectangles are overlapping
-    return rect1.X < rect2.X + rect2.Width &&
-           rect1.X + rect1.Width > rect2.X &&
-           rect1.Y < rect2.Y + rect2.Height &&
-           rect1.Y + rect1.Height > rect2.Y;
-  }
 }
-
-// Program class removed from here, will be in Program.cs
