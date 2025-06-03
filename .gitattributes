@@ -13,4 +13,5 @@
 *.exe binary
 *.pdb binary
 *.aseprite binary
+*.zip binary
 # Add any other binary extensions your project uses

@@ -152,6 +152,65 @@ jobs:
           echo "Pushed tag ${{ steps.update_version_csproj.outputs.version_tag }} to remote."
         shell: bash
 
+- name: Prepare SDL3 Prebuilt Binaries
+        run: |
+          echo "Looking for SDL3 prebuilt binary ZIP files in lib/SDL3-Prebuilt..."
+          SDL_PREBUILT_DIR="lib/SDL3-Prebuilt"
+
+          # Ensure unzip is available (GitHub Actions ubuntu-latest usually has it)
+          if ! command -v unzip &> /dev/null; then
+            echo "Error: unzip command not found. Please ensure it's installed on the runner."
+            exit 1
+          fi
+
+          # Linux
+          if [ -f "$SDL_PREBUILT_DIR/linux.zip" ]; then
+            echo "Extracting Linux binaries from $SDL_PREBUILT_DIR/linux.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/linux"
+            unzip -qo "$SDL_PREBUILT_DIR/linux.zip" -d "$SDL_PREBUILT_DIR/linux/"
+            echo "Extracted Linux binaries."
+          elif [ -f "$SDL_PREBUILT_DIR/linux-binaries.zip" ]; then
+            echo "Extracting Linux binaries from $SDL_PREBUILT_DIR/linux-binaries.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/linux"
+            unzip -qo "$SDL_PREBUILT_DIR/linux-binaries.zip" -d "$SDL_PREBUILT_DIR/linux/"
+            echo "Extracted Linux binaries."
+          else
+            echo "Info: No Linux SDL binaries ZIP found (checked for linux.zip and linux-binaries.zip)."
+          fi
+
+          # macOS
+          if [ -f "$SDL_PREBUILT_DIR/macos.zip" ]; then
+            echo "Extracting macOS binaries from $SDL_PREBUILT_DIR/macos.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/macos"
+            unzip -qo "$SDL_PREBUILT_DIR/macos.zip" -d "$SDL_PREBUILT_DIR/macos/"
+            echo "Extracted macOS binaries."
+          elif [ -f "$SDL_PREBUILT_DIR/macos-binaries.zip" ]; then
+            echo "Extracting macOS binaries from $SDL_PREBUILT_DIR/macos-binaries.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/macos"
+            unzip -qo "$SDL_PREBUILT_DIR/macos-binaries.zip" -d "$SDL_PREBUILT_DIR/macos/"
+            echo "Extracted macOS binaries."
+          else
+            echo "Info: No macOS SDL binaries ZIP found (checked for macos.zip and macos-binaries.zip)."
+          fi
+
+          # Windows
+          if [ -f "$SDL_PREBUILT_DIR/windows.zip" ]; then
+            echo "Extracting Windows binaries from $SDL_PREBUILT_DIR/windows.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/windows"
+            unzip -qo "$SDL_PREBUILT_DIR/windows.zip" -d "$SDL_PREBUILT_DIR/windows/"
+            echo "Extracted Windows binaries."
+          elif [ -f "$SDL_PREBUILT_DIR/windows-binaries.zip" ]; then
+            echo "Extracting Windows binaries from $SDL_PREBUILT_DIR/windows-binaries.zip..."
+            mkdir -p "$SDL_PREBUILT_DIR/windows"
+            unzip -qo "$SDL_PREBUILT_DIR/windows-binaries.zip" -d "$SDL_PREBUILT_DIR/windows/"
+            echo "Extracted Windows binaries."
+          else
+            echo "Info: No Windows SDL binaries ZIP found (checked for windows.zip and windows-binaries.zip)."
+          fi
+
+          echo "Final listing of contents in $SDL_PREBUILT_DIR after extraction attempts:"
+          ls -R "$SDL_PREBUILT_DIR"
+        shell: bash
       - name: Build Solution
         run: dotnet build "${{ env.SOLUTION_FILE_PATH }}" -c Release /p:Version="${{ github.event.inputs.version }}"
 
