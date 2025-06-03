@@ -21,6 +21,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 
 using Night;
 
@@ -32,8 +33,9 @@ using Xunit.Abstractions;
 namespace NightTest.Groups.Graphics
 {
   /// <summary>
-  /// Contains tests for Graphics related IGame test cases.
+  /// Tests for the Night.Graphics functionality.
   /// </summary>
+  [Collection("SequentialTests")]
   public class GraphicsTests : TestGroup
   {
     /// <summary>

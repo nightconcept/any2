@@ -325,7 +325,6 @@ namespace Night
     /// <exception cref="ArgumentException">Thrown if filePath is empty.</exception>
     /// <exception cref="FileNotFoundException">Thrown if the file specified in filePath was not found.</exception>
     /// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
-    /// <exception cref="System.Security.SecurityException">Thrown if the caller does not have the required permission.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if the caller does not have the required permission, or path specified a directory, or the caller does not have read access.</exception>
     public static IEnumerable<string> Lines(string filePath)
     {

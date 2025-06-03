@@ -26,6 +26,8 @@
   - GetInfo(string path, FileSystemInfo info)
   - GetInfo(string path, FileType filterType, FileSystemInfo info)
   - GetInfo(string path, FileType? filterType)
+- Lines() - love.filesystem.lines
+  - Lines(string filePath)
 - ReadBytes() - love.filesystem.readBytes
   - ReadBytes(string path)
 - ReadText() - love.filesystem.readText

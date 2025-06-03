@@ -20,6 +20,11 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
+
+using Night;
+
 using NightTest.Core;
 
 using Xunit;
@@ -28,8 +33,9 @@ using Xunit.Abstractions;
 namespace NightTest.Groups.Filesystem
 {
   /// <summary>
-  /// Contains tests for Filesystem related IGame test cases.
+  /// Tests for the Night.Filesystem functionality.
   /// </summary>
+  [Collection("SequentialTests")]
   public class FilesystemGroup : TestGroup
   {
     /// <summary>
@@ -40,15 +46,6 @@ namespace NightTest.Groups.Filesystem
       : base(outputHelper)
     {
     }
-
-    // Test methods for Filesystem IGame cases will be added here.
-    // For example:
-    // [Fact]
-    // [Trait("TestType", "Automated")]
-    // public void Run_MyFilesystemTest()
-    // {
-    //   this.Run_TestCase(new MyFilesystemTest());
-    // }
 
     /// <summary>
     /// Runs the FilesystemLines_ReadStandardFileTest IGame instance.

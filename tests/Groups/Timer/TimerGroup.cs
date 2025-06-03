@@ -21,6 +21,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 
 using Night;
 
@@ -32,8 +33,9 @@ using Xunit.Abstractions;
 namespace NightTest.Groups.Timer
 {
   /// <summary>
-  /// Contains tests for Timer related IGame test cases.
+  /// Tests for the Night.Timer functionality.
   /// </summary>
+  [Collection("SequentialTests")]
   public class TimerGroup : TestGroup
   {
     /// <summary>
