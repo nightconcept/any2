@@ -114,11 +114,18 @@ jobs:
           $newSemVer = "${{ github.event.inputs.version }}"
           $versionInfoFilePath = "${{ env.VERSION_INFO_FILE_PATH }}"
           Write-Host "Attempting to update Version constant in '$versionInfoFilePath' to '$newSemVer'"
-          $content = Get-Content $versionInfoFilePath -Raw
+          $content = Get-Content -Path $versionInfoFilePath -Raw
           # Regex to find 'public const string Version = ".*";' and replace the version string part
           $updatedContent = $content -replace '(?<=public const string Version = ")([^"]*)(?=";)', $newSemVer
-          Set-Content -Path $versionInfoFilePath -Value $updatedContent
-          Write-Host "Updated Version constant in '$versionInfoFilePath'"
+
+          # Ensure the content ends with a single LF newline.
+          # Remove all trailing CR and LF characters, then add a single LF.
+          $updatedContent = $updatedContent.TrimEnd("`r", "`n") + "`n"
+
+          # Write the content. UTF-8 is standard for .cs files.
+          Set-Content -Path $versionInfoFilePath -Value $updatedContent -Encoding UTF8
+
+          Write-Host "Updated Version constant in '$versionInfoFilePath', ensuring it ends with a single LF newline."
         shell: pwsh
 
       - name: Commit Version Changes
