@@ -89,6 +89,20 @@ namespace Night
 
       try
       {
+        // Check if running in a testing environment (e.g., CI/CD, headless environments)
+        bool isTestingEnvironment = IsTestingEnvironment();
+        if (isTestingEnvironment)
+        {
+          Console.WriteLine("Night.Framework.Run: Testing environment detected. Setting SDL video driver to 'dummy'.");
+          // Set the video driver to "dummy" for headless testing environments
+          // This resolves "No available video device" errors in CI/CD systems
+          _ = SDL.SetHint(SDL.Hints.VideoDriver, "dummy");
+
+          Console.WriteLine("Night.Framework.Run: Testing environment detected. Setting SDL render driver to 'software'.");
+          // Force software rendering to avoid OpenGL/GLES initialization issues in headless environments
+          _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
+        }
+
         lock (SdlLock)
         {
           if (!isSdlInitialized)
@@ -518,6 +532,55 @@ namespace Night
       {
         Window.Close();
       }
+    }
+
+    /// <summary>
+    /// Detects if the application is running in a testing environment.
+    /// This includes CI/CD systems, automated test runners, or when explicitly configured for testing.
+    /// </summary>
+    /// <returns>True if running in a testing environment, false otherwise.</returns>
+    private static bool IsTestingEnvironment()
+    {
+      // Check for common CI/CD environment variables
+      var ciEnvironmentVars = new[]
+      {
+        "CI", "CONTINUOUS_INTEGRATION", "GITHUB_ACTIONS", "GITLAB_CI",
+        "JENKINS_URL", "BUILDKITE", "CIRCLECI", "TRAVIS", "APPVEYOR",
+      };
+
+      foreach (var envVar in ciEnvironmentVars)
+      {
+        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar)))
+        {
+          return true;
+        }
+      }
+
+      // Check for test runner processes in the call stack or environment
+      try
+      {
+        var processName = Process.GetCurrentProcess().ProcessName;
+        if (processName.Contains("dotnet") || processName.Contains("testhost") ||
+            processName.Contains("vstest") || processName.Contains("xunit"))
+        {
+          return true;
+        }
+      }
+      catch
+      {
+        // Ignore any exceptions during process name detection
+      }
+
+      // Check for SDL_VIDEODRIVER environment variable already set to testing modes
+      var videoDriver = Environment.GetEnvironmentVariable("SDL_VIDEODRIVER");
+      if (!string.IsNullOrEmpty(videoDriver) &&
+          (videoDriver.Equals("dummy", StringComparison.OrdinalIgnoreCase) ||
+           videoDriver.Equals("offscreen", StringComparison.OrdinalIgnoreCase)))
+      {
+        return true;
+      }
+
+      return false;
     }
 
     private static string GetFormattedPlatformString()
