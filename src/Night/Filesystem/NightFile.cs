@@ -25,9 +25,14 @@ using System.IO;
 
 namespace Night
 {
+  /// <summary>
+  /// Represents a file in the Night engine, providing methods for file operations.
+  /// </summary>
   public class NightFile : IDisposable
   {
-    // Placeholder for IDisposable implementation
+    /// <summary>
+    /// Releases all resources used by the <see cref="NightFile"/> object.
+    /// </summary>
     public void Dispose()
     {
       // TODO: Implement resource cleanup
