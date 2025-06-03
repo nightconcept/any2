@@ -10,6 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
+        fail-fast: false
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -27,66 +28,6 @@ jobs:
       - name: Check Formatting
         run: dotnet format --verify-no-changes --verbosity diagnostic Night.sln
 
-      - name: Prepare SDL3 Prebuilt Binaries
-        run: |
-          echo "Runner OS: ${{ runner.os }}"
-          echo "Looking for SDL3 prebuilt binary ZIP files in platform-specific subdirectories under lib/SDL3-Prebuilt..."
-          SDL_PREBUILT_DIR="lib/SDL3-Prebuilt"
-
-          if ! command -v unzip &> /dev/null; then
-            echo "Error: unzip command not found on ${{ runner.os }}. Please ensure it's installed or use an alternative extraction method for this OS."
-            # For Windows, if unzip is not in PATH for bash, you might need to use PowerShell:
-            # if [[ "${{ runner.os }}" == "Windows" ]]; then
-            #   powershell -Command "if (Test-Path '$SDL_PREBUILT_DIR/windows/windows.zip') { Expand-Archive -Path '$SDL_PREBUILT_DIR/windows/windows.zip' -DestinationPath '$SDL_PREBUILT_DIR/windows' -Force } elseif (Test-Path '$SDL_PREBUILT_DIR/windows/windows-binaries.zip') { Expand-Archive -Path '$SDL_PREBUILT_DIR/windows/windows-binaries.zip' -DestinationPath '$SDL_PREBUILT_DIR/windows' -Force }"
-            # fi
-            exit 1
-          fi
-
-          TARGET_ZIP_BASENAME=""
-          TARGET_PLATFORM_DIR_NAME="" # Renamed to avoid confusion with full path
-
-          if [[ "${{ runner.os }}" == "Linux" ]]; then
-            TARGET_ZIP_BASENAME="linux"
-            TARGET_PLATFORM_DIR_NAME="linux"
-          elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            TARGET_ZIP_BASENAME="macos"
-            TARGET_PLATFORM_DIR_NAME="macos"
-          elif [[ "${{ runner.os }}" == "Windows" ]]; then
-            TARGET_ZIP_BASENAME="windows"
-            TARGET_PLATFORM_DIR_NAME="windows"
-          else
-            echo "Warning: Unknown runner OS '${{ runner.os }}'. Cannot determine which SDL3 binaries to extract."
-          fi
-
-          if [ -n "$TARGET_PLATFORM_DIR_NAME" ]; then
-            # Define the full path to the platform-specific directory
-            PLATFORM_DIR_PATH="$SDL_PREBUILT_DIR/$TARGET_PLATFORM_DIR_NAME"
-            # Define the expected archive names within that platform directory
-            PLATFORM_ARCHIVE_PATH="$PLATFORM_DIR_PATH/$TARGET_ZIP_BASENAME.zip"
-            PLATFORM_ARCHIVE_ALT_PATH="$PLATFORM_DIR_PATH/$TARGET_ZIP_BASENAME-binaries.zip"
-            # The extraction directory is the platform-specific directory itself
-            EXTRACTION_DIR="$PLATFORM_DIR_PATH"
-
-            echo "Attempting to extract for $TARGET_PLATFORM_DIR_NAME from $PLATFORM_DIR_PATH into $EXTRACTION_DIR..."
-            # Ensure the extraction directory itself exists.
-            mkdir -p "$EXTRACTION_DIR"
-
-            if [ -f "$PLATFORM_ARCHIVE_PATH" ]; then
-              echo "Extracting $TARGET_PLATFORM_DIR_NAME binaries from $PLATFORM_ARCHIVE_PATH..."
-              unzip -qo "$PLATFORM_ARCHIVE_PATH" -d "$EXTRACTION_DIR/"
-              echo "Extracted $TARGET_PLATFORM_DIR_NAME binaries from $PLATFORM_ARCHIVE_PATH."
-            elif [ -f "$PLATFORM_ARCHIVE_ALT_PATH" ]; then
-              echo "Extracting $TARGET_PLATFORM_DIR_NAME binaries from $PLATFORM_ARCHIVE_ALT_PATH..."
-              unzip -qo "$PLATFORM_ARCHIVE_ALT_PATH" -d "$EXTRACTION_DIR/"
-              echo "Extracted $TARGET_PLATFORM_DIR_NAME binaries from $PLATFORM_ARCHIVE_ALT_PATH."
-            else
-              echo "Info: No $TARGET_PLATFORM_DIR_NAME SDL binaries ZIP found (checked for $PLATFORM_ARCHIVE_PATH and $PLATFORM_ARCHIVE_ALT_PATH). Build might fail if these are required."
-            fi
-          fi
-
-          echo "Final listing of contents in $SDL_PREBUILT_DIR after extraction attempts:"
-          ls -R "$SDL_PREBUILT_DIR"
-        shell: bash
       - name: Restore dependencies
         run: dotnet restore Night.sln
 
