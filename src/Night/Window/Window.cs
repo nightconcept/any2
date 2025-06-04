@@ -36,7 +36,7 @@ namespace Night
   /// </summary>
   public static class Window
   {
-    private static readonly ILogger logger = LogManager.GetLogger("Night.Window.Window");
+    private static readonly ILogger Logger = LogManager.GetLogger("Night.Window.Window");
     private static readonly object WindowLock = new object(); // Thread synchronization for window operations
     private static nint window = nint.Zero;
     private static nint renderer = nint.Zero;
@@ -67,13 +67,13 @@ namespace Night
 
       if (window == nint.Zero)
       {
-        logger.Warn("Window handle is null. Icon not set.");
+        Logger.Warn("Window handle is null. Icon not set.");
         return false;
       }
 
       if (string.IsNullOrEmpty(imagePath))
       {
-        logger.Warn("imagePath is null or empty. Icon not set.");
+        Logger.Warn("imagePath is null or empty. Icon not set.");
         return false;
       }
 
@@ -82,7 +82,7 @@ namespace Night
       if (loadedSurfacePtr == nint.Zero)
       {
         string imgError = SDL.GetError();
-        logger.Error($"Failed to load image '{imagePath}' using SDL_image. Error: {imgError}");
+        Logger.Error($"Failed to load image '{imagePath}' using SDL_image. Error: {imgError}");
         return false;
       }
 
@@ -92,7 +92,7 @@ namespace Night
       if (convertedSurfacePtr == nint.Zero)
       {
         string sdlError = SDL.GetError();
-        logger.Error($"Failed to convert surface to target format. SDL Error: {sdlError}");
+        Logger.Error($"Failed to convert surface to target format. SDL Error: {sdlError}");
         SDL.DestroySurface(loadedSurfacePtr);
         return false;
       }
@@ -102,7 +102,7 @@ namespace Night
         if (!SDL.SetWindowIcon(window, convertedSurfacePtr))
         {
           string sdlError = SDL.GetError();
-          logger.Error($"SDL_SetWindowIcon failed. SDL Error: {sdlError}");
+          Logger.Error($"SDL_SetWindowIcon failed. SDL Error: {sdlError}");
           return false;
         }
 
@@ -114,7 +114,7 @@ namespace Night
         if (detailsPtr == IntPtr.Zero)
         {
           string sdlError = SDL.GetError();
-          logger.Error($"Failed to get pixel format details. SDL Error: {sdlError}");
+          Logger.Error($"Failed to get pixel format details. SDL Error: {sdlError}");
           return false;
         }
 
@@ -123,7 +123,7 @@ namespace Night
 
         if (bytesPerPixel != 4)
         {
-          logger.Error($"Converted surface is not 4bpp as expected for RGBA. Actual bpp: {bytesPerPixel}, Format: {convertedSurfaceStruct.Format}");
+          Logger.Error($"Converted surface is not 4bpp as expected for RGBA. Actual bpp: {bytesPerPixel}, Format: {convertedSurfaceStruct.Format}");
           return false;
         }
 
@@ -135,7 +135,7 @@ namespace Night
       }
       catch (Exception e)
       {
-        logger.Error($"Error processing surface or creating ImageData.", e);
+        Logger.Error($"Error processing surface or creating ImageData.", e);
         return false;
       }
       finally
@@ -172,94 +172,94 @@ namespace Night
     {
       lock (WindowLock)
       {
-        logger.Info($"Attempting to set mode {width}x{height} with flags: {flags}");
-        logger.Debug($"Current Thread ID: {Thread.CurrentThread.ManagedThreadId}");
+        Logger.Info($"Attempting to set mode {width}x{height} with flags: {flags}");
+        Logger.Debug($"Current Thread ID: {Thread.CurrentThread.ManagedThreadId}");
 
         if (window != nint.Zero)
         {
-          logger.Info($"Existing window found (Handle: {window}). Destroying old window and renderer.");
+          Logger.Info($"Existing window found (Handle: {window}). Destroying old window and renderer.");
           if (renderer != nint.Zero)
           {
             SDL.DestroyRenderer(renderer);
             renderer = nint.Zero;
-            logger.Debug($"Old renderer destroyed.");
+            Logger.Debug($"Old renderer destroyed.");
           }
 
           SDL.DestroyWindow(window);
           window = nint.Zero;
           isWindowOpen = false;
-          logger.Debug($"Old window destroyed.");
+          Logger.Debug($"Old window destroyed.");
         }
 
-        logger.Debug($"[PRE-CREATE] Clearing any previous SDL errors");
+        Logger.Debug($"[PRE-CREATE] Clearing any previous SDL errors");
         _ = SDL.ClearError();
         string preCreateError = SDL.GetError();
-        logger.Debug($"[PRE-CREATE] SDL error after clear: '{preCreateError}'");
+        Logger.Debug($"[PRE-CREATE] SDL error after clear: '{preCreateError}'");
 
-        logger.Debug($"[PRE-CREATE] About to call SDL.CreateWindow with parameters:");
-        logger.Debug($"  - title: 'Night Engine'");
-        logger.Debug($"  - width: {width}");
-        logger.Debug($"  - height: {height}");
-        logger.Debug($"  - flags: {flags} (0x{(uint)flags:X})");
-        logger.Debug($"  - Thread ID: {Thread.CurrentThread.ManagedThreadId}");
+        Logger.Debug($"[PRE-CREATE] About to call SDL.CreateWindow with parameters:");
+        Logger.Debug($"  - title: 'Night Engine'");
+        Logger.Debug($"  - width: {width}");
+        Logger.Debug($"  - height: {height}");
+        Logger.Debug($"  - flags: {flags} (0x{(uint)flags:X})");
+        Logger.Debug($"  - Thread ID: {Thread.CurrentThread.ManagedThreadId}");
 
         window = SDL.CreateWindow("Night Engine", width, height, flags);
 
-        logger.Debug($"[POST-CREATE] SDL.CreateWindow returned: {window} (0x{window:X})");
+        Logger.Debug($"[POST-CREATE] SDL.CreateWindow returned: {window} (0x{window:X})");
 
         if (window == nint.Zero)
         {
           isWindowOpen = false;
-          logger.Error($"[POST-CREATE] SDL.CreateWindow FAILED - returned null pointer");
+          Logger.Error($"[POST-CREATE] SDL.CreateWindow FAILED - returned null pointer");
 
           string immediateError = SDL.GetError();
-          logger.Error($"[POST-CREATE] Immediate SDL.GetError(): '{immediateError}'");
+          Logger.Error($"[POST-CREATE] Immediate SDL.GetError(): '{immediateError}'");
 
           SDL.Delay(10);
           string delayedError1 = SDL.GetError();
-          logger.Error($"[POST-CREATE] SDL.GetError() after 10ms delay: '{delayedError1}'");
+          Logger.Error($"[POST-CREATE] SDL.GetError() after 10ms delay: '{delayedError1}'");
 
           SDL.Delay(50);
           string delayedError2 = SDL.GetError();
-          logger.Error($"[POST-CREATE] SDL.GetError() after 60ms total delay: '{delayedError2}'");
+          Logger.Error($"[POST-CREATE] SDL.GetError() after 60ms total delay: '{delayedError2}'");
 
-          logger.Debug($"[POST-CREATE] Attempting to get video driver info for diagnostics...");
+          Logger.Debug($"[POST-CREATE] Attempting to get video driver info for diagnostics...");
           try
           {
             string videoDriver = SDL.GetCurrentVideoDriver() ?? string.Empty;
-            logger.Debug($"[POST-CREATE] Current video driver: '{videoDriver}'");
+            Logger.Debug($"[POST-CREATE] Current video driver: '{videoDriver}'");
           }
           catch (Exception ex)
           {
-            logger.Warn($"[POST-CREATE] Failed to get video driver: {ex.Message}");
+            Logger.Warn($"[POST-CREATE] Failed to get video driver: {ex.Message}");
           }
 
-          logger.Error($"SDL.CreateWindow failed. Final SDL Error: '{delayedError2}'");
+          Logger.Error($"SDL.CreateWindow failed. Final SDL Error: '{delayedError2}'");
           return false;
         }
 
-        logger.Info($"SDL.CreateWindow succeeded. New Window Handle: {window}");
+        Logger.Info($"SDL.CreateWindow succeeded. New Window Handle: {window}");
 
         string? initialRendererError = null;
         renderer = SDL.CreateRenderer(window, null);
         if (renderer == nint.Zero)
         {
           initialRendererError = SDL.GetError() ?? "Unknown error (hardware renderer)";
-          logger.Warn($"SDL.CreateRenderer (hardware) failed: {initialRendererError}. Attempting software renderer.");
+          Logger.Warn($"SDL.CreateRenderer (hardware) failed: {initialRendererError}. Attempting software renderer.");
 
           nint surface = SDL.GetWindowSurface(window);
           if (surface == nint.Zero)
           {
             string windowSurfaceError = SDL.GetError() ?? "Unknown error (getting window surface for software renderer)";
             string relevantError = string.IsNullOrEmpty(initialRendererError) || initialRendererError.Contains("Unknown error") ? windowSurfaceError : initialRendererError;
-            logger.Error($"SDL.GetWindowSurface failed. Relevant Error: {relevantError}");
+            Logger.Error($"SDL.GetWindowSurface failed. Relevant Error: {relevantError}");
             SDL.DestroyWindow(window);
             window = nint.Zero;
             isWindowOpen = false;
             return false;
           }
 
-          logger.Debug($"SDL.GetWindowSurface succeeded for software fallback.");
+          Logger.Debug($"SDL.GetWindowSurface succeeded for software fallback.");
 
           renderer = SDL.CreateSoftwareRenderer(surface);
           if (renderer == nint.Zero)
@@ -271,22 +271,22 @@ namespace Night
               combinedError += $" (Software attempt also failed: {softwareRendererError})";
             }
 
-            logger.Error($"SDL.CreateSoftwareRenderer failed. Combined/Relevant Error: {combinedError}");
+            Logger.Error($"SDL.CreateSoftwareRenderer failed. Combined/Relevant Error: {combinedError}");
             SDL.DestroyWindow(window);
             window = nint.Zero;
             isWindowOpen = false;
             return false;
           }
 
-          logger.Info($"Successfully created software renderer. RendererPtr: {renderer}");
+          Logger.Info($"Successfully created software renderer. RendererPtr: {renderer}");
         }
         else
         {
-          logger.Info($"Successfully created hardware renderer. RendererPtr: {renderer}");
+          Logger.Info($"Successfully created hardware renderer. RendererPtr: {renderer}");
         }
 
         isWindowOpen = true;
-        logger.Info($"SetMode completed. isWindowOpen: {isWindowOpen}, Window.Handle: {Handle}, RendererPtr: {RendererPtr}");
+        Logger.Info($"SetMode completed. isWindowOpen: {isWindowOpen}, Window.Handle: {Handle}, RendererPtr: {RendererPtr}");
         return true;
       }
     }
@@ -327,7 +327,7 @@ namespace Night
     /// </summary>
     public static void Close()
     {
-      logger.Info($"Window.Close called. Setting isWindowOpen to false. Current window handle: {window}");
+      Logger.Info($"Window.Close called. Setting isWindowOpen to false. Current window handle: {window}");
       isWindowOpen = false;
     }
 
@@ -439,12 +439,12 @@ namespace Night
         {
           if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
           {
-            logger.Warn($"SetFullscreen (Desktop): SDL_SetWindowFullscreenMode(NULL) failed: {SDL.GetError()}");
+            Logger.Warn($"SetFullscreen (Desktop): SDL_SetWindowFullscreenMode(NULL) failed: {SDL.GetError()}");
           }
 
           if (!SDL.SetWindowBordered(window, false))
           {
-            logger.Error($"SetFullscreen (Desktop): SDL_SetWindowBordered(false) failed: {SDL.GetError()}");
+            Logger.Error($"SetFullscreen (Desktop): SDL_SetWindowBordered(false) failed: {SDL.GetError()}");
             return false;
           }
 
@@ -452,7 +452,7 @@ namespace Night
           string errorCheck = SDL.GetError();
           if (displayID == 0 && !string.IsNullOrEmpty(errorCheck))
           {
-            logger.Error($"SetFullscreen (Desktop): SDL_GetDisplayForWindow failed: {errorCheck}");
+            Logger.Error($"SetFullscreen (Desktop): SDL_GetDisplayForWindow failed: {errorCheck}");
             return false;
           }
 
@@ -463,12 +463,12 @@ namespace Night
             _ = SDL.SetWindowPosition(window, 0, 0);
             if (!SDL.SetWindowSize(window, desktopW, desktopH))
             {
-              logger.Warn($"SetFullscreen (Desktop): SDL_SetWindowSize({desktopW},{desktopH}) failed: {SDL.GetError()}");
+              Logger.Warn($"SetFullscreen (Desktop): SDL_SetWindowSize({desktopW},{desktopH}) failed: {SDL.GetError()}");
             }
           }
           else
           {
-            logger.Error($"SetFullscreen (Desktop): GetDesktopDimensionsForDisplayID failed for display {displayID}.");
+            Logger.Error($"SetFullscreen (Desktop): GetDesktopDimensionsForDisplayID failed for display {displayID}.");
             return false;
           }
         }
@@ -478,12 +478,12 @@ namespace Night
         currentFullscreenType = FullscreenType.Desktop;
         if (!SDL.SetWindowFullscreenMode(window, nint.Zero))
         {
-          logger.Warn($"SetFullscreen (Exit): SDL_SetWindowFullscreenMode(NULL) failed: {SDL.GetError()}");
+          Logger.Warn($"SetFullscreen (Exit): SDL_SetWindowFullscreenMode(NULL) failed: {SDL.GetError()}");
         }
 
         if (!SDL.SetWindowBordered(window, true))
         {
-          logger.Error($"SetFullscreen (Exit): SDL_SetWindowBordered(true) failed: {SDL.GetError()}");
+          Logger.Error($"SetFullscreen (Exit): SDL_SetWindowBordered(true) failed: {SDL.GetError()}");
           return false;
         }
 
@@ -493,7 +493,7 @@ namespace Night
 
         if (!SDL.SetWindowSize(window, restoreWidth, restoreHeight))
         {
-          logger.Warn($"SetFullscreen (Exit): SDL_SetWindowSize({restoreWidth},{restoreHeight}) failed: {SDL.GetError()}");
+          Logger.Warn($"SetFullscreen (Exit): SDL_SetWindowSize({restoreWidth},{restoreHeight}) failed: {SDL.GetError()}");
         }
 
         if (config.X.HasValue && config.Y.HasValue)
@@ -706,24 +706,24 @@ namespace Night
     {
       lock (WindowLock)
       {
-        logger.Info($"Shutdown called. Current window: {window}, renderer: {renderer}");
+        Logger.Info($"Shutdown called. Current window: {window}, renderer: {renderer}");
         if (renderer != nint.Zero)
         {
           SDL.DestroyRenderer(renderer);
           renderer = nint.Zero;
-          logger.Debug("Renderer destroyed.");
+          Logger.Debug("Renderer destroyed.");
         }
 
         if (window != nint.Zero)
         {
           SDL.DestroyWindow(window);
           window = nint.Zero;
-          logger.Debug("Window destroyed.");
+          Logger.Debug("Window destroyed.");
         }
 
         isWindowOpen = false;
         currentIconData = null;
-        logger.Debug("State reset.");
+        Logger.Debug("State reset.");
       }
     }
 
@@ -732,7 +732,7 @@ namespace Night
     /// </summary>
     internal static void ResetInternalState()
     {
-      logger.Debug("ResetInternalState called.");
+      Logger.Debug("ResetInternalState called.");
       isWindowOpen = false;
       currentFullscreenType = FullscreenType.Desktop;
       currentIconData = null;
@@ -753,7 +753,7 @@ namespace Night
       SDL.DisplayMode? mode = SDL.GetDesktopDisplayMode(displayID);
       if (mode == null)
       {
-        logger.Warn($"GetDesktopDimensionsForDisplayID: Failed to get desktop display mode for display {displayID}. SDL Error: {SDL.GetError()}");
+        Logger.Warn($"GetDesktopDimensionsForDisplayID: Failed to get desktop display mode for display {displayID}. SDL Error: {SDL.GetError()}");
         return (0, 0);
       }
 

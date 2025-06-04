@@ -36,7 +36,7 @@ namespace Night
   /// </summary>
   public static class Graphics
   {
-    private static readonly ILogger logger = LogManager.GetLogger("Night.Graphics.Graphics");
+    private static readonly ILogger Logger = LogManager.GetLogger("Night.Graphics.Graphics");
 
     /// <summary>Loads an image file and creates a new Sprite.</summary>
     /// <param name="filePath">Path to the image file.</param>
@@ -46,13 +46,13 @@ namespace Night
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return null;
       }
 
       if (!File.Exists(filePath))
       {
-        logger.Error($"Image file not found at '{filePath}'.");
+        Logger.Error($"Image file not found at '{filePath}'.");
         return null;
       }
 
@@ -61,7 +61,7 @@ namespace Night
       if (surfacePtr == IntPtr.Zero)
       {
         string sdlError = SDL.GetError();
-        logger.Error($"Failed to load image into surface from '{filePath}'. SDL_image Error: {sdlError}");
+        Logger.Error($"Failed to load image into surface from '{filePath}'. SDL_image Error: {sdlError}");
         return null;
       }
 
@@ -71,7 +71,7 @@ namespace Night
 
       if (width <= 0 || height <= 0)
       {
-        logger.Error($"Invalid surface dimensions ({width}x{height}) for '{filePath}'.");
+        Logger.Error($"Invalid surface dimensions ({width}x{height}) for '{filePath}'.");
         SDL.DestroySurface(surfacePtr);
         return null;
       }
@@ -82,7 +82,7 @@ namespace Night
       if (texturePtr == IntPtr.Zero)
       {
         string sdlError = SDL.GetError();
-        logger.Error($"Failed to create texture from surface for '{filePath}'. SDL Error: {sdlError}");
+        Logger.Error($"Failed to create texture from surface for '{filePath}'. SDL Error: {sdlError}");
         return null;
       }
 
@@ -96,14 +96,14 @@ namespace Night
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 
       if (!SDL.SetRenderDrawColor(rendererPtr, color.R, color.G, color.B, color.A))
       {
         string sdlError = SDL.GetError();
-        logger.Error($"SetRenderDrawColor failed: {sdlError}");
+        Logger.Error($"SetRenderDrawColor failed: {sdlError}");
       }
     }
 
@@ -128,7 +128,7 @@ namespace Night
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 
@@ -222,7 +222,7 @@ namespace Night
       if (!success)
       {
         string sdlError = SDL.GetError();
-        logger.Error($"Rectangle rendering failed (Mode: {mode}): {sdlError}");
+        Logger.Error($"Rectangle rendering failed (Mode: {mode}): {sdlError}");
       }
     }
 
@@ -238,14 +238,14 @@ namespace Night
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 
       if (!SDL.RenderLine(rendererPtr, x1, y1, x2, y2))
       {
         string sdlError = SDL.GetError();
-        logger.Error($"Line rendering failed: {sdlError}");
+        Logger.Error($"Line rendering failed: {sdlError}");
       }
     }
 
@@ -258,13 +258,13 @@ namespace Night
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 
       if (points == null || points.Length < 2)
       {
-        logger.Error("At least two points are required to draw lines.");
+        Logger.Error("At least two points are required to draw lines.");
         return;
       }
 
@@ -277,7 +277,7 @@ namespace Night
       if (!SDL.RenderLines(rendererPtr, sdlPoints, sdlPoints.Length))
       {
         string sdlError = SDL.GetError();
-        logger.Error($"Multiple points line rendering failed: {sdlError}");
+        Logger.Error($"Multiple points line rendering failed: {sdlError}");
       }
     }
 
@@ -291,13 +291,13 @@ namespace Night
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 
       if (vertices == null || vertices.Length < 3)
       {
-        logger.Error("At least three vertices are required to draw a polygon.");
+        Logger.Error("At least three vertices are required to draw a polygon.");
         return;
       }
 
@@ -315,7 +315,7 @@ namespace Night
         if (!SDL.RenderLines(rendererPtr, lineVertices, lineVertices.Length))
         {
           string sdlError = SDL.GetError();
-          logger.Error($"Polygon rendering failed (Line Mode): {sdlError}");
+          Logger.Error($"Polygon rendering failed (Line Mode): {sdlError}");
         }
       }
       else
@@ -376,7 +376,7 @@ namespace Night
                                      sizeof(byte)))
           {
             string sdlError = SDL.GetError();
-            logger.Error($"Polygon rendering failed (Fill Mode - RenderGeometryRaw): {sdlError}");
+            Logger.Error($"Polygon rendering failed (Fill Mode - RenderGeometryRaw): {sdlError}");
           }
         }
         finally
@@ -417,7 +417,7 @@ namespace Night
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 
@@ -467,7 +467,7 @@ namespace Night
       if (!success)
       {
         string sdlError = SDL.GetError();
-        logger.Error($"Circle rendering failed (Mode: {mode}): {sdlError}");
+        Logger.Error($"Circle rendering failed (Mode: {mode}): {sdlError}");
       }
     }
 
@@ -501,14 +501,14 @@ namespace Night
       // Check if sprite texture is null
       if (sprite.Texture == IntPtr.Zero)
       {
-        logger.Error("Sprite or sprite texture is null.");
+        Logger.Error("Sprite or sprite texture is null.");
         return;
       }
 
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 
@@ -542,7 +542,7 @@ namespace Night
         if (!SDL.RenderTextureRotated(rendererPtr, sprite.Texture, IntPtr.Zero, dstRectPtr, angleInDegrees, centerPointPtr, SDL.FlipMode.None))
         {
           string sdlError = SDL.GetError();
-          logger.Error($"RenderTextureRotated failed: {sdlError}");
+          Logger.Error($"RenderTextureRotated failed: {sdlError}");
         }
       }
       finally
@@ -568,7 +568,7 @@ namespace Night
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 
@@ -576,14 +576,14 @@ namespace Night
       if (!SDL.SetRenderDrawColor(rendererPtr, color.R, color.G, color.B, color.A))
       {
         string sdlError = SDL.GetError();
-        logger.Error($"SetRenderDrawColor failed: {sdlError}");
+        Logger.Error($"SetRenderDrawColor failed: {sdlError}");
         return; // Return if color setting fails, to avoid clearing with wrong color
       }
 
       if (!SDL.RenderClear(rendererPtr))
       {
         string sdlError = SDL.GetError();
-        logger.Error($"RenderClear failed: {sdlError}");
+        Logger.Error($"RenderClear failed: {sdlError}");
       }
     }
 
@@ -595,7 +595,7 @@ namespace Night
       IntPtr rendererPtr = Window.RendererPtr;
       if (rendererPtr == IntPtr.Zero)
       {
-        logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
+        Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
 

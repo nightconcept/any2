@@ -34,7 +34,7 @@ namespace Night
   /// </summary>
   public static class ConfigurationManager
   {
-    private static readonly ILogger logger = LogManager.GetLogger("Night.Configuration.ConfigurationManager");
+    private static readonly ILogger Logger = LogManager.GetLogger("Night.Configuration.ConfigurationManager");
     private static readonly string ConfigFileName = "config.json";
     private static GameConfig currentConfig = new GameConfig();
     private static bool isLoaded = false;
@@ -85,28 +85,28 @@ namespace Night
             }
             else
             {
-              logger.Warn($"Could not parse '{ConfigFileName}' from '{configFilePath}'. Using default configuration.");
+              Logger.Warn($"Could not parse '{ConfigFileName}' from '{configFilePath}'. Using default configuration.");
             }
           }
           else
           {
-            logger.Warn($"'{ConfigFileName}' found at '{configFilePath}' is empty. Using default configuration.");
+            Logger.Warn($"'{ConfigFileName}' found at '{configFilePath}' is empty. Using default configuration.");
           }
         }
         catch (JsonException jsonEx)
         {
-          logger.Error($"Error deserializing '{ConfigFileName}' from '{configFilePath}'. Using default configuration.", jsonEx);
+          Logger.Error($"Error deserializing '{ConfigFileName}' from '{configFilePath}'. Using default configuration.", jsonEx);
         }
 
         // Catch-all for other potential issues
         catch (Exception ex)
         {
-          logger.Error($"Error loading or deserializing config.json. Using default configuration.", ex);
+          Logger.Error($"Error loading or deserializing config.json. Using default configuration.", ex);
         }
       }
       else
       {
-        logger.Info($"'{ConfigFileName}' not found at '{configFilePath}'. Using default configuration.");
+        Logger.Info($"'{ConfigFileName}' not found at '{configFilePath}'. Using default configuration.");
       }
 
       isLoaded = true;

@@ -35,7 +35,7 @@ namespace Night
   /// </summary>
   public static class Filesystem
   {
-    private static readonly ILogger logger = LogManager.GetLogger("Night.Filesystem.Filesystem");
+    private static readonly ILogger Logger = LogManager.GetLogger("Night.Filesystem.Filesystem");
     private static string gameIdentity = "NightDefault"; // Placeholder, to be managed by SetIdentity/GetIdentity
 
     /// <summary>
@@ -92,7 +92,7 @@ namespace Night
       }
       catch (Exception ex)
       {
-        logger.Error($"Error getting file info for path '{path}'.", ex);
+        Logger.Error($"Error getting file info for path '{path}'.", ex);
         return null;
       }
 
@@ -261,7 +261,7 @@ namespace Night
       }
       catch (Exception ex)
       {
-        logger.Error($"Error creating directory '{path}'.", ex);
+        Logger.Error($"Error creating directory '{path}'.", ex);
         return false; // An error occurred
       }
     }
@@ -311,7 +311,7 @@ namespace Night
       }
       catch (Exception ex)
       {
-        logger.Warn($"Could not create appdata directory '{appDataPath}': {ex.Message}");
+        Logger.Warn($"Could not create appdata directory '{appDataPath}': {ex.Message}");
       }
 
       return appDataPath;
