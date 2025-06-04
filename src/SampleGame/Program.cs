@@ -21,13 +21,7 @@
 // </copyright>
 
 using Night;
-using Night.Engine;
 
-// using Night.Log; // No longer directly used here
-// using System.Globalization; // No longer directly used here
-// using System.IO; // No longer directly used here
-// using System.Linq; // No longer directly used here (was implicit via .Any())
-// using System; // Console.WriteLine was removed
 namespace SampleGame
 {
   /// <summary>
@@ -43,9 +37,6 @@ namespace SampleGame
     /// <param name="args">Command-line arguments.</param>
     public static void Main(string[] args)
     {
-      // All CLI argument parsing and application of settings (like logging)
-      // is now handled within Night.Engine.CLI and Night.Engine.CommandLineProcessor,
-      // which is called by Framework.Run().
       Framework.Run(new Game(), new CLI(args));
     }
   }

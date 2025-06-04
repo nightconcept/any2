@@ -21,7 +21,6 @@
 // </copyright>
 
 using Night;
-using Night.Engine; // Added for CLI
 
 namespace SampleGame;
 

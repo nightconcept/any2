@@ -24,7 +24,6 @@ using System;
 using System.Diagnostics;
 
 using Night;
-using Night.Engine; // Added for CLI
 
 using Xunit;
 using Xunit.Abstractions;

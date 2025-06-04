@@ -23,12 +23,12 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization; // Added for DateTime parsing if needed for session log, though path generation is in Program.cs
-using System.IO; // Added for Path operations if needed, though path generation is in Program.cs
+using System.IO;
 using System.Linq;
 
-using Night.Log; // Added for LogLevel
+using Night;
 
-namespace Night.Engine
+namespace Night
 {
   /// <summary>
   /// Handles command-line argument parsing for the Night Engine.
@@ -125,5 +125,85 @@ namespace Night.Engine
     /// Gets the list of arguments that were not processed as specific CLI flags by this parser.
     /// </summary>
     public IReadOnlyList<string> RemainingArgs => this.remainingArgs.AsReadOnly();
+
+    /// <summary>
+    /// Applies logging and other settings based on the parsed command-line arguments.
+    /// </summary>
+    public void ApplySettings()
+    {
+      // Apply settings based on parsed CLI arguments
+      if (this.ParsedLogLevel.HasValue)
+      {
+        LogManager.MinLevel = this.ParsedLogLevel.Value;
+        if (!this.IsSilentMode)
+        {
+          Console.WriteLine($"[Night.Engine.CLI] Log level set to: {this.ParsedLogLevel.Value}");
+        }
+      }
+
+      if (this.IsDebugMode)
+      {
+        LogManager.MinLevel = LogLevel.Debug; // Ensure debug level if --debug is set
+        LogManager.EnableSystemConsoleSink(true);
+        if (!this.IsSilentMode)
+        {
+          Console.WriteLine("[Night.Engine.CLI] Debug mode enabled: Log level set to Debug, console sink enabled.");
+        }
+      }
+
+      if (this.EnableSessionLog)
+      {
+        try
+        {
+          string baseDirectory = AppContext.BaseDirectory ?? ".";
+          string sessionDirPath = Path.Combine(baseDirectory, "session");
+          _ = Directory.CreateDirectory(sessionDirPath);
+
+          string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture);
+          string logFileName = $"session_log_{timestamp}.log";
+          string logFilePath = Path.Combine(sessionDirPath, logFileName);
+
+          LogManager.ConfigureFileSink(logFilePath, LogLevel.Trace); // FileSink itself will capture all from Trace, LogManager.MinLevel filters what's sent
+          if (!this.IsSilentMode)
+          {
+            Console.WriteLine($"[Night.Engine.CLI] Session log enabled. Logging to: {logFilePath}");
+          }
+        }
+        catch (Exception ex)
+        {
+          if (!this.IsSilentMode)
+          {
+            Console.WriteLine($"[Night.Engine.CLI] Error enabling session log: {ex.Message}");
+          }
+        }
+      }
+
+      // Handle any remaining arguments that were not processed by this parser
+      if (this.RemainingArgs.Any())
+      {
+        if (!this.IsSilentMode)
+        {
+          Console.WriteLine($"[Night.Engine.CLI] Warning: Unprocessed or invalid arguments found: {string.Join(" ", this.RemainingArgs)}");
+          if (this.RemainingArgs.Contains("--log-level", StringComparer.OrdinalIgnoreCase))
+          {
+            bool valueMissing = true;
+            int logLevelIndex = this.RemainingArgs.ToList().FindIndex(x => x.Equals("--log-level", StringComparison.OrdinalIgnoreCase));
+            if (logLevelIndex != -1 && logLevelIndex + 1 < this.RemainingArgs.Count)
+            {
+              if (!this.RemainingArgs[logLevelIndex + 1].StartsWith("--"))
+              {
+                Console.WriteLine($"[Night.Engine.CLI] Warning: The value '{this.RemainingArgs[logLevelIndex + 1]}' provided for --log-level is invalid. Using current default.");
+                valueMissing = false;
+              }
+            }
+
+            if (valueMissing)
+            {
+              Console.WriteLine("[Night.Engine.CLI] Warning: --log-level option requires a valid level argument (Trace, Debug, Information, Warning, Error, Fatal).");
+            }
+          }
+        }
+      }
+    }
   }
 }

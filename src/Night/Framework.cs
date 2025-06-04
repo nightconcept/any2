@@ -28,7 +28,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 using Night;
-using Night.Engine;
 using Night.Log;
 
 using SDL3;
@@ -67,8 +66,8 @@ namespace Night
     /// This method will initialize and shut down required SDL subsystems.
     /// </summary>
     /// <param name="game">The game interface to run. Must implement <see cref="Night.IGame"/>.</param>
-    /// <param name="cliArgs">The parsed command-line arguments.</param>
-    public static void Run(IGame game, CLI cliArgs)
+    /// <param name="cliArgs">The parsed command-line arguments. Optional; if null, default settings are used.</param>
+    public static void Run(IGame game, CLI? cliArgs = null)
     {
       if (game == null)
       {
@@ -76,18 +75,9 @@ namespace Night
         return;
       }
 
-      if (cliArgs == null)
-      {
-        Logger.Error("cliArgs cannot be null.");
-
-        // Or, proceed with default behavior if cliArgs is optional
-        // For now, let's assume it's required.
-        return;
-      }
-
-      // Apply settings from command line arguments first.
+      // Apply settings from command line arguments first, if provided.
       // This will handle LogManager setup, session logs, etc., based on CLI flags.
-      CommandLineProcessor.ApplySettings(cliArgs);
+      cliArgs?.ApplySettings();
 
       inErrorState = false;
       IsInputInitialized = false;
@@ -97,7 +87,7 @@ namespace Night
 
       bool isTestingEnvironment = IsTestingEnvironment();
 
-      if (!cliArgs.IsSilentMode && !isTestingEnvironment)
+      if ((cliArgs == null || !cliArgs.IsSilentMode) && !isTestingEnvironment)
       {
         string nightVersionString = VersionInfo.GetVersion();
         string sdlVersionString = NightSDL.GetVersion();

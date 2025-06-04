@@ -9,12 +9,6 @@
 - ModulesConfig
 - WindowConfig
 
-## Engine
-
-### Types (Engine)
-
-- CLI
-
 ## Filesystem
 
 ### Types (Filesystem)
