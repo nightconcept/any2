@@ -24,6 +24,7 @@ using System;
 using System.Diagnostics;
 
 using Night;
+using Night.Engine; // Added for CLI
 
 using Xunit;
 using Xunit.Abstractions;
@@ -62,7 +63,7 @@ namespace NightTest.Core
       {
         // Run the IGame test case
         // This will block until the Night.Window is closed by the test itself (e.g., via EndTest)
-        Night.Framework.Run(testCase);
+        Night.Framework.Run(testCase, new CLI(System.Array.Empty<string>()));
       }
       catch (Exception ex)
       {

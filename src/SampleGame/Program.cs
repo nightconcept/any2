@@ -20,13 +20,14 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
-using System;
-using System.Globalization;
-using System.IO;
-
 using Night;
-using Night.Log;
+using Night.Engine;
 
+// using Night.Log; // No longer directly used here
+// using System.Globalization; // No longer directly used here
+// using System.IO; // No longer directly used here
+// using System.Linq; // No longer directly used here (was implicit via .Any())
+// using System; // Console.WriteLine was removed
 namespace SampleGame
 {
   /// <summary>
@@ -42,64 +43,10 @@ namespace SampleGame
     /// <param name="args">Command-line arguments.</param>
     public static void Main(string[] args)
     {
-      // Default log level can be set here if desired, e.g., LogManager.MinLevel = LogLevel.Information;
-      // By default, it's Information as per LogManager.
-      for (int i = 0; i < args.Length; i++)
-      {
-        string arg = args[i];
-
-        if (string.Equals(arg, "--log-level", StringComparison.OrdinalIgnoreCase))
-        {
-          if (i + 1 < args.Length)
-          {
-            i++; // Consume the level value
-            string levelString = args[i];
-            if (Enum.TryParse(levelString, true, out LogLevel parsedLevel))
-            {
-              LogManager.MinLevel = parsedLevel;
-              Console.WriteLine($"[SampleGame] Log level set to: {parsedLevel}"); // Early feedback
-            }
-            else
-            {
-              Console.WriteLine($"[SampleGame] Warning: Invalid log level '{levelString}'. Using current default.");
-            }
-          }
-          else
-          {
-            Console.WriteLine("[SampleGame] Warning: --log-level option requires a level argument (Trace, Debug, Information, Warning, Error, Fatal).");
-          }
-        }
-        else if (string.Equals(arg, "--debug", StringComparison.OrdinalIgnoreCase))
-        {
-          LogManager.MinLevel = LogLevel.Debug;
-          LogManager.EnableSystemConsoleSink(true);
-          Console.WriteLine("[SampleGame] Debug mode enabled: Log level set to Debug, console sink enabled."); // Early feedback
-        }
-        else if (string.Equals(arg, "--session-log", StringComparison.OrdinalIgnoreCase))
-        {
-          try
-          {
-            string baseDirectory = AppContext.BaseDirectory ?? "."; // Fallback to current dir if null
-            string sessionDirPath = Path.Combine(baseDirectory, "session");
-            _ = Directory.CreateDirectory(sessionDirPath); // Ensures the directory exists
-
-            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture);
-            string logFileName = $"session_log_{timestamp}.log";
-            string logFilePath = Path.Combine(sessionDirPath, logFileName);
-
-            // Configure file sink to capture all trace levels and above.
-            // The actual filtering will be done by LogManager.MinLevel.
-            LogManager.ConfigureFileSink(logFilePath, LogLevel.Trace);
-            Console.WriteLine($"[SampleGame] Session log enabled. Logging to: {logFilePath}"); // Early feedback
-          }
-          catch (Exception ex)
-          {
-            Console.WriteLine($"[SampleGame] Error enabling session log: {ex.Message}");
-          }
-        }
-      }
-
-      Framework.Run(new Game());
+      // All CLI argument parsing and application of settings (like logging)
+      // is now handled within Night.Engine.CLI and Night.Engine.CommandLineProcessor,
+      // which is called by Framework.Run().
+      Framework.Run(new Game(), new CLI(args));
     }
   }
 }

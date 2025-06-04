@@ -28,6 +28,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 using Night;
+using Night.Engine;
 using Night.Log;
 
 using SDL3;
@@ -66,7 +67,8 @@ namespace Night
     /// This method will initialize and shut down required SDL subsystems.
     /// </summary>
     /// <param name="game">The game interface to run. Must implement <see cref="Night.IGame"/>.</param>
-    public static void Run(IGame game)
+    /// <param name="cliArgs">The parsed command-line arguments.</param>
+    public static void Run(IGame game, CLI cliArgs)
     {
       if (game == null)
       {
@@ -74,27 +76,47 @@ namespace Night
         return;
       }
 
+      if (cliArgs == null)
+      {
+        Logger.Error("cliArgs cannot be null.");
+
+        // Or, proceed with default behavior if cliArgs is optional
+        // For now, let's assume it's required.
+        return;
+      }
+
+      // Apply settings from command line arguments first.
+      // This will handle LogManager setup, session logs, etc., based on CLI flags.
+      CommandLineProcessor.ApplySettings(cliArgs);
+
       inErrorState = false;
       IsInputInitialized = false;
 
       ConfigurationManager.LoadConfig();
       var windowConfig = ConfigurationManager.CurrentConfig.Window;
 
-      string nightVersionString = VersionInfo.GetVersion();
-      string sdlVersionString = NightSDL.GetVersion();
-      Console.WriteLine($"Night Engine: v{nightVersionString}");
-      Console.WriteLine($"SDL: v{sdlVersionString}");
-      Console.WriteLine(GetFormattedPlatformString());
-      Console.WriteLine($"Framework: {RuntimeInformation.FrameworkDescription}");
+      bool isTestingEnvironment = IsTestingEnvironment();
+
+      if (!cliArgs.IsSilentMode && !isTestingEnvironment)
+      {
+        string nightVersionString = VersionInfo.GetVersion();
+        string sdlVersionString = NightSDL.GetVersion();
+        Console.WriteLine($"Night Engine: v{nightVersionString}");
+        Console.WriteLine($"SDL: v{sdlVersionString}");
+        Console.WriteLine(GetFormattedPlatformString());
+        Console.WriteLine($"Framework: {RuntimeInformation.FrameworkDescription}");
+      }
 
       bool sdlSuccessfullyInitializedThisRun = false;
 
       try
       {
         // Check if running in a testing environment (e.g., CI/CD, headless environments)
-        bool isTestingEnvironment = IsTestingEnvironment();
+        // isTestingEnvironment is already determined above
         if (isTestingEnvironment)
         {
+          Logger.Info("Testing environment detected. Setting LogManager.MinLevel to Fatal.");
+          LogManager.MinLevel = LogLevel.Fatal; // Minimize log output for tests
           Logger.Info("Testing environment detected. Setting SDL video driver to 'dummy'.");
 
           // Set the video driver to "dummy" for headless testing environments
