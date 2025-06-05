@@ -81,7 +81,7 @@ namespace NightTest.Core
     void IGame.Load()
     {
       this.IsDone = false;
-      this.CurrentStatus = TestStatus.NotRun;
+      this.CurrentStatus = TestStatus.Running; // Changed from NotRun
       this.Details = "Test is running...";
       this.CurrentFrameCount = 0;
       this.TestStopwatch.Reset();

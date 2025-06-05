@@ -74,21 +74,44 @@ namespace NightTest.Groups.SDL
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      _ = SDL3.SDL.ClearError(); // Ensure no pre-existing error
-      string error = NightSDL.GetError();
+      try
+      {
+        // Ensure CurrentStatus is Running if not already set by Load,
+        // though Load should have set it.
+        if (this.CurrentStatus == TestStatus.NotRun)
+        {
+            this.CurrentStatus = TestStatus.Running;
+            this.Details = "Test execution started in Update...";
+        }
 
-      if (string.IsNullOrEmpty(error))
-      {
-        this.Details = "NightSDL.GetError() returned an empty string as expected.";
-        this.CurrentStatus = TestStatus.Passed;
+        _ = SDL3.SDL.ClearError(); // Ensure no pre-existing error
+        string error = NightSDL.GetError();
+
+        if (string.IsNullOrEmpty(error))
+        {
+          this.Details = "NightSDL.GetError() returned an empty string as expected.";
+          this.CurrentStatus = TestStatus.Passed;
+        }
+        else
+        {
+          this.Details = $"NightSDL.GetError() returned '{error}' but an empty string was expected after SDL.ClearError().";
+          this.CurrentStatus = TestStatus.Failed;
+        }
       }
-      else
+      catch (System.Exception ex)
       {
-        this.Details = $"NightSDL.GetError() returned '{error}' but an empty string was expected after SDL.ClearError().";
+        this.Details = $"Exception during NightSDL_GetErrorTest: {ex.GetType().Name} - {ex.Message}. StackTrace: {ex.StackTrace}";
         this.CurrentStatus = TestStatus.Failed;
       }
-
-      this.EndTest();
+      finally
+      {
+        // Ensure EndTest is always called to finalize the test state and close the window.
+        // This is crucial if an exception occurs before EndTest is normally reached.
+        if (!this.IsDone) // Avoid calling EndTest multiple times if it was already called in try block (though current logic doesn't)
+        {
+            this.EndTest();
+        }
+      }
     }
   }
 }

@@ -12,15 +12,11 @@
 
 ## Essential Context & Reference Documents
 
-MUST review and use:
+ALWAYS MUST review and use:
 
 - `Assigned Task File`: `project/epics/epic#.md` given in the prompt.
-- `Project PRD` or `Feature PRD`: `project/PRD.md` OR `project/feat/{featureName}/PRD.md` (includes architecture, goals, tech stack, versions, project structure, and approved dependencies)
+- `Project PRD`: `project/PRD.md`
 - `Project Guidelines`: `project/guidelines.md` (Covers detailed Coding Standards, Testing Strategy, Error Handling, Security, and other specific project conventions)
-
-FOR REFERENCE, not to be read for every task, but as a fast way to find libraries and code that may exist in the code base:
-
-- `Code Digest`: `project/digest.txt` (For quick reference to current project state)
 
 ## Core Operational Mandates
 
