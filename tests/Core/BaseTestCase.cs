@@ -81,7 +81,7 @@ namespace NightTest.Core
     void IGame.Load()
     {
       this.IsDone = false;
-      this.CurrentStatus = TestStatus.Running; // Changed from NotRun
+      this.CurrentStatus = TestStatus.NotRun; // Reverted: Enum does not contain 'Running'
       this.Details = "Test is running...";
       this.CurrentFrameCount = 0;
       this.TestStopwatch.Reset();
@@ -105,8 +105,35 @@ namespace NightTest.Core
 
       this.CurrentFrameCount++;
 
-      // Call the virtual InternalUpdate, allowing intermediate classes to intercept.
-      this.InternalUpdate(deltaTime);
+      try
+      {
+        // Call the virtual InternalUpdate, allowing intermediate classes to intercept.
+        this.InternalUpdate(deltaTime);
+      }
+      catch (System.Exception ex)
+      {
+        // Record failure if an unhandled exception occurs in the test's Update logic
+        this.RecordFailure($"Unhandled exception in Update: {ex.GetType().Name} - {ex.Message}", ex);
+      }
+      finally
+      {
+        // Ensure EndTest is called if the test logic itself hasn't already.
+        // This is a safety net, especially if an exception occurred or if a test
+        // doesn't explicitly call EndTest upon completion.
+        if (!this.IsDone)
+        {
+          // If the test is being ended by this safety net and its status is still NotRun,
+          // it means the test's own logic didn't determine an outcome.
+          // Mark it as Failed in this scenario.
+          if (this.CurrentStatus == TestStatus.NotRun)
+          {
+            this.CurrentStatus = TestStatus.Failed;
+            this.Details = "Test did not complete its logic and was ended by the framework's safety net. Status was still NotRun.";
+          }
+
+          this.EndTest();
+        }
+      }
     }
 
     /// <summary>

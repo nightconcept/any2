@@ -74,44 +74,34 @@ namespace NightTest.Groups.SDL
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      try
+      // The try-catch-finally for general exceptions and ensuring EndTest() is called
+      // has been moved to BaseTestCase.IGame.Update().
+
+      // Ensure CurrentStatus is Running if not already set by Load,
+      // though Load should have set it.
+      // This specific check can remain if there's a concern it might still be NotRun
+      // when Update is called, though the BaseTestCase.Load() should prevent this.
+      // For now, let's assume BaseTestCase.Load() correctly sets it to Running.
+      // if (this.CurrentStatus == TestStatus.NotRun)
+      // {
+      //     this.CurrentStatus = TestStatus.Running;
+      //     this.Details = "Test execution started in Update...";
+      // }
+      _ = SDL3.SDL.ClearError(); // Ensure no pre-existing error
+      string error = NightSDL.GetError();
+
+      if (string.IsNullOrEmpty(error))
       {
-        // Ensure CurrentStatus is Running if not already set by Load,
-        // though Load should have set it.
-        if (this.CurrentStatus == TestStatus.NotRun)
-        {
-            this.CurrentStatus = TestStatus.Running;
-            this.Details = "Test execution started in Update...";
-        }
-
-        _ = SDL3.SDL.ClearError(); // Ensure no pre-existing error
-        string error = NightSDL.GetError();
-
-        if (string.IsNullOrEmpty(error))
-        {
-          this.Details = "NightSDL.GetError() returned an empty string as expected.";
-          this.CurrentStatus = TestStatus.Passed;
-        }
-        else
-        {
-          this.Details = $"NightSDL.GetError() returned '{error}' but an empty string was expected after SDL.ClearError().";
-          this.CurrentStatus = TestStatus.Failed;
-        }
+        this.Details = "NightSDL.GetError() returned an empty string as expected.";
+        this.CurrentStatus = TestStatus.Passed;
       }
-      catch (System.Exception ex)
+      else
       {
-        this.Details = $"Exception during NightSDL_GetErrorTest: {ex.GetType().Name} - {ex.Message}. StackTrace: {ex.StackTrace}";
+        this.Details = $"NightSDL.GetError() returned '{error}' but an empty string was expected after SDL.ClearError().";
         this.CurrentStatus = TestStatus.Failed;
       }
-      finally
-      {
-        // Ensure EndTest is always called to finalize the test state and close the window.
-        // This is crucial if an exception occurs before EndTest is normally reached.
-        if (!this.IsDone) // Avoid calling EndTest multiple times if it was already called in try block (though current logic doesn't)
-        {
-            this.EndTest();
-        }
-      }
+
+      this.EndTest();
     }
   }
 }

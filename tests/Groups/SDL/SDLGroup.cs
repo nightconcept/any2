@@ -30,6 +30,7 @@ namespace NightTest.Groups.SDL
   /// <summary>
   /// Test group for SDL related functionality.
   /// </summary>
+  [Collection("SequentialTests")]
   public class SDLGroup : TestGroup
   {
     /// <summary>
