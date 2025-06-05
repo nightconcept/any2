@@ -62,7 +62,7 @@ namespace NightTest.Core
       {
         // Run the IGame test case
         // This will block until the Night.Window is closed by the test itself (e.g., via EndTest)
-        Night.Framework.Run(testCase, new CLI(System.Array.Empty<string>()));
+        Night.Framework.Run(testCase);
       }
       catch (Exception ex)
       {
