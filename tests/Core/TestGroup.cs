@@ -44,6 +44,10 @@ namespace NightTest.Core
     public TestGroup(ITestOutputHelper outputHelper)
     {
       this.outputHelper = outputHelper;
+
+      // Clear any sinks from previous test runs and add our custom xUnit sink.
+      LogManager.ClearSinks();
+      LogManager.AddSink(new XunitLogSink(this.outputHelper));
     }
 
     /// <summary>

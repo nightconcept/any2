@@ -120,10 +120,18 @@ namespace Night
           // to ensure a valid rendering context without a visible window.
           _ = SDL.SetHint(SDL.Hints.VideoDriver, "offscreen");
 
-          Logger.Info("Testing environment detected. Setting SDL render driver to 'software'.");
+          // Force software rendering unless hardware is explicitly requested for debugging.
+          if (cliArgs == null || !cliArgs.ForceHardwareRender)
+          {
+            Logger.Info("Testing environment detected. Setting SDL render driver to 'software'.");
 
-          // Force software rendering to avoid OpenGL/GLES initialization issues in headless environments
-          _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
+            // Force software rendering to avoid OpenGL/GLES initialization issues in headless environments
+            _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
+          }
+          else
+          {
+            Logger.Info("Testing environment detected, but --force-graphics was specified. NOT forcing software rendering.");
+          }
         }
 
         lock (SdlLock)
