@@ -26,7 +26,7 @@ using System.IO;
 namespace Night
 {
   /// <summary>
-  /// Represents a file in the Night engine, providing methods for file operations.
+  /// Represents a file in the Night framework, providing methods for file operations.
   /// </summary>
   public class NightFile : IDisposable
   {

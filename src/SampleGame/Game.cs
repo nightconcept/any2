@@ -277,6 +277,24 @@ public class Game : IGame
     }
   }
 
+  /// <inheritdoc/>
+  public void KeyReleased(KeySymbol key, KeyCode scancode)
+  {
+    throw new NotImplementedException();
+  }
+
+  /// <inheritdoc/>
+  public void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
+  {
+    throw new NotImplementedException();
+  }
+
+  /// <inheritdoc/>
+  public void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses)
+  {
+    throw new NotImplementedException();
+  }
+
   // Helper for collision detection (AABB)
   private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
   {

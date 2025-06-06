@@ -251,18 +251,18 @@ namespace Night
 
       if (Directory.Exists(path))
       {
-        return false; // Already existed
+        return false;
       }
 
       try
       {
         _ = Directory.CreateDirectory(path); // Creates all directories in the specified path, if they don't already exist.
-        return true; // Successfully created
+        return true;
       }
       catch (Exception ex)
       {
         Logger.Error($"Error creating directory '{path}'.", ex);
-        return false; // An error occurred
+        return false;
       }
     }
 

@@ -111,9 +111,6 @@ namespace Night.Log.Sinks
       {
         // Log to diagnostics trace as a fallback, to avoid logger-ception or silent failure.
         Trace.WriteLine($"Night.Log.Sinks.FileSink: Failed to create directory for log file '{this.filePath}'. Error: {ex.Message}");
-
-        // We don't re-throw here to allow the application to continue if possible,
-        // though logging to this sink will likely fail.
       }
     }
   }

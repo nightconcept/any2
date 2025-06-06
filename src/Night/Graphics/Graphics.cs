@@ -498,7 +498,6 @@ namespace Night
         return;
       }
 
-      // Check if sprite texture is null
       if (sprite.Texture == IntPtr.Zero)
       {
         Logger.Error("Sprite or sprite texture is null.");
@@ -599,8 +598,6 @@ namespace Night
         return;
       }
 
-      // Set color for drawing (though Present itself doesn't draw, good practice if any last-minute things were to be added here)
-      // SDL.SetRenderDrawColor( Night.Window.RendererPtr, currentColor.R, currentColor.G, currentColor.B, currentColor.A );
       _ = SDL.RenderPresent(Window.RendererPtr);
     }
   }
