@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Tests
         env:
-          SDL_VIDEODRIVER: ${{ matrix.os == 'macos-latest' && 'dummy' || '' }}
+          SDL_VIDEODRIVER: ${{ (matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest') && 'dummy' || '' }}
         run: >
           dotnet test Night.sln --configuration Release --no-build --filter "TestType=Automated"
           /p:CollectCoverage=true
