@@ -47,6 +47,9 @@ namespace Night
     private static bool isSdlInitialized = false; // Tracks if SDL is currently active globally
     private static SDL.InitFlags initializedSubsystemsFlags = 0;
 
+    // Delegate to hold a reference to the log output function to prevent garbage collection.
+    private static SDL.LogOutputFunction? sdlLogOutputFunction;
+
     private static int frameCount = 0;
     private static double fpsTimeAccumulator = 0.0;
     private static List<double> deltaHistory = new List<double>();
@@ -105,13 +108,17 @@ namespace Night
         // isTestingEnvironment is already determined above
         if (isTestingEnvironment)
         {
-          Logger.Info("Testing environment detected. Setting LogManager.MinLevel to Fatal.");
-          LogManager.MinLevel = LogLevel.Fatal; // Minimize log output for tests
-          Logger.Info("Testing environment detected. Setting SDL video driver to 'dummy'.");
+          // Redirect SDL logging to a null sink to prevent "Vulkan..." messages on CI
+          sdlLogOutputFunction = (userdata, category, priority, message) => { };
+          SDL.SetLogOutputFunction(sdlLogOutputFunction, nint.Zero);
 
-          // Set the video driver to "dummy" for headless testing environments
-          // This resolves "No available video device" errors in CI/CD systems
-          _ = SDL.SetHint(SDL.Hints.VideoDriver, "dummy");
+          Logger.Info("Testing environment detected. Setting LogManager.MinLevel to Debug for diagnostics.");
+          LogManager.MinLevel = LogLevel.Debug; // Verbose log output for CI tests
+          Logger.Info("Testing environment detected. Setting SDL video driver to 'offscreen'.");
+
+          // Use the "offscreen" video driver for headless testing environments
+          // to ensure a valid rendering context without a visible window.
+          _ = SDL.SetHint(SDL.Hints.VideoDriver, "offscreen");
 
           Logger.Info("Testing environment detected. Setting SDL render driver to 'software'.");
 
@@ -172,7 +179,7 @@ namespace Night
         }
 
         Window.SetTitle(windowConfig.Title ?? "Night Game");
-        Logger.Info($"Window title set to '{Window.GetMode().Title}'.");
+        Logger.Info($"Window title set to '{Window.GetMode().Title}'. IsOpen: {Window.IsOpen()}");
 
         if (!Window.IsOpen())
         {
@@ -269,9 +276,11 @@ namespace Night
         frameCount = 0;
         fpsTimeAccumulator = 0.0;
         deltaHistory.Clear();
+        var loopCount = 0;
 
         while (Window.IsOpen() && !inErrorState)
         {
+          loopCount++;
           double deltaTime = Night.Timer.Step();
           frameCount++;
           fpsTimeAccumulator += deltaTime;
@@ -296,8 +305,10 @@ namespace Night
           while (SDL.PollEvent(out SDL.Event e) && !inErrorState)
           {
             var eventType = (SDL.EventType)e.Type;
+            Logger.Debug($"SDL Event polled: {eventType}");
             if (eventType == SDL.EventType.Quit)
             {
+              Logger.Info("SDL_QUIT event received. Closing window.");
               Window.Close();
             }
             else if (eventType == SDL.EventType.KeyDown)
@@ -355,7 +366,9 @@ namespace Night
           {
             try
             {
+              Logger.Debug($"Loop {loopCount}: Calling game.Update()");
               game.Update((float)deltaTime);
+              Logger.Debug($"Loop {loopCount}: game.Update() returned");
             }
             catch (Exception exUser)
             {
@@ -371,8 +384,10 @@ namespace Night
           {
             try
             {
+              Logger.Debug($"Loop {loopCount}: Calling game.Draw() and Graphics.Present()");
               game.Draw();
               Night.Graphics.Present();
+              Logger.Debug($"Loop {loopCount}: game.Draw() and Graphics.Present() returned");
             }
             catch (Exception exUser)
             {
@@ -385,7 +400,7 @@ namespace Night
           }
         }
 
-        Logger.Info($"Main loop ended. Window.IsOpen(): {Window.IsOpen()}, inErrorState: {inErrorState}");
+        Logger.Info($"Main loop ended. Window.IsOpen(): {Window.IsOpen()}, inErrorState: {inErrorState}, LoopCount: {loopCount}");
       }
       catch (Exception ex)
       {
