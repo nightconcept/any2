@@ -22,7 +22,9 @@
 
 using System.Globalization;
 using System.Text;
+
 using Night;
+
 using Xunit.Abstractions;
 
 namespace NightTest.Core
@@ -47,14 +49,14 @@ namespace NightTest.Core
     public void Write(LogEntry entry)
     {
       var sb = new StringBuilder();
-      sb.Append(entry.TimestampUtc.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'", CultureInfo.InvariantCulture));
-      sb.Append(" [").Append(entry.Level.ToString().ToUpperInvariant()).Append(']');
-      sb.Append(" [").Append(entry.CategoryName).Append(']');
-      sb.Append(' ').Append(entry.Message);
+      _ = sb.Append(entry.TimestampUtc.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'", CultureInfo.InvariantCulture));
+      _ = sb.Append(" [").Append(entry.Level.ToString().ToUpperInvariant()).Append(']');
+      _ = sb.Append(" [").Append(entry.CategoryName).Append(']');
+      _ = sb.Append(' ').Append(entry.Message);
 
       if (entry.Exception != null)
       {
-        sb.Append('\n').Append(entry.Exception);
+        _ = sb.Append('\n').Append(entry.Exception);
       }
 
       try

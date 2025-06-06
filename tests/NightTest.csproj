@@ -109,11 +109,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Core\XunitLogSink.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Night\Night.csproj" />
+    <ProjectReference Include="..\src\Night\Night.csproj" />
   </ItemGroup>
 
 </Project>
