@@ -27,7 +27,8 @@ run = ["dotnet run --project src/SampleGame/SampleGame.csproj"]
 [tasks.test]
 alias = "test"
 description = "Run automated tests"
-run = ["dotnet test --filter TestType=Automated"]
+run = ["SDL_VIDEODRIVER=dummy dotnet test --filter TestType=Automated"]
+run_windows = ["dotnet test --filter TestType=Automated"]
 
 [tasks.manual-test]
 alias = "man-test"
@@ -61,6 +62,15 @@ run = ["python scripts/update_api_doc.py"]
 alias = "prepare"
 description = "Prepare everything before a commit."
 run = [
+  "dotnet clean Night.sln",
+  "dotnet tool restore",
+  "dotnet format --verbosity diagnostic Night.sln",
+  "dotnet build Night.sln",
+  "SDL_VIDEODRIVER=dummy dotnet test --filter TestType=Automated",
+  "dotnet docfx docs/docfx.json",
+  "python scripts/update_api_doc.py",
+]
+run_windows = [
   "dotnet clean Night.sln",
   "dotnet tool restore",
   "dotnet format --verbosity diagnostic Night.sln",
