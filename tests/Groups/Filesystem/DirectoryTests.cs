@@ -195,7 +195,6 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemCreateDirectory_NestedDirTest : BaseTestCase
   {
-    private readonly string basePath = Path.GetTempPath();
     private readonly string parentDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_parent");
     private readonly string nestedDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_parent", "child", "grandchild");
 
