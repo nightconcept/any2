@@ -35,9 +35,9 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemGetInfo_FileExistsTest : BaseTestCase
   {
-    private readonly string _testFileName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_file.txt");
-    private DateTimeOffset _expectedModTime;
-    private long _expectedSize;
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_file.txt");
+    private long expectedModTime;
+    private long expectedSize;
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.GetInfo.FileExists";
@@ -51,21 +51,20 @@ namespace NightTest.Groups.Filesystem
       base.Load();
       try
       {
-        File.WriteAllText(this._testFileName, "Hello Night!");
-        var fileInfo = new FileInfo(this._testFileName);
-        this._expectedSize = fileInfo.Length;
-        this._expectedModTime = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+        File.WriteAllText(this.testFileName, "Hello Night!");
+        var fileInfo = new FileInfo(this.testFileName);
+        this.expectedSize = fileInfo.Length;
+        this.expectedModTime = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+
         // Allow a small grace period for LastWriteTimeUtc to settle, especially on some filesystems.
         System.Threading.Thread.Sleep(100);
         fileInfo.LastWriteTimeUtc = DateTime.UtcNow; // Explicitly set to ensure consistency for comparison
-        this._expectedModTime = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
-
-
+        this.expectedModTime = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
       }
       catch (Exception e)
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test file '{this._testFileName}'. {e.Message}";
+        this.Details = $"Setup failed: Could not create test file '{this.testFileName}'. {e.Message}";
         this.EndTest();
       }
     }
@@ -80,12 +79,13 @@ namespace NightTest.Groups.Filesystem
 
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed) // Setup failed
+        // Setup failed
+        if (this.CurrentStatus == TestStatus.Failed)
         {
           return;
         }
 
-        var info = Night.Filesystem.GetInfo(this._testFileName);
+        var info = Night.Filesystem.GetInfo(this.testFileName);
 
         if (info == null)
         {
@@ -97,16 +97,18 @@ namespace NightTest.Groups.Filesystem
           this.CurrentStatus = TestStatus.Failed;
           this.Details = $"Expected FileType.File, but got {info.Type}.";
         }
-        else if (info.Size != this._expectedSize)
+        else if (info.Size != this.expectedSize)
         {
           this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Expected size {this._expectedSize}, but got {info.Size}.";
+          this.Details = $"Expected size {this.expectedSize}, but got {info.Size}.";
         }
+
         // Comparing ModTime can be tricky due to precision. Allow a small delta.
-        else if (info.ModTime == null || Math.Abs(info.ModTime.Value - this._expectedModTime) > 2) // Allow 2s delta
+        // Comparing ModTime can be tricky due to precision. Allow a small delta.
+        else if (info.ModTime == null || Math.Abs(info.ModTime.Value - this.expectedModTime) > 2)
         {
           this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Expected ModTime around {this._expectedModTime}, but got {info.ModTime}. Difference: {Math.Abs((info.ModTime ?? 0) - this._expectedModTime)}";
+          this.Details = $"Expected ModTime around {this.expectedModTime}, but got {info.ModTime}. Difference: {Math.Abs((info.ModTime ?? 0) - this.expectedModTime)}";
         }
         else
         {
@@ -121,17 +123,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (File.Exists(this._testFileName))
+        if (File.Exists(this.testFileName))
         {
           try
           {
-            File.Delete(this._testFileName);
+            File.Delete(this.testFileName);
           }
           catch (Exception ex)
           {
-            this.Details += $" | Warning: Failed to delete test file '{this._testFileName}': {ex.Message}";
+            this.Details += $" | Warning: Failed to delete test file '{this.testFileName}': {ex.Message}";
           }
         }
+
         this.EndTest();
       }
     }
@@ -142,8 +145,8 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemGetInfo_DirectoryExistsTest : BaseTestCase
   {
-    private readonly string _testDirName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_dir");
-    private DateTimeOffset _expectedModTime;
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_dir");
+    private long expectedModTime;
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.GetInfo.DirectoryExists";
@@ -157,17 +160,18 @@ namespace NightTest.Groups.Filesystem
       base.Load();
       try
       {
-        Directory.CreateDirectory(this._testDirName);
-        var dirInfo = new DirectoryInfo(this._testDirName);
+        _ = Directory.CreateDirectory(this.testDirName);
+        var dirInfo = new DirectoryInfo(this.testDirName);
+
         // Allow a small grace period for LastWriteTimeUtc to settle.
         System.Threading.Thread.Sleep(100);
         dirInfo.LastWriteTimeUtc = DateTime.UtcNow; // Explicitly set
-        this._expectedModTime = new DateTimeOffset(dirInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+        this.expectedModTime = new DateTimeOffset(dirInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
       }
       catch (Exception e)
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test directory '{this._testDirName}'. {e.Message}";
+        this.Details = $"Setup failed: Could not create test directory '{this.testDirName}'. {e.Message}";
         this.EndTest();
       }
     }
@@ -182,12 +186,13 @@ namespace NightTest.Groups.Filesystem
 
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed) // Setup failed
+        // Setup failed
+        if (this.CurrentStatus == TestStatus.Failed)
         {
           return;
         }
 
-        var info = Night.Filesystem.GetInfo(this._testDirName);
+        var info = Night.Filesystem.GetInfo(this.testDirName);
 
         if (info == null)
         {
@@ -199,15 +204,17 @@ namespace NightTest.Groups.Filesystem
           this.CurrentStatus = TestStatus.Failed;
           this.Details = $"Expected FileType.Directory, but got {info.Type}.";
         }
-        else if (info.Size != null) // Size should be null for directories as per Filesystem.cs logic
+
+        // Size should be null for directories as per Filesystem.cs logic
+        else if (info.Size != null)
         {
           this.CurrentStatus = TestStatus.Failed;
           this.Details = $"Expected Size to be null for a directory, but got {info.Size}.";
         }
-        else if (info.ModTime == null || Math.Abs(info.ModTime.Value - this._expectedModTime) > 2) // Allow 2s delta
+        else if (info.ModTime == null || Math.Abs(info.ModTime.Value - this.expectedModTime) > 2)
         {
           this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Expected ModTime around {this._expectedModTime}, but got {info.ModTime}. Difference: {Math.Abs((info.ModTime ?? 0) - this._expectedModTime)}";
+          this.Details = $"Expected ModTime around {this.expectedModTime}, but got {info.ModTime}. Difference: {Math.Abs((info.ModTime ?? 0) - this.expectedModTime)}";
         }
         else
         {
@@ -222,17 +229,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (Directory.Exists(this._testDirName))
+        if (Directory.Exists(this.testDirName))
         {
           try
           {
-            Directory.Delete(this._testDirName);
+            Directory.Delete(this.testDirName);
           }
           catch (Exception ex)
           {
-            this.Details += $" | Warning: Failed to delete test directory '{this._testDirName}': {ex.Message}";
+            this.Details += $" | Warning: Failed to delete test directory '{this.testDirName}': {ex.Message}";
           }
         }
+
         this.EndTest();
       }
     }
@@ -243,7 +251,7 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemGetInfo_PathDoesNotExistTest : BaseTestCase
   {
-    private readonly string _nonExistentPath = Path.Combine(Path.GetTempPath(), "night_test_this_should_not_exist");
+    private readonly string nonExistentPath = Path.Combine(Path.GetTempPath(), "night_test_this_should_not_exist");
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.GetInfo.PathDoesNotExist";
@@ -255,15 +263,16 @@ namespace NightTest.Groups.Filesystem
     protected override void Load()
     {
       base.Load();
+
       // Ensure the path does not exist
-      if (File.Exists(this._nonExistentPath))
+      if (File.Exists(this.nonExistentPath))
       {
-        File.Delete(this._nonExistentPath);
+        File.Delete(this.nonExistentPath);
       }
 
-      if (Directory.Exists(this._nonExistentPath))
+      if (Directory.Exists(this.nonExistentPath))
       {
-        Directory.Delete(this._nonExistentPath);
+        Directory.Delete(this.nonExistentPath);
       }
     }
 
@@ -277,7 +286,7 @@ namespace NightTest.Groups.Filesystem
 
       try
       {
-        var info = Night.Filesystem.GetInfo(this._nonExistentPath);
+        var info = Night.Filesystem.GetInfo(this.nonExistentPath);
 
         if (info == null)
         {
@@ -307,7 +316,7 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemGetInfo_FilterTypeFile_MatchesTest : BaseTestCase
   {
-    private readonly string _testFileName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_filter_file.txt");
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_filter_file.txt");
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.GetInfo.FilterTypeFileMatches";
@@ -321,12 +330,12 @@ namespace NightTest.Groups.Filesystem
       base.Load();
       try
       {
-        File.WriteAllText(this._testFileName, "Filter test");
+        File.WriteAllText(this.testFileName, "Filter test");
       }
       catch (Exception e)
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test file '{this._testFileName}'. {e.Message}";
+        this.Details = $"Setup failed: Could not create test file '{this.testFileName}'. {e.Message}";
         this.EndTest();
       }
     }
@@ -341,9 +350,12 @@ namespace NightTest.Groups.Filesystem
 
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed) return;
+        if (this.CurrentStatus == TestStatus.Failed)
+        {
+          return;
+        }
 
-        var info = Night.Filesystem.GetInfo(this._testFileName, FileType.File);
+        var info = Night.Filesystem.GetInfo(this.testFileName, FileType.File);
 
         if (info != null && info.Type == FileType.File)
         {
@@ -363,17 +375,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (File.Exists(this._testFileName))
+        if (File.Exists(this.testFileName))
         {
           try
           {
-            File.Delete(this._testFileName);
+            File.Delete(this.testFileName);
           }
           catch (Exception ex)
           {
-            this.Details += $" | Warning: Failed to delete test file '{this._testFileName}': {ex.Message}";
+            this.Details += $" | Warning: Failed to delete test file '{this.testFileName}': {ex.Message}";
           }
         }
+
         this.EndTest();
       }
     }
@@ -384,7 +397,7 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemGetInfo_FilterTypeFile_MismatchesTest : BaseTestCase
   {
-    private readonly string _testDirName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_filter_file_mismatch_dir");
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_filter_file_mismatch_dir");
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.GetInfo.FilterTypeFileMismatches";
@@ -398,12 +411,12 @@ namespace NightTest.Groups.Filesystem
       base.Load();
       try
       {
-        Directory.CreateDirectory(this._testDirName);
+        _ = Directory.CreateDirectory(this.testDirName);
       }
       catch (Exception e)
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test directory '{this._testDirName}'. {e.Message}";
+        this.Details = $"Setup failed: Could not create test directory '{this.testDirName}'. {e.Message}";
         this.EndTest();
       }
     }
@@ -418,9 +431,12 @@ namespace NightTest.Groups.Filesystem
 
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed) return;
+        if (this.CurrentStatus == TestStatus.Failed)
+        {
+          return;
+        }
 
-        var info = Night.Filesystem.GetInfo(this._testDirName, FileType.File);
+        var info = Night.Filesystem.GetInfo(this.testDirName, FileType.File);
 
         if (info == null)
         {
@@ -440,17 +456,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (Directory.Exists(this._testDirName))
+        if (Directory.Exists(this.testDirName))
         {
           try
           {
-            Directory.Delete(this._testDirName);
+            Directory.Delete(this.testDirName);
           }
           catch (Exception ex)
           {
-            this.Details += $" | Warning: Failed to delete test directory '{this._testDirName}': {ex.Message}";
+            this.Details += $" | Warning: Failed to delete test directory '{this.testDirName}': {ex.Message}";
           }
         }
+
         this.EndTest();
       }
     }

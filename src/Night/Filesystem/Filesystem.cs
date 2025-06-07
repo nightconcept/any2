@@ -224,7 +224,7 @@ namespace Night
         return; // Nothing to write
       }
 
-      using (var stream = new FileStream(filename, (global::System.IO.FileMode)FileMode.Append, FileAccess.Write))
+      using (var stream = new FileStream(filename, global::System.IO.FileMode.Append, FileAccess.Write))
       {
         stream.Write(data, 0, (int)bytesToWrite);
       }

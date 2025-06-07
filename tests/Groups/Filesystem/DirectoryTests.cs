@@ -34,7 +34,7 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemCreateDirectory_NewSingleDirTest : BaseTestCase
   {
-    private readonly string _testDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_single");
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_single");
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.CreateDirectory.NewSingleDir";
@@ -46,31 +46,35 @@ namespace NightTest.Groups.Filesystem
     protected override void Load()
     {
       base.Load();
-      if (Directory.Exists(this._testDirName))
+      if (Directory.Exists(this.testDirName))
       {
-        Directory.Delete(this._testDirName, true); // true for recursive, just in case
+        Directory.Delete(this.testDirName, true); // true for recursive, just in case
       }
     }
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        bool created = Night.Filesystem.CreateDirectory(this._testDirName);
+        bool created = Night.Filesystem.CreateDirectory(this.testDirName);
 
-        if (created && Directory.Exists(this._testDirName))
+        if (created && Directory.Exists(this.testDirName))
         {
           this.CurrentStatus = TestStatus.Passed;
           this.Details = "Successfully created a new single directory and CreateDirectory returned true.";
         }
-        else if (!created && Directory.Exists(this._testDirName))
+        else if (!created && Directory.Exists(this.testDirName))
         {
           this.CurrentStatus = TestStatus.Failed;
           this.Details = "CreateDirectory returned false, but the directory was created.";
         }
-        else if (created && !Directory.Exists(this._testDirName))
+        else if (created && !Directory.Exists(this.testDirName))
         {
           this.CurrentStatus = TestStatus.Failed;
           this.Details = "CreateDirectory returned true, but the directory was not found.";
@@ -88,11 +92,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (Directory.Exists(this._testDirName))
+        if (Directory.Exists(this.testDirName))
         {
-          try { Directory.Delete(this._testDirName, true); }
-          catch (Exception ex) { this.Details += $" | Warning: Failed to delete test directory '{this._testDirName}': {ex.Message}"; }
+          try
+          {
+            Directory.Delete(this.testDirName, true);
+          }
+          catch (Exception ex)
+          {
+            this.Details += $" | Warning: Failed to delete test directory '{this.testDirName}': {ex.Message}";
+          }
         }
+
         this.EndTest();
       }
     }
@@ -103,7 +114,7 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemCreateDirectory_ExistingDirTest : BaseTestCase
   {
-    private readonly string _testDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_existing");
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_existing");
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.CreateDirectory.ExistingDir";
@@ -117,12 +128,12 @@ namespace NightTest.Groups.Filesystem
       base.Load();
       try
       {
-        Directory.CreateDirectory(this._testDirName); // Ensure it exists
+        _ = Directory.CreateDirectory(this.testDirName); // Ensure it exists
       }
       catch (Exception e)
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create pre-existing test directory '{this._testDirName}'. {e.Message}";
+        this.Details = $"Setup failed: Could not create pre-existing test directory '{this.testDirName}'. {e.Message}";
         this.EndTest();
       }
     }
@@ -130,14 +141,21 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed) return;
+        if (this.CurrentStatus == TestStatus.Failed)
+        {
+          return;
+        }
 
-        bool created = Night.Filesystem.CreateDirectory(this._testDirName);
+        bool created = Night.Filesystem.CreateDirectory(this.testDirName);
 
-        if (!created && Directory.Exists(this._testDirName))
+        if (!created && Directory.Exists(this.testDirName))
         {
           this.CurrentStatus = TestStatus.Passed;
           this.Details = "CreateDirectory correctly returned false for an existing directory.";
@@ -155,11 +173,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (Directory.Exists(this._testDirName))
+        if (Directory.Exists(this.testDirName))
         {
-          try { Directory.Delete(this._testDirName, true); }
-          catch (Exception ex) { this.Details += $" | Warning: Failed to delete test directory '{this._testDirName}': {ex.Message}"; }
+          try
+          {
+            Directory.Delete(this.testDirName, true);
+          }
+          catch (Exception ex)
+          {
+            this.Details += $" | Warning: Failed to delete test directory '{this.testDirName}': {ex.Message}";
+          }
         }
+
         this.EndTest();
       }
     }
@@ -170,9 +195,9 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemCreateDirectory_NestedDirTest : BaseTestCase
   {
-    private readonly string _basePath = Path.GetTempPath();
-    private readonly string _parentDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_parent");
-    private readonly string _nestedDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_parent", "child", "grandchild");
+    private readonly string basePath = Path.GetTempPath();
+    private readonly string parentDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_parent");
+    private readonly string nestedDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_parent", "child", "grandchild");
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.CreateDirectory.NestedDir";
@@ -184,21 +209,25 @@ namespace NightTest.Groups.Filesystem
     protected override void Load()
     {
       base.Load();
-      if (Directory.Exists(this._parentDirName))
+      if (Directory.Exists(this.parentDirName))
       {
-        Directory.Delete(this._parentDirName, true);
+        Directory.Delete(this.parentDirName, true);
       }
     }
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        bool created = Night.Filesystem.CreateDirectory(this._nestedDirName);
+        bool created = Night.Filesystem.CreateDirectory(this.nestedDirName);
 
-        if (created && Directory.Exists(this._nestedDirName))
+        if (created && Directory.Exists(this.nestedDirName))
         {
           this.CurrentStatus = TestStatus.Passed;
           this.Details = "Successfully created nested directories and CreateDirectory returned true.";
@@ -206,7 +235,7 @@ namespace NightTest.Groups.Filesystem
         else
         {
           this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Failed to create nested directories or CreateDirectory returned {created}. Path exists: {Directory.Exists(this._nestedDirName)}";
+          this.Details = $"Failed to create nested directories or CreateDirectory returned {created}. Path exists: {Directory.Exists(this.nestedDirName)}";
         }
       }
       catch (Exception e)
@@ -216,11 +245,19 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (Directory.Exists(this._parentDirName)) // Clean up the parent, which should remove nested
+        // Clean up the parent, which should remove nested
+        if (Directory.Exists(this.parentDirName))
         {
-          try { Directory.Delete(this._parentDirName, true); }
-          catch (Exception ex) { this.Details += $" | Warning: Failed to delete parent test directory '{this._parentDirName}': {ex.Message}"; }
+          try
+          {
+            Directory.Delete(this.parentDirName, true);
+          }
+          catch (Exception ex)
+          {
+            this.Details += $" | Warning: Failed to delete parent test directory '{this.parentDirName}': {ex.Message}";
+          }
         }
+
         this.EndTest();
       }
     }
@@ -240,7 +277,11 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       int checksPassed = 0;
       string failureDetails = string.Empty;
 
@@ -249,11 +290,17 @@ namespace NightTest.Groups.Filesystem
         // Test null path
         try
         {
-          _ = Night.Filesystem.CreateDirectory(null);
+          _ = Night.Filesystem.CreateDirectory(null!);
           failureDetails += "ArgumentNullException not thrown for null path. ";
         }
-        catch (ArgumentNullException) { checksPassed++; }
-        catch (Exception e) { failureDetails += $"Unexpected exception for null path: {e.GetType().Name}. "; }
+        catch (ArgumentNullException)
+        {
+          checksPassed++;
+        }
+        catch (Exception e)
+        {
+          failureDetails += $"Unexpected exception for null path: {e.GetType().Name}. ";
+        }
 
         // Test empty path
         try
@@ -261,8 +308,14 @@ namespace NightTest.Groups.Filesystem
           _ = Night.Filesystem.CreateDirectory(string.Empty);
           failureDetails += "ArgumentException not thrown for empty path. ";
         }
-        catch (ArgumentException) { checksPassed++; }
-        catch (Exception e) { failureDetails += $"Unexpected exception for empty path: {e.GetType().Name}. "; }
+        catch (ArgumentException)
+        {
+          checksPassed++;
+        }
+        catch (Exception e)
+        {
+          failureDetails += $"Unexpected exception for empty path: {e.GetType().Name}. ";
+        }
 
         if (checksPassed == 2)
         {
@@ -301,12 +354,14 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
-      string appDataPath1 = null;
-      string appDataPath2 = null;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        appDataPath1 = Night.Filesystem.GetAppdataDirectory();
+        string appDataPath1 = Night.Filesystem.GetAppdataDirectory();
 
         if (string.IsNullOrEmpty(appDataPath1))
         {
@@ -321,7 +376,7 @@ namespace NightTest.Groups.Filesystem
         else
         {
           // Call it again to ensure it's idempotent and directory creation doesn't fail
-          appDataPath2 = Night.Filesystem.GetAppdataDirectory();
+          string appDataPath2 = Night.Filesystem.GetAppdataDirectory();
           if (appDataPath1 == appDataPath2 && Directory.Exists(appDataPath2))
           {
             this.CurrentStatus = TestStatus.Passed;

@@ -42,7 +42,10 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
 
       try
       {

@@ -86,7 +86,9 @@ namespace NightTest.Groups.Filesystem
     {
       this.Run_TestCase(new FilesystemLines_ReadSingleLineFileTest());
     }
-// Tests from GetInfoTests.cs
+
+    // Tests from GetInfoTests.cs
+
     /// <summary>
     /// Runs the FilesystemGetInfo_FileExistsTest IGame instance.
     /// </summary>
@@ -138,6 +140,7 @@ namespace NightTest.Groups.Filesystem
     }
 
     // Tests from ReadWriteTests.cs
+
     /// <summary>
     /// Runs the FilesystemReadBytes_ReadExistingFileTest IGame instance.
     /// </summary>
@@ -219,6 +222,7 @@ namespace NightTest.Groups.Filesystem
     }
 
     // Tests from DirectoryTests.cs
+
     /// <summary>
     /// Runs the FilesystemCreateDirectory_NewSingleDirTest IGame instance.
     /// </summary>
@@ -270,6 +274,7 @@ namespace NightTest.Groups.Filesystem
     }
 
     // Tests from NightFileTests.cs
+
     /// <summary>
     /// Runs the NightFile_Dispose_DoesNotThrowTest IGame instance.
     /// </summary>

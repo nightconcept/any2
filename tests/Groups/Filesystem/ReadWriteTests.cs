@@ -36,8 +36,8 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemReadBytes_ReadExistingFileTest : BaseTestCase
   {
-    private readonly string _testFileName = Path.Combine(Path.GetTempPath(), "night_test_readbytes_file.bin");
-    private readonly byte[] _expectedContent = { 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x4E, 0x69, 0x67, 0x68, 0x74 }; // "Hello Night"
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_readbytes_file.bin");
+    private readonly byte[] expectedContent = { 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x4E, 0x69, 0x67, 0x68, 0x74 }; // "Hello Night"
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.ReadBytes.ReadExistingFile";
@@ -51,12 +51,12 @@ namespace NightTest.Groups.Filesystem
       base.Load();
       try
       {
-        File.WriteAllBytes(this._testFileName, this._expectedContent);
+        File.WriteAllBytes(this.testFileName, this.expectedContent);
       }
       catch (Exception e)
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test file '{this._testFileName}'. {e.Message}";
+        this.Details = $"Setup failed: Could not create test file '{this.testFileName}'. {e.Message}";
         this.EndTest();
       }
     }
@@ -64,14 +64,21 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed) return;
+        if (this.CurrentStatus == TestStatus.Failed)
+        {
+          return;
+        }
 
-        byte[] actualContent = Night.Filesystem.ReadBytes(this._testFileName);
+        byte[] actualContent = Night.Filesystem.ReadBytes(this.testFileName);
 
-        if (actualContent != null && actualContent.SequenceEqual(this._expectedContent))
+        if (actualContent != null && actualContent.SequenceEqual(this.expectedContent))
         {
           this.CurrentStatus = TestStatus.Passed;
           this.Details = "Successfully read bytes from an existing file.";
@@ -89,11 +96,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (File.Exists(this._testFileName))
+        if (File.Exists(this.testFileName))
         {
-          try { File.Delete(this._testFileName); }
-          catch (Exception ex) { this.Details += $" | Warning: Failed to delete test file '{this._testFileName}': {ex.Message}"; }
+          try
+          {
+            File.Delete(this.testFileName);
+          }
+          catch (Exception ex)
+          {
+            this.Details += $" | Warning: Failed to delete test file '{this.testFileName}': {ex.Message}";
+          }
         }
+
         this.EndTest();
       }
     }
@@ -104,8 +118,8 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemReadText_ReadExistingFileTest : BaseTestCase
   {
-    private readonly string _testFileName = Path.Combine(Path.GetTempPath(), "night_test_readtext_file.txt");
-    private readonly string _expectedContent = "Hello Night Text!";
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_readtext_file.txt");
+    private readonly string expectedContent = "Hello Night Text!";
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.ReadText.ReadExistingFile";
@@ -119,12 +133,12 @@ namespace NightTest.Groups.Filesystem
       base.Load();
       try
       {
-        File.WriteAllText(this._testFileName, this._expectedContent);
+        File.WriteAllText(this.testFileName, this.expectedContent);
       }
       catch (Exception e)
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test file '{this._testFileName}'. {e.Message}";
+        this.Details = $"Setup failed: Could not create test file '{this.testFileName}'. {e.Message}";
         this.EndTest();
       }
     }
@@ -132,14 +146,21 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed) return;
+        if (this.CurrentStatus == TestStatus.Failed)
+        {
+          return;
+        }
 
-        string actualContent = Night.Filesystem.ReadText(this._testFileName);
+        string actualContent = Night.Filesystem.ReadText(this.testFileName);
 
-        if (actualContent == this._expectedContent)
+        if (actualContent == this.expectedContent)
         {
           this.CurrentStatus = TestStatus.Passed;
           this.Details = "Successfully read text from an existing file.";
@@ -147,7 +168,7 @@ namespace NightTest.Groups.Filesystem
         else
         {
           this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"ReadText content did not match. Expected: '{this._expectedContent}', Got: '{actualContent}'.";
+          this.Details = $"ReadText content did not match. Expected: '{this.expectedContent}', Got: '{actualContent}'.";
         }
       }
       catch (Exception e)
@@ -157,11 +178,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (File.Exists(this._testFileName))
+        if (File.Exists(this.testFileName))
         {
-          try { File.Delete(this._testFileName); }
-          catch (Exception ex) { this.Details += $" | Warning: Failed to delete test file '{this._testFileName}': {ex.Message}"; }
+          try
+          {
+            File.Delete(this.testFileName);
+          }
+          catch (Exception ex)
+          {
+            this.Details += $" | Warning: Failed to delete test file '{this.testFileName}': {ex.Message}";
+          }
         }
+
         this.EndTest();
       }
     }
@@ -172,7 +200,7 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemReadBytes_FileNotFoundTest : BaseTestCase
   {
-    private readonly string _nonExistentFile = Path.Combine(Path.GetTempPath(), "night_test_readbytes_nonexistent.bin");
+    private readonly string nonExistentFile = Path.Combine(Path.GetTempPath(), "night_test_readbytes_nonexistent.bin");
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.ReadBytes.FileNotFound";
@@ -184,19 +212,23 @@ namespace NightTest.Groups.Filesystem
     protected override void Load()
     {
       base.Load();
-      if (File.Exists(this._nonExistentFile))
+      if (File.Exists(this.nonExistentFile))
       {
-        File.Delete(this._nonExistentFile); // Ensure it doesn't exist
+        File.Delete(this.nonExistentFile); // Ensure it doesn't exist
       }
     }
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        _ = Night.Filesystem.ReadBytes(this._nonExistentFile);
+        _ = Night.Filesystem.ReadBytes(this.nonExistentFile);
         this.CurrentStatus = TestStatus.Failed;
         this.Details = "FileNotFoundException was not thrown for ReadBytes.";
       }
@@ -222,7 +254,8 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemReadText_FileNotFoundTest : BaseTestCase
   {
-    private readonly string _nonExistentFile = Path.Combine(Path.GetTempPath(), "night_test_readtext_nonexistent.txt");
+    private readonly string nonExistentFile = Path.Combine(Path.GetTempPath(), "night_test_readtext_nonexistent.txt");
+
     /// <inheritdoc/>
     public override string Name => "Filesystem.ReadText.FileNotFound";
 
@@ -233,19 +266,23 @@ namespace NightTest.Groups.Filesystem
     protected override void Load()
     {
       base.Load();
-      if (File.Exists(this._nonExistentFile))
+      if (File.Exists(this.nonExistentFile))
       {
-        File.Delete(this._nonExistentFile); // Ensure it doesn't exist
+        File.Delete(this.nonExistentFile); // Ensure it doesn't exist
       }
     }
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        _ = Night.Filesystem.ReadText(this._nonExistentFile);
+        _ = Night.Filesystem.ReadText(this.nonExistentFile);
         this.CurrentStatus = TestStatus.Failed;
         this.Details = "FileNotFoundException was not thrown for ReadText.";
       }
@@ -271,8 +308,8 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemAppend_AppendToNewFileTest : BaseTestCase
   {
-    private readonly string _testFileName = Path.Combine(Path.GetTempPath(), "night_test_append_new.txt");
-    private readonly byte[] _dataToAppend = Encoding.UTF8.GetBytes("First line.");
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_append_new.txt");
+    private readonly byte[] dataToAppend = Encoding.UTF8.GetBytes("First line.");
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.Append.NewFile";
@@ -284,22 +321,26 @@ namespace NightTest.Groups.Filesystem
     protected override void Load()
     {
       base.Load();
-      if (File.Exists(this._testFileName))
+      if (File.Exists(this.testFileName))
       {
-        File.Delete(this._testFileName);
+        File.Delete(this.testFileName);
       }
     }
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        Night.Filesystem.Append(this._testFileName, this._dataToAppend);
-        byte[] fileContent = File.ReadAllBytes(this._testFileName);
+        Night.Filesystem.Append(this.testFileName, this.dataToAppend);
+        byte[] fileContent = File.ReadAllBytes(this.testFileName);
 
-        if (fileContent.SequenceEqual(this._dataToAppend))
+        if (fileContent.SequenceEqual(this.dataToAppend))
         {
           this.CurrentStatus = TestStatus.Passed;
           this.Details = "Successfully appended data to a new file.";
@@ -317,11 +358,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (File.Exists(this._testFileName))
+        if (File.Exists(this.testFileName))
         {
-          try { File.Delete(this._testFileName); }
-          catch (Exception ex) { this.Details += $" | Warning: Failed to delete test file '{this._testFileName}': {ex.Message}"; }
+          try
+          {
+            File.Delete(this.testFileName);
+          }
+          catch (Exception ex)
+          {
+            this.Details += $" | Warning: Failed to delete test file '{this.testFileName}': {ex.Message}";
+          }
         }
+
         this.EndTest();
       }
     }
@@ -332,10 +380,10 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemAppend_AppendToExistingFileTest : BaseTestCase
   {
-    private readonly string _testFileName = Path.Combine(Path.GetTempPath(), "night_test_append_existing.txt");
-    private readonly byte[] _initialData = Encoding.UTF8.GetBytes("Initial content. ");
-    private readonly byte[] _dataToAppend = Encoding.UTF8.GetBytes("Appended data.");
-    private byte[] _expectedData;
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_append_existing.txt");
+    private readonly byte[] initialData = Encoding.UTF8.GetBytes("Initial content. ");
+    private readonly byte[] dataToAppend = Encoding.UTF8.GetBytes("Appended data.");
+    private byte[] expectedData = Array.Empty<byte>();
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.Append.ExistingFile";
@@ -349,13 +397,13 @@ namespace NightTest.Groups.Filesystem
       base.Load();
       try
       {
-        File.WriteAllBytes(this._testFileName, this._initialData);
-        this._expectedData = this._initialData.Concat(this._dataToAppend).ToArray();
+        File.WriteAllBytes(this.testFileName, this.initialData);
+        this.expectedData = this.initialData.Concat(this.dataToAppend).ToArray();
       }
       catch (Exception e)
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create initial test file '{this._testFileName}'. {e.Message}";
+        this.Details = $"Setup failed: Could not create initial test file '{this.testFileName}'. {e.Message}";
         this.EndTest();
       }
     }
@@ -363,15 +411,22 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed) return;
+        if (this.CurrentStatus == TestStatus.Failed)
+        {
+          return;
+        }
 
-        Night.Filesystem.Append(this._testFileName, this._dataToAppend);
-        byte[] fileContent = File.ReadAllBytes(this._testFileName);
+        Night.Filesystem.Append(this.testFileName, this.dataToAppend);
+        byte[] fileContent = File.ReadAllBytes(this.testFileName);
 
-        if (fileContent.SequenceEqual(this._expectedData))
+        if (fileContent.SequenceEqual(this.expectedData))
         {
           this.CurrentStatus = TestStatus.Passed;
           this.Details = "Successfully appended data to an existing file.";
@@ -379,7 +434,7 @@ namespace NightTest.Groups.Filesystem
         else
         {
           this.CurrentStatus = TestStatus.Failed;
-          this.Details = "Appended content did not match expected combined content.";
+          this.Details = $"Appended content did not match. Expected: [{string.Join(", ", this.expectedData)}], Got: [{string.Join(", ", fileContent)}]";
         }
       }
       catch (Exception e)
@@ -389,11 +444,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (File.Exists(this._testFileName))
+        if (File.Exists(this.testFileName))
         {
-          try { File.Delete(this._testFileName); }
-          catch (Exception ex) { this.Details += $" | Warning: Failed to delete test file '{this._testFileName}': {ex.Message}"; }
+          try
+          {
+            File.Delete(this.testFileName);
+          }
+          catch (Exception ex)
+          {
+            this.Details += $" | Warning: Failed to delete test file '{this.testFileName}': {ex.Message}";
+          }
         }
+
         this.EndTest();
       }
     }
@@ -404,10 +466,10 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemAppend_PartialDataTest : BaseTestCase
   {
-    private readonly string _testFileName = Path.Combine(Path.GetTempPath(), "night_test_append_partial.txt");
-    private readonly byte[] _fullData = Encoding.UTF8.GetBytes("FullDataString");
-    private readonly long _sizeToAppend = 5; // "FullD"
-    private byte[] _expectedData;
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_append_partial.txt");
+    private readonly byte[] fullData = Encoding.UTF8.GetBytes("FullDataString");
+    private readonly long sizeToAppend = 5; // "FullD"
+    private byte[] expectedData = Array.Empty<byte>();
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.Append.PartialData";
@@ -419,24 +481,29 @@ namespace NightTest.Groups.Filesystem
     protected override void Load()
     {
       base.Load();
-      if (File.Exists(this._testFileName))
+      if (File.Exists(this.testFileName))
       {
-        File.Delete(this._testFileName);
+        File.Delete(this.testFileName);
       }
-      this._expectedData = new byte[this._sizeToAppend];
-      Array.Copy(this._fullData, this._expectedData, this._sizeToAppend);
+
+      this.expectedData = new byte[this.sizeToAppend];
+      Array.Copy(this.fullData, this.expectedData, this.sizeToAppend);
     }
 
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       try
       {
-        Night.Filesystem.Append(this._testFileName, this._fullData, this._sizeToAppend);
-        byte[] fileContent = File.ReadAllBytes(this._testFileName);
+        Night.Filesystem.Append(this.testFileName, this.fullData, this.sizeToAppend);
+        byte[] fileContent = File.ReadAllBytes(this.testFileName);
 
-        if (fileContent.SequenceEqual(this._expectedData))
+        if (fileContent.SequenceEqual(this.expectedData))
         {
           this.CurrentStatus = TestStatus.Passed;
           this.Details = "Successfully appended partial data using the size parameter.";
@@ -454,11 +521,18 @@ namespace NightTest.Groups.Filesystem
       }
       finally
       {
-        if (File.Exists(this._testFileName))
+        if (File.Exists(this.testFileName))
         {
-          try { File.Delete(this._testFileName); }
-          catch (Exception ex) { this.Details += $" | Warning: Failed to delete test file '{this._testFileName}': {ex.Message}"; }
+          try
+          {
+            File.Delete(this.testFileName);
+          }
+          catch (Exception ex)
+          {
+            this.Details += $" | Warning: Failed to delete test file '{this.testFileName}': {ex.Message}";
+          }
         }
+
         this.EndTest();
       }
     }
@@ -469,8 +543,8 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemAppend_ArgumentValidationTest : BaseTestCase
   {
-    private readonly string _validFileName = Path.Combine(Path.GetTempPath(), "night_test_append_validation.txt");
-    private readonly byte[] _validData = { 1, 2, 3 };
+    private readonly string validFileName = Path.Combine(Path.GetTempPath(), "night_test_append_validation.txt");
+    private readonly byte[] validData = { 1, 2, 3 };
 
     /// <inheritdoc/>
     public override string Name => "Filesystem.Append.ArgumentValidation";
@@ -481,7 +555,11 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      if (this.IsDone) return;
+      if (this.IsDone)
+      {
+        return;
+      }
+
       int checksPassed = 0;
       string failureDetails = string.Empty;
 
@@ -490,29 +568,47 @@ namespace NightTest.Groups.Filesystem
         // Test null filename
         try
         {
-          Night.Filesystem.Append(null, this._validData);
+          Night.Filesystem.Append(null!, this.validData);
           failureDetails += "ArgumentNullException not thrown for null filename. ";
         }
-        catch (ArgumentNullException) { checksPassed++; }
-        catch (Exception e) { failureDetails += $"Unexpected exception for null filename: {e.GetType().Name}. "; }
+        catch (ArgumentNullException)
+        {
+          checksPassed++;
+        }
+        catch (Exception e)
+        {
+          failureDetails += $"Unexpected exception for null filename: {e.GetType().Name}. ";
+        }
 
         // Test null data
         try
         {
-          Night.Filesystem.Append(this._validFileName, null);
+          Night.Filesystem.Append(this.validFileName, null!);
           failureDetails += "ArgumentNullException not thrown for null data. ";
         }
-        catch (ArgumentNullException) { checksPassed++; }
-        catch (Exception e) { failureDetails += $"Unexpected exception for null data: {e.GetType().Name}. "; }
+        catch (ArgumentNullException)
+        {
+          checksPassed++;
+        }
+        catch (Exception e)
+        {
+          failureDetails += $"Unexpected exception for null data: {e.GetType().Name}. ";
+        }
 
         // Test empty filename
         try
         {
-          Night.Filesystem.Append(string.Empty, this._validData);
+          Night.Filesystem.Append(string.Empty, this.validData);
           failureDetails += "ArgumentException not thrown for empty filename. ";
         }
-        catch (ArgumentException) { checksPassed++; }
-        catch (Exception e) { failureDetails += $"Unexpected exception for empty filename: {e.GetType().Name}. "; }
+        catch (ArgumentException)
+        {
+          checksPassed++;
+        }
+        catch (Exception e)
+        {
+          failureDetails += $"Unexpected exception for empty filename: {e.GetType().Name}. ";
+        }
 
         if (checksPassed == 3)
         {
@@ -533,11 +629,17 @@ namespace NightTest.Groups.Filesystem
       finally
       {
         // Clean up the valid file name if it was created by a failed test part
-        if (File.Exists(this._validFileName))
+        if (File.Exists(this.validFileName))
         {
-          try { File.Delete(this._validFileName); }
-          catch { /* best effort */ }
+          try
+          {
+            File.Delete(this.validFileName);
+          }
+          catch
+          { /* best effort */
+          }
         }
+
         this.EndTest();
       }
     }
