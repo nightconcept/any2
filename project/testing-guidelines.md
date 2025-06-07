@@ -38,6 +38,7 @@ This document provides guidelines for writing tests for the Night Engine, specif
 The primary goal of our testing strategy is to ensure the reliability and correctness of the `Night Engine`'s features.
 Tests are organized into `TestGroup` classes, which are discovered and run by xUnit.
 There are three main types of test cases:
+
 * **`GameTestCase`**: These tests implement [`Night.IGame`](../src/Night/IGame.cs) and run within the engine's main loop, allowing for automated testing of features that require a game context (e.g., graphics, input, windowing).
 * **`ManualTestCase`**: A specialization of `GameTestCase`, these also run as `IGame` instances but are designed for scenarios requiring manual user confirmation (e.g., visual verification of rendering).
 * **`ModTestCase`**: These tests are designed for testing individual functions, classes, or modules in isolation, much like traditional unit tests. They do not run as `IGame` instances and are suitable for testing logic that doesn't require a game window or full engine loop.
@@ -97,7 +98,7 @@ There are three main types of test cases:
 
 ## 3. Directory Structure
 
-```
+```plaintext
 tests/
 ├── Core/                 # Base classes, interfaces, and core testing utilities
 │   ├── BaseTestCase.cs

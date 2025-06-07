@@ -56,5 +56,65 @@ namespace NightTest.Groups.Configuration
     {
       this.Run_ModTestCase(new ConfigurationGameConfig_GetSet());
     }
+
+    /// <summary>
+    /// Runs the ConfigurationManager IsLoaded property test.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_ConfigurationManager_IsLoadedTest()
+    {
+      this.Run_ModTestCase(new ConfigurationManager_IsLoadedTest());
+    }
+
+    /// <summary>
+    /// Runs the ConfigurationManager LoadConfig already loaded test.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_ConfigurationManager_LoadConfig_AlreadyLoadedTest()
+    {
+      this.Run_ModTestCase(new ConfigurationManager_LoadConfig_AlreadyLoadedTest());
+    }
+
+    /// <summary>
+    /// Runs the ConfigurationManager LoadConfig file not exists test.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_ConfigurationManager_LoadConfig_FileNotExistsTest()
+    {
+      this.Run_ModTestCase(new ConfigurationManager_LoadConfig_FileNotExistsTest());
+    }
+
+    /// <summary>
+    /// Runs the ConfigurationManager LoadConfig empty file test.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_ConfigurationManager_LoadConfig_EmptyFileTest()
+    {
+      this.Run_ModTestCase(new ConfigurationManager_LoadConfig_EmptyFileTest());
+    }
+
+    /// <summary>
+    /// Runs the ConfigurationManager LoadConfig invalid JSON test.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_ConfigurationManager_LoadConfig_InvalidJsonTest()
+    {
+      this.Run_ModTestCase(new ConfigurationManager_LoadConfig_InvalidJsonTest());
+    }
+
+    /// <summary>
+    /// Runs the ConfigurationManager LoadConfig deserializes to null test.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_ConfigurationManager_LoadConfig_DeserializesToNullTest()
+    {
+      this.Run_ModTestCase(new ConfigurationManager_LoadConfig_DeserializesToNullTest());
+    }
   }
 }
