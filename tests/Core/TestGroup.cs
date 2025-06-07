@@ -87,6 +87,10 @@ namespace NightTest.Core
       Assert.Equal(TestStatus.Passed, testCase.CurrentStatus);
     }
 
+    /// <summary>
+    /// Run the test case.
+    /// </summary>
+    /// <param name="testCase">The test case to run.</param>
     public void Run_TestCase(BaseTestCase testCase)
     {
       Assert.NotNull(testCase);

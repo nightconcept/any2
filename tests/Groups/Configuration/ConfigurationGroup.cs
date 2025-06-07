@@ -1,4 +1,4 @@
-// <copyright file="GraphicsGroup.cs" company="Night Circle">
+// <copyright file="ConfigurationGroup.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle

@@ -1,4 +1,4 @@
-// <copyright file="DirectoryTests.cs" company="Night Circle">
+// <copyright file="WindowConfigTest.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -36,7 +36,6 @@ namespace NightTest.Groups.Configuration
   /// </summary>
   public class ConfigurationWindowConfig_GetSet : BaseTestCase
   {
-
     /// <inheritdoc/>
     public override string Name => "Configuration.WindowConfig";
 

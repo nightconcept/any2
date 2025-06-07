@@ -39,7 +39,7 @@ namespace NightTest.Groups.Graphics
   public class GraphicsGroup : TestGroup
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="GraphicsTests"/> class.
+    /// Initializes a new instance of the <see cref="GraphicsGroup"/> class.
     /// </summary>
     /// <param name="outputHelper">The xUnit test output helper for logging.</param>
     public GraphicsGroup(ITestOutputHelper outputHelper)

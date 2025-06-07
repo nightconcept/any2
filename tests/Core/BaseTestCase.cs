@@ -1,4 +1,4 @@
-// <copyright file="BaseGameTestCase.cs" company="Night Circle">
+// <copyright file="BaseTestCase.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
