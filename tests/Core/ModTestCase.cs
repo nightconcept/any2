@@ -33,35 +33,9 @@ namespace NightTest.Core
   /// Mod tests are closer in nature to unit tests and do not rely on a
   /// IGame instance to run.
   /// </summary>
-  public abstract class ModTestCase : ITestCase
+  public abstract class ModTestCase : BaseTestCase
   {
     // Public Properties
-
-    /// <summary>
-    /// Gets the stopwatch used to measure the duration of the test case.
-    /// </summary>
-    public Stopwatch TestStopwatch { get; } = new Stopwatch();
-
-    /// <summary>
-    /// Gets or sets the current status of the test case.
-    /// Its value can be asserted by xUnit test methods.
-    /// </summary>
-    public TestStatus CurrentStatus { get; protected set; } = TestStatus.NotRun;
-
-    /// <summary>
-    /// Gets or sets details about the test execution, such as error messages or success information.
-    /// Its value can be asserted by xUnit test methods.
-    /// </summary>
-    public string Details { get; protected set; } = "Test has not started.";
-
-    /// <inheritdoc/>
-    public abstract string Name { get; }
-
-    /// <inheritdoc/>
-    public virtual TestType Type => TestType.Automated;
-
-    /// <inheritdoc/>
-    public abstract string Description { get; }
 
     /// <summary>
     /// Gets the success message for the test.
@@ -75,24 +49,6 @@ namespace NightTest.Core
     /// contain try-catch blocks for assertion failures or calls to RecordSuccess/RecordFailure.
     /// </summary>
     public abstract void Run();
-
-    /// <summary>
-    /// Public method to record a test failure, typically called by an xUnit wrapper when an exception occurs.
-    /// </summary>
-    /// <param name="failureDetails">Specific details about the failure.</param>
-    /// <param name="ex">The exception that caused the failure, if any.</param>
-    public void RecordFailure(string failureDetails, Exception? ex = null)
-    {
-      this.CurrentStatus = TestStatus.Failed;
-      if (ex != null)
-      {
-        this.Details = $"{failureDetails} - Exception: {ex.GetType().Name}: {ex.Message}";
-      }
-      else
-      {
-        this.Details = failureDetails;
-      }
-    }
 
     /// <summary>
     /// Public method to record a test success, typically called by an xUnit wrapper when an exception occurs.

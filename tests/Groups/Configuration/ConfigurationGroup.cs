@@ -48,13 +48,13 @@ namespace NightTest.Groups.Configuration
     }
 
     /// <summary>
-    /// Runs the GraphicsClearColorTest IGame instance.
+    /// Runs the GameConfig mod test. Also tests the AudioConfig, WindowConfig and ModuleConfig functionality.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_ConfigurationWindowConfig_GetSet()
+    public void Run_ConfigurationGameConfig_GetSet()
     {
-      this.Run_ModTestCase(new ConfigurationWindowConfig_GetSet());
+      this.Run_ModTestCase(new ConfigurationGameConfig_GetSet());
     }
   }
 }

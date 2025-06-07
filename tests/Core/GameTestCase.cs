@@ -31,36 +31,8 @@ namespace NightTest.Core
   /// Abstract base class for test cases to reduce boilerplate.
   /// Implements ITestCase and Night.IGame.
   /// </summary>
-  public abstract class GameTestCase : ITestCase, IGame
+  public abstract class GameTestCase : BaseTestCase, IGame
   {
-    // Public Properties
-
-    /// <summary>
-    /// Gets the stopwatch used to measure the duration of the test case.
-    /// </summary>
-    public Stopwatch TestStopwatch { get; } = new Stopwatch();
-
-    /// <summary>
-    /// Gets or sets the current status of the test case.
-    /// Its value can be asserted by xUnit test methods.
-    /// </summary>
-    public TestStatus CurrentStatus { get; protected set; } = TestStatus.NotRun;
-
-    /// <summary>
-    /// Gets or sets details about the test execution, such as error messages or success information.
-    /// Its value can be asserted by xUnit test methods.
-    /// </summary>
-    public string Details { get; protected set; } = "Test has not started.";
-
-    /// <inheritdoc/>
-    public abstract string Name { get; }
-
-    /// <inheritdoc/>
-    public virtual TestType Type => TestType.Automated;
-
-    /// <inheritdoc/>
-    public abstract string Description { get; }
-
     // Protected Properties
 
     /// <summary>
@@ -174,24 +146,6 @@ namespace NightTest.Core
     /// <param name="presses">The number of clicks (usually 1 for release, but can be higher for some systems/drivers if tracking click counts on release).</param>
     public virtual void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses)
     {
-    }
-
-    /// <summary>
-    /// Public method to record a test failure, typically called by an xUnit wrapper when an exception occurs.
-    /// </summary>
-    /// <param name="failureDetails">Specific details about the failure.</param>
-    /// <param name="ex">The exception that caused the failure, if any.</param>
-    public void RecordFailure(string failureDetails, Exception? ex = null)
-    {
-      this.CurrentStatus = TestStatus.Failed;
-      if (ex != null)
-      {
-        this.Details = $"{failureDetails} - Exception: {ex.GetType().Name}: {ex.Message}";
-      }
-      else
-      {
-        this.Details = failureDetails;
-      }
     }
 
     /// <summary>
