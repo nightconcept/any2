@@ -54,7 +54,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemLines_ReadStandardFileTest()
     {
-      this.Run_TestCase(new FilesystemLines_ReadStandardFileTest());
+      this.Run_GameTestCase(new FilesystemLines_ReadStandardFileTest());
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemLines_ReadEmptyFileTest()
     {
-      this.Run_TestCase(new FilesystemLines_ReadEmptyFileTest());
+      this.Run_GameTestCase(new FilesystemLines_ReadEmptyFileTest());
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemLines_FileNotFoundTest()
     {
-      this.Run_TestCase(new FilesystemLines_FileNotFoundTest());
+      this.Run_GameTestCase(new FilesystemLines_FileNotFoundTest());
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemLines_ReadSingleLineFileTest()
     {
-      this.Run_TestCase(new FilesystemLines_ReadSingleLineFileTest());
+      this.Run_GameTestCase(new FilesystemLines_ReadSingleLineFileTest());
     }
 
     // Tests from GetInfoTests.cs
@@ -96,7 +96,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemGetInfo_FileExistsTest()
     {
-      this.Run_TestCase(new FilesystemGetInfo_FileExistsTest());
+      this.Run_GameTestCase(new FilesystemGetInfo_FileExistsTest());
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemGetInfo_DirectoryExistsTest()
     {
-      this.Run_TestCase(new FilesystemGetInfo_DirectoryExistsTest());
+      this.Run_GameTestCase(new FilesystemGetInfo_DirectoryExistsTest());
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemGetInfo_PathDoesNotExistTest()
     {
-      this.Run_TestCase(new FilesystemGetInfo_PathDoesNotExistTest());
+      this.Run_GameTestCase(new FilesystemGetInfo_PathDoesNotExistTest());
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemGetInfo_FilterTypeFile_MatchesTest()
     {
-      this.Run_TestCase(new FilesystemGetInfo_FilterTypeFile_MatchesTest());
+      this.Run_GameTestCase(new FilesystemGetInfo_FilterTypeFile_MatchesTest());
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemGetInfo_FilterTypeFile_MismatchesTest()
     {
-      this.Run_TestCase(new FilesystemGetInfo_FilterTypeFile_MismatchesTest());
+      this.Run_GameTestCase(new FilesystemGetInfo_FilterTypeFile_MismatchesTest());
     }
 
     // Tests from ReadWriteTests.cs
@@ -148,7 +148,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemReadBytes_ReadExistingFileTest()
     {
-      this.Run_TestCase(new FilesystemReadBytes_ReadExistingFileTest());
+      this.Run_GameTestCase(new FilesystemReadBytes_ReadExistingFileTest());
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemReadText_ReadExistingFileTest()
     {
-      this.Run_TestCase(new FilesystemReadText_ReadExistingFileTest());
+      this.Run_GameTestCase(new FilesystemReadText_ReadExistingFileTest());
     }
 
     /// <summary>
@@ -168,7 +168,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemReadBytes_FileNotFoundTest()
     {
-      this.Run_TestCase(new FilesystemReadBytes_FileNotFoundTest());
+      this.Run_GameTestCase(new FilesystemReadBytes_FileNotFoundTest());
     }
 
     /// <summary>
@@ -178,7 +178,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemReadText_FileNotFoundTest()
     {
-      this.Run_TestCase(new FilesystemReadText_FileNotFoundTest());
+      this.Run_GameTestCase(new FilesystemReadText_FileNotFoundTest());
     }
 
     /// <summary>
@@ -188,7 +188,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemAppend_AppendToNewFileTest()
     {
-      this.Run_TestCase(new FilesystemAppend_AppendToNewFileTest());
+      this.Run_GameTestCase(new FilesystemAppend_AppendToNewFileTest());
     }
 
     /// <summary>
@@ -198,7 +198,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemAppend_AppendToExistingFileTest()
     {
-      this.Run_TestCase(new FilesystemAppend_AppendToExistingFileTest());
+      this.Run_GameTestCase(new FilesystemAppend_AppendToExistingFileTest());
     }
 
     /// <summary>
@@ -208,7 +208,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemAppend_PartialDataTest()
     {
-      this.Run_TestCase(new FilesystemAppend_PartialDataTest());
+      this.Run_GameTestCase(new FilesystemAppend_PartialDataTest());
     }
 
     /// <summary>
@@ -218,7 +218,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemAppend_ArgumentValidationTest()
     {
-      this.Run_TestCase(new FilesystemAppend_ArgumentValidationTest());
+      this.Run_GameTestCase(new FilesystemAppend_ArgumentValidationTest());
     }
 
     // Tests from DirectoryTests.cs
@@ -230,7 +230,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemCreateDirectory_NewSingleDirTest()
     {
-      this.Run_TestCase(new FilesystemCreateDirectory_NewSingleDirTest());
+      this.Run_GameTestCase(new FilesystemCreateDirectory_NewSingleDirTest());
     }
 
     /// <summary>
@@ -240,7 +240,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemCreateDirectory_ExistingDirTest()
     {
-      this.Run_TestCase(new FilesystemCreateDirectory_ExistingDirTest());
+      this.Run_GameTestCase(new FilesystemCreateDirectory_ExistingDirTest());
     }
 
     /// <summary>
@@ -250,7 +250,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemCreateDirectory_NestedDirTest()
     {
-      this.Run_TestCase(new FilesystemCreateDirectory_NestedDirTest());
+      this.Run_GameTestCase(new FilesystemCreateDirectory_NestedDirTest());
     }
 
     /// <summary>
@@ -260,7 +260,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemCreateDirectory_ArgumentValidationTest()
     {
-      this.Run_TestCase(new FilesystemCreateDirectory_ArgumentValidationTest());
+      this.Run_GameTestCase(new FilesystemCreateDirectory_ArgumentValidationTest());
     }
 
     /// <summary>
@@ -270,7 +270,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_FilesystemGetAppdataDirectory_ReturnsValidPathTest()
     {
-      this.Run_TestCase(new FilesystemGetAppdataDirectory_ReturnsValidPathTest());
+      this.Run_GameTestCase(new FilesystemGetAppdataDirectory_ReturnsValidPathTest());
     }
 
     // Tests from NightFileTests.cs
@@ -282,7 +282,7 @@ namespace NightTest.Groups.Filesystem
     [Trait("TestType", "Automated")]
     public void Run_NightFile_Dispose_DoesNotThrowTest()
     {
-      this.Run_TestCase(new NightFile_Dispose_DoesNotThrowTest());
+      this.Run_GameTestCase(new NightFile_Dispose_DoesNotThrowTest());
     }
   }
 }

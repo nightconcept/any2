@@ -36,13 +36,13 @@ namespace NightTest.Groups.Graphics
   /// Tests for the Night.Graphics functionality.
   /// </summary>
   [Collection("SequentialTests")]
-  public class GraphicsTests : TestGroup
+  public class GraphicsGroup : TestGroup
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="GraphicsTests"/> class.
     /// </summary>
     /// <param name="outputHelper">The xUnit test output helper for logging.</param>
-    public GraphicsTests(ITestOutputHelper outputHelper)
+    public GraphicsGroup(ITestOutputHelper outputHelper)
       : base(outputHelper)
     {
     }
@@ -54,7 +54,7 @@ namespace NightTest.Groups.Graphics
     [Trait("TestType", "Manual")]
     public void Run_GraphicsClearColorTest()
     {
-      this.Run_TestCase(new GraphicsClearColorTest());
+      this.Run_GameTestCase(new GraphicsClearColorTest());
     }
   }
 }

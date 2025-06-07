@@ -33,7 +33,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests reading lines from a standard text file with multiple lines.
   /// </summary>
-  public class FilesystemLines_ReadStandardFileTest : BaseTestCase
+  public class FilesystemLines_ReadStandardFileTest : BaseGameTestCase
   {
     private const string TestFileName = "test_standard.txt";
     private readonly List<string> expectedLines = new()
@@ -136,7 +136,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests reading lines from an empty text file.
   /// </summary>
-  public class FilesystemLines_ReadEmptyFileTest : BaseTestCase
+  public class FilesystemLines_ReadEmptyFileTest : BaseGameTestCase
   {
     private const string TestFileName = "test_empty.txt";
 
@@ -217,7 +217,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests that Night.Filesystem.Lines throws FileNotFoundException for a non-existent file.
   /// </summary>
-  public class FilesystemLines_FileNotFoundTest : BaseTestCase
+  public class FilesystemLines_FileNotFoundTest : BaseGameTestCase
   {
     /// <inheritdoc/>
     public override string Name => "Filesystem.Lines.FileNotFound";
@@ -262,7 +262,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests reading lines from a text file containing only a single line.
   /// </summary>
-  public class FilesystemLines_ReadSingleLineFileTest : BaseTestCase
+  public class FilesystemLines_ReadSingleLineFileTest : BaseGameTestCase
   {
     private const string TestFileName = "test_single_line.txt";
     private const string ExpectedLineContent = "This is the only line.";

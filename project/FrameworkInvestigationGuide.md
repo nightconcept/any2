@@ -8,9 +8,9 @@ Efforts to stabilize the test suite, particularly for `Timer` tests and the `Run
 - **Sequential Execution Implemented:**
   - A `SequentialTestCollection` was created in [`tests/Core/SequentialTestCollection.cs`](tests/Core/SequentialTestCollection.cs:1).
   - Test group classes (e.g., `SDLGroup`, `TimerGroup`) were decorated with `[Collection("SequentialTests")]` to prevent race conditions, which were a known issue with SDL resource management as documented in [`project/race-condition.md`](project/race-condition.md:1).
-- **Robust Error Handling in `BaseTestCase`:**
-  - The `IGame.Load()` method in [`tests/Core/BaseTestCase.cs`](tests/Core/BaseTestCase.cs:81) now correctly initializes `CurrentStatus` to `TestStatus.NotRun` and `Details` to "Test is running...".
-  - The `IGame.Update()` method in [`tests/Core/BaseTestCase.cs`](tests/Core/BaseTestCase.cs:99) now includes a `try-catch-finally` block:
+- **Robust Error Handling in `BaseGameTestCase`:**
+  - The `IGame.Load()` method in [`tests/Core/BaseGameTestCase.cs`](tests/Core/BaseGameTestCase.cs:81) now correctly initializes `CurrentStatus` to `TestStatus.NotRun` and `Details` to "Test is running...".
+  - The `IGame.Update()` method in [`tests/Core/BaseGameTestCase.cs`](tests/Core/BaseGameTestCase.cs:99) now includes a `try-catch-finally` block:
     - The `catch` block records any unhandled exception from a test's `Update` logic and sets `CurrentStatus = TestStatus.Failed`.
     - The `finally` block ensures `EndTest()` is called if `!IsDone`. Crucially, if `CurrentStatus` is still `TestStatus.NotRun` when this safety net `EndTest()` is invoked, `CurrentStatus` is set to `TestStatus.Failed` with the detail "Test did not complete its logic and was ended by the framework's safety net. Status was still NotRun."
 - **Current Test Outcome:**
@@ -44,7 +44,7 @@ The goal is to understand why the main loop in `Night.Framework.Run()` is not pe
     - Log each iteration of the main loop.
     - Log the type of SDL events being received, if any.
     - Log the status of `Night.Window.IsOpen()` within the loop.
-    - Log any explicit calls to `Night.Window.Close()` or SDL shutdown functions from within the framework itself (outside of `BaseTestCase.EndTest()`).
+    - Log any explicit calls to `Night.Window.Close()` or SDL shutdown functions from within the framework itself (outside of `BaseGameTestCase.EndTest()`).
 3. **SDL Initialization and Window Handling for Tests:**
     - How and when is `SDL.Init()` called relative to `Night.Framework.Run()`?
     - Is an SDL window explicitly created by `Night.Framework.Run()` or assumed to be created by the `IGame` instance (e.g., in its `Load` method via `Night.Window.SetMode()`)?
@@ -59,7 +59,7 @@ The goal is to understand why the main loop in `Night.Framework.Run()` is not pe
     - Example minimal test:
 
         ```csharp
-        public class MinimalDurationTest : BaseTestCase
+        public class MinimalDurationTest : BaseGameTestCase
         {
             public override string Name => "MinimalDurationTest";
             public override string Description => "Tests if framework can run for a minimal duration.";

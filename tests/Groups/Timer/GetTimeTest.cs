@@ -29,7 +29,7 @@ namespace NightTest.Groups.Timer
   /// <summary>
   /// Tests the Timer.GetTime() method.
   /// </summary>
-  public class GetTimeTest : BaseTestCase
+  public class GetTimeTest : BaseGameTestCase
   {
     private double startTime = 0;
     private double endTime = 0;
@@ -49,7 +49,7 @@ namespace NightTest.Groups.Timer
     /// <inheritdoc/>
     protected override void Update(double deltaTime)
     {
-      // The IsDone check is handled by BaseTestCase.Update before calling this.
+      // The IsDone check is handled by BaseGameTestCase.Update before calling this.
       _ = this.CheckCompletionAfterDuration(
         500,
         successCondition: () =>
@@ -64,6 +64,6 @@ namespace NightTest.Groups.Timer
         });
     }
 
-    // Draw() override removed, will use empty BaseTestCase.Draw()
+    // Draw() override removed, will use empty BaseGameTestCase.Draw()
   }
 }

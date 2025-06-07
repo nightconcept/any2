@@ -54,7 +54,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_GetTimeTest()
     {
-      this.Run_TestCase(new GetTimeTest());
+      this.Run_GameTestCase(new GetTimeTest());
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_GetFPSTest()
     {
-      this.Run_TestCase(new GetFPSTest());
+      this.Run_GameTestCase(new GetFPSTest());
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_GetDeltaTest()
     {
-      this.Run_TestCase(new GetDeltaTest());
+      this.Run_GameTestCase(new GetDeltaTest());
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_GetAverageDeltaTest()
     {
-      this.Run_TestCase(new GetAverageDeltaTest());
+      this.Run_GameTestCase(new GetAverageDeltaTest());
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_SleepTest()
     {
-      this.Run_TestCase(new SleepTest());
+      this.Run_GameTestCase(new SleepTest());
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ namespace NightTest.Groups.Timer
     [Trait("TestType", "Automated")]
     public void Run_StepTest()
     {
-      this.Run_TestCase(new StepTest());
+      this.Run_GameTestCase(new StepTest());
     }
   }
 }

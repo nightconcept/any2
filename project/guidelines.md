@@ -42,14 +42,14 @@ This section outlines how to write tests for the `Night` framework using the `Ni
   - They use xUnit's `[Fact]` attribute to define individual test methods. Each `[Fact]` method typically runs one specific `IGame` test case.
 - **`IGame` Test Case Classes:**
   - These classes contain the actual test logic and implement `Night.IGame` and [`NightTest.Core.ITestCase`](tests/Core/ITestCase.cs).
-  - They **must** inherit from [`NightTest.Core.BaseTestCase`](tests/Core/BaseTestCase.cs) or [`NightTest.Core.BaseManualTestCase`](tests/Core/BaseManualTestCase.cs).
+  - They **must** inherit from [`NightTest.Core.BaseGameTestCase`](tests/Core/BaseGameTestCase.cs) or [`NightTest.Core.BaseManualTestCase`](tests/Core/BaseManualTestCase.cs).
   - They are typically located alongside their corresponding xUnit test class or in a related file (e.g., `TimerTests.cs` contains multiple `IGame` test cases like `GetTimeTest`, run by `TimerGroup.cs`).
 - **Core Infrastructure:**
   - [`tests/Core/`](tests/Core/): Contains base classes and core types for the testing framework.
     - [`ITestCase.cs`](tests/Core/ITestCase.cs): Interface defining metadata for an `IGame` test case.
-    - [`BaseTestCase.cs`](tests/Core/BaseTestCase.cs): Base class for automated `IGame` test cases, providing common functionality (stopwatch, status tracking, completion helpers).
-    - [`BaseManualTestCase.cs`](tests/Core/BaseManualTestCase.cs): Base class for manual `IGame` test cases, extending `BaseTestCase` with UI for manual pass/fail confirmation.
-    - [`TestGroup.cs`](tests/Core/TestGroup.cs): Base class for xUnit test classes, providing the `Run_TestCase` helper method.
+    - [`BaseGameTestCase.cs`](tests/Core/BaseGameTestCase.cs): Base class for automated `IGame` test cases, providing common functionality (stopwatch, status tracking, completion helpers).
+    - [`BaseManualTestCase.cs`](tests/Core/BaseManualTestCase.cs): Base class for manual `IGame` test cases, extending `BaseGameTestCase` with UI for manual pass/fail confirmation.
+    - [`TestGroup.cs`](tests/Core/TestGroup.cs): Base class for xUnit test classes, providing the `Run_GameTestCase` helper method.
     - [`TestTypes.cs`](tests/Core/TestTypes.cs): Enums for `TestType` (Automated, Manual) and `TestStatus` (NotRun, Passed, Failed, Skipped).
 
 **2. Workflow for Adding New Tests:**
@@ -60,22 +60,22 @@ For each specific feature or function you want to test (e.g., a new `Night.Graph
 
 - **Location:** Create the class in a relevant file within a subdirectory of `tests/Groups/` (e.g., for a new graphics test, it might go in `tests/Groups/Graphics/NewGraphicsFeatureTest.cs` or be added to an existing file like `GraphicsTests.cs` if it contains multiple small test case classes).
 - **Inheritance:**
-  - For automated tests: Inherit from [`NightTest.Core.BaseTestCase`](tests/Core/BaseTestCase.cs).
+  - For automated tests: Inherit from [`NightTest.Core.BaseGameTestCase`](tests/Core/BaseGameTestCase.cs).
   - For tests requiring manual user confirmation: Inherit from [`NightTest.Core.BaseManualTestCase`](tests/Core/BaseManualTestCase.cs).
-- **Implement `ITestCase` Properties (Abstract in `BaseTestCase`):**
+- **Implement `ITestCase` Properties (Abstract in `BaseGameTestCase`):**
   - `public override string Name { get; }`: Provide a unique, descriptive name (e.g., `"Graphics.DrawSpriteAlpha"`).
   - `public override string Description { get; }`: Describe what the test does.
-  - The `Type` property is automatically set to `TestType.Automated` by `BaseTestCase` or `TestType.Manual` by `BaseManualTestCase`.
-- **Implement `IGame` Logic (Override methods from `BaseTestCase`):**
+  - The `Type` property is automatically set to `TestType.Automated` by `BaseGameTestCase` or `TestType.Manual` by `BaseManualTestCase`.
+- **Implement `IGame` Logic (Override methods from `BaseGameTestCase`):**
   - `protected override void Load()`: Initialize resources, set up initial state for your test.
   - `protected override void Update(double deltaTime)`: Implement the core test logic.
-    - Use helper methods from `BaseTestCase` like `CheckCompletionAfterDuration()` or `CheckCompletionAfterFrames()` to define pass/fail conditions and automatically set `CurrentStatus`, `Details`, and call `EndTest()`.
+    - Use helper methods from `BaseGameTestCase` like `CheckCompletionAfterDuration()` or `CheckCompletionAfterFrames()` to define pass/fail conditions and automatically set `CurrentStatus`, `Details`, and call `EndTest()`.
     - For manual tests inheriting from `BaseManualTestCase`, call `RequestManualConfirmation("Your question to the user?")` when ready for user input. The base class handles the UI and timeout.
   - `protected override void Draw()`: Implement any rendering needed for the test to be visually inspected or to function.
   - `public override void KeyPressed(...)`, `MousePressed(...)`, etc.: Override if your test needs specific input handling beyond what `BaseManualTestCase` provides.
 - **Test Completion:**
   - Ensure your test logic eventually leads to `CurrentStatus` being set (e.g., to `TestStatus.Passed` or `TestStatus.Failed`) and `Details` populated.
-  - The `EndTest()` method (called by completion helpers or directly) will stop the `TestStopwatch` and call `Night.Window.Close()`, which signals the `Night.Framework.Run()` method (invoked by `TestGroup.Run_TestCase`) to return.
+  - The `EndTest()` method (called by completion helpers or directly) will stop the `TestStopwatch` and call `Night.Window.Close()`, which signals the `Night.Framework.Run()` method (invoked by `TestGroup.Run_GameTestCase`) to return.
 
 **Step 2: Create/Update the xUnit Test Class (Test Group)**
 
@@ -87,8 +87,8 @@ For each "module" or logical grouping of tests (e.g., `Timer`, `Graphics`, `MyMo
 - **Add `[Fact]` Method:** For each new `IGame` test case you created in Step 1, add a new public void method annotated with `[Fact]`.
   - **Naming:** Conventionally, `Run_YourIGameTestCaseName()` (e.g., `Run_MyAutomatedFeatureTest()`).
   - **Implementation:**
-        1. Call `Run_TestCase(new MyAutomatedFeatureTest());`. This method is inherited from `NightTest.Core.TestGroup` and handles the execution, logging, and assertion.
-  - **Traits:** Add `[Trait("TestType", "Automated")]` or `[Trait("TestType", "Manual")]` to the `[Fact]` method. This should match the `Type` of the `IGame` test case being run (which is determined by whether it inherits `BaseTestCase` or `BaseManualTestCase`) and is used for filtering tests via the xUnit runner.
+        1. Call `Run_GameTestCase(new MyAutomatedFeatureTest());`. This method is inherited from `NightTest.Core.TestGroup` and handles the execution, logging, and assertion.
+  - **Traits:** Add `[Trait("TestType", "Automated")]` or `[Trait("TestType", "Manual")]` to the `[Fact]` method. This should match the `Type` of the `IGame` test case being run (which is determined by whether it inherits `BaseGameTestCase` or `BaseManualTestCase`) and is used for filtering tests via the xUnit runner.
 
 **3. Running Tests:**
 
@@ -97,12 +97,12 @@ For each "module" or logical grouping of tests (e.g., `Timer`, `Graphics`, `MyMo
 
 **4. Key Considerations:**
 
-- **`Run_TestCase` Method:** The `NightTest.Core.TestGroup.Run_TestCase` method will:
+- **`Run_GameTestCase` Method:** The `NightTest.Core.TestGroup.Run_GameTestCase` method will:
   - Log the start and end of the `IGame` test case using `ITestOutputHelper`.
-  - Call `Night.Framework.Run(testCase)`, which blocks until the `IGame` test case calls `Night.Window.Close()` (typically via `EndTest()` in `BaseTestCase`).
-  - Log the `CurrentStatus`, `Details`, and `TestStopwatch.ElapsedMilliseconds` from the `BaseTestCase` instance.
+  - Call `Night.Framework.Run(testCase)`, which blocks until the `IGame` test case calls `Night.Window.Close()` (typically via `EndTest()` in `BaseGameTestCase`).
+  - Log the `CurrentStatus`, `Details`, and `TestStopwatch.ElapsedMilliseconds` from the `BaseGameTestCase` instance.
   - Assert that `testCase.CurrentStatus == TestStatus.Passed`. If not, the xUnit test will fail.
-- **Error Handling:** Unhandled exceptions during `Night.Framework.Run(testCase)` are caught by `Run_TestCase`, which will then call `testCase.RecordFailure()` and fail the xUnit test.
+- **Error Handling:** Unhandled exceptions during `Night.Framework.Run(testCase)` are caught by `Run_GameTestCase`, which will then call `testCase.RecordFailure()` and fail the xUnit test.
 - **Clarity and Focus:** Each `IGame` test case should be focused on testing a specific piece of functionality. The `Name` and `Description` properties should clearly state its purpose.
 
 By following these guidelines, tests for the `Night` framework can be added systematically, leveraging the provided base classes and xUnit integration.

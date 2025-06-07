@@ -54,7 +54,7 @@ namespace NightTest.Core
     /// Run the IGame test case.
     /// </summary>
     /// <param name="testCase">The test case to run.</param>
-    public void Run_TestCase(BaseTestCase testCase)
+    public void Run_GameTestCase(BaseGameTestCase testCase)
     {
       Assert.NotNull(testCase);
 
@@ -75,6 +75,39 @@ namespace NightTest.Core
         // the Assert.NotNull would have already caught a null testCase argument.
         // If the exception happens *during* testCase execution, testCase is still the same valid object.
         this.outputHelper.WriteLine($"IGame test '{testCase.Name}' threw an unhandled exception: {ex.Message}\n{ex.StackTrace}");
+        testCase.RecordFailure($"Unhandled exception: {ex.Message}", ex);
+      }
+
+      // testCase is guaranteed to be non-null here.
+      this.outputHelper.WriteLine($"IGame test '{testCase.Name}' completed.");
+      this.outputHelper.WriteLine($"  Status: {testCase.CurrentStatus}");
+      this.outputHelper.WriteLine($"  Details: {testCase.Details}");
+      this.outputHelper.WriteLine($"  Duration: {testCase.TestStopwatch.ElapsedMilliseconds}ms");
+
+      Assert.Equal(TestStatus.Passed, testCase.CurrentStatus);
+    }
+
+    public void Run_TestCase(BaseTestCase testCase)
+    {
+      Assert.NotNull(testCase);
+
+      this.outputHelper.WriteLine($"Starting test: {testCase.Name}");
+      this.outputHelper.WriteLine($"  Description: {testCase.Description}");
+      this.outputHelper.WriteLine($"  Type: {testCase.Type}");
+
+      try
+      {
+        // Run the IGame test case
+        // This will block until the Night.Window is closed by the test itself (e.g., via EndTest)
+        testCase.Run();
+      }
+      catch (Exception ex)
+      {
+        // testCase is guaranteed to be non-null here due to the Assert.NotNull above.
+        // If Night.Framework.Run throws before testCase.Load() or if testCase itself is problematic early,
+        // the Assert.NotNull would have already caught a null testCase argument.
+        // If the exception happens *during* testCase execution, testCase is still the same valid object.
+        this.outputHelper.WriteLine($"Test '{testCase.Name}' threw an unhandled exception: {ex.Message}\n{ex.StackTrace}");
         testCase.RecordFailure($"Unhandled exception: {ex.Message}", ex);
       }
 

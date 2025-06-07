@@ -1,4 +1,4 @@
-// <copyright file="SDLGroup.cs" company="Night Circle">
+// <copyright file="GraphicsGroup.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -20,46 +20,41 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
+
+using Night;
+
 using NightTest.Core;
 
 using Xunit;
 using Xunit.Abstractions;
 
-namespace NightTest.Groups.SDL
+namespace NightTest.Groups.Configuration
 {
   /// <summary>
-  /// Test group for SDL related functionality.
+  /// Tests for the Night.Configuration functionality.
   /// </summary>
   [Collection("SequentialTests")]
-  public class SDLGroup : TestGroup
+  public class ConfigurationGroup : TestGroup
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="SDLGroup"/> class.
+    /// Initializes a new instance of the <see cref="ConfigurationGroup"/> class.
     /// </summary>
-    /// <param name="outputHelper">The xUnit output helper.</param>
-    public SDLGroup(ITestOutputHelper outputHelper)
-        : base(outputHelper)
+    /// <param name="outputHelper">The xUnit test output helper for logging.</param>
+    public ConfigurationGroup(ITestOutputHelper outputHelper)
+      : base(outputHelper)
     {
     }
 
     /// <summary>
-    /// Runs the <see cref="NightSDL_GetVersionTest"/>.
+    /// Runs the GraphicsClearColorTest IGame instance.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_GetVersionTest()
+    public void Run_ConfigurationWindowConfig_GetSet()
     {
-      this.Run_GameTestCase(new NightSDL_GetVersionTest());
-    }
-
-    /// <summary>
-    /// Runs the <see cref="NightSDL_GetErrorTest"/>.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_GetErrorTest()
-    {
-      this.Run_GameTestCase(new NightSDL_GetErrorTest());
+      this.Run_TestCase(new ConfigurationWindowConfig_GetSet());
     }
   }
 }

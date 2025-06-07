@@ -28,9 +28,9 @@ namespace NightTest.Core
 {
   /// <summary>
   /// Abstract base class for manual test cases, providing common UI and interaction logic.
-  /// Inherits from BaseTestCase.
+  /// Inherits from BaseGameTestCase.
   /// </summary>
-  public abstract class BaseManualTestCase : BaseTestCase
+  public abstract class BaseManualTestCase : BaseGameTestCase
   {
     // Constants
     private const int ButtonWidth = 120;
@@ -145,9 +145,9 @@ namespace NightTest.Core
     }
 
     /// <summary>
-    /// Overrides the internal load hook from <see cref="BaseTestCase"/>
+    /// Overrides the internal load hook from <see cref="BaseGameTestCase"/>
     /// to inject manual test-specific initialization logic
-    /// before allowing the concrete test's <see cref="BaseTestCase.Load()"/> method to run.
+    /// before allowing the concrete test's <see cref="BaseGameTestCase.Load()"/> method to run.
     /// This method is sealed to ensure this control flow.
     /// </summary>
     protected sealed override void InternalLoad()
@@ -162,9 +162,9 @@ namespace NightTest.Core
     }
 
     /// <summary>
-    /// Overrides the internal update hook from <see cref="BaseTestCase"/>
+    /// Overrides the internal update hook from <see cref="BaseGameTestCase"/>
     /// to inject manual test-specific logic, such as timeout checks,
-    /// before allowing the concrete test's <see cref="BaseTestCase.Update(double)"/> method to run.
+    /// before allowing the concrete test's <see cref="BaseGameTestCase.Update(double)"/> method to run.
     /// This method is sealed to ensure this control flow.
     /// </summary>
     /// <param name="deltaTime">Time elapsed since the last frame.</param>
@@ -192,8 +192,8 @@ namespace NightTest.Core
     }
 
     /// <summary>
-    /// Overrides the internal draw hook from <see cref="BaseTestCase"/>
-    /// to allow the concrete test's <see cref="BaseTestCase.Draw()"/> method to run first,
+    /// Overrides the internal draw hook from <see cref="BaseGameTestCase"/>
+    /// to allow the concrete test's <see cref="BaseGameTestCase.Draw()"/> method to run first,
     /// then draws manual test-specific UI elements (like Pass/Fail buttons),
     /// and finally calls <see cref="Night.Graphics.Present()"/>.
     /// This method is sealed to ensure this control flow.

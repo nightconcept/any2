@@ -32,7 +32,7 @@ namespace NightTest.Groups.Timer
   /// <summary>
   /// Tests the Timer.Step() method.
   /// </summary>
-  public class StepTest : BaseTestCase
+  public class StepTest : BaseGameTestCase
   {
     private int stepCount = 0;
     private List<double> stepDeltas = new List<double>();

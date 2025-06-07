@@ -29,7 +29,7 @@ namespace NightTest.Groups.Timer
   /// <summary>
   /// Tests the Timer.GetAverageDelta() method.
   /// </summary>
-  public class GetAverageDeltaTest : BaseTestCase
+  public class GetAverageDeltaTest : BaseGameTestCase
   {
     /// <inheritdoc/>
     public override string Name => "Timer.GetAverageDelta";
