@@ -86,5 +86,198 @@ namespace NightTest.Groups.Filesystem
     {
       this.Run_TestCase(new FilesystemLines_ReadSingleLineFileTest());
     }
+// Tests from GetInfoTests.cs
+    /// <summary>
+    /// Runs the FilesystemGetInfo_FileExistsTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_FileExistsTest()
+    {
+      this.Run_TestCase(new FilesystemGetInfo_FileExistsTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemGetInfo_DirectoryExistsTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_DirectoryExistsTest()
+    {
+      this.Run_TestCase(new FilesystemGetInfo_DirectoryExistsTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemGetInfo_PathDoesNotExistTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PathDoesNotExistTest()
+    {
+      this.Run_TestCase(new FilesystemGetInfo_PathDoesNotExistTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemGetInfo_FilterTypeFile_MatchesTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_FilterTypeFile_MatchesTest()
+    {
+      this.Run_TestCase(new FilesystemGetInfo_FilterTypeFile_MatchesTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemGetInfo_FilterTypeFile_MismatchesTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_FilterTypeFile_MismatchesTest()
+    {
+      this.Run_TestCase(new FilesystemGetInfo_FilterTypeFile_MismatchesTest());
+    }
+
+    // Tests from ReadWriteTests.cs
+    /// <summary>
+    /// Runs the FilesystemReadBytes_ReadExistingFileTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemReadBytes_ReadExistingFileTest()
+    {
+      this.Run_TestCase(new FilesystemReadBytes_ReadExistingFileTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemReadText_ReadExistingFileTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemReadText_ReadExistingFileTest()
+    {
+      this.Run_TestCase(new FilesystemReadText_ReadExistingFileTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemReadBytes_FileNotFoundTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemReadBytes_FileNotFoundTest()
+    {
+      this.Run_TestCase(new FilesystemReadBytes_FileNotFoundTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemReadText_FileNotFoundTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemReadText_FileNotFoundTest()
+    {
+      this.Run_TestCase(new FilesystemReadText_FileNotFoundTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemAppend_AppendToNewFileTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemAppend_AppendToNewFileTest()
+    {
+      this.Run_TestCase(new FilesystemAppend_AppendToNewFileTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemAppend_AppendToExistingFileTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemAppend_AppendToExistingFileTest()
+    {
+      this.Run_TestCase(new FilesystemAppend_AppendToExistingFileTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemAppend_PartialDataTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemAppend_PartialDataTest()
+    {
+      this.Run_TestCase(new FilesystemAppend_PartialDataTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemAppend_ArgumentValidationTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemAppend_ArgumentValidationTest()
+    {
+      this.Run_TestCase(new FilesystemAppend_ArgumentValidationTest());
+    }
+
+    // Tests from DirectoryTests.cs
+    /// <summary>
+    /// Runs the FilesystemCreateDirectory_NewSingleDirTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemCreateDirectory_NewSingleDirTest()
+    {
+      this.Run_TestCase(new FilesystemCreateDirectory_NewSingleDirTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemCreateDirectory_ExistingDirTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemCreateDirectory_ExistingDirTest()
+    {
+      this.Run_TestCase(new FilesystemCreateDirectory_ExistingDirTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemCreateDirectory_NestedDirTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemCreateDirectory_NestedDirTest()
+    {
+      this.Run_TestCase(new FilesystemCreateDirectory_NestedDirTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemCreateDirectory_ArgumentValidationTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemCreateDirectory_ArgumentValidationTest()
+    {
+      this.Run_TestCase(new FilesystemCreateDirectory_ArgumentValidationTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemGetAppdataDirectory_ReturnsValidPathTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetAppdataDirectory_ReturnsValidPathTest()
+    {
+      this.Run_TestCase(new FilesystemGetAppdataDirectory_ReturnsValidPathTest());
+    }
+
+    // Tests from NightFileTests.cs
+    /// <summary>
+    /// Runs the NightFile_Dispose_DoesNotThrowTest IGame instance.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_NightFile_Dispose_DoesNotThrowTest()
+    {
+      this.Run_TestCase(new NightFile_Dispose_DoesNotThrowTest());
+    }
   }
 }
