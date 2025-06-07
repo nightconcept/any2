@@ -29,7 +29,7 @@ namespace NightTest.Groups.Timer
   /// <summary>
   /// Tests the Timer.GetFPS() method.
   /// </summary>
-  public class GetFPSTest : BaseGameTestCase
+  public class GetFPSTest : GameTestCase
   {
     /// <inheritdoc/>
     public override string Name => "Timer.GetFPS";

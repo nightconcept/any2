@@ -1,4 +1,4 @@
-// <copyright file="BaseGameTestCase.cs" company="Night Circle">
+// <copyright file="GameTestCase.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -31,7 +31,7 @@ namespace NightTest.Core
   /// Abstract base class for test cases to reduce boilerplate.
   /// Implements ITestCase and Night.IGame.
   /// </summary>
-  public abstract class BaseGameTestCase : ITestCase, IGame
+  public abstract class GameTestCase : ITestCase, IGame
   {
     // Public Properties
 
@@ -207,7 +207,7 @@ namespace NightTest.Core
 
     /// <summary>
     /// Intermediate virtual method that can be overridden by specialized base classes
-    /// (like <see cref="BaseManualTestCase"/>) to inject logic before or after
+    /// (like <see cref="ManualTestCase"/>) to inject logic before or after
     /// the concrete test's <see cref="Load()"/> method is called.
     /// By default, it directly calls the concrete <see cref="Load()"/>.
     /// </summary>
@@ -227,7 +227,7 @@ namespace NightTest.Core
 
     /// <summary>
     /// Intermediate virtual method that can be overridden by specialized base classes
-    /// (like <see cref="BaseManualTestCase"/>) to inject logic before or after
+    /// (like <see cref="ManualTestCase"/>) to inject logic before or after
     /// the concrete test's <see cref="Update(double)"/> method is called.
     /// By default, it directly calls the concrete <see cref="Update(double)"/>.
     /// </summary>
@@ -251,7 +251,7 @@ namespace NightTest.Core
 
     /// <summary>
     /// Intermediate virtual method that can be overridden by specialized base classes
-    /// (like <see cref="BaseManualTestCase"/>) to inject logic before or after
+    /// (like <see cref="ManualTestCase"/>) to inject logic before or after
     /// the concrete test's <see cref="Draw()"/> method is called.
     /// By default, it directly calls the concrete <see cref="Draw()"/>.
     /// </summary>

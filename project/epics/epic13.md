@@ -27,7 +27,7 @@
   - [x] Present implementation plan to the user.
 - [x] **Task 4: Implement Filesystem Tests**
   - [x] Create new test case files under `tests/Groups/Filesystem/` as needed (`GetInfoTests.cs`, `ReadWriteTests.cs`, `DirectoryTests.cs`, `NightFileTests.cs`).
-  - [x] Implement test case classes inheriting from `NightTest.Core.BaseGameTestCase`.
+  - [x] Implement test case classes inheriting from `NightTest.Core.GameTestCase`.
   - [x] Implement `Load()`, `Update()`, and `Draw()` (if necessary) methods for each test case.
   - [x] Ensure proper setup and cleanup of test resources (e.g., temporary files/directories).
   - [x] Add new test methods to `FilesystemGroup.cs`.

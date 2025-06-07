@@ -32,15 +32,18 @@ using Xunit;
 namespace NightTest.Groups.Configuration
 {
   /// <summary>
-  /// Tests for Night.Configuration.CreateDirectory().
+  /// Tests for Night.Configuration.WindowConfig.
   /// </summary>
-  public class ConfigurationWindowConfig_GetSet : BaseTestCase
+  public class ConfigurationWindowConfig_GetSet : ModTestCase
   {
     /// <inheritdoc/>
     public override string Name => "Configuration.WindowConfig";
 
     /// <inheritdoc/>
     public override string Description => "Tests getters and setters.";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "WindowConfig getters and setters passed successfully.";
 
     /// <inheritdoc/>
     public override void Run()
@@ -102,8 +105,6 @@ namespace NightTest.Groups.Configuration
 
       config.UseDPIScale = false;
       Assert.False(config.UseDPIScale);
-
-      this.RecordSuccess("WindowConfig getters and setters passed successfully.");
     }
   }
 }

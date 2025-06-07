@@ -32,7 +32,7 @@ namespace NightTest.Groups.Timer
   /// <summary>
   /// Tests the Timer.GetDelta() method.
   /// </summary>
-  public class GetDeltaTest : BaseGameTestCase
+  public class GetDeltaTest : GameTestCase
   {
     private List<float> deltas = new List<float>();
 

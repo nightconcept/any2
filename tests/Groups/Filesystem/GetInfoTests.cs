@@ -33,7 +33,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests for Night.Filesystem.GetInfo().
   /// </summary>
-  public class FilesystemGetInfo_FileExistsTest : BaseGameTestCase
+  public class FilesystemGetInfo_FileExistsTest : GameTestCase
   {
     private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_file.txt");
     private long expectedModTime;
@@ -143,7 +143,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests GetInfo for an existing directory.
   /// </summary>
-  public class FilesystemGetInfo_DirectoryExistsTest : BaseGameTestCase
+  public class FilesystemGetInfo_DirectoryExistsTest : GameTestCase
   {
     private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_dir");
     private long expectedModTime;
@@ -249,7 +249,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests GetInfo for a path that does not exist.
   /// </summary>
-  public class FilesystemGetInfo_PathDoesNotExistTest : BaseGameTestCase
+  public class FilesystemGetInfo_PathDoesNotExistTest : GameTestCase
   {
     private readonly string nonExistentPath = Path.Combine(Path.GetTempPath(), "night_test_this_should_not_exist");
 
@@ -314,7 +314,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests GetInfo with a FileType.File filter on an actual file.
   /// </summary>
-  public class FilesystemGetInfo_FilterTypeFile_MatchesTest : BaseGameTestCase
+  public class FilesystemGetInfo_FilterTypeFile_MatchesTest : GameTestCase
   {
     private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_filter_file.txt");
 
@@ -395,7 +395,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests GetInfo with a FileType.File filter on a directory.
   /// </summary>
-  public class FilesystemGetInfo_FilterTypeFile_MismatchesTest : BaseGameTestCase
+  public class FilesystemGetInfo_FilterTypeFile_MismatchesTest : GameTestCase
   {
     private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_filter_file_mismatch_dir");
 

@@ -31,7 +31,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests for the Night.NightFile class.
   /// </summary>
-  public class NightFile_Dispose_DoesNotThrowTest : BaseGameTestCase
+  public class NightFile_Dispose_DoesNotThrowTest : GameTestCase
   {
     /// <inheritdoc/>
     public override string Name => "NightFile.Dispose.DoesNotThrow";

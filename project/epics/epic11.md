@@ -32,7 +32,7 @@
 - **Task 2.2: Implement Test Case for Reading a Standard File**
   - **Description:** Test reading lines from a file with typical content.
   - **Implementation Details:**
-    - [ ] Create an `IGame` test case class (e.g., `Lines_ReadStandardFileTest`) in [`tests/Groups/Filesystem/LinesTests.cs`](tests/Groups/Filesystem/LinesTests.cs) inheriting from `NightTest.Core.BaseGameTestCase`.
+    - [ ] Create an `IGame` test case class (e.g., `Lines_ReadStandardFileTest`) in [`tests/Groups/Filesystem/LinesTests.cs`](tests/Groups/Filesystem/LinesTests.cs) inheriting from `NightTest.Core.GameTestCase`.
     - [ ] `Name`: "Filesystem.Lines.ReadStandardFile"
     - [ ] `Description`: "Tests reading lines from a standard text file with multiple lines."
     - [ ] `Load()`: Create a temporary test file (e.g., `test_standard.txt`) with 3-5 lines of known content, including varied line endings if possible or assume consistent environment.
@@ -340,7 +340,7 @@
   - **Description:** Test basic file object lifecycle and property retrieval.
   - **Implementation Details:**
     - [ ] Create `IGame` test case `NightFile_LifecycleAndInfoTest` in `NightFileOperationsTests.cs`.
-    - [ ] Create an `IGame` test case class (e.g., `NightFile_LifecycleAndInfoTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.BaseGameTestCase`.
+    - [ ] Create an `IGame` test case class (e.g., `NightFile_LifecycleAndInfoTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.GameTestCase`.
     - [ ] `Name`: "NightFile.LifecycleAndInfoTest"
     - [ ] `Description`: "Tests basic lifecycle and property retrieval for NightFile."
     - [ ] `Load()`: Create a temporary test file (e.g., `test_nightfile_lifecycle.txt`) with 3-5 lines of known content.
@@ -360,7 +360,7 @@
   - **Description:** Test writing string data and reading it back.
   - **Implementation Details:**
     - [ ] Create `IGame` test case `NightFile_StringWriteReadTest` in `NightFileOperationsTests.cs`.
-    - [ ] Create an `IGame` test case class (e.g., `NightFile_StringWriteReadTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.BaseGameTestCase`.
+    - [ ] Create an `IGame` test case class (e.g., `NightFile_StringWriteReadTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.GameTestCase`.
     - [ ] `Name`: "NightFile.StringWriteReadTest"
     - [ ] `Description`: "Tests writing string data and reading it back."
     - [ ] `Load()`: Create a temporary test file (e.g., `test_nightfile_stringwriteread.txt`) with 3-5 lines of known content.
@@ -379,7 +379,7 @@
   - **Description:** Test line-by-line iteration over file content.
   - **Implementation Details:**
     - [ ] Create `IGame` test case `NightFile_LinesIteratorTest` in `NightFileOperationsTests.cs`.
-    - [ ] Create an `IGame` test case class (e.g., `NightFile_LinesIteratorTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.BaseGameTestCase`.
+    - [ ] Create an `IGame` test case class (e.g., `NightFile_LinesIteratorTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.GameTestCase`.
     - [ ] `Name`: "NightFile.LinesIteratorTest"
     - [ ] `Description`: "Tests line-by-line iteration over file content."
     - [ ] `Load()`: Create a temporary test file (e.g., `test_nightfile_linesiterator.txt`) with 3-5 lines of known content.
@@ -399,7 +399,7 @@
   - **Description:** Test file positioning, size reporting, and end-of-file detection.
   - **Implementation Details:**
     - [ ] Create `IGame` test case `NightFile_PositioningAndSizeTest` in `NightFileOperationsTests.cs`.
-    - [ ] Create an `IGame` test case class (e.g., `NightFile_PositioningAndSizeTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.BaseGameTestCase`.
+    - [ ] Create an `IGame` test case class (e.g., `NightFile_PositioningAndSizeTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.GameTestCase`.
     - [ ] `Name`: "NightFile.PositioningAndSizeTest"
     - [ ] `Description`: "Tests file positioning, size reporting, and end-of-file detection."
     - [ ] `Load()`: Create a temporary test file (e.g., `test_nightfile_positioningandsize.txt`) with 3-5 lines of known content.
@@ -422,7 +422,7 @@
   - **Description:** Test the `Flush` method. Verifying actual disk write is hard, so test for successful call.
   - **Implementation Details:**
     - [ ] Create `IGame` test case `NightFile_FlushTest` in `NightFileOperationsTests.cs`.
-    - [ ] Create an `IGame` test case class (e.g., `NightFile_FlushTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.BaseGameTestCase`.
+    - [ ] Create an `IGame` test case class (e.g., `NightFile_FlushTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.GameTestCase`.
     - [ ] `Name`: "NightFile.FlushTest"
     - [ ] `Description`: "Tests the Flush method."
     - [ ] `Load()`: Create a temporary test file (e.g., `test_nightfile_flush.txt`) with 3-5 lines of known content.
@@ -439,7 +439,7 @@
   - **Description:** Test setting and getting buffer modes. Actual behavior change verification is complex.
   - **Implementation Details:**
     - [ ] Create `IGame` test case `NightFile_BufferModeTest` in `NightFileOperationsTests.cs`.
-    - [ ] Create an `IGame` test case class (e.g., `NightFile_BufferModeTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.BaseGameTestCase`.
+    - [ ] Create an `IGame` test case class (e.g., `NightFile_BufferModeTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.GameTestCase`.
     - [ ] `Name`: "NightFile.BufferModeTest"
     - [ ] `Description`: "Tests setting and getting buffer modes."
     - [ ] `Load()`: Create a temporary test file (e.g., `test_nightfile_buffermode.txt`) with 3-5 lines of known content.
@@ -459,7 +459,7 @@
   - **Description:** Test how `NightFile` methods handle various errors and edge cases.
   - **Implementation Details:**
     - [ ] Create `IGame` test case `NightFile_ErrorConditionsTest` in `NightFileOperationsTests.cs`.
-    - [ ] Create an `IGame` test case class (e.g., `NightFile_ErrorConditionsTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.BaseGameTestCase`.
+    - [ ] Create an `IGame` test case class (e.g., `NightFile_ErrorConditionsTest`) in `NightFileOperationsTests.cs` inheriting from `NightTest.Core.GameTestCase`.
     - [ ] `Name`: "NightFile.ErrorConditionsTest"
     - [ ] `Description`: "Tests error handling and edge cases for NightFile."
     - [ ] `Load()`: Create a temporary test file (e.g., `test_nightfile_errorconditions.txt`) with 3-5 lines of known content.

@@ -31,7 +31,7 @@ namespace NightTest.Groups.SDL
   /// <summary>
   /// Tests that <see cref="NightSDL.GetVersion"/> returns a correctly formatted version string.
   /// </summary>
-  public class NightSDL_GetVersionTest : BaseGameTestCase
+  public class NightSDL_GetVersionTest : GameTestCase
   {
     /// <inheritdoc/>
     public override string Name => "NightSDL.GetVersion Format";
@@ -63,7 +63,7 @@ namespace NightTest.Groups.SDL
   /// <summary>
   /// Tests that <see cref="NightSDL.GetError"/> returns an empty string when no SDL error has occurred.
   /// </summary>
-  public class NightSDL_GetErrorTest : BaseGameTestCase
+  public class NightSDL_GetErrorTest : GameTestCase
   {
     /// <inheritdoc/>
     public override string Name => "NightSDL.GetError No Error";
@@ -75,13 +75,13 @@ namespace NightTest.Groups.SDL
     protected override void Update(double deltaTime)
     {
       // The try-catch-finally for general exceptions and ensuring EndTest() is called
-      // has been moved to BaseGameTestCase.IGame.Update().
+      // has been moved to GameTestCase.IGame.Update().
 
       // Ensure CurrentStatus is Running if not already set by Load,
       // though Load should have set it.
       // This specific check can remain if there's a concern it might still be NotRun
-      // when Update is called, though the BaseGameTestCase.Load() should prevent this.
-      // For now, let's assume BaseGameTestCase.Load() correctly sets it to Running.
+      // when Update is called, though the GameTestCase.Load() should prevent this.
+      // For now, let's assume GameTestCase.Load() correctly sets it to Running.
       // if (this.CurrentStatus == TestStatus.NotRun)
       // {
       //     this.CurrentStatus = TestStatus.Running;

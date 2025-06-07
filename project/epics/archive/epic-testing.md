@@ -8,7 +8,7 @@
 - As a Developer, I want a clear and standardized way to interact with manual tests so that they are easier to execute and less prone to specific keybinding issues.
 - As a Developer, I want individual test cases or groups to be able to manage their own configurations if needed, for greater flexibility.
 - As a Developer, I want test cases to report failures robustly, even in case of crashes, so that xUnit test results are always informative.
-- As a Developer, I want a well-defined `BaseGameTestCase` to reduce boilerplate and provide common utilities for writing tests compatible with xUnit.
+- As a Developer, I want a well-defined `GameTestCase` to reduce boilerplate and provide common utilities for writing tests compatible with xUnit.
 - As a Developer, I want the `NightTest` project structure to be clean and consistently named (e.g., `Groups/` instead of `Modules/`).
 - As a CI System, I want to build and run `NightTest` automated tests using `dotnet test` and fail the build if any tests fail.
 - As a Developer, I want the CI system to archive standard xUnit test result artifacts (e.g., TRX files) for inspection.
@@ -36,17 +36,17 @@
   - **Acceptance Criteria:** Custom test execution and reporting code is removed. The project relies on xUnit for these functions.
   - **Status:** Done
 
-- **Task 0.3: Adapt `ITestCase` and `BaseGameTestCase` for xUnit**
-  - **Description:** Modify `ITestCase` and `BaseGameTestCase` to align with xUnit's execution model. Tests will be xUnit test methods that instantiate and run `IGame` instances.
+- **Task 0.3: Adapt `ITestCase` and `GameTestCase` for xUnit**
+  - **Description:** Modify `ITestCase` and `GameTestCase` to align with xUnit's execution model. Tests will be xUnit test methods that instantiate and run `IGame` instances.
   - **Implementation:**
     - [x] Review `ITestCase`: Determine if the interface is still fully needed or if its properties (Name, Type, Description) can be primarily managed by xUnit attributes (`[Fact]`, `[Trait]`) on test methods. (Decision: `ITestCase` as is remains useful for defining core metadata contract for test classes.)
-    - [x] Modify `BaseGameTestCase`:
+    - [x] Modify `GameTestCase`:
       - [x] Remove `SetTestRunner(TestRunner runner)` method and `TestRunner` dependency.
-      - [x] `RecordPass`/`RecordFail` logic is removed from `QuitSelf`. `BaseGameTestCase` now sets `CurrentStatus` and `Details` (which are public get, protected set) that the xUnit test method wrapper will assert.
-      - [x] `Name`, `Type`, `Description` properties in `BaseGameTestCase` are now `abstract public get`.
-      - [x] For failures, `BaseGameTestCase` (or the `IGame` test itself) will either let unhandled exceptions propagate (failing the xUnit test) or set `CurrentStatus` to `Failed` for logical failures, which will be asserted by the xUnit wrapper.
-      - [x] The `TestStopwatch` for duration is available in `BaseGameTestCase`; its result will be logged using `ITestOutputHelper` in xUnit wrapper methods (as part of Task 0.4).
-  - **Acceptance Criteria:** `BaseGameTestCase` no longer relies on the custom `TestRunner`. `IGame` test outcomes (pass/fail/error) can be effectively translated into xUnit test results. Derived classes are forced to implement `Name`, `Type`, `Description`. `ITestCase` interface is confirmed suitable.
+      - [x] `RecordPass`/`RecordFail` logic is removed from `QuitSelf`. `GameTestCase` now sets `CurrentStatus` and `Details` (which are public get, protected set) that the xUnit test method wrapper will assert.
+      - [x] `Name`, `Type`, `Description` properties in `GameTestCase` are now `abstract public get`.
+      - [x] For failures, `GameTestCase` (or the `IGame` test itself) will either let unhandled exceptions propagate (failing the xUnit test) or set `CurrentStatus` to `Failed` for logical failures, which will be asserted by the xUnit wrapper.
+      - [x] The `TestStopwatch` for duration is available in `GameTestCase`; its result will be logged using `ITestOutputHelper` in xUnit wrapper methods (as part of Task 0.4).
+  - **Acceptance Criteria:** `GameTestCase` no longer relies on the custom `TestRunner`. `IGame` test outcomes (pass/fail/error) can be effectively translated into xUnit test results. Derived classes are forced to implement `Name`, `Type`, `Description`. `ITestCase` interface is confirmed suitable.
   - **Status:** Done
 
 - **Task 0.4: Create Initial xUnit Test Wrappers**
@@ -58,7 +58,7 @@
       - Instantiate the corresponding `IGame` test case (e.g., `var myTest = new GraphicsClearColorTest();`).
       - (If needed) Inject `ITestOutputHelper` for logging.
       - Call `Night.Framework.Run(myTest);`.
-      - After `Run` completes, use xUnit assertions (`Assert.True()`, `Assert.Equal()`, etc.) based on the outcome of the `IGame` test (e.g., checking a status property set by `BaseGameTestCase` or the `IGame` itself).
+      - After `Run` completes, use xUnit assertions (`Assert.True()`, `Assert.Equal()`, etc.) based on the outcome of the `IGame` test (e.g., checking a status property set by `GameTestCase` or the `IGame` itself).
   - **Acceptance Criteria:** At least one existing `IGame` test can be successfully executed via an xUnit test method. Test results are reported by xUnit.
   - **Status:** Done
 
@@ -88,24 +88,24 @@
 - **Task 1.2: Standardize Manual Test Interaction**
   - **Description:** Develop a standardized mechanism for manual test pass/fail input, as per the future consideration in [`project/night-test-prd.md:31`](project/night-test-prd.md:31) and [`project/night-test-prd.md:249`](project/night-test-prd.md:249). This moves away from hardcoded keys specific to each manual test.
   - **Implementation:**
-    - [x] Design a simple UI overlay (e.g., using `Night.Graphics` to draw "Pass"/"Fail" text/buttons and listen for mouse clicks on them) or a dedicated input phase managed by `BaseGameTestCase`. (Implemented in `BaseGameTestCase` with clickable rectangles for Pass/Fail - `TestRunner` part is no longer applicable).
-    - [x] Update `BaseGameTestCase` (Task 0.3, formerly 1.3) to include logic for this standardized interaction. (Done as part of this task for the UI elements and input handling).
+    - [x] Design a simple UI overlay (e.g., using `Night.Graphics` to draw "Pass"/"Fail" text/buttons and listen for mouse clicks on them) or a dedicated input phase managed by `GameTestCase`. (Implemented in `GameTestCase` with clickable rectangles for Pass/Fail - `TestRunner` part is no longer applicable).
+    - [x] Update `GameTestCase` (Task 0.3, formerly 1.3) to include logic for this standardized interaction. (Done as part of this task for the UI elements and input handling).
     - [x] Refactor existing manual tests (e.g., `ConcreteDummyManualTest` if it exists) to use the new mechanism. (A new test `GraphicsClearColorTest` was created using this mechanism, and `ConcreteDummyManualTest` was removed).
   - **Acceptance Criteria:** Manual tests use a consistent and clear method for user input to signal pass or fail. A sample test demonstrates this. Existing dummy manual tests are removed or refactored.
   - **Status:** Done
 
-- **Task 1.3: Implement and Utilize `BaseGameTestCase`**
-  - **Description:** Create and flesh out the `tests/Core/BaseGameTestCase.cs` as per PRD ([`project/night-test-prd.md:165`](project/night-test-prd.md:165), [`project/night-test-prd.md:197`](project/night-test-prd.md:197)) and `project/testing-plan.md`.
+- **Task 1.3: Implement and Utilize `GameTestCase`**
+  - **Description:** Create and flesh out the `tests/Core/GameTestCase.cs` as per PRD ([`project/night-test-prd.md:165`](project/night-test-prd.md:165), [`project/night-test-prd.md:197`](project/night-test-prd.md:197)) and `project/testing-plan.md`.
   - **Implementation:**
-    - [x] Create `tests/Core/BaseGameTestCase.cs` inheriting from `Night.IGame` and implementing `NightTest.Core.ITestCase`.
+    - [x] Create `tests/Core/GameTestCase.cs` inheriting from `Night.IGame` and implementing `NightTest.Core.ITestCase`.
     - [x] Provide default (virtual) implementations for all `Night.IGame` methods.
     - [x] Implement common `ITestCase` properties (e.g., `Name`, `Type`, `Description` can be abstract or virtual with default).
     - [x] Include a `System.Diagnostics.Stopwatch` (`TestStopwatch`) for measuring total test duration, started in `Load()` and stopped before reporting.
     - [x] Implement `QuitSelf()` method that signals the test is done, records the duration, and calls `Night.Window.Close()`.
-    - [x] `BaseGameTestCase` will need methods that allow the `IGame` to signal its outcome (e.g., setting internal status properties like `ActualTestStatus` and `FailureDetails`). The xUnit test method wrapping the `IGame` will then use these properties to make assertions.
+    - [x] `GameTestCase` will need methods that allow the `IGame` to signal its outcome (e.g., setting internal status properties like `ActualTestStatus` and `FailureDetails`). The xUnit test method wrapping the `IGame` will then use these properties to make assertions.
     - [x] Remove `SetTestRunner()` and any `TestRunner` dependency.
-    - [x] Refactor existing test cases to inherit from `BaseGameTestCase`.
-  - **Acceptance Criteria:** `BaseGameTestCase.cs` is implemented and provides useful common functionality. Existing and new test cases inherit from it, reducing boilerplate.
+    - [x] Refactor existing test cases to inherit from `GameTestCase`.
+  - **Acceptance Criteria:** `GameTestCase.cs` is implemented and provides useful common functionality. Existing and new test cases inherit from it, reducing boilerplate.
   - **Status:** Complete
 
 - **Task 1.4: Refactor Directory Structure: `Modules` to `Groups`**
@@ -119,21 +119,21 @@
   - **Status:** Complete
 
 - **Task 1.5: Clarify and Refactor `tests/Game.cs`**
-  - **Description:** Determine the precise role of the existing [`tests/Game.cs`](tests/Game.cs:1). If its functionality is better suited for `BaseGameTestCase` or it's a redundant example, refactor or remove it.
+  - **Description:** Determine the precise role of the existing [`tests/Game.cs`](tests/Game.cs:1). If its functionality is better suited for `GameTestCase` or it's a redundant example, refactor or remove it.
   - **Implementation:**
     - [x] Analyze the functionality provided by [`tests/Game.cs`](tests/Game.cs:1). (Analysis complete: File is unused by the test orchestrator and not referenced elsewhere. It appears to be a redundant example.)
-    - [ ] If it provides generic game loop or input handling logic useful for all tests, merge this functionality into `BaseGameTestCase` (Task 1.3). (N/A as file is unused and basic shell)
+    - [ ] If it provides generic game loop or input handling logic useful for all tests, merge this functionality into `GameTestCase` (Task 1.3). (N/A as file is unused and basic shell)
     - [ ] If it's intended as a very simple, standalone example of an `IGame` for testing the host, ensure it's minimal and perhaps rename it (e.g., `ExampleHostedTest.cs`) and include it in a relevant `ITestGroup` if it's meant to be run as a test. (N/A as it's not used)
-    - [x] If its functionality becomes entirely redundant after `BaseGameTestCase` implementation and other refactorings, remove [`tests/Game.cs`](tests/Game.cs:1) and update any references. (Decision: Remove the file.)
-  - **Acceptance Criteria:** The role of [`tests/Game.cs`](tests/Game.cs:1) is clarified. The codebase is cleaner, and any useful generic logic is consolidated in `BaseGameTestCase`.
+    - [x] If its functionality becomes entirely redundant after `GameTestCase` implementation and other refactorings, remove [`tests/Game.cs`](tests/Game.cs:1) and update any references. (Decision: Remove the file.)
+  - **Acceptance Criteria:** The role of [`tests/Game.cs`](tests/Game.cs:1) is clarified. The codebase is cleaner, and any useful generic logic is consolidated in `GameTestCase`.
   - **Status:** Complete
 
-- **Task 1.6: Enhance Error Handling within Test Cases and `BaseGameTestCase`**
-  - **Description:** Ensure that test cases, particularly through `BaseGameTestCase`, robustly report failures to xUnit, especially in the event of unexpected exceptions during test logic or from `Night.Framework` calls.
+- **Task 1.6: Enhance Error Handling within Test Cases and `GameTestCase`**
+  - **Description:** Ensure that test cases, particularly through `GameTestCase`, robustly report failures to xUnit, especially in the event of unexpected exceptions during test logic or from `Night.Framework` calls.
   - **Implementation:**
-    - [x] `BaseGameTestCase` (or the xUnit test method wrapping it) should implement a top-level try-catch mechanism around the execution of the `IGame`'s `Load`, `Update`, and `Draw` methods (or a central test execution method if applicable). (Implemented in xUnit wrapper methods)
+    - [x] `GameTestCase` (or the xUnit test method wrapping it) should implement a top-level try-catch mechanism around the execution of the `IGame`'s `Load`, `Update`, and `Draw` methods (or a central test execution method if applicable). (Implemented in xUnit wrapper methods)
     - [x] Any unhandled exception caught should cause the xUnit test to fail. xUnit automatically captures exception details. (Ensured by rethrowing from wrapper)
-    - [x] For non-exception failures determined by the `IGame`'s logic, `BaseGameTestCase` should set status properties that the xUnit test method can assert, causing an `Assert.Fail()` or similar if the status is `Failed`. (Existing functionality)
+    - [x] For non-exception failures determined by the `IGame`'s logic, `GameTestCase` should set status properties that the xUnit test method can assert, causing an `Assert.Fail()` or similar if the status is `Failed`. (Existing functionality)
   - **Acceptance Criteria:** xUnit test results accurately reflect test failures caused by unhandled exceptions or assertion failures within the test case execution, providing error messages and stack traces via standard xUnit reporting.
   - **Status:** Done
 
@@ -141,7 +141,7 @@
   - **Description:** Investigate and optionally implement a mechanism allowing individual test cases or test groups to load specific configuration files (e.g., a `test_config.json` alongside the test case file).
   - **Implementation:**
     - [ ] Design an approach (e.g., `ITestCase` property for a config file path, convention-based loading like `TestName.config.json`).
-    - [ ] If implemented, add helper methods in `BaseGameTestCase` to load and parse such configuration files.
+    - [ ] If implemented, add helper methods in `GameTestCase` to load and parse such configuration files.
   - **Acceptance Criteria:** (If implemented) Test cases can load their own configurations, allowing for more varied and isolated test scenarios.
   - **Status:** To Do
 
@@ -149,7 +149,7 @@
   - **Description:** Improve the organization of assets used by test cases. Consider allowing per-group or per-test asset subdirectories under `tests/assets/`.
   - **Implementation:**
     - [ ] Define a clear convention for test asset subdirectories (e.g., `tests/assets/GroupName/AssetName`).
-    - [ ] Provide a helper method in `BaseGameTestCase` to easily resolve paths to these specific assets.
+    - [ ] Provide a helper method in `GameTestCase` to easily resolve paths to these specific assets.
   - **Acceptance Criteria:** (If implemented) Test assets are organized more logically, making it easier to manage assets for specific tests or test groups.
   - **Status:** To Do
 

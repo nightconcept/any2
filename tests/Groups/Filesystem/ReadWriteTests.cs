@@ -34,7 +34,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests for Night.Filesystem.ReadBytes().
   /// </summary>
-  public class FilesystemReadBytes_ReadExistingFileTest : BaseGameTestCase
+  public class FilesystemReadBytes_ReadExistingFileTest : GameTestCase
   {
     private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_readbytes_file.bin");
     private readonly byte[] expectedContent = { 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x4E, 0x69, 0x67, 0x68, 0x74 }; // "Hello Night"
@@ -116,7 +116,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests for Night.Filesystem.ReadText().
   /// </summary>
-  public class FilesystemReadText_ReadExistingFileTest : BaseGameTestCase
+  public class FilesystemReadText_ReadExistingFileTest : GameTestCase
   {
     private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_readtext_file.txt");
     private readonly string expectedContent = "Hello Night Text!";
@@ -198,7 +198,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests Night.Filesystem.ReadBytes for a non-existent file.
   /// </summary>
-  public class FilesystemReadBytes_FileNotFoundTest : BaseGameTestCase
+  public class FilesystemReadBytes_FileNotFoundTest : GameTestCase
   {
     private readonly string nonExistentFile = Path.Combine(Path.GetTempPath(), "night_test_readbytes_nonexistent.bin");
 
@@ -252,7 +252,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests Night.Filesystem.ReadText for a non-existent file.
   /// </summary>
-  public class FilesystemReadText_FileNotFoundTest : BaseGameTestCase
+  public class FilesystemReadText_FileNotFoundTest : GameTestCase
   {
     private readonly string nonExistentFile = Path.Combine(Path.GetTempPath(), "night_test_readtext_nonexistent.txt");
 
@@ -306,7 +306,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests for Night.Filesystem.Append().
   /// </summary>
-  public class FilesystemAppend_AppendToNewFileTest : BaseGameTestCase
+  public class FilesystemAppend_AppendToNewFileTest : GameTestCase
   {
     private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_append_new.txt");
     private readonly byte[] dataToAppend = Encoding.UTF8.GetBytes("First line.");
@@ -378,7 +378,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests appending data to an existing file.
   /// </summary>
-  public class FilesystemAppend_AppendToExistingFileTest : BaseGameTestCase
+  public class FilesystemAppend_AppendToExistingFileTest : GameTestCase
   {
     private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_append_existing.txt");
     private readonly byte[] initialData = Encoding.UTF8.GetBytes("Initial content. ");
@@ -464,7 +464,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests appending a partial amount of data using the size parameter.
   /// </summary>
-  public class FilesystemAppend_PartialDataTest : BaseGameTestCase
+  public class FilesystemAppend_PartialDataTest : GameTestCase
   {
     private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_append_partial.txt");
     private readonly byte[] fullData = Encoding.UTF8.GetBytes("FullDataString");
@@ -541,7 +541,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests argument validation for Filesystem.Append.
   /// </summary>
-  public class FilesystemAppend_ArgumentValidationTest : BaseGameTestCase
+  public class FilesystemAppend_ArgumentValidationTest : GameTestCase
   {
     private readonly string validFileName = Path.Combine(Path.GetTempPath(), "night_test_append_validation.txt");
     private readonly byte[] validData = { 1, 2, 3 };

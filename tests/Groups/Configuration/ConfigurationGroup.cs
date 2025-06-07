@@ -54,7 +54,7 @@ namespace NightTest.Groups.Configuration
     [Trait("TestType", "Automated")]
     public void Run_ConfigurationWindowConfig_GetSet()
     {
-      this.Run_TestCase(new ConfigurationWindowConfig_GetSet());
+      this.Run_ModTestCase(new ConfigurationWindowConfig_GetSet());
     }
   }
 }

@@ -29,7 +29,7 @@ namespace NightTest.Groups.Timer
   /// <summary>
   /// Tests the Timer.Sleep() method.
   /// </summary>
-  public class SleepTest : BaseGameTestCase
+  public class SleepTest : GameTestCase
   {
     private const double SleepDurationSeconds = 0.25; // Sleep for 250ms
 

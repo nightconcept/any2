@@ -1,4 +1,4 @@
-// <copyright file="BaseTestCase.cs" company="Night Circle">
+// <copyright file="ModTestCase.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -28,10 +28,12 @@ using Night;
 namespace NightTest.Core
 {
   /// <summary>
-  /// Abstract base class for test cases to reduce boilerplate.
-  /// Implements ITestCase and Night.IGame.
+  /// Abstract mod test base class for test cases to reduce boilerplate.
+  /// Implements ITestCase.
+  /// Mod tests are closer in nature to unit tests and do not rely on a
+  /// IGame instance to run.
   /// </summary>
-  public abstract class BaseTestCase : ITestCase
+  public abstract class ModTestCase : ITestCase
   {
     // Public Properties
 
@@ -62,12 +64,17 @@ namespace NightTest.Core
     public abstract string Description { get; }
 
     /// <summary>
-    /// Gets or sets details about the test execution, such as error messages or success information.
-    /// Its value can be asserted by xUnit test methods.
+    /// Gets the success message for the test.
+    /// This message is used by the test runner if the Run() method completes without exceptions.
     /// </summary>
-    public virtual void Run()
-    {
-    }
+    public abstract string SuccessMessage { get; }
+
+    /// <summary>
+    /// When implemented by a derived class, contains the specific test logic and assertions.
+    /// This method will be called by the test runner (e.g., TestGroup) and should not
+    /// contain try-catch blocks for assertion failures or calls to RecordSuccess/RecordFailure.
+    /// </summary>
+    public abstract void Run();
 
     /// <summary>
     /// Public method to record a test failure, typically called by an xUnit wrapper when an exception occurs.
@@ -88,13 +95,30 @@ namespace NightTest.Core
     }
 
     /// <summary>
-    /// Public method to record a test failure, typically called by an xUnit wrapper when an exception occurs.
+    /// Public method to record a test success, typically called by an xUnit wrapper when an exception occurs.
     /// </summary>
     /// <param name="successDetails">Specific details about the success.</param>
     public void RecordSuccess(string successDetails)
     {
       this.CurrentStatus = TestStatus.Passed;
       this.Details = successDetails;
+    }
+
+    /// <summary>
+    /// Sets the initial state of the test before execution by the test runner.
+    /// </summary>
+    internal void PrepareForRun()
+    {
+      this.TestStopwatch.Restart();
+      this.Details = "Test is preparing to run.";
+    }
+
+    /// <summary>
+    /// Finalizes the test run, typically called by the test runner.
+    /// </summary>
+    internal void FinalizeRun()
+    {
+      this.TestStopwatch.Stop();
     }
   }
 }

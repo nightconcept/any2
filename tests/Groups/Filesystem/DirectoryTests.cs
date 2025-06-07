@@ -32,7 +32,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests for Night.Filesystem.CreateDirectory().
   /// </summary>
-  public class FilesystemCreateDirectory_NewSingleDirTest : BaseGameTestCase
+  public class FilesystemCreateDirectory_NewSingleDirTest : GameTestCase
   {
     private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_single");
 
@@ -112,7 +112,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests CreateDirectory when the directory already exists.
   /// </summary>
-  public class FilesystemCreateDirectory_ExistingDirTest : BaseGameTestCase
+  public class FilesystemCreateDirectory_ExistingDirTest : GameTestCase
   {
     private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_existing");
 
@@ -193,7 +193,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests CreateDirectory for nested directories.
   /// </summary>
-  public class FilesystemCreateDirectory_NestedDirTest : BaseGameTestCase
+  public class FilesystemCreateDirectory_NestedDirTest : GameTestCase
   {
     private readonly string parentDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_parent");
     private readonly string nestedDirName = Path.Combine(Path.GetTempPath(), "night_test_createdir_parent", "child", "grandchild");
@@ -265,7 +265,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests argument validation for Filesystem.CreateDirectory.
   /// </summary>
-  public class FilesystemCreateDirectory_ArgumentValidationTest : BaseGameTestCase
+  public class FilesystemCreateDirectory_ArgumentValidationTest : GameTestCase
   {
     /// <inheritdoc/>
     public override string Name => "Filesystem.CreateDirectory.ArgumentValidation";
@@ -342,7 +342,7 @@ namespace NightTest.Groups.Filesystem
   /// <summary>
   /// Tests for Night.Filesystem.GetAppdataDirectory().
   /// </summary>
-  public class FilesystemGetAppdataDirectory_ReturnsValidPathTest : BaseGameTestCase
+  public class FilesystemGetAppdataDirectory_ReturnsValidPathTest : GameTestCase
   {
     /// <inheritdoc/>
     public override string Name => "Filesystem.GetAppdataDirectory.ReturnsValidPath";

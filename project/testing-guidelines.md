@@ -48,19 +48,19 @@ The primary goal of our testing strategy is to ensure the reliability and correc
 * **Purpose:** An individual test scenario that verifies a specific piece of functionality.
 * **Implementation:** Create a C# class that:
   * Implements `Night.IGame`.
-  * Inherits from `NightTest.Core.BaseGameTestCase` (for automated tests) or `NightTest.Core.BaseManualTestCase` (for manual tests).
+  * Inherits from `NightTest.Core.GameTestCase` (for automated tests) or `NightTest.Core.ManualTestCase` (for manual tests).
 * **Location:** Typically in `tests/Groups/[ModuleName]/[FeatureName]Tests.cs`. A single file can contain multiple related test case classes.
 * **Example:** [`LinesTests.cs`](../../tests/Groups/Filesystem/LinesTests.cs) contains `FilesystemLines_ReadStandardFileTest`.
 
 ### Automated vs. Manual Tests
 
 * **Automated Tests:**
-  * Inherit from `BaseGameTestCase`.
+  * Inherit from `GameTestCase`.
   * Logic within `Update()` determines pass/fail status automatically.
   * `Type` property is `TestType.Automated`.
   * Marked with `[Trait("TestType", "Automated")]` in the `TestGroup`.
 * **Manual Tests:**
-  * Inherit from `BaseManualTestCase`.
+  * Inherit from `ManualTestCase`.
   * Require user interaction to confirm pass/fail (e.g., visual confirmation).
   * Use `RequestManualConfirmation("Prompt message")` in the `Update()` method.
   * `Type` property is `TestType.Manual`.
@@ -72,8 +72,8 @@ The primary goal of our testing strategy is to ensure the reliability and correc
 ```
 tests/
 ├── Core/                 # Base classes, interfaces, and core testing utilities
-│   ├── BaseGameTestCase.cs
-│   ├── BaseManualTestCase.cs
+│   ├── GameTestCase.cs
+│   ├── ManualTestCase.cs
 │   ├── ITestCase.cs
 │   ├── TestGroup.cs
 │   └── ...
@@ -98,8 +98,8 @@ Consistency in naming is crucial for maintainability.
 * **Test Group Classes:** `[ModuleName]Group` or `[ModuleName]Tests` (e.g., `FilesystemGroup`, `GraphicsTests`). Prefer `[ModuleName]Group` for consistency with the directory.
   * Example: `public class FilesystemGroup : TestGroup`
 * **Test Case Classes:** `[ModuleName][FeatureName]_[SpecificBehavior]Test`
-  * Example: `public class FilesystemLines_ReadStandardFileTest : BaseGameTestCase`
-  * Example: `public class GraphicsClear_SkyBlueColorTest : BaseManualTestCase` (Adjusting example for clarity)
+  * Example: `public class FilesystemLines_ReadStandardFileTest : GameTestCase`
+  * Example: `public class GraphicsClear_SkyBlueColorTest : ManualTestCase` (Adjusting example for clarity)
 
 ### Methods in Test Groups
 
@@ -136,7 +136,7 @@ using Night; // Assuming Night.MyModule.MyFeature exists
 
 namespace NightTest.Groups.MyModule
 {
-    public class MyModuleMyFeature_ExpectedBehaviorTest : BaseGameTestCase
+    public class MyModuleMyFeature_ExpectedBehaviorTest : GameTestCase
     {
         public override string Name => "MyModule.MyFeature.ExpectedBehavior";
         public override string Description => "Tests that MyFeature exhibits the expected behavior under specific conditions.";
@@ -182,7 +182,7 @@ using Night;
 
 namespace NightTest.Groups.MyModule
 {
-    public class MyModuleMyVisualFeature_UserConfirmationTest : BaseManualTestCase
+    public class MyModuleMyVisualFeature_UserConfirmationTest : ManualTestCase
     {
         public override string Name => "MyModule.MyVisualFeature.UserConfirmation";
         public override string Description => "User must visually confirm that MyVisualFeature renders correctly.";
@@ -219,7 +219,7 @@ namespace NightTest.Groups.MyModule
 
 ### Step 3: Implement IGame Methods
 
-Override methods from `BaseGameTestCase` or `BaseManualTestCase` as needed.
+Override methods from `GameTestCase` or `ManualTestCase` as needed.
 
 #### `Load()`
 
@@ -228,7 +228,7 @@ Override methods from `BaseGameTestCase` or `BaseManualTestCase` as needed.
   * Initializing variables.
   * Creating temporary files (as in `FilesystemLines_ReadStandardFileTest`).
   * Loading assets.
-* **Always call `base.Load();`** if you override it, especially if inheriting from `BaseManualTestCase` which has its own `InternalLoad` logic.
+* **Always call `base.Load();`** if you override it, especially if inheriting from `ManualTestCase` which has its own `InternalLoad` logic.
 * If setup fails, set `this.CurrentStatus = TestStatus.Failed;`, provide `this.Details`, and call `this.EndTest();`.
 
 #### `Update(double deltaTime)`
@@ -240,7 +240,7 @@ Override methods from `BaseGameTestCase` or `BaseManualTestCase` as needed.
   * `this.CurrentStatus = TestStatus.Passed;` or `TestStatus.Failed;`
   * `this.Details = "Descriptive message about the outcome.";`
 * For automated tests, call `this.EndTest();` when the assertion is complete.
-* For manual tests, call `this.RequestManualConfirmation("Your question to the user");` when ready for user input. The `BaseManualTestCase` will handle `EndTest()` based on user input or timeout.
+* For manual tests, call `this.RequestManualConfirmation("Your question to the user");` when ready for user input. The `ManualTestCase` will handle `EndTest()` based on user input or timeout.
 * Use try-catch blocks for operations that might throw exceptions, setting status and details accordingly.
 
 #### `Draw()`
@@ -248,12 +248,12 @@ Override methods from `BaseGameTestCase` or `BaseManualTestCase` as needed.
 * Called every frame, after `Update()`.
 * Use for any rendering required by the test, especially for manual tests where visual output is being verified.
 * Example: `Night.Graphics.Clear(someColor); Night.Graphics.Draw(mySprite, ...);`
-* For `BaseManualTestCase`, the pass/fail buttons are drawn automatically after your `Draw()` logic if confirmation is active. `Night.Graphics.Present()` is also handled by `BaseManualTestCase`.
+* For `ManualTestCase`, the pass/fail buttons are drawn automatically after your `Draw()` logic if confirmation is active. `Night.Graphics.Present()` is also handled by `ManualTestCase`.
 
 #### Input Handling
 
 * Override `KeyPressed`, `KeyReleased`, `MousePressed`, `MouseReleased` if your test needs to react to input.
-* `BaseManualTestCase` uses `KeyPressed` (for ESC) and `MousePressed` (for UI buttons). If you override these in a manual test, ensure you call `base.KeyPressed(...)` or `base.MousePressed(...)` or replicate necessary base logic.
+* `ManualTestCase` uses `KeyPressed` (for ESC) and `MousePressed` (for UI buttons). If you override these in a manual test, ensure you call `base.KeyPressed(...)` or `base.MousePressed(...)` or replicate necessary base logic.
 
 ### Step 4: Manage Test Lifecycle and Status
 
@@ -261,8 +261,8 @@ Override methods from `BaseGameTestCase` or `BaseManualTestCase` as needed.
 * **`this.Details`**: Provide a clear string explaining the test outcome or failure reason.
 * **`this.EndTest()`**: Call this method when the test logic is complete (either passed or failed) to stop the test, close the window, and record the duration.
   * In automated tests, you typically call this at the end of your `Update()` logic.
-  * In manual tests, this is often handled by `BaseManualTestCase` after user interaction or timeout, but can be called directly if an early exit condition is met.
-* **Helper methods in `BaseGameTestCase`**:
+  * In manual tests, this is often handled by `ManualTestCase` after user interaction or timeout, but can be called directly if an early exit condition is met.
+* **Helper methods in `GameTestCase`**:
   * `CheckCompletionAfterDuration(...)`: End test after a certain time.
   * `CheckCompletionAfterFrames(...)`: End test after a certain number of frames.
 * **Error Handling**: Wrap potentially problematic code in `try-catch` blocks. On exception:
@@ -323,15 +323,15 @@ Override methods from `BaseGameTestCase` or `BaseManualTestCase` as needed.
 ## 6. Key Base Classes and Interfaces
 
 * **`Night.IGame`**: Interface from the core engine that test cases implement to hook into the game loop (`Load`, `Update`, `Draw`, input methods).
-* **`NightTest.Core.ITestCase`**: Defines properties for test identification (`Name`, `Type`, `Description`). Implemented by `BaseGameTestCase`.
-* **`NightTest.Core.BaseGameTestCase`**:
+* **`NightTest.Core.ITestCase`**: Defines properties for test identification (`Name`, `Type`, `Description`). Implemented by `GameTestCase`.
+* **`NightTest.Core.GameTestCase`**:
   * Base class for all test cases, providing common functionality:
     * `TestStopwatch`, `CurrentStatus`, `Details`, `IsDone`, `CurrentFrameCount`.
     * Default `IGame` implementations that call virtual `InternalLoad`, `InternalUpdate`, `InternalDraw`, which in turn call protected virtual `Load`, `Update`, `Draw`.
     * Helper methods: `EndTest()`, `RecordFailure()`, `CheckCompletionAfterDuration()`, `CheckCompletionAfterFrames()`.
   * Default `Type` is `TestType.Automated`.
-* **`NightTest.Core.BaseManualTestCase`**:
-  * Inherits from `BaseGameTestCase`.
+* **`NightTest.Core.ManualTestCase`**:
+  * Inherits from `GameTestCase`.
   * Overrides `Type` to `TestType.Manual`.
   * Provides UI for manual pass/fail confirmation (buttons, ESC key).
   * Manages timeout for manual tests.
@@ -340,7 +340,7 @@ Override methods from `BaseGameTestCase` or `BaseManualTestCase` as needed.
 * **`NightTest.Core.TestGroup`**:
   * Base class for xUnit test classes.
   * Takes `ITestOutputHelper` for logging.
-  * Provides `Run_GameTestCase(BaseGameTestCase testCase)` method which:
+  * Provides `Run_GameTestCase(GameTestCase testCase)` method which:
     * Logs test information.
     * Runs the `IGame` instance using `Night.Framework.Run(testCase)`.
     * Asserts that `testCase.CurrentStatus == TestStatus.Passed`.

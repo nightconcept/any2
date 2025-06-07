@@ -1,4 +1,4 @@
-// <copyright file="BaseManualTestCase.cs" company="Night Circle">
+// <copyright file="ManualTestCase.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -28,9 +28,9 @@ namespace NightTest.Core
 {
   /// <summary>
   /// Abstract base class for manual test cases, providing common UI and interaction logic.
-  /// Inherits from BaseGameTestCase.
+  /// Inherits from GameTestCase.
   /// </summary>
-  public abstract class BaseManualTestCase : BaseGameTestCase
+  public abstract class ManualTestCase : GameTestCase
   {
     // Constants
     private const int ButtonWidth = 120;
@@ -145,14 +145,14 @@ namespace NightTest.Core
     }
 
     /// <summary>
-    /// Overrides the internal load hook from <see cref="BaseGameTestCase"/>
+    /// Overrides the internal load hook from <see cref="GameTestCase"/>
     /// to inject manual test-specific initialization logic
-    /// before allowing the concrete test's <see cref="BaseGameTestCase.Load()"/> method to run.
+    /// before allowing the concrete test's <see cref="GameTestCase.Load()"/> method to run.
     /// This method is sealed to ensure this control flow.
     /// </summary>
     protected sealed override void InternalLoad()
     {
-      // Perform BaseManualTestCase specific initialization
+      // Perform ManualTestCase specific initialization
       this.currentManualInputUIMode = ManualInputUIMode.None;
       this.ManualConfirmationConsolePrompt = string.Empty;
       this.confirmationPromptActive = false;
@@ -162,9 +162,9 @@ namespace NightTest.Core
     }
 
     /// <summary>
-    /// Overrides the internal update hook from <see cref="BaseGameTestCase"/>
+    /// Overrides the internal update hook from <see cref="GameTestCase"/>
     /// to inject manual test-specific logic, such as timeout checks,
-    /// before allowing the concrete test's <see cref="BaseGameTestCase.Update(double)"/> method to run.
+    /// before allowing the concrete test's <see cref="GameTestCase.Update(double)"/> method to run.
     /// This method is sealed to ensure this control flow.
     /// </summary>
     /// <param name="deltaTime">Time elapsed since the last frame.</param>
@@ -192,8 +192,8 @@ namespace NightTest.Core
     }
 
     /// <summary>
-    /// Overrides the internal draw hook from <see cref="BaseGameTestCase"/>
-    /// to allow the concrete test's <see cref="BaseGameTestCase.Draw()"/> method to run first,
+    /// Overrides the internal draw hook from <see cref="GameTestCase"/>
+    /// to allow the concrete test's <see cref="GameTestCase.Draw()"/> method to run first,
     /// then draws manual test-specific UI elements (like Pass/Fail buttons),
     /// and finally calls <see cref="Night.Graphics.Present()"/>.
     /// This method is sealed to ensure this control flow.
@@ -203,7 +203,7 @@ namespace NightTest.Core
       // First, call the base InternalDraw, which will execute the concrete test's Draw() method.
       base.InternalDraw();
 
-      // Then, draw BaseManualTestCase specific UI elements.
+      // Then, draw ManualTestCase specific UI elements.
       if (this.currentManualInputUIMode == ManualInputUIMode.AwaitingConfirmation)
       {
         // Ensure button rects are calculated if window is valid

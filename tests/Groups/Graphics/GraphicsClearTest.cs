@@ -32,7 +32,7 @@ namespace NightTest.Groups.Graphics
   /// Tests the Graphics.Clear() method with a specific color.
   /// Requires manual confirmation that the color is correct.
   /// </summary>
-  public class GraphicsClearColorTest : BaseManualTestCase
+  public class GraphicsClearColorTest : ManualTestCase
   {
     private readonly Color skyBlue = new Color(135, 206, 235);
 
