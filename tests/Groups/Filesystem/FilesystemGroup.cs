@@ -87,56 +87,196 @@ namespace NightTest.Groups.Filesystem
       this.Run_GameTestCase(new FilesystemLines_ReadSingleLineFileTest());
     }
 
-    // Tests from GetInfoTests.cs
+    // Tests from FilesystemGetInfoTests.cs
 
     /// <summary>
-    /// Runs the FilesystemGetInfo_FileExistsTest IGame instance.
+    /// Runs the <see cref="FilesystemGetInfo_NullPath_ReturnsNullTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_FilesystemGetInfo_FileExistsTest()
+    public void Run_FilesystemGetInfo_NullPath_ReturnsNullTest_Mod()
     {
-      this.Run_GameTestCase(new FilesystemGetInfo_FileExistsTest());
+      this.Run_ModTestCase(new FilesystemGetInfo_NullPath_ReturnsNullTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemGetInfo_DirectoryExistsTest IGame instance.
+    /// Runs the <see cref="FilesystemGetInfo_EmptyPath_ReturnsNullTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_FilesystemGetInfo_DirectoryExistsTest()
+    public void Run_FilesystemGetInfo_EmptyPath_ReturnsNullTest_Mod()
     {
-      this.Run_GameTestCase(new FilesystemGetInfo_DirectoryExistsTest());
+      this.Run_ModTestCase(new FilesystemGetInfo_EmptyPath_ReturnsNullTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemGetInfo_PathDoesNotExistTest IGame instance.
+    /// Runs the <see cref="FilesystemGetInfo_PathDoesNotExist_ReturnsNullTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_FilesystemGetInfo_PathDoesNotExistTest()
+    public void Run_FilesystemGetInfo_PathDoesNotExist_ReturnsNullTest_Mod()
     {
-      this.Run_GameTestCase(new FilesystemGetInfo_PathDoesNotExistTest());
+      this.Run_ModTestCase(new FilesystemGetInfo_PathDoesNotExist_ReturnsNullTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemGetInfo_FilterTypeFile_MatchesTest IGame instance.
+    /// Runs the <see cref="FilesystemGetInfo_FileExists_NoFilter_ReturnsFileInfoTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_FilesystemGetInfo_FilterTypeFile_MatchesTest()
+    public void Run_FilesystemGetInfo_FileExists_NoFilter_ReturnsFileInfoTest_Mod()
     {
-      this.Run_GameTestCase(new FilesystemGetInfo_FilterTypeFile_MatchesTest());
+      this.Run_ModTestCase(new FilesystemGetInfo_FileExists_NoFilter_ReturnsFileInfoTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemGetInfo_FilterTypeFile_MismatchesTest IGame instance.
+    /// Runs the <see cref="FilesystemGetInfo_FileExists_MatchingFilter_ReturnsFileInfoTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_FilesystemGetInfo_FilterTypeFile_MismatchesTest()
+    public void Run_FilesystemGetInfo_FileExists_MatchingFilter_ReturnsFileInfoTest_Mod()
     {
-      this.Run_GameTestCase(new FilesystemGetInfo_FilterTypeFile_MismatchesTest());
+      this.Run_ModTestCase(new FilesystemGetInfo_FileExists_MatchingFilter_ReturnsFileInfoTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_FileExists_NonMatchingFilter_ReturnsNullTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_FileExists_NonMatchingFilter_ReturnsNullTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_FileExists_NonMatchingFilter_ReturnsNullTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_DirectoryExists_NoFilter_ReturnsDirectoryInfoTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_DirectoryExists_NoFilter_ReturnsDirectoryInfoTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_DirectoryExists_NoFilter_ReturnsDirectoryInfoTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_DirectoryExists_MatchingFilter_ReturnsDirectoryInfoTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_DirectoryExists_MatchingFilter_ReturnsDirectoryInfoTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_DirectoryExists_MatchingFilter_ReturnsDirectoryInfoTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_DirectoryExists_NonMatchingFilter_ReturnsNullTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_DirectoryExists_NonMatchingFilter_ReturnsNullTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_DirectoryExists_NonMatchingFilter_ReturnsNullTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateNullInfoObject_ReturnsNullTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateNullInfoObject_ReturnsNullTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateNullInfoObject_ReturnsNullTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateValidInfo_FileExists_PopulatesAndReturnsInfoTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateValidInfo_FileExists_PopulatesAndReturnsInfoTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateValidInfo_FileExists_PopulatesAndReturnsInfoTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateValidInfo_DirectoryExists_PopulatesAndReturnsInfoTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateValidInfo_DirectoryExists_PopulatesAndReturnsInfoTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateValidInfo_DirectoryExists_PopulatesAndReturnsInfoTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateValidInfo_PathDoesNotExist_ReturnsNullTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateValidInfo_PathDoesNotExist_ReturnsNullTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateValidInfo_PathDoesNotExist_ReturnsNullTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateWithFilter_NullInfoObject_ReturnsNullTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateWithFilter_NullInfoObject_ReturnsNullTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateWithFilter_NullInfoObject_ReturnsNullTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateWithFilter_FileExists_MatchingFilter_PopulatesInfoTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateWithFilter_FileExists_MatchingFilter_PopulatesInfoTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateWithFilter_FileExists_MatchingFilter_PopulatesInfoTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateWithFilter_FileExists_NonMatchingFilter_ReturnsNullTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateWithFilter_FileExists_NonMatchingFilter_ReturnsNullTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateWithFilter_FileExists_NonMatchingFilter_ReturnsNullTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateWithFilter_DirectoryExists_MatchingFilter_PopulatesInfoTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateWithFilter_DirectoryExists_MatchingFilter_PopulatesInfoTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateWithFilter_DirectoryExists_MatchingFilter_PopulatesInfoTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateWithFilter_DirectoryExists_NonMatchingFilter_ReturnsNullTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateWithFilter_DirectoryExists_NonMatchingFilter_ReturnsNullTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateWithFilter_DirectoryExists_NonMatchingFilter_ReturnsNullTest());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="FilesystemGetInfo_PopulateWithFilter_PathDoesNotExist_ReturnsNullTest"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_PopulateWithFilter_PathDoesNotExist_ReturnsNullTest_Mod()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_PopulateWithFilter_PathDoesNotExist_ReturnsNullTest());
     }
 
     // Tests from ReadWriteTests.cs

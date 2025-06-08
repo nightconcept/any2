@@ -47,7 +47,7 @@ namespace NightTest.Core
 
       // Clear any sinks from previous test runs and add our custom xUnit sink.
       LogManager.ClearSinks();
-      LogManager.AddSink(new XunitLogSink(this.outputHelper));
+      LogManager.AddSink(new XUnitLogSink(this.outputHelper));
     }
 
     /// <summary>

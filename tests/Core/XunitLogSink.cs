@@ -1,4 +1,4 @@
-// <copyright file="XunitLogSink.cs" company="Night Circle">
+// <copyright file="XUnitLogSink.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -32,15 +32,15 @@ namespace NightTest.Core
   /// <summary>
   /// An ILogSink implementation that writes log entries to the xUnit test output.
   /// </summary>
-  public class XunitLogSink : ILogSink
+  public class XUnitLogSink : ILogSink
   {
     private readonly ITestOutputHelper outputHelper;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="XunitLogSink"/> class.
+    /// Initializes a new instance of the <see cref="XUnitLogSink"/> class.
     /// </summary>
     /// <param name="outputHelper">The xUnit test output helper.</param>
-    public XunitLogSink(ITestOutputHelper outputHelper)
+    public XUnitLogSink(ITestOutputHelper outputHelper)
     {
       this.outputHelper = outputHelper;
     }

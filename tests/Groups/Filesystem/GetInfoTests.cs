@@ -22,249 +22,94 @@
 
 using System;
 using System.IO;
-using System.Threading;
 
 using Night;
 
 using NightTest.Core;
 
+using Xunit;
+
 namespace NightTest.Groups.Filesystem
 {
   /// <summary>
-  /// Tests for Night.Filesystem.GetInfo().
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns null when the path is null.
   /// </summary>
-  public class FilesystemGetInfo_FileExistsTest : GameTestCase
+  public class FilesystemGetInfo_NullPath_ReturnsNullTest : ModTestCase
   {
-    private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_file.txt");
-    private long expectedModTime;
-    private long expectedSize;
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.NullPathMod";
 
     /// <inheritdoc/>
-    public override string Name => "Filesystem.GetInfo.FileExists";
+    public override string Description => "Tests GetInfo with a null path, expecting null (Mod Test).";
 
     /// <inheritdoc/>
-    public override string Description => "Tests GetInfo for an existing file, checking Type, Size, and ModTime.";
+    public override string SuccessMessage => "GetInfo with null path correctly returned null.";
 
     /// <inheritdoc/>
-    protected override void Load()
+    public override void Run()
     {
-      base.Load();
-      try
-      {
-        File.WriteAllText(this.testFileName, "Hello Night!");
-        var fileInfo = new FileInfo(this.testFileName);
-        this.expectedSize = fileInfo.Length;
-        this.expectedModTime = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+      // Arrange
+      string? path = null;
 
-        // Allow a small grace period for LastWriteTimeUtc to settle, especially on some filesystems.
-        System.Threading.Thread.Sleep(100);
-        fileInfo.LastWriteTimeUtc = DateTime.UtcNow; // Explicitly set to ensure consistency for comparison
-        this.expectedModTime = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
-      }
-      catch (Exception e)
-      {
-        this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test file '{this.testFileName}'. {e.Message}";
-        this.EndTest();
-      }
-    }
+      // Act
+#pragma warning disable CS8604 // Possible null reference argument. Test case specifically for null.
+      var info = Night.Filesystem.GetInfo(path);
+#pragma warning restore CS8604
 
-    /// <inheritdoc/>
-    protected override void Update(double deltaTime)
-    {
-      if (this.IsDone)
-      {
-        return;
-      }
-
-      try
-      {
-        // Setup failed
-        if (this.CurrentStatus == TestStatus.Failed)
-        {
-          return;
-        }
-
-        var info = Night.Filesystem.GetInfo(this.testFileName);
-
-        if (info == null)
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = "GetInfo returned null for an existing file.";
-        }
-        else if (info.Type != FileType.File)
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Expected FileType.File, but got {info.Type}.";
-        }
-        else if (info.Size != this.expectedSize)
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Expected size {this.expectedSize}, but got {info.Size}.";
-        }
-
-        // Comparing ModTime can be tricky due to precision. Allow a small delta.
-        // Comparing ModTime can be tricky due to precision. Allow a small delta.
-        else if (info.ModTime == null || Math.Abs(info.ModTime.Value - this.expectedModTime) > 2)
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Expected ModTime around {this.expectedModTime}, but got {info.ModTime}. Difference: {Math.Abs((info.ModTime ?? 0) - this.expectedModTime)}";
-        }
-        else
-        {
-          this.CurrentStatus = TestStatus.Passed;
-          this.Details = "Successfully retrieved correct info for an existing file.";
-        }
-      }
-      catch (Exception e)
-      {
-        this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"An unexpected error occurred: {e.Message}";
-      }
-      finally
-      {
-        if (File.Exists(this.testFileName))
-        {
-          try
-          {
-            File.Delete(this.testFileName);
-          }
-          catch (Exception ex)
-          {
-            this.Details += $" | Warning: Failed to delete test file '{this.testFileName}': {ex.Message}";
-          }
-        }
-
-        this.EndTest();
-      }
+      // Assert
+      Assert.Null(info);
     }
   }
 
   /// <summary>
-  /// Tests GetInfo for an existing directory.
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns null when the path is empty.
   /// </summary>
-  public class FilesystemGetInfo_DirectoryExistsTest : GameTestCase
+  public class FilesystemGetInfo_EmptyPath_ReturnsNullTest : ModTestCase
   {
-    private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_dir");
-    private long expectedModTime;
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.EmptyPathMod";
 
     /// <inheritdoc/>
-    public override string Name => "Filesystem.GetInfo.DirectoryExists";
+    public override string Description => "Tests GetInfo with an empty path, expecting null (Mod Test).";
 
     /// <inheritdoc/>
-    public override string Description => "Tests GetInfo for an existing directory, checking Type and ModTime.";
+    public override string SuccessMessage => "GetInfo with empty path correctly returned null.";
 
     /// <inheritdoc/>
-    protected override void Load()
+    public override void Run()
     {
-      base.Load();
-      try
-      {
-        _ = Directory.CreateDirectory(this.testDirName);
-        var dirInfo = new DirectoryInfo(this.testDirName);
+      // Arrange
+      string path = string.Empty;
 
-        // Allow a small grace period for LastWriteTimeUtc to settle.
-        System.Threading.Thread.Sleep(100);
-        dirInfo.LastWriteTimeUtc = DateTime.UtcNow; // Explicitly set
-        this.expectedModTime = new DateTimeOffset(dirInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
-      }
-      catch (Exception e)
-      {
-        this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test directory '{this.testDirName}'. {e.Message}";
-        this.EndTest();
-      }
-    }
+      // Act
+      var info = Night.Filesystem.GetInfo(path);
 
-    /// <inheritdoc/>
-    protected override void Update(double deltaTime)
-    {
-      if (this.IsDone)
-      {
-        return;
-      }
-
-      try
-      {
-        // Setup failed
-        if (this.CurrentStatus == TestStatus.Failed)
-        {
-          return;
-        }
-
-        var info = Night.Filesystem.GetInfo(this.testDirName);
-
-        if (info == null)
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = "GetInfo returned null for an existing directory.";
-        }
-        else if (info.Type != FileType.Directory)
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Expected FileType.Directory, but got {info.Type}.";
-        }
-
-        // Size should be null for directories as per Filesystem.cs logic
-        else if (info.Size != null)
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Expected Size to be null for a directory, but got {info.Size}.";
-        }
-        else if (info.ModTime == null || Math.Abs(info.ModTime.Value - this.expectedModTime) > 2)
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = $"Expected ModTime around {this.expectedModTime}, but got {info.ModTime}. Difference: {Math.Abs((info.ModTime ?? 0) - this.expectedModTime)}";
-        }
-        else
-        {
-          this.CurrentStatus = TestStatus.Passed;
-          this.Details = "Successfully retrieved correct info for an existing directory.";
-        }
-      }
-      catch (Exception e)
-      {
-        this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"An unexpected error occurred: {e.Message}";
-      }
-      finally
-      {
-        if (Directory.Exists(this.testDirName))
-        {
-          try
-          {
-            Directory.Delete(this.testDirName);
-          }
-          catch (Exception ex)
-          {
-            this.Details += $" | Warning: Failed to delete test directory '{this.testDirName}': {ex.Message}";
-          }
-        }
-
-        this.EndTest();
-      }
+      // Assert
+      Assert.Null(info);
     }
   }
 
   /// <summary>
-  /// Tests GetInfo for a path that does not exist.
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns null for a path that does not exist.
   /// </summary>
-  public class FilesystemGetInfo_PathDoesNotExistTest : GameTestCase
+  public class FilesystemGetInfo_PathDoesNotExist_ReturnsNullTest : ModTestCase
   {
-    private readonly string nonExistentPath = Path.Combine(Path.GetTempPath(), "night_test_this_should_not_exist");
+    private readonly string nonExistentPath = Path.Combine(Path.GetTempPath(), $"night_test_non_existent_mod_{Guid.NewGuid()}");
 
     /// <inheritdoc/>
-    public override string Name => "Filesystem.GetInfo.PathDoesNotExist";
+    public override string Name => "Filesystem.GetInfo.PathDoesNotExistMod";
 
     /// <inheritdoc/>
-    public override string Description => "Tests GetInfo for a non-existent path, expecting null.";
+    public override string Description => "Tests GetInfo for a non-existent path, expecting null (Mod Test).";
 
     /// <inheritdoc/>
-    protected override void Load()
+    public override string SuccessMessage => "GetInfo for a non-existent path correctly returned null.";
+
+    /// <inheritdoc/>
+    public override void Run()
     {
-      base.Load();
-
-      // Ensure the path does not exist
+      // Arrange
+      // Ensure path does not exist (highly unlikely for a GUID-based name, but good practice)
       if (File.Exists(this.nonExistentPath))
       {
         File.Delete(this.nonExistentPath);
@@ -274,210 +119,856 @@ namespace NightTest.Groups.Filesystem
       {
         Directory.Delete(this.nonExistentPath);
       }
+
+      // Act
+      var info = Night.Filesystem.GetInfo(this.nonExistentPath);
+
+      // Assert
+      Assert.Null(info);
     }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns correct info for an existing file when no filter is applied.
+  /// </summary>
+  public class FilesystemGetInfo_FileExists_NoFilter_ReturnsFileInfoTest : ModTestCase
+  {
+    private const string TestFileContent = "Hello Night!";
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), $"night_test_file_exists_mod_{Guid.NewGuid()}.txt");
 
     /// <inheritdoc/>
-    protected override void Update(double deltaTime)
+    public override string Name => "Filesystem.GetInfo.FileExistsNoFilterMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo for an existing file with no filter, expecting correct FileSystemInfo (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo for an existing file with no filter returned correct FileSystemInfo.";
+
+    /// <inheritdoc/>
+    public override void Run()
     {
-      if (this.IsDone)
+      // Arrange
+      long expectedSize = 0;
+      long expectedModTime = 0;
+      try
       {
-        return;
+        File.WriteAllText(this.testFileName, TestFileContent);
+        var fileInfo = new FileInfo(this.testFileName);
+        expectedSize = fileInfo.Length;
+
+        // Ensure LastWriteTimeUtc is fresh for comparison
+        fileInfo.LastWriteTimeUtc = DateTime.UtcNow;
+        expectedModTime = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test file '{this.testFileName}'. {ex.Message}");
       }
 
       try
       {
-        var info = Night.Filesystem.GetInfo(this.nonExistentPath);
+        // Act
+        var info = Night.Filesystem.GetInfo(this.testFileName);
 
-        if (info == null)
-        {
-          this.CurrentStatus = TestStatus.Passed;
-          this.Details = "GetInfo correctly returned null for a non-existent path.";
-        }
-        else
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = "GetInfo returned a non-null object for a non-existent path.";
-        }
-      }
-      catch (Exception e)
-      {
-        this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"An unexpected error occurred: {e.Message}";
+        // Assert
+        Assert.NotNull(info);
+        Assert.Equal(FileType.File, info.Type);
+        Assert.Equal(expectedSize, info.Size);
+        _ = Assert.NotNull(info.ModTime);
+        Assert.True(Math.Abs(info.ModTime.Value - expectedModTime) <= 2, $"Expected ModTime around {expectedModTime}, but got {info.ModTime}. Difference: {Math.Abs((info.ModTime ?? 0) - expectedModTime)}");
       }
       finally
       {
-        this.EndTest();
+        // Cleanup
+        if (File.Exists(this.testFileName))
+        {
+          File.Delete(this.testFileName);
+        }
       }
     }
   }
 
   /// <summary>
-  /// Tests GetInfo with a FileType.File filter on an actual file.
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns correct info for a file that matches the filter.
   /// </summary>
-  public class FilesystemGetInfo_FilterTypeFile_MatchesTest : GameTestCase
+  public class FilesystemGetInfo_FileExists_MatchingFilter_ReturnsFileInfoTest : ModTestCase
   {
-    private readonly string testFileName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_filter_file.txt");
+    private const string TestFileContent = "Filter Match!";
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), $"night_test_file_match_filter_mod_{Guid.NewGuid()}.txt");
 
     /// <inheritdoc/>
-    public override string Name => "Filesystem.GetInfo.FilterTypeFileMatches";
+    public override string Name => "Filesystem.GetInfo.FileExistsMatchingFilterMod";
 
     /// <inheritdoc/>
-    public override string Description => "Tests GetInfo with FileType.File filter on a file, expecting a match.";
+    public override string Description => "Tests GetInfo for an existing file with FileType.File filter, expecting correct FileSystemInfo (Mod Test).";
 
     /// <inheritdoc/>
-    protected override void Load()
+    public override string SuccessMessage => "GetInfo for an existing file with FileType.File filter returned correct FileSystemInfo.";
+
+    /// <inheritdoc/>
+    public override void Run()
     {
-      base.Load();
+      // Arrange
       try
       {
-        File.WriteAllText(this.testFileName, "Filter test");
-      }
-      catch (Exception e)
-      {
-        this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test file '{this.testFileName}'. {e.Message}";
-        this.EndTest();
-      }
-    }
+        File.WriteAllText(this.testFileName, TestFileContent);
 
-    /// <inheritdoc/>
-    protected override void Update(double deltaTime)
-    {
-      if (this.IsDone)
+        // Ensure LastWriteTimeUtc is fresh for comparison
+        new FileInfo(this.testFileName).LastWriteTimeUtc = DateTime.UtcNow;
+      }
+      catch (Exception ex)
       {
-        return;
+        Assert.Fail($"Test setup failed: Could not create test file '{this.testFileName}'. {ex.Message}");
       }
 
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed)
-        {
-          return;
-        }
-
+        // Act
         var info = Night.Filesystem.GetInfo(this.testFileName, FileType.File);
 
-        if (info != null && info.Type == FileType.File)
+        // Assert
+        Assert.NotNull(info);
+        Assert.Equal(FileType.File, info.Type);
+      }
+      finally
+      {
+        // Cleanup
+        if (File.Exists(this.testFileName))
         {
-          this.CurrentStatus = TestStatus.Passed;
-          this.Details = "GetInfo with FileType.File filter correctly returned info for a file.";
-        }
-        else
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = "GetInfo with FileType.File filter failed to return info for a file or returned wrong type.";
+          File.Delete(this.testFileName);
         }
       }
-      catch (Exception e)
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns null for a file that does not match the filter.
+  /// </summary>
+  public class FilesystemGetInfo_FileExists_NonMatchingFilter_ReturnsNullTest : ModTestCase
+  {
+    private const string TestFileContent = "Filter No Match!";
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), $"night_test_file_nonmatch_filter_mod_{Guid.NewGuid()}.txt");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.FileExistsNonMatchingFilterMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo for an existing file with FileType.Directory filter, expecting null (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo for an existing file with FileType.Directory filter correctly returned null.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      try
       {
-        this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"An unexpected error occurred: {e.Message}";
+        File.WriteAllText(this.testFileName, TestFileContent);
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test file '{this.testFileName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+        var info = Night.Filesystem.GetInfo(this.testFileName, FileType.Directory);
+
+        // Assert
+        Assert.Null(info);
+      }
+      finally
+      {
+        // Cleanup
+        if (File.Exists(this.testFileName))
+        {
+          File.Delete(this.testFileName);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns correct info for a directory with no filter.
+  /// </summary>
+  public class FilesystemGetInfo_DirectoryExists_NoFilter_ReturnsDirectoryInfoTest : ModTestCase
+  {
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), $"night_test_dir_exists_mod_{Guid.NewGuid()}");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.DirectoryExistsNoFilterMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo for an existing directory with no filter, expecting correct FileSystemInfo (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo for an existing directory with no filter returned correct FileSystemInfo.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      long expectedModTime = 0;
+      try
+      {
+        _ = Directory.CreateDirectory(this.testDirName);
+        var dirInfo = new DirectoryInfo(this.testDirName);
+
+        // Ensure LastWriteTimeUtc is fresh for comparison
+        dirInfo.LastWriteTimeUtc = DateTime.UtcNow;
+        expectedModTime = new DateTimeOffset(dirInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test directory '{this.testDirName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+        var info = Night.Filesystem.GetInfo(this.testDirName);
+
+        // Assert
+        Assert.NotNull(info);
+        Assert.Equal(FileType.Directory, info.Type);
+        Assert.Null(info.Size); // Size should be null for directories
+        _ = Assert.NotNull(info.ModTime);
+        Assert.True(Math.Abs(info.ModTime.Value - expectedModTime) <= 2, $"Expected ModTime around {expectedModTime}, but got {info.ModTime}. Difference: {Math.Abs((info.ModTime ?? 0) - expectedModTime)}");
+      }
+      finally
+      {
+        // Cleanup
+        if (Directory.Exists(this.testDirName))
+        {
+          Directory.Delete(this.testDirName, true);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns correct info for a directory that matches the filter.
+  /// </summary>
+  public class FilesystemGetInfo_DirectoryExists_MatchingFilter_ReturnsDirectoryInfoTest : ModTestCase
+  {
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), $"night_test_dir_match_filter_mod_{Guid.NewGuid()}");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.DirectoryExistsMatchingFilterMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo for an existing directory with FileType.Directory filter, expecting correct FileSystemInfo (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo for an existing directory with FileType.Directory filter returned correct FileSystemInfo.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      try
+      {
+        _ = Directory.CreateDirectory(this.testDirName);
+
+        // Ensure LastWriteTimeUtc is fresh for comparison
+        new DirectoryInfo(this.testDirName).LastWriteTimeUtc = DateTime.UtcNow;
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test directory '{this.testDirName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+        var info = Night.Filesystem.GetInfo(this.testDirName, FileType.Directory);
+
+        // Assert
+        Assert.NotNull(info);
+        Assert.Equal(FileType.Directory, info.Type);
+      }
+      finally
+      {
+        // Cleanup
+        if (Directory.Exists(this.testDirName))
+        {
+          Directory.Delete(this.testDirName, true);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns null for a directory that does not match the filter.
+  /// </summary>
+  public class FilesystemGetInfo_DirectoryExists_NonMatchingFilter_ReturnsNullTest : ModTestCase
+  {
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), $"night_test_dir_nonmatch_filter_mod_{Guid.NewGuid()}");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.DirectoryExistsNonMatchingFilterMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo for an existing directory with FileType.File filter, expecting null (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo for an existing directory with FileType.File filter correctly returned null.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      try
+      {
+        _ = Directory.CreateDirectory(this.testDirName);
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test directory '{this.testDirName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+        var info = Night.Filesystem.GetInfo(this.testDirName, FileType.File);
+
+        // Assert
+        Assert.Null(info);
+      }
+      finally
+      {
+        // Cleanup
+        if (Directory.Exists(this.testDirName))
+        {
+          Directory.Delete(this.testDirName, true);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileSystemInfo)"/> returns null when the info object to populate is null.
+  /// </summary>
+  public class FilesystemGetInfo_PopulateNullInfoObject_ReturnsNullTest : ModTestCase
+  {
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), $"night_test_populate_null_info_{Guid.NewGuid()}.txt");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.PopulateNullInfoObjectMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo with a null FileSystemInfo object to populate, expecting null (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo with a null FileSystemInfo object correctly returned null.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      Night.FileSystemInfo? infoToPopulate = null;
+      try
+      {
+        File.WriteAllText(this.testFileName, "content"); // File needs to exist for GetInfo to proceed
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test file '{this.testFileName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+#pragma warning disable CS8604 // Possible null reference argument. Test case specifically for null.
+        var resultInfo = Night.Filesystem.GetInfo(this.testFileName, infoToPopulate!);
+#pragma warning restore CS8604
+
+        // Assert
+        Assert.Null(resultInfo);
       }
       finally
       {
         if (File.Exists(this.testFileName))
         {
-          try
-          {
-            File.Delete(this.testFileName);
-          }
-          catch (Exception ex)
-          {
-            this.Details += $" | Warning: Failed to delete test file '{this.testFileName}': {ex.Message}";
-          }
+          File.Delete(this.testFileName);
         }
-
-        this.EndTest();
       }
     }
   }
 
   /// <summary>
-  /// Tests GetInfo with a FileType.File filter on a directory.
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileSystemInfo)"/> correctly populates a valid info object for an existing file.
   /// </summary>
-  public class FilesystemGetInfo_FilterTypeFile_MismatchesTest : GameTestCase
+  public class FilesystemGetInfo_PopulateValidInfo_FileExists_PopulatesAndReturnsInfoTest : ModTestCase
   {
-    private readonly string testDirName = Path.Combine(Path.GetTempPath(), "night_test_getinfo_filter_file_mismatch_dir");
+    private const string TestFileContent = "Populate Me!";
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), $"night_test_populate_file_mod_{Guid.NewGuid()}.txt");
 
     /// <inheritdoc/>
-    public override string Name => "Filesystem.GetInfo.FilterTypeFileMismatches";
+    public override string Name => "Filesystem.GetInfo.PopulateValidInfoFileExistsMod";
 
     /// <inheritdoc/>
-    public override string Description => "Tests GetInfo with FileType.File filter on a directory, expecting null.";
+    public override string Description => "Tests GetInfo with a valid FileSystemInfo object for an existing file, expecting it to be populated (Mod Test).";
 
     /// <inheritdoc/>
-    protected override void Load()
+    public override string SuccessMessage => "GetInfo with a valid FileSystemInfo object for an existing file populated and returned it.";
+
+    /// <inheritdoc/>
+    public override void Run()
     {
-      base.Load();
+      // Arrange
+      var infoToPopulate = new Night.FileSystemInfo(FileType.Other, null, null); // Initial dummy values
+      long expectedSize = 0;
+      long expectedModTime = 0;
+
+      try
+      {
+        File.WriteAllText(this.testFileName, TestFileContent);
+        var fileInfo = new FileInfo(this.testFileName);
+        expectedSize = fileInfo.Length;
+        fileInfo.LastWriteTimeUtc = DateTime.UtcNow;
+        expectedModTime = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test file '{this.testFileName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+        var resultInfo = Night.Filesystem.GetInfo(this.testFileName, infoToPopulate);
+
+        // Assert
+        Assert.NotNull(resultInfo);
+        Assert.Same(infoToPopulate, resultInfo); // Should be the same instance
+        Assert.Equal(FileType.File, resultInfo.Type);
+        Assert.Equal(expectedSize, resultInfo.Size);
+        _ = Assert.NotNull(resultInfo.ModTime);
+        Assert.True(Math.Abs(resultInfo.ModTime.Value - expectedModTime) <= 2, $"Expected ModTime around {expectedModTime}, but got {resultInfo.ModTime}. Difference: {Math.Abs((resultInfo.ModTime ?? 0) - expectedModTime)}");
+      }
+      finally
+      {
+        if (File.Exists(this.testFileName))
+        {
+          File.Delete(this.testFileName);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileSystemInfo)"/> correctly populates a valid info object for an existing directory.
+  /// </summary>
+  public class FilesystemGetInfo_PopulateValidInfo_DirectoryExists_PopulatesAndReturnsInfoTest : ModTestCase
+  {
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), $"night_test_populate_dir_mod_{Guid.NewGuid()}");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.PopulateValidInfoDirectoryExistsMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo with a valid FileSystemInfo object for an existing directory, expecting it to be populated (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo with a valid FileSystemInfo object for an existing directory populated and returned it.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      var infoToPopulate = new Night.FileSystemInfo(FileType.Other, 123, 123); // Initial dummy values
+      long expectedModTime = 0;
+
       try
       {
         _ = Directory.CreateDirectory(this.testDirName);
+        var dirInfo = new DirectoryInfo(this.testDirName);
+        dirInfo.LastWriteTimeUtc = DateTime.UtcNow;
+        expectedModTime = new DateTimeOffset(dirInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Setup failed: Could not create test directory '{this.testDirName}'. {e.Message}";
-        this.EndTest();
-      }
-    }
-
-    /// <inheritdoc/>
-    protected override void Update(double deltaTime)
-    {
-      if (this.IsDone)
-      {
-        return;
+        Assert.Fail($"Test setup failed: Could not create test directory '{this.testDirName}'. {ex.Message}");
       }
 
       try
       {
-        if (this.CurrentStatus == TestStatus.Failed)
-        {
-          return;
-        }
+        // Act
+        var resultInfo = Night.Filesystem.GetInfo(this.testDirName, infoToPopulate);
 
-        var info = Night.Filesystem.GetInfo(this.testDirName, FileType.File);
-
-        if (info == null)
-        {
-          this.CurrentStatus = TestStatus.Passed;
-          this.Details = "GetInfo with FileType.File filter correctly returned null for a directory.";
-        }
-        else
-        {
-          this.CurrentStatus = TestStatus.Failed;
-          this.Details = "GetInfo with FileType.File filter returned non-null for a directory.";
-        }
-      }
-      catch (Exception e)
-      {
-        this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"An unexpected error occurred: {e.Message}";
+        // Assert
+        Assert.NotNull(resultInfo);
+        Assert.Same(infoToPopulate, resultInfo);
+        Assert.Equal(FileType.Directory, resultInfo.Type);
+        Assert.Null(resultInfo.Size); // Size should be null for directories
+        _ = Assert.NotNull(resultInfo.ModTime);
+        Assert.True(Math.Abs(resultInfo.ModTime.Value - expectedModTime) <= 2, $"Expected ModTime around {expectedModTime}, but got {resultInfo.ModTime}. Difference: {Math.Abs((resultInfo.ModTime ?? 0) - expectedModTime)}");
       }
       finally
       {
         if (Directory.Exists(this.testDirName))
         {
-          try
-          {
-            Directory.Delete(this.testDirName);
-          }
-          catch (Exception ex)
-          {
-            this.Details += $" | Warning: Failed to delete test directory '{this.testDirName}': {ex.Message}";
-          }
+          Directory.Delete(this.testDirName, true);
         }
-
-        this.EndTest();
       }
     }
   }
 
-  // TODO: Add tests for other GetInfo overloads:
-  // - GetInfo(string path, FileSystemInfo info)
-  // - GetInfo(string path, FileType filterType, FileSystemInfo info)
-  // - GetInfo_EmptyPath_ReturnsNull
-  // - GetInfo_SymlinkExists_ReturnsSymlinkType (if feasible)
-  // - GetInfo_WithFilterTypeDirectory_Matches
-  // - GetInfo_WithFilterTypeDirectory_Mismatches
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileSystemInfo)"/> returns null when the path does not exist.
+  /// </summary>
+  public class FilesystemGetInfo_PopulateValidInfo_PathDoesNotExist_ReturnsNullTest : ModTestCase
+  {
+    private readonly string nonExistentPath = Path.Combine(Path.GetTempPath(), $"night_test_populate_non_existent_mod_{Guid.NewGuid()}");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.PopulateValidInfoPathDoesNotExistMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo with a valid FileSystemInfo object for a non-existent path, expecting null (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo with a valid FileSystemInfo object for a non-existent path correctly returned null.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      var infoToPopulate = new Night.FileSystemInfo(FileType.File, 10, 100); // Initial dummy values
+      if (File.Exists(this.nonExistentPath))
+      {
+        File.Delete(this.nonExistentPath);
+      }
+
+      if (Directory.Exists(this.nonExistentPath))
+      {
+        Directory.Delete(this.nonExistentPath, true);
+      }
+
+      // Act
+      var resultInfo = Night.Filesystem.GetInfo(this.nonExistentPath, infoToPopulate);
+
+      // Assert
+      Assert.Null(resultInfo);
+
+      // Original infoToPopulate should remain unchanged by the GetInfo call if path doesn't exist
+      Assert.Equal(FileType.File, infoToPopulate.Type);
+      Assert.Equal(10, infoToPopulate.Size);
+      Assert.Equal(100, infoToPopulate.ModTime);
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns null when the info object is null.
+  /// </summary>
+  public class FilesystemGetInfo_PopulateWithFilter_NullInfoObject_ReturnsNullTest : ModTestCase
+  {
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), $"night_test_populate_filter_null_info_{Guid.NewGuid()}.txt");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.PopulateWithFilterNullInfoObjectMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo (filter overload) with a null FileSystemInfo object, expecting null (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo (filter overload) with a null FileSystemInfo object correctly returned null.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      Night.FileSystemInfo? infoToPopulate = null;
+      try
+      {
+        File.WriteAllText(this.testFileName, "content");
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test file '{this.testFileName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+#pragma warning disable CS8604 // Possible null reference argument.
+        var resultInfo = Night.Filesystem.GetInfo(this.testFileName, FileType.File, infoToPopulate);
+#pragma warning restore CS8604
+
+        // Assert
+        Assert.Null(resultInfo);
+      }
+      finally
+      {
+        if (File.Exists(this.testFileName))
+        {
+          File.Delete(this.testFileName);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> populates info for a file with a matching filter.
+  /// </summary>
+  public class FilesystemGetInfo_PopulateWithFilter_FileExists_MatchingFilter_PopulatesInfoTest : ModTestCase
+  {
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), $"night_test_populate_file_match_filter_mod_{Guid.NewGuid()}.txt");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.PopulateWithFilterFileMatchingMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo (filter overload) for a file with matching filter, expecting populated info (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo (filter overload) for a file with matching filter populated info.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      var infoToPopulate = new Night.FileSystemInfo(FileType.Other, 0, 0);
+      long expectedSize = 0;
+      long expectedModTime = 0;
+      try
+      {
+        File.WriteAllText(this.testFileName, "content");
+        var fileInfo = new FileInfo(this.testFileName);
+        expectedSize = fileInfo.Length;
+        fileInfo.LastWriteTimeUtc = DateTime.UtcNow;
+        expectedModTime = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test file '{this.testFileName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+        var resultInfo = Night.Filesystem.GetInfo(this.testFileName, FileType.File, infoToPopulate);
+
+        // Assert
+        Assert.NotNull(resultInfo);
+        Assert.Same(infoToPopulate, resultInfo);
+        Assert.Equal(FileType.File, resultInfo.Type);
+        Assert.Equal(expectedSize, resultInfo.Size);
+        _ = Assert.NotNull(resultInfo.ModTime);
+        Assert.True(Math.Abs(resultInfo.ModTime.Value - expectedModTime) <= 2);
+      }
+      finally
+      {
+        if (File.Exists(this.testFileName))
+        {
+          File.Delete(this.testFileName);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns null for a file with a non-matching filter.
+  /// </summary>
+  public class FilesystemGetInfo_PopulateWithFilter_FileExists_NonMatchingFilter_ReturnsNullTest : ModTestCase
+  {
+    private readonly string testFileName = Path.Combine(Path.GetTempPath(), $"night_test_populate_file_nonmatch_filter_mod_{Guid.NewGuid()}.txt");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.PopulateWithFilterFileNonMatchingMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo (filter overload) for a file with non-matching filter, expecting null (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo (filter overload) for a file with non-matching filter returned null.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      var infoToPopulate = new Night.FileSystemInfo(FileType.Other, 0, 0);
+      try
+      {
+        File.WriteAllText(this.testFileName, "content");
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test file '{this.testFileName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+        var resultInfo = Night.Filesystem.GetInfo(this.testFileName, FileType.Directory, infoToPopulate);
+
+        // Assert
+        Assert.Null(resultInfo);
+
+        // Original infoToPopulate should remain unchanged
+        Assert.Equal(FileType.Other, infoToPopulate.Type);
+      }
+      finally
+      {
+        if (File.Exists(this.testFileName))
+        {
+          File.Delete(this.testFileName);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> populates info for a directory with a matching filter.
+  /// </summary>
+  public class FilesystemGetInfo_PopulateWithFilter_DirectoryExists_MatchingFilter_PopulatesInfoTest : ModTestCase
+  {
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), $"night_test_populate_dir_match_filter_mod_{Guid.NewGuid()}");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.PopulateWithFilterDirectoryMatchingMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo (filter overload) for a directory with matching filter, expecting populated info (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo (filter overload) for a directory with matching filter populated info.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      var infoToPopulate = new Night.FileSystemInfo(FileType.Other, 0, 0);
+      long expectedModTime = 0;
+      try
+      {
+        _ = Directory.CreateDirectory(this.testDirName);
+        var dirInfo = new DirectoryInfo(this.testDirName);
+        dirInfo.LastWriteTimeUtc = DateTime.UtcNow;
+        expectedModTime = new DateTimeOffset(dirInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test directory '{this.testDirName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+        var resultInfo = Night.Filesystem.GetInfo(this.testDirName, FileType.Directory, infoToPopulate);
+
+        // Assert
+        Assert.NotNull(resultInfo);
+        Assert.Same(infoToPopulate, resultInfo);
+        Assert.Equal(FileType.Directory, resultInfo.Type);
+        Assert.Null(resultInfo.Size);
+        _ = Assert.NotNull(resultInfo.ModTime);
+        Assert.True(Math.Abs(resultInfo.ModTime.Value - expectedModTime) <= 2);
+      }
+      finally
+      {
+        if (Directory.Exists(this.testDirName))
+        {
+          Directory.Delete(this.testDirName, true);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns null for a directory with a non-matching filter.
+  /// </summary>
+  public class FilesystemGetInfo_PopulateWithFilter_DirectoryExists_NonMatchingFilter_ReturnsNullTest : ModTestCase
+  {
+    private readonly string testDirName = Path.Combine(Path.GetTempPath(), $"night_test_populate_dir_nonmatch_filter_mod_{Guid.NewGuid()}");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.PopulateWithFilterDirectoryNonMatchingMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo (filter overload) for a directory with non-matching filter, expecting null (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo (filter overload) for a directory with non-matching filter returned null.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      var infoToPopulate = new Night.FileSystemInfo(FileType.Other, 0, 0);
+      try
+      {
+        _ = Directory.CreateDirectory(this.testDirName);
+      }
+      catch (Exception ex)
+      {
+        Assert.Fail($"Test setup failed: Could not create test directory '{this.testDirName}'. {ex.Message}");
+      }
+
+      try
+      {
+        // Act
+        var resultInfo = Night.Filesystem.GetInfo(this.testDirName, FileType.File, infoToPopulate);
+
+        // Assert
+        Assert.Null(resultInfo);
+        Assert.Equal(FileType.Other, infoToPopulate.Type);
+      }
+      finally
+      {
+        if (Directory.Exists(this.testDirName))
+        {
+          Directory.Delete(this.testDirName, true);
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns null for a non-existent path.
+  /// </summary>
+  public class FilesystemGetInfo_PopulateWithFilter_PathDoesNotExist_ReturnsNullTest : ModTestCase
+  {
+    private readonly string nonExistentPath = Path.Combine(Path.GetTempPath(), $"night_test_populate_filter_non_existent_mod_{Guid.NewGuid()}");
+
+    /// <inheritdoc/>
+    public override string Name => "Filesystem.GetInfo.PopulateWithFilterPathDoesNotExistMod";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests GetInfo (filter overload) for a non-existent path, expecting null (Mod Test).";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "GetInfo (filter overload) for a non-existent path correctly returned null.";
+
+    /// <inheritdoc/>
+    public override void Run()
+    {
+      // Arrange
+      var infoToPopulate = new Night.FileSystemInfo(FileType.File, 10, 100);
+      if (File.Exists(this.nonExistentPath))
+      {
+        File.Delete(this.nonExistentPath);
+      }
+
+      if (Directory.Exists(this.nonExistentPath))
+      {
+        Directory.Delete(this.nonExistentPath, true);
+      }
+
+      // Act
+      var resultInfo = Night.Filesystem.GetInfo(this.nonExistentPath, FileType.File, infoToPopulate);
+
+      // Assert
+      Assert.Null(resultInfo);
+      Assert.Equal(FileType.File, infoToPopulate.Type);
+      Assert.Equal(10, infoToPopulate.Size);
+      Assert.Equal(100, infoToPopulate.ModTime);
+    }
+  }
+
+  // More test cases for existing files, directories, filters, and other overloads will be added here.
 }

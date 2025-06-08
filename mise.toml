@@ -85,7 +85,7 @@ alias = "docs"
 description = "Generate docs."
 run = ["dotnet docfx docs/docfx.json"]
 
-[tasks.format]
-alias = "format"
-description = "Format files."
-run = ["dotnet format --verbosity verbose Night.sln"]
+[tasks.lint]
+alias = "lint"
+description = "Lint files."
+run = ["dotnet format --verbosity diagnostic Night.sln"]
