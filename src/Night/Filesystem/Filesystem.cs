@@ -30,8 +30,7 @@ using Night.Log;
 namespace Night
 {
   /// <summary>
-  /// Provides basic file system operations.
-  /// Inspired by Love2D's love.filesystem module.
+  /// Provides an interface to the user's filesystem.
   /// </summary>
   public static class Filesystem
   {
