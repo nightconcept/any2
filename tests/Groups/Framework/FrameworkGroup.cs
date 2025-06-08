@@ -1,4 +1,4 @@
-// <copyright file="CLIGroup.cs" company="Night Circle">
+// <copyright file="FrameworkGroup.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -28,16 +28,16 @@ using Xunit.Abstractions;
 namespace NightTest.Groups.Framework
 {
   /// <summary>
-  /// Test group for CLI-related ModTestCases.
+  /// Test group for Framework-related ModTestCases.
   /// </summary>
   [Collection("SequentialTests")] // Recommended for ModTestCases as well if they modify global state (like LogManager)
-  public class CLIGroup : TestGroup
+  public class FrameworkGroup : TestGroup
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="CLIGroup"/> class.
+    /// Initializes a new instance of the <see cref="FrameworkGroup"/> class.
     /// </summary>
     /// <param name="outputHelper">The xUnit test output helper.</param>
-    public CLIGroup(ITestOutputHelper outputHelper)
+    public FrameworkGroup(ITestOutputHelper outputHelper)
         : base(outputHelper)
     {
     }
@@ -160,6 +160,16 @@ namespace NightTest.Groups.Framework
     public void Run_FrameworkCLI_ApplySettings_RemainingArgsWarningTest()
     {
       this.Run_ModTestCase(new NightCLI_ApplySettings_RemainingArgsWarningTest());
+    }
+
+    /// <summary>
+    /// Runs the test for Night Framework.Run method with null IGame handling.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FrameworkRun_NullIGame()
+    {
+      this.Run_ModTestCase(new FrameworkRun_NullIGame());
     }
   }
 }
