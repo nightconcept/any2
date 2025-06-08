@@ -1,4 +1,4 @@
-// <copyright file="Game.cs" company="Night Circle">
+// <copyright file="SamplePlatformerGame.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -38,9 +38,9 @@ namespace SampleGame;
 
 /// <summary>
 /// Main game class for the platformer sample.
-/// Implements the <see cref="IGame"/> interface for Night.Engine integration.
+/// Inherits from <see cref="Night.Game"/> for Night.Engine integration.
 /// </summary>
-public class Game : IGame
+public class SamplePlatformerGame : Night.Game
 {
   private Player player;
   private List<Night.Rectangle> platforms;
@@ -51,9 +51,9 @@ public class Game : IGame
   private bool goalReachedMessageShown = false; // To ensure message prints only once
 
   /// <summary>
-  /// Initializes a new instance of the <see cref="Game"/> class.
+  /// Initializes a new instance of the <see cref="SamplePlatformerGame"/> class.
   /// </summary>
-  public Game()
+  public SamplePlatformerGame()
   {
     this.player = new Player();
     this.platforms = new List<Night.Rectangle>();
@@ -77,7 +77,7 @@ public class Game : IGame
     this.platformSprite = Graphics.NewImage(platformImageFullPath);
     if (this.platformSprite == null)
     {
-      Console.WriteLine($"Game.Load: Failed to load platform sprite at '{platformImageFullPath}'. Platforms will not be drawn.");
+      Console.WriteLine($"SamplePlatformerGame.Load: Failed to load platform sprite at '{platformImageFullPath}'. Platforms will not be drawn.");
     }
 
     // Initialize platforms (as per docs/epics/epic7-design.md)
@@ -97,7 +97,7 @@ public class Game : IGame
     string iconRelativePath = Path.Combine("assets", "icon.ico");
     string iconFullPath = Path.Combine(AppContext.BaseDirectory, iconRelativePath);
     _ = Window.SetIcon(iconFullPath);
-    Console.WriteLine($"Attempted to set icon from Game.Load. Current icon: {Window.GetIcon()}");
+    Console.WriteLine($"Attempted to set icon from SamplePlatformerGame.Load. Current icon: {Window.GetIcon()}");
   }
 
   /// <summary>
@@ -107,7 +107,7 @@ public class Game : IGame
   /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
   public void Update(double deltaTime)
   {
-    // Logger.Debug($"Game.Update: deltaTime={deltaTime:F5}");
+    // Logger.Debug($"SamplePlatformerGame.Update: deltaTime={deltaTime:F5}");
     this.player.Update(deltaTime, this.platforms);
 
     // Check if player reached the goal platform
@@ -132,7 +132,7 @@ public class Game : IGame
   /// </summary>
   public void Draw()
   {
-    // Logger.Debug("Game.Draw START");
+    // Logger.Debug("SamplePlatformerGame.Draw START");
     Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
 
     // Draw platforms
@@ -258,7 +258,7 @@ public class Game : IGame
     // Test error triggering
     if (key == Night.KeySymbol.E && !isRepeat)
     {
-      throw new InvalidOperationException("Test error triggered by pressing 'E' in SampleGame!");
+      throw new InvalidOperationException("Test error triggered by pressing 'E' in SamplePlatformerGame!");
     }
 
     // --- Night.Window Demo: Toggle Fullscreen ---
@@ -281,24 +281,8 @@ public class Game : IGame
     }
   }
 
-  /// <inheritdoc/>
-  public void KeyReleased(KeySymbol key, KeyCode scancode)
-  {
-    // No specific action needed on key release for now, but method must be implemented.
-    // Logger.Debug($"Game.KeyReleased: Key={key}, Scancode={scancode}");
-  }
-
-  /// <inheritdoc/>
-  public void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
-  {
-    throw new NotImplementedException();
-  }
-
-  /// <inheritdoc/>
-  public void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses)
-  {
-    throw new NotImplementedException();
-  }
+  // KeyReleased, MousePressed, and MouseReleased are inherited from Night.Game (default empty implementations)
+  // and do not need to be overridden here if no specific action is required.
 
   // Helper for collision detection (AABB)
   private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)

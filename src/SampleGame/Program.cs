@@ -37,7 +37,7 @@ namespace SampleGame
     /// <param name="args">Command-line arguments.</param>
     public static void Main(string[] args)
     {
-      Framework.Run(new Game(), new CLI(args));
+      Framework.Run(new SamplePlatformerGame(), new CLI(args));
     }
   }
 }
