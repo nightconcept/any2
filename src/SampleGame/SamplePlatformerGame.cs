@@ -63,7 +63,7 @@ public class SamplePlatformerGame : Night.Game
   /// Loads game assets and initializes game state.
   /// Called once at the start of the game by the Night.Engine.
   /// </summary>
-  public void Load()
+  public override void Load()
   {
     // _ = Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     // Window.SetTitle("Night Platformer Sample");
@@ -105,7 +105,7 @@ public class SamplePlatformerGame : Night.Game
   /// Called every frame by the Night.Engine.
   /// </summary>
   /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
-  public void Update(double deltaTime)
+  public override void Update(double deltaTime)
   {
     // Logger.Debug($"SamplePlatformerGame.Update: deltaTime={deltaTime:F5}");
     this.player.Update(deltaTime, this.platforms);
@@ -130,7 +130,7 @@ public class SamplePlatformerGame : Night.Game
   /// Draws the game scene.
   /// Called every frame by the Night.Engine after Update.
   /// </summary>
-  public void Draw()
+  public override void Draw()
   {
     // Logger.Debug("SamplePlatformerGame.Draw START");
     Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
@@ -247,7 +247,7 @@ public class SamplePlatformerGame : Night.Game
   /// <param name="key">The <see cref="Night.KeySymbol"/> of the pressed key.</param>
   /// <param name="scancode">The <see cref="Night.KeyCode"/> (physical key code) of the pressed key.</param>
   /// <param name="isRepeat">True if this is a repeat key event, false otherwise.</param>
-  public void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
+  public override void KeyPressed(Night.KeySymbol key, Night.KeyCode scancode, bool isRepeat)
   {
     // Minimal key handling for now, primarily for closing the window.
     if (key == Night.KeySymbol.Escape)
