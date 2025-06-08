@@ -122,6 +122,12 @@ namespace SampleGame
     {
       float dt = (float)deltaTime;
 
+      // Logger.Debug(
+      //     $"Player.Update START: dt={dt.ToString("F5", CultureInfo.InvariantCulture)}, " +
+      //     $"X={this.X.ToString("F2", CultureInfo.InvariantCulture)}, Y={this.Y.ToString("F2", CultureInfo.InvariantCulture)}, " +
+      //     $"vX={this.velocityX.ToString("F2", CultureInfo.InvariantCulture)}, vY={this.velocityY.ToString("F2", CultureInfo.InvariantCulture)}, " +
+      //     $"Grounded={this.isGrounded}");
+
       // 1. Handle Input & Apply Jump Impulse
       this.velocityX = 0;
       if (Keyboard.IsDown(KeyCode.Left) || Keyboard.IsDown(KeyCode.A))
@@ -255,14 +261,10 @@ namespace SampleGame
 
       this.isGrounded = newIsGroundedThisFrame;
 
-      // If a jump was initiated and _isGrounded became false,
-      // and player is still moving upwards (_velocityY < 0), they are not grounded.
-      // This ensures that if a jump starts, _isGrounded remains false until landing.
-      // Check if jump was initiated *this frame*
-      if (tryingToJump && this.velocityY < 0)
-      {
-        this.isGrounded = false;
-      }
+      // Logger.Debug(
+      //     $"Player.Update END: X={this.X.ToString("F2", CultureInfo.InvariantCulture)}, Y={this.Y.ToString("F2", CultureInfo.InvariantCulture)}, " +
+      //     $"vX={this.velocityX.ToString("F2", CultureInfo.InvariantCulture)}, vY={this.velocityY.ToString("F2", CultureInfo.InvariantCulture)}, " +
+      //     $"Grounded={this.isGrounded}");
 
       // Prevent player from going off-screen left/right (simple boundary)
       // These values should ideally come from Window.GetWidth/Height if game resizes
@@ -286,6 +288,7 @@ namespace SampleGame
     /// </summary>
     public void Draw()
     {
+      // Logger.Debug($"Player.Draw: X={this.X.ToString("F2", CultureInfo.InvariantCulture)}, Y={this.Y.ToString("F2", CultureInfo.InvariantCulture)}");
       if (this.playerSprite != null)
       {
         // If player_sprite_blue_32x64.png is exactly 32x64, scaleX and scaleY are 1.

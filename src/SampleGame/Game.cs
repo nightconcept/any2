@@ -29,7 +29,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Night;
-using Night.Log;
+
 using Night.Log.Sinks;
 
 using SDL3;
@@ -45,6 +45,8 @@ public class Game : IGame
   private Player player;
   private List<Night.Rectangle> platforms;
   private Night.Sprite? platformSprite;
+
+  // private static readonly ILogger Logger = LogManager.GetLogger(nameof(Game)); // Removed
   private Night.Rectangle goalPlatform;
   private bool goalReachedMessageShown = false; // To ensure message prints only once
 
@@ -105,6 +107,7 @@ public class Game : IGame
   /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
   public void Update(double deltaTime)
   {
+    // Logger.Debug($"Game.Update: deltaTime={deltaTime:F5}");
     this.player.Update(deltaTime, this.platforms);
 
     // Check if player reached the goal platform
@@ -129,6 +132,7 @@ public class Game : IGame
   /// </summary>
   public void Draw()
   {
+    // Logger.Debug("Game.Draw START");
     Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
 
     // Draw platforms
@@ -280,7 +284,8 @@ public class Game : IGame
   /// <inheritdoc/>
   public void KeyReleased(KeySymbol key, KeyCode scancode)
   {
-    throw new NotImplementedException();
+    // No specific action needed on key release for now, but method must be implemented.
+    // Logger.Debug($"Game.KeyReleased: Key={key}, Scancode={scancode}");
   }
 
   /// <inheritdoc/>

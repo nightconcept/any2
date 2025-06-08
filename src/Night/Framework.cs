@@ -78,8 +78,6 @@ namespace Night
         return;
       }
 
-      // Apply settings from command line arguments first, if provided.
-      // This will handle LogManager setup, session logs, etc., based on CLI flags.
       cliArgs?.ApplySettings();
 
       inErrorState = false;
@@ -90,7 +88,7 @@ namespace Night
 
       bool isTestingEnvironment = IsTestingEnvironment();
 
-      if ((cliArgs == null || !cliArgs.IsSilentMode) && !isTestingEnvironment)
+      if (cliArgs == null || !cliArgs.IsSilentMode)
       {
         string nightVersionString = VersionInfo.GetVersion();
         string sdlVersionString = NightSDL.GetVersion();
