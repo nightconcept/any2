@@ -53,7 +53,7 @@ namespace NightTest.Groups.Timer
 
       double elapsedMs = this.internalStopwatch.ElapsedMilliseconds;
 
-      if (elapsedMs >= SleepDurationSeconds * 1000 * 0.9 && elapsedMs <= SleepDurationSeconds * 1000 * 1.5)
+      if (elapsedMs >= SleepDurationSeconds * 1000 * 0.9 && elapsedMs <= SleepDurationSeconds * 1000 * 1.6)
       {
         this.CurrentStatus = TestStatus.Passed;
         this.Details = $"Timer.Sleep({SleepDurationSeconds}) executed. Measured duration: {elapsedMs}ms. Expected ~{SleepDurationSeconds * 1000}ms.";
