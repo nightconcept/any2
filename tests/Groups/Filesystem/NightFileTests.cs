@@ -49,7 +49,7 @@ namespace NightTest.Groups.Filesystem
 
       try
       {
-        using (var nightFile = new NightFile())
+        using (var nightFile = new NightFile("dummy_test_file.txt"))
         {
           // Dispose is called automatically by using statement.
         }

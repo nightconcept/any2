@@ -340,5 +340,56 @@ namespace Night
 
       return File.ReadLines(filePath);
     }
+
+    /// <summary>
+    /// Creates a new File object. It needs to be opened before it can be accessed.
+    /// </summary>
+    /// <param name="filename">The filename of the file.</param>
+    /// <returns>The new NightFile object.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if filename is null or empty.</exception>
+    public static NightFile NewFile(string filename)
+    {
+      // Note: LÖVE's love.filesystem.newFile(filename) does not error at this stage
+      // for invalid filenames, deferring errors to File:open.
+      // Our NightFile constructor will throw ArgumentNullException if filename is null/empty,
+      // which is a reasonable basic validation.
+      return new NightFile(filename);
+    }
+
+    /// <summary>
+    /// Creates a File object and opens it for reading, writing, or appending.
+    /// </summary>
+    /// <param name="filename">The filename of the file.</param>
+    /// <param name="mode">The mode to open the file in.</param>
+    /// <returns>A tuple containing the new NightFile object (or null if an error occurred) and an error string if an error occurred.</returns>
+    public static (NightFile? File, string? ErrorStr) NewFile(string filename, FileMode mode)
+    {
+      try
+      {
+        var file = new NightFile(filename);
+        (bool success, string? error) = file.Open(mode);
+        if (success)
+        {
+          return (file, null);
+        }
+        else
+        {
+          // Ensure the file object is disposed if open failed, though NightFile's Open should handle internal state.
+          // If Open fails, the FileStream might not be created, or if created and failed, it should be handled there.
+          // For safety, we could call Dispose, but it might be redundant if Open cleans up.
+          // LÖVE returns nil for the file object on error.
+          return (null, error);
+        }
+      }
+      catch (ArgumentNullException ex)
+      {
+        return (null, ex.Message);
+      }
+      catch (Exception ex)
+      {
+        Logger.Error($"Unexpected error in Filesystem.NewFile('{filename}', '{mode}'): {ex.Message}", ex);
+        return (null, $"An unexpected error occurred: {ex.Message}");
+      }
+    }
   }
 }

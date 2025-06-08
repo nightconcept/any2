@@ -29,6 +29,9 @@
   - GetInfo(string path, FileType? filterType)
 - Lines() - love.filesystem.lines
   - Lines(string filePath)
+- NewFile() - love.filesystem.newFile
+  - NewFile(string filename)
+  - NewFile(string filename, FileMode mode)
 - ReadBytes() - love.filesystem.readBytes
   - ReadBytes(string path)
 - ReadText() - love.filesystem.readText
