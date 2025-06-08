@@ -32,6 +32,9 @@
 - NewFile() - love.filesystem.newFile
   - NewFile(string filename)
   - NewFile(string filename, FileMode mode)
+- Read() - love.filesystem.read
+  - Read(ContainerType container, string name, long? sizeToRead)
+  - Read(string name, long? sizeToRead)
 - ReadBytes() - love.filesystem.readBytes
   - ReadBytes(string path)
 - ReadText() - love.filesystem.readText
@@ -40,6 +43,7 @@
 ### Enums (Filesystem)
 
 - BufferMode
+- ContainerType
 - FileMode
 - FileType
 

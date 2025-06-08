@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security;
+using System.Text;
 
 using Night.Log;
 
@@ -36,6 +37,22 @@ namespace Night
   {
     private static readonly ILogger Logger = LogManager.GetLogger("Night.Filesystem.Filesystem");
     private static string gameIdentity = "NightDefault"; // Placeholder, to be managed by SetIdentity/GetIdentity
+
+    /// <summary>
+    /// Specifies the type to return file contents as when reading.
+    /// </summary>
+    public enum ContainerType
+    {
+      /// <summary>
+      /// Read content as a string.
+      /// </summary>
+      String,
+
+      /// <summary>
+      /// Read content as raw byte data.
+      /// </summary>
+      Data,
+    }
 
     /// <summary>
     /// Gets information about the specified file or directory.
@@ -174,6 +191,153 @@ namespace Night
     public static string ReadText(string path)
     {
       return File.ReadAllText(path);
+    }
+
+    /// <summary>
+    /// Reads the contents of a file into a string.
+    /// </summary>
+    /// <param name="name">The name (and path) of the file.</param>
+    /// <param name="sizeToRead">How many bytes to read. If null, reads the entire file.
+    /// If the requested size exceeds practical limits (e.g., max string size),
+    /// reading may be capped, and the returned bytesRead will reflect the actual amount.</param>
+    /// <returns>
+    /// A tuple containing:
+    /// - <c>contents</c>: The file contents as a string. Null if an error occurs.
+    /// - <c>bytesRead</c>: How many bytes were read. Null if an error occurs before reading attempt or on critical failure.
+    /// - <c>errorMsg</c>: An error message if reading fails, otherwise null.
+    /// </returns>
+    /// <remarks>
+    /// This method mimics LÖVE's love.filesystem.read(name, size), defaulting to string content.
+    /// Content is UTF-8 decoded.
+    /// </remarks>
+    public static (string? Contents, long? BytesRead, string? ErrorMsg) Read(string name, long? sizeToRead = null)
+    {
+      var result = Read(ContainerType.String, name, sizeToRead);
+      if (result.ErrorMsg != null)
+      {
+        // Ensure contents is null if there's an error message, bytesRead might be 0 or null depending on when error occurred.
+        return (null, result.BytesRead, result.ErrorMsg);
+      }
+
+      return ((string?)result.Contents, result.BytesRead, result.ErrorMsg);
+    }
+
+    /// <summary>
+    /// Reads the contents of a file.
+    /// </summary>
+    /// <param name="container">What type to return the file's contents as (string or raw data).</param>
+    /// <param name="name">The name (and path) of the file.</param>
+    /// <param name="sizeToRead">How many bytes to read. If null, reads the entire file.
+    /// If the requested size exceeds practical limits (e.g., max array/string size),
+    /// reading may be capped, and the returned bytesRead will reflect the actual amount.</param>
+    /// <returns>
+    /// A tuple containing:
+    /// - <c>contents</c>: The file contents as an object (string or byte[]). Null if an error occurs.
+    /// - <c>bytesRead</c>: How many bytes were read. Null if an error occurs before reading attempt or on critical failure.
+    /// - <c>errorMsg</c>: An error message if reading fails, otherwise null.
+    /// </returns>
+    /// <remarks>
+    /// This method mimics LÖVE's love.filesystem.read(container, name, size).
+    /// When <paramref name="container"/> is <see cref="ContainerType.Data"/>, contents will be byte[].
+    /// When <paramref name="container"/> is <see cref="ContainerType.String"/>, contents will be a string (UTF-8 decoded).
+    /// Reading is capped at int.MaxValue bytes due to .NET array/string limitations.
+    /// </remarks>
+    public static (object? Contents, long? BytesRead, string? ErrorMsg) Read(ContainerType container, string name, long? sizeToRead = null)
+    {
+      if (string.IsNullOrEmpty(name))
+      {
+        return (null, null, "File name cannot be null or empty.");
+      }
+
+      if (sizeToRead.HasValue && sizeToRead.Value < 0)
+      {
+        // LÖVE's behavior for negative size is not explicitly defined for read,
+        // but typically means read all or error. Let's treat as an error or invalid argument.
+        // For consistency with Append, we could return 0 bytes read, but an error seems more appropriate for read.
+        return (null, 0, "Size to read cannot be negative.");
+      }
+
+      try
+      {
+        if (!File.Exists(name))
+        {
+          return (null, null, "File not found.");
+        }
+
+        using (var stream = new FileStream(name, global::System.IO.FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+          long fileLength = stream.Length;
+          long actualBytesToRead;
+
+          if (sizeToRead.HasValue)
+          {
+            actualBytesToRead = Math.Min(sizeToRead.Value, fileLength);
+          }
+          else
+          {
+            actualBytesToRead = fileLength;
+          }
+
+          // Cap reading at int.MaxValue due to .NET array/string limitations
+          if (actualBytesToRead > int.MaxValue)
+          {
+            Logger.Warn($"Requested read size ({actualBytesToRead} bytes) for '{name}' exceeds int.MaxValue. Capping read at {int.MaxValue} bytes.");
+            actualBytesToRead = int.MaxValue;
+          }
+
+          if (actualBytesToRead == 0)
+          {
+            return (container == ContainerType.String ? string.Empty : Array.Empty<byte>(), 0, null);
+          }
+
+          byte[] buffer = new byte[(int)actualBytesToRead];
+          int bytesActuallyReadFromStream = stream.Read(buffer, 0, (int)actualBytesToRead);
+
+          if (bytesActuallyReadFromStream < actualBytesToRead)
+          {
+            // This might happen if the file is modified concurrently, or other rare FS issues.
+            // Adjust buffer if fewer bytes were read than expected.
+            Array.Resize(ref buffer, bytesActuallyReadFromStream);
+            Logger.Warn($"Read fewer bytes ({bytesActuallyReadFromStream}) than expected ({actualBytesToRead}) for file '{name}'.");
+          }
+
+          object resultContents;
+          if (container == ContainerType.String)
+          {
+            resultContents = global::System.Text.Encoding.UTF8.GetString(buffer);
+          }
+          else
+          {
+            resultContents = buffer;
+          }
+
+          return (resultContents, bytesActuallyReadFromStream, null);
+        }
+      }
+      catch (FileNotFoundException)
+      {
+        return (null, null, "File not found.");
+      }
+      catch (UnauthorizedAccessException ex)
+      {
+        Logger.Error($"Unauthorized access trying to read file '{name}'.", ex);
+        return (null, null, "Unauthorized access.");
+      }
+      catch (SecurityException ex)
+      {
+        Logger.Error($"Security error trying to read file '{name}'.", ex);
+        return (null, null, "Security error.");
+      }
+      catch (IOException ex)
+      {
+        Logger.Error($"IO error trying to read file '{name}'.", ex);
+        return (null, null, $"IO error: {ex.Message}");
+      }
+      catch (Exception ex)
+      {
+        Logger.Error($"Unexpected error trying to read file '{name}'.", ex);
+        return (null, null, $"An unexpected error occurred: {ex.Message}");
+      }
     }
 
     /// <summary>

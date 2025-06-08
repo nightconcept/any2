@@ -221,7 +221,75 @@ namespace NightTest.Groups.Filesystem
       this.Run_GameTestCase(new FilesystemAppend_ArgumentValidationTest());
     }
 
-    // Tests from DirectoryTests.cs
+    /// <summary>
+    /// Runs the FilesystemRead_String_ReadExistingFileTest GameTestCase.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemRead_String_ReadExistingFileTest()
+    {
+      this.Run_GameTestCase(new FilesystemRead_String_ReadExistingFileTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemRead_Data_ReadExistingFileTest GameTestCase.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemRead_Data_ReadExistingFileTest()
+    {
+      this.Run_GameTestCase(new FilesystemRead_Data_ReadExistingFileTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemRead_FileNotFoundTest GameTestCase.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemRead_FileNotFoundTest()
+    {
+      this.Run_GameTestCase(new FilesystemRead_FileNotFoundTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemRead_String_PartialReadTest GameTestCase.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemRead_String_PartialReadTest()
+    {
+      this.Run_GameTestCase(new FilesystemRead_String_PartialReadTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemRead_Data_PartialReadTest GameTestCase.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemRead_Data_PartialReadTest()
+    {
+      this.Run_GameTestCase(new FilesystemRead_Data_PartialReadTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemRead_EmptyFileTest GameTestCase.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemRead_EmptyFileTest()
+    {
+      this.Run_GameTestCase(new FilesystemRead_EmptyFileTest());
+    }
+
+    /// <summary>
+    /// Runs the FilesystemRead_ArgumentValidationTest GameTestCase.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemRead_ArgumentValidationTest()
+    {
+      this.Run_GameTestCase(new FilesystemRead_ArgumentValidationTest());
+    }
 
     /// <summary>
     /// Runs the FilesystemCreateDirectory_NewSingleDirTest IGame instance.
