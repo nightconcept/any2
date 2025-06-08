@@ -4,34 +4,36 @@ This document provides guidelines for writing tests for the Night Engine, specif
 
 ## Table of Contents
 
-1. [Overview](#1-overview)
-2. [Core Concepts](#2-core-concepts)
-    * [Test Groups](#test-groups)
-    * [Test Cases](#test-cases)
-        * [GameTestCase](#gametestcase)
-        * [ManualTestCase](#manualtestcase)
-        * [ModTestCase](#modtestcase)
-    * [Automated vs. Manual Tests](#automated-vs-manual-tests)
-3. [Directory Structure](#3-directory-structure)
-4. [Naming Conventions](#4-naming-conventions)
-    * [Files](#files)
-    * [Classes](#classes)
-    * [Methods in Test Groups](#methods-in-test-groups)
-    * [Test Case `Name` Property](#test-case-name-property)
-5. [Creating Tests: Step-by-Step](#5-creating-tests-step-by-step)
-    * [Step 1: Identify the Module and Feature](#step-1-identify-the-module-and-feature)
-    * [Step 2: Choose the Appropriate Test Case Type](#step-2-choose-the-appropriate-test-case-type)
-    * [Step 3: Create a Test Case File and Class](#step-3-create-a-test-case-file-and-class)
-        * [GameTestCase Example](#gametestcase-example)
-        * [ManualTestCase Example](#manualtestcase-example)
-        * [ModTestCase Example](#modtestcase-example)
-    * [Step 4: Implement Test Logic](#step-4-implement-test-logic)
-        * [For GameTestCase and ManualTestCase (IGame Methods)](#for-gametestcase-and-manualtestcase-igame-methods)
-        * [For ModTestCase](#for-modtestcase)
-    * [Step 5: Manage Test Lifecycle and Status (GameTestCase/ManualTestCase)](#step-5-manage-test-lifecycle-and-status-gametestcasemanualtestcase)
-    * [Step 6: Create or Update the Test Group](#step-6-create-or-update-the-test-group)
-6. [Key Base Classes and Interfaces](#6-key-base-classes-and-interfaces)
-7. [Best Practices](#7-best-practices)
+- [Night Engine Testing Guidelines](#night-engine-testing-guidelines)
+  - [Table of Contents](#table-of-contents)
+  - [1. Overview](#1-overview)
+  - [2. Core Concepts](#2-core-concepts)
+    - [Test Groups](#test-groups)
+    - [Test Cases](#test-cases)
+      - [`GameTestCase`](#gametestcase)
+      - [`ManualTestCase`](#manualtestcase)
+      - [`ModTestCase`](#modtestcase)
+    - [Automated vs. Manual Tests](#automated-vs-manual-tests)
+  - [3. Directory Structure](#3-directory-structure)
+  - [4. Naming Conventions](#4-naming-conventions)
+    - [Files](#files)
+    - [Classes](#classes)
+    - [Methods in Test Groups](#methods-in-test-groups)
+    - [Test Case `Name` Property](#test-case-name-property)
+  - [5. Creating Tests: Step-by-Step](#5-creating-tests-step-by-step)
+    - [Step 1: Identify the Module and Feature](#step-1-identify-the-module-and-feature)
+    - [Step 2: Choose the Appropriate Test Case Type](#step-2-choose-the-appropriate-test-case-type)
+    - [Step 3: Create a Test Case File and Class](#step-3-create-a-test-case-file-and-class)
+      - [`GameTestCase` Example](#gametestcase-example)
+      - [`ManualTestCase` Example](#manualtestcase-example)
+      - [`ModTestCase` Example](#modtestcase-example)
+    - [Step 4: Implement Test Logic](#step-4-implement-test-logic)
+      - [For `GameTestCase` and `ManualTestCase` (`IGame` Methods)](#for-gametestcase-and-manualtestcase-igame-methods)
+      - [For `ModTestCase`](#for-modtestcase)
+    - [Step 5: Manage Test Lifecycle and Status (`GameTestCase`/`ManualTestCase`)](#step-5-manage-test-lifecycle-and-status-gametestcasemanualtestcase)
+    - [Step 6: Create or Update the Test Group](#step-6-create-or-update-the-test-group)
+  - [6. Key Base Classes and Interfaces](#6-key-base-classes-and-interfaces)
+  - [7. Best Practices](#7-best-practices)
 
 ## 1. Overview
 
@@ -484,3 +486,22 @@ This section primarily applies to `GameTestCase` and `ManualTestCase`. `ModTestC
 * **Keep Manual Tests for Visuals/Interaction:** Reserve `ManualTestCase` for scenarios that genuinely require human observation (e.g., "is this color correct?", "does this animation look right?") or complex interactions not easily automated.
 * **Assertions in `ModTestCase`:** Use xUnit's `Assert` methods directly within the `Run()` method of your `ModTestCase`.
 * **`TestGroup` Responsibility:** The `TestGroup`'s `Run_GameTestCase` and `Run_ModTestCase` methods are responsible for the overall execution flow, logging, and final assertion on the test case's `CurrentStatus`.
+* **ALWAYS** write XML summaries for public API or use inheritdoc where appropriate.
+* Order tests correctly:
+  1. Fields
+  2. Constructors
+  3. Finalizers
+  4. Delegates
+  5. Events
+  6. Enums
+  7. Interfaces
+  8. Properties
+  9. Indexers
+  10. Methods
+      1.  Public
+      2.  Internal
+      3.  Protected
+      4.  Private
+  11. Structs
+  12. Classes (Nested)
+* Static members should appear before instance members.
