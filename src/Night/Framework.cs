@@ -87,6 +87,7 @@ namespace Night
       var windowConfig = ConfigurationManager.CurrentConfig.Window;
 
       bool isTestingEnvironment = IsTestingEnvironment();
+      bool isCI = IsCIEnvironment();
 
       if (cliArgs == null || !cliArgs.IsSilentMode)
       {
@@ -102,34 +103,40 @@ namespace Night
 
       try
       {
-        // Check if running in a testing environment (e.g., CI/CD, headless environments)
-        // isTestingEnvironment is already determined above
-        if (isTestingEnvironment)
+        var videoDriver = Environment.GetEnvironmentVariable("SDL_VIDEODRIVER");
+        bool isHeadlessEnv = string.Equals(videoDriver, "dummy", StringComparison.OrdinalIgnoreCase) ||
+                             string.Equals(videoDriver, "offscreen", StringComparison.OrdinalIgnoreCase);
+
+        if (isHeadlessEnv)
         {
-          // Redirect SDL logging to a null sink to prevent "Vulkan..." messages on CI
+          // Configure for a headless run.
+          Logger.Info($"Headless mode explicitly requested via SDL_VIDEODRIVER='{videoDriver}'.");
           sdlLogOutputFunction = (userdata, category, priority, message) => { };
           SDL.SetLogOutputFunction(sdlLogOutputFunction, nint.Zero);
-
-          Logger.Info("Testing environment detected. Setting LogManager.MinLevel to Debug for diagnostics.");
-          LogManager.MinLevel = LogLevel.Debug; // Verbose log output for CI tests
-          Logger.Info("Testing environment detected. Setting SDL video driver to 'offscreen'.");
-
-          // Use the "offscreen" video driver for headless testing environments
-          // to ensure a valid rendering context without a visible window.
-          _ = SDL.SetHint(SDL.Hints.VideoDriver, "offscreen");
-
-          // Force software rendering unless hardware is explicitly requested for debugging.
-          if (cliArgs == null || !cliArgs.ForceHardwareRender)
-          {
-            Logger.Info("Testing environment detected. Setting SDL render driver to 'software'.");
-
-            // Force software rendering to avoid OpenGL/GLES initialization issues in headless environments
-            _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
-          }
-          else
-          {
-            Logger.Info("Testing environment detected, but --force-graphics was specified. NOT forcing software rendering.");
-          }
+          _ = SDL.SetHint(SDL.Hints.VideoDriver, videoDriver);
+          _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
+          LogManager.MinLevel = LogLevel.Debug;
+        }
+        else if (isTestingEnvironment && isCI)
+        {
+          // If we are in a testing environment on CI and no headless driver is specified,
+          // default to a headless driver to ensure tests can run.
+          videoDriver = "offscreen";
+          Logger.Info($"CI testing environment detected. Forcing '{videoDriver}' video driver and 'software'renderer.");
+          _ = SDL.SetHint(SDL.Hints.VideoDriver, videoDriver);
+          _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
+          _ = SDL.SetHint("SDL_FRAMEBUFFER_ACCELERATION", "0");
+          LogManager.MinLevel = LogLevel.Debug;
+        }
+        else if (isTestingEnvironment)
+        {
+          // This is a local test run. Treat it as a normal headed application.
+          Logger.Info("Local testing environment detected. Using default drivers for headed test.");
+        }
+        else
+        {
+          // We are in a headed mode (either by default, or forced)
+          Logger.Info("Headed mode detected. Using default drivers.");
         }
 
         lock (SdlLock)
@@ -593,12 +600,18 @@ namespace Night
         }
       }
 
+      // Check for loaded test assemblies, a reliable way to detect a test runner.
+      if (AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name?.StartsWith("xunit", StringComparison.OrdinalIgnoreCase) ?? false))
+      {
+        return true;
+      }
+
       // Check for test runner processes in the call stack or environment
       try
       {
         var processName = Process.GetCurrentProcess().ProcessName;
-        if (processName.Contains("dotnet") || processName.Contains("testhost") ||
-            processName.Contains("vstest") || processName.Contains("xunit"))
+        if (processName.Contains("testhost") || processName.Contains("vstest") ||
+            processName.Contains("xunit"))
         {
           return true;
         }
@@ -615,6 +628,26 @@ namespace Night
            videoDriver.Equals("offscreen", StringComparison.OrdinalIgnoreCase)))
       {
         return true;
+      }
+
+      return false;
+    }
+
+    private static bool IsCIEnvironment()
+    {
+      // Check for common CI/CD environment variables
+      var ciEnvironmentVars = new[]
+      {
+        "CI", "CONTINUOUS_INTEGRATION", "GITHUB_ACTIONS", "GITLAB_CI",
+        "JENKINS_URL", "BUILDKITE", "CIRCLECI", "TRAVIS", "APPVEYOR",
+      };
+
+      foreach (var envVar in ciEnvironmentVars)
+      {
+        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar)))
+        {
+          return true;
+        }
       }
 
       return false;

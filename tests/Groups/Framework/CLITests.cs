@@ -57,7 +57,6 @@ namespace NightTest.Groups.Framework
       Assert.Null(cliNull.ParsedLogLevel);
       Assert.False(cliNull.IsDebugMode, "IsDebugMode should be false for null args.");
       Assert.False(cliNull.EnableSessionLog, "EnableSessionLog should be false for null args.");
-      Assert.False(cliNull.ForceHardwareRender, "ForceHardwareRender should be false for null args.");
       Assert.Empty(cliNull.RemainingArgs);
 
       // Arrange & Act: Empty arguments
@@ -68,7 +67,6 @@ namespace NightTest.Groups.Framework
       Assert.Null(cliEmpty.ParsedLogLevel);
       Assert.False(cliEmpty.IsDebugMode, "IsDebugMode should be false for empty args.");
       Assert.False(cliEmpty.EnableSessionLog, "EnableSessionLog should be false for empty args.");
-      Assert.False(cliEmpty.ForceHardwareRender, "ForceHardwareRender should be false for empty args.");
       Assert.Empty(cliEmpty.RemainingArgs);
     }
   }
@@ -227,31 +225,6 @@ namespace NightTest.Groups.Framework
   }
 
   /// <summary>
-  /// Tests for the CLI constructor focusing on the --force-graphics flag.
-  /// </summary>
-  public class NightCLI_Constructor_ForceHardwareRenderTest : ModTestCase
-  {
-    /// <inheritdoc />
-    public override string Name => "CLI.Constructor.ForceHardwareRender";
-
-    /// <inheritdoc />
-    public override string Description => "Tests CLI constructor for --force-graphics flag.";
-
-    /// <inheritdoc />
-    public override string SuccessMessage => "CLI force hardware render flag parsed correctly.";
-
-    /// <inheritdoc />
-    public override void Run()
-    {
-      // Arrange & Act
-      var cli = new Night.CLI(new[] { "--force-graphics" });
-
-      // Assert
-      Assert.True(cli.ForceHardwareRender, "ForceHardwareRender should be true for '--force-graphics'.");
-    }
-  }
-
-  /// <summary>
   /// Tests for the CLI constructor focusing on how unrecognized arguments are handled.
   /// </summary>
   public class NightCLI_Constructor_RemainingArgsTest : ModTestCase
@@ -298,13 +271,12 @@ namespace NightTest.Groups.Framework
     public override void Run()
     {
       // Arrange & Act
-      var cli = new Night.CLI(new[] { "-s", "--log-level", "Error", "remaining1", "--debug", "--force-graphics", "remaining2", "--session-log" });
+      var cli = new Night.CLI(new[] { "-s", "--log-level", "Error", "remaining1", "--debug", "remaining2", "--session-log" });
 
       // Assert
       Assert.True(cli.IsSilentMode);
       Assert.Equal(LogLevel.Error, cli.ParsedLogLevel);
       Assert.True(cli.IsDebugMode);
-      Assert.True(cli.ForceHardwareRender);
       Assert.True(cli.EnableSessionLog);
       Assert.Equal(2, cli.RemainingArgs.Count);
       Assert.Contains("remaining1", cli.RemainingArgs);

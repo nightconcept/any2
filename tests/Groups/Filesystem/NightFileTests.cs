@@ -25,7 +25,9 @@ using System.IO;
 using System.Text;
 
 using Night;
+
 using NightTest.Core;
+
 using Xunit;
 
 namespace NightTest.Groups.Filesystem

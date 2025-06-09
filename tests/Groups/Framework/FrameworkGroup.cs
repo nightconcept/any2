@@ -93,16 +93,6 @@ namespace NightTest.Groups.Framework
     }
 
     /// <summary>
-    /// Runs the test for CLI constructor --force-graphics flag.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_Constructor_ForceHardwareRenderTest()
-    {
-      this.Run_ModTestCase(new NightCLI_Constructor_ForceHardwareRenderTest());
-    }
-
-    /// <summary>
     /// Runs the test for CLI constructor remaining arguments handling.
     /// </summary>
     [Fact]

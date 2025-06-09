@@ -40,7 +40,6 @@ namespace Night
     private LogLevel? parsedLogLevel = null;
     private bool isDebugMode = false;
     private bool enableSessionLog = false;
-    private bool forceHardwareRender = false;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CLI"/> class.
@@ -94,10 +93,6 @@ namespace Night
         {
           this.enableSessionLog = true;
         }
-        else if (string.Equals(arg, "--force-graphics", StringComparison.OrdinalIgnoreCase))
-        {
-          this.forceHardwareRender = true;
-        }
         else
         {
           this.remainingArgs.Add(arg);
@@ -125,11 +120,6 @@ namespace Night
     /// Gets a value indicating whether session logging was requested via command-line arguments.
     /// </summary>
     public bool EnableSessionLog => this.enableSessionLog;
-
-    /// <summary>
-    /// Gets a value indicating whether hardware rendering should be forced, even in testing environments.
-    /// </summary>
-    public bool ForceHardwareRender => this.forceHardwareRender;
 
     /// <summary>
     /// Gets the list of arguments that were not processed as specific CLI flags by this parser.

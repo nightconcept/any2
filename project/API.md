@@ -16,30 +16,6 @@
 - FileSystemInfo
 - NightFile
 
-### Functions (Filesystem)
-
-- Append() - love.filesystem.append
-  - Append(string filename, byte[] data, long? size)
-- CreateDirectory() - love.filesystem.createDirectory
-  - CreateDirectory(string path)
-- GetAppdataDirectory() - love.filesystem.getAppdataDirectory
-- GetInfo() - love.filesystem.getInfo
-  - GetInfo(string path, FileSystemInfo info)
-  - GetInfo(string path, FileType filterType, FileSystemInfo info)
-  - GetInfo(string path, FileType? filterType)
-- Lines() - love.filesystem.lines
-  - Lines(string filePath)
-- NewFile() - love.filesystem.newFile
-  - NewFile(string filename)
-  - NewFile(string filename, FileMode mode)
-- Read() - love.filesystem.read
-  - Read(ContainerType container, string name, long? sizeToRead)
-  - Read(string name, long? sizeToRead)
-- ReadBytes() - love.filesystem.readBytes
-  - ReadBytes(string path)
-- ReadText() - love.filesystem.readText
-  - ReadText(string path)
-
 ### Enums (Filesystem)
 
 - BufferMode
@@ -144,32 +120,6 @@
 ### Types (Window)
 
 - WindowMode
-
-### Functions (Window)
-
-- Close() - love.window.close
-- FromPixels() - love.window.fromPixels
-  - FromPixels(float value)
-- GetDPIScale() - love.window.getDPIScale
-- GetDesktopDimensions() - love.window.getDesktopDimensions
-  - GetDesktopDimensions(int displayIndex)
-- GetDisplayCount() - love.window.getDisplayCount
-- GetFullscreen() - love.window.getFullscreen
-- GetFullscreenModes() - love.window.getFullscreenModes
-  - GetFullscreenModes(int displayIndex)
-- GetIcon() - love.window.getIcon
-- GetMode() - love.window.getMode
-- IsOpen() - love.window.isOpen
-- SetFullscreen() - love.window.setFullscreen
-  - SetFullscreen(bool fullscreen, FullscreenType fsType)
-- SetIcon() - love.window.setIcon
-  - SetIcon(string imagePath)
-- SetMode() - love.window.setMode
-  - SetMode(int width, int height, SDL.WindowFlags flags)
-- SetTitle() - love.window.setTitle
-  - SetTitle(string title)
-- ToPixels() - love.window.toPixels
-  - ToPixels(float value)
 
 ### Enums (Window)
 

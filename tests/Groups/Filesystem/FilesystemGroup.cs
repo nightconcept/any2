@@ -48,43 +48,43 @@ namespace NightTest.Groups.Filesystem
     }
 
     /// <summary>
-    /// Runs the FilesystemLines_ReadStandardFileTest IGame instance.
+    /// Runs the <see cref="FilesystemLines_ReadStandardFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemLines_ReadStandardFileTest()
     {
-      this.Run_GameTestCase(new FilesystemLines_ReadStandardFileTest());
+      this.Run_ModTestCase(new FilesystemLines_ReadStandardFileTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemLines_ReadEmptyFileTest IGame instance.
+    /// Runs the <see cref="FilesystemLines_ReadEmptyFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemLines_ReadEmptyFileTest()
     {
-      this.Run_GameTestCase(new FilesystemLines_ReadEmptyFileTest());
+      this.Run_ModTestCase(new FilesystemLines_ReadEmptyFileTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemLines_FileNotFoundTest IGame instance.
+    /// Runs the <see cref="FilesystemLines_FileNotFoundTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemLines_FileNotFoundTest()
     {
-      this.Run_GameTestCase(new FilesystemLines_FileNotFoundTest());
+      this.Run_ModTestCase(new FilesystemLines_FileNotFoundTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemLines_ReadSingleLineFileTest IGame instance.
+    /// Runs the <see cref="FilesystemLines_ReadSingleLineFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemLines_ReadSingleLineFileTest()
     {
-      this.Run_GameTestCase(new FilesystemLines_ReadSingleLineFileTest());
+      this.Run_ModTestCase(new FilesystemLines_ReadSingleLineFileTest());
     }
 
     // Tests from FilesystemGetInfoTests.cs
@@ -292,153 +292,153 @@ namespace NightTest.Groups.Filesystem
     // Tests from ReadWriteTests.cs
 
     /// <summary>
-    /// Runs the FilesystemReadBytes_ReadExistingFileTest IGame instance.
+    /// Runs the <see cref="FilesystemReadBytes_ReadExistingFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemReadBytes_ReadExistingFileTest()
     {
-      this.Run_GameTestCase(new FilesystemReadBytes_ReadExistingFileTest());
+      this.Run_ModTestCase(new FilesystemReadBytes_ReadExistingFileTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemReadText_ReadExistingFileTest IGame instance.
+    /// Runs the <see cref="FilesystemReadText_ReadExistingFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemReadText_ReadExistingFileTest()
     {
-      this.Run_GameTestCase(new FilesystemReadText_ReadExistingFileTest());
+      this.Run_ModTestCase(new FilesystemReadText_ReadExistingFileTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemReadBytes_FileNotFoundTest IGame instance.
+    /// Runs the <see cref="FilesystemReadBytes_FileNotFoundTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemReadBytes_FileNotFoundTest()
     {
-      this.Run_GameTestCase(new FilesystemReadBytes_FileNotFoundTest());
+      this.Run_ModTestCase(new FilesystemReadBytes_FileNotFoundTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemReadText_FileNotFoundTest IGame instance.
+    /// Runs the <see cref="FilesystemReadText_FileNotFoundTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemReadText_FileNotFoundTest()
     {
-      this.Run_GameTestCase(new FilesystemReadText_FileNotFoundTest());
+      this.Run_ModTestCase(new FilesystemReadText_FileNotFoundTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemAppend_AppendToNewFileTest IGame instance.
+    /// Runs the <see cref="FilesystemAppend_AppendToNewFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemAppend_AppendToNewFileTest()
     {
-      this.Run_GameTestCase(new FilesystemAppend_AppendToNewFileTest());
+      this.Run_ModTestCase(new FilesystemAppend_AppendToNewFileTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemAppend_AppendToExistingFileTest IGame instance.
+    /// Runs the <see cref="FilesystemAppend_AppendToExistingFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemAppend_AppendToExistingFileTest()
     {
-      this.Run_GameTestCase(new FilesystemAppend_AppendToExistingFileTest());
+      this.Run_ModTestCase(new FilesystemAppend_AppendToExistingFileTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemAppend_PartialDataTest IGame instance.
+    /// Runs the <see cref="FilesystemAppend_PartialDataTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemAppend_PartialDataTest()
     {
-      this.Run_GameTestCase(new FilesystemAppend_PartialDataTest());
+      this.Run_ModTestCase(new FilesystemAppend_PartialDataTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemAppend_ArgumentValidationTest IGame instance.
+    /// Runs the <see cref="FilesystemAppend_ArgumentValidationTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemAppend_ArgumentValidationTest()
     {
-      this.Run_GameTestCase(new FilesystemAppend_ArgumentValidationTest());
+      this.Run_ModTestCase(new FilesystemAppend_ArgumentValidationTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemRead_String_ReadExistingFileTest GameTestCase.
+    /// Runs the <see cref="FilesystemRead_String_ReadExistingFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemRead_String_ReadExistingFileTest()
     {
-      this.Run_GameTestCase(new FilesystemRead_String_ReadExistingFileTest());
+      this.Run_ModTestCase(new FilesystemRead_String_ReadExistingFileTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemRead_Data_ReadExistingFileTest GameTestCase.
+    /// Runs the <see cref="FilesystemRead_Data_ReadExistingFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemRead_Data_ReadExistingFileTest()
     {
-      this.Run_GameTestCase(new FilesystemRead_Data_ReadExistingFileTest());
+      this.Run_ModTestCase(new FilesystemRead_Data_ReadExistingFileTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemRead_FileNotFoundTest GameTestCase.
+    /// Runs the <see cref="FilesystemRead_FileNotFoundTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemRead_FileNotFoundTest()
     {
-      this.Run_GameTestCase(new FilesystemRead_FileNotFoundTest());
+      this.Run_ModTestCase(new FilesystemRead_FileNotFoundTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemRead_String_PartialReadTest GameTestCase.
+    /// Runs the <see cref="FilesystemRead_String_PartialReadTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemRead_String_PartialReadTest()
     {
-      this.Run_GameTestCase(new FilesystemRead_String_PartialReadTest());
+      this.Run_ModTestCase(new FilesystemRead_String_PartialReadTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemRead_Data_PartialReadTest GameTestCase.
+    /// Runs the <see cref="FilesystemRead_Data_PartialReadTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemRead_Data_PartialReadTest()
     {
-      this.Run_GameTestCase(new FilesystemRead_Data_PartialReadTest());
+      this.Run_ModTestCase(new FilesystemRead_Data_PartialReadTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemRead_EmptyFileTest GameTestCase.
+    /// Runs the <see cref="FilesystemRead_EmptyFileTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemRead_EmptyFileTest()
     {
-      this.Run_GameTestCase(new FilesystemRead_EmptyFileTest());
+      this.Run_ModTestCase(new FilesystemRead_EmptyFileTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemRead_ArgumentValidationTest GameTestCase.
+    /// Runs the <see cref="FilesystemRead_ArgumentValidationTest"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemRead_ArgumentValidationTest()
     {
-      this.Run_GameTestCase(new FilesystemRead_ArgumentValidationTest());
+      this.Run_ModTestCase(new FilesystemRead_ArgumentValidationTest());
     }
 
     /// <summary>
