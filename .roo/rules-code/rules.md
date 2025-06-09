@@ -71,6 +71,8 @@ ALWAYS MUST review and use:
   - Provide clear docstrings or API comments for public interfaces (functions, classes, modules) as per `Project Guidelines`
   - Use inline comments to explain non-obvious logic, complex algorithms, or important decisions (*why* something is done, not just *what*)
   - Update `project/README.md` if changes involve core features, dependency modifications, or adjustments to setup/build processes
+  - Files of code should never be greater than 500 lines. C# files using classes should be split using the `partial` keyword to do so.
+  - If after a change a file is found to be greater than 500, find ways to refactor. This overrules any other commands to not refactor. Always refactor above 500 lines.
 
 5. **Handling Blockers & Clarifications (Non-Dependency):**
 

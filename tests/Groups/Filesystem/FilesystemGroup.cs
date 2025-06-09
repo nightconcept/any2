@@ -62,6 +62,8 @@ namespace NightTest.Groups.Filesystem
       this.Run_ModTestCase(new FilesystemLines_EmptyPathTest());
       this.Run_ModTestCase(new FilesystemLines_ReadDirectoryTest());
       this.Run_ModTestCase(new FilesystemLines_LockedFileTest());
+      this.Run_ModTestCase(new FilesystemLines_ThrowsArgumentNullExceptionOnNullPathTest());
+      this.Run_ModTestCase(new FilesystemLines_ThrowsArgumentExceptionOnEmptyPathTest());
     }
 
     // Tests from FilesystemGetInfoTests.cs
@@ -150,6 +152,9 @@ namespace NightTest.Groups.Filesystem
       this.Run_ModTestCase(new FilesystemRead_Data_ReadDirectoryTest());
       this.Run_ModTestCase(new FilesystemRead_String_LockedFileTest());
       this.Run_ModTestCase(new FilesystemRead_Data_LockedFileTest());
+      this.Run_ModTestCase(new FilesystemRead_UnauthorizedAccessTest());
+      this.Run_ModTestCase(new FilesystemRead_DecodingErrorTest());
+      this.Run_ModTestCase(new FilesystemRead_CappingLogicForLargeFileTest());
     }
 
     /// <summary>
