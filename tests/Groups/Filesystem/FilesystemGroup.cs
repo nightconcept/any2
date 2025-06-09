@@ -279,6 +279,16 @@ namespace NightTest.Groups.Filesystem
       this.Run_ModTestCase(new FilesystemGetInfo_PopulateWithFilter_PathDoesNotExist_ReturnsNullTest());
     }
 
+    /// <summary>
+    /// Runs the FilesystemGetInfo_SymbolicLinkTest ModTestCase.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemGetInfo_SymbolicLinkTest()
+    {
+      this.Run_ModTestCase(new FilesystemGetInfo_SymbolicLinkTest());
+    }
+
     // Tests from ReadWriteTests.cs
 
     /// <summary>

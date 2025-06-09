@@ -21,7 +21,10 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 using Night;
 
@@ -285,7 +288,17 @@ namespace NightTest.Groups.Filesystem
         // Cleanup
         if (File.Exists(this.testFileName))
         {
-          File.Delete(this.testFileName);
+          try
+          {
+            File.Delete(this.testFileName);
+          }
+          catch (Exception ex)
+          {
+            // Logging the warning to output, as ModTestCase doesn't have a Details property to append to in the same way
+            // and this.Details is not typically used for cleanup warnings in ModTestCase.
+            // Consider using ITestOutputHelper if more detailed logging is needed here.
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to delete test file '{this.testFileName}': {ex.Message}");
+          }
         }
       }
     }
@@ -922,53 +935,222 @@ namespace NightTest.Groups.Filesystem
       {
         if (Directory.Exists(this.testDirName))
         {
-          Directory.Delete(this.testDirName, true);
+          try
+          {
+            Directory.Delete(this.testDirName);
+          }
+          catch (Exception ex)
+          {
+            this.Details += $" | Warning: Failed to delete test directory '{this.testDirName}': {ex.Message}";
+          }
         }
       }
     }
   }
 
-  /// <summary>
-  /// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns null for a non-existent path.
-  /// </summary>
-  public class FilesystemGetInfo_PopulateWithFilter_PathDoesNotExist_ReturnsNullTest : ModTestCase
+  // TODO: Add tests for other GetInfo overloads:
+  // - GetInfo(string path, FileSystemInfo info)
+  // - GetInfo(string path, FileType filterType, FileSystemInfo info)
+  // - GetInfo_EmptyPath_ReturnsNull
+  // - GetInfo_WithFilterTypeDirectory_Matches
+  // - GetInfo_WithFilterTypeDirectory_Mismatches
+}
+
+/// <summary>
+/// Tests that <see cref="Night.Filesystem.GetInfo(string?, Night.FileType, Night.FileSystemInfo?)"/> returns null for a non-existent path.
+/// </summary>
+public class FilesystemGetInfo_PopulateWithFilter_PathDoesNotExist_ReturnsNullTest : ModTestCase
+{
+  private readonly string nonExistentPath = Path.Combine(Path.GetTempPath(), $"night_test_populate_filter_non_existent_mod_{Guid.NewGuid()}");
+
+  /// <inheritdoc/>
+  public override string Name => "Filesystem.GetInfo.PopulateWithFilterPathDoesNotExistMod";
+
+  /// <inheritdoc/>
+  public override string Description => "Tests GetInfo (filter overload) for a non-existent path, expecting null (Mod Test).";
+
+  /// <inheritdoc/>
+  public override string SuccessMessage => "GetInfo (filter overload) for a non-existent path correctly returned null.";
+
+  /// <inheritdoc/>
+  public override void Run()
   {
-    private readonly string nonExistentPath = Path.Combine(Path.GetTempPath(), $"night_test_populate_filter_non_existent_mod_{Guid.NewGuid()}");
-
-    /// <inheritdoc/>
-    public override string Name => "Filesystem.GetInfo.PopulateWithFilterPathDoesNotExistMod";
-
-    /// <inheritdoc/>
-    public override string Description => "Tests GetInfo (filter overload) for a non-existent path, expecting null (Mod Test).";
-
-    /// <inheritdoc/>
-    public override string SuccessMessage => "GetInfo (filter overload) for a non-existent path correctly returned null.";
-
-    /// <inheritdoc/>
-    public override void Run()
+    // Arrange
+    var infoToPopulate = new Night.FileSystemInfo(FileType.File, 10, 100);
+    if (File.Exists(this.nonExistentPath))
     {
-      // Arrange
-      var infoToPopulate = new Night.FileSystemInfo(FileType.File, 10, 100);
-      if (File.Exists(this.nonExistentPath))
+      File.Delete(this.nonExistentPath);
+    }
+
+    if (Directory.Exists(this.nonExistentPath))
+    {
+      Directory.Delete(this.nonExistentPath, true);
+    }
+
+    // Act
+    var resultInfo = Night.Filesystem.GetInfo(this.nonExistentPath, FileType.File, infoToPopulate);
+
+    // Assert
+    Assert.Null(resultInfo);
+    Assert.Equal(FileType.File, infoToPopulate.Type);
+    Assert.Equal(10, infoToPopulate.Size);
+    Assert.Equal(100, infoToPopulate.ModTime);
+  }
+}
+
+/// <summary>
+/// Tests GetInfo for an existing file symbolic link.
+/// </summary>
+public class FilesystemGetInfo_SymbolicLinkTest : ModTestCase
+{
+  private string testTargetFileName = string.Empty;
+  private string testSymlinkFileName = string.Empty;
+
+  /// <inheritdoc/>
+  public override string Name => "Filesystem.GetInfo.SymbolicLink";
+
+  /// <inheritdoc/>
+  public override string Description => "Tests GetInfo for an existing file symbolic link, checking Type, Size, and ModTime of the link itself across platforms.";
+
+  /// <inheritdoc/>
+  public override string SuccessMessage => "Successfully retrieved correct info for an existing file symbolic link.";
+
+  /// <inheritdoc/>
+  public override void Run()
+  {
+    this.GenerateUniqueFileNames();
+    long expectedSymlinkModTime;
+    long expectedSymlinkSize;
+
+    try
+    {
+      // Create target file
+      File.WriteAllText(this.testTargetFileName, "Hello from symlink target!");
+      System.Threading.Thread.Sleep(100); // Allow time for filesystem operations to settle
+
+      // Create symlink (platform-specific)
+      ProcessStartInfo processStartInfo;
+      string commandArguments;
+
+      if (OperatingSystem.IsWindows())
       {
-        File.Delete(this.nonExistentPath);
+        processStartInfo = new ProcessStartInfo("cmd.exe");
+        commandArguments = $"/c mklink \"{this.testSymlinkFileName}\" \"{this.testTargetFileName}\"";
+      }
+      else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+      {
+        processStartInfo = new ProcessStartInfo("/bin/sh"); // Or /bin/bash
+
+        // Ensure paths are quoted for ln -s
+        commandArguments = $"-c \"ln -s '{this.testTargetFileName.Replace("'", "'\\''")}' '{this.testSymlinkFileName.Replace("'", "'\\''")}'\"";
+      }
+      else
+      {
+        Assert.Fail($"Symbolic link creation test is not supported on this OS: {RuntimeInformation.OSDescription}");
+        return; // Should not be reached if Assert.True fails
       }
 
-      if (Directory.Exists(this.nonExistentPath))
+      processStartInfo.Arguments = commandArguments;
+      processStartInfo.RedirectStandardOutput = true;
+      processStartInfo.RedirectStandardError = true;
+      processStartInfo.UseShellExecute = false;
+      processStartInfo.CreateNoWindow = true;
+
+      using (var process = Process.Start(processStartInfo))
       {
-        Directory.Delete(this.nonExistentPath, true);
+        if (process == null)
+        {
+          throw new Xunit.Sdk.XunitException($"Failed to start process for symbolic link creation ({processStartInfo.FileName}).");
+        }
+
+        string processOutput = process.StandardOutput.ReadToEnd();
+        string processError = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+
+        if (process.ExitCode != 0)
+        {
+          throw new Xunit.Sdk.XunitException($"Symbolic link creation failed with exit code {process.ExitCode}. OS: {RuntimeInformation.OSDescription}. Command: {processStartInfo.FileName} {processStartInfo.Arguments}. Output: {processOutput}. Error: {processError}. This may be due to insufficient permissions.");
+        }
       }
 
-      // Act
-      var resultInfo = Night.Filesystem.GetInfo(this.nonExistentPath, FileType.File, infoToPopulate);
+      Assert.True(File.Exists(this.testSymlinkFileName), $"Symbolic link was reported as created, but does not exist at the expected path: {this.testSymlinkFileName}");
 
-      // Assert
-      Assert.Null(resultInfo);
-      Assert.Equal(FileType.File, infoToPopulate.Type);
-      Assert.Equal(10, infoToPopulate.Size);
-      Assert.Equal(100, infoToPopulate.ModTime);
+      var symlinkFileInfo = new FileInfo(this.testSymlinkFileName);
+
+      if (OperatingSystem.IsWindows())
+      {
+        Assert.True((symlinkFileInfo.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint, "Created file on Windows is not a reparse point (symlink) as expected.");
+        expectedSymlinkSize = 0L;
+      }
+      else
+      {
+        // FileInfo.Length for a symlink is the length of the target path string.
+        expectedSymlinkSize = symlinkFileInfo.Length;
+
+        // A more direct check for symlink on Unix via File.ResolveLinkTarget()
+        Assert.NotNull(System.IO.File.ResolveLinkTarget(this.testSymlinkFileName, false));
+      }
+
+      System.Threading.Thread.Sleep(200);
+
+      // On some OSes (like macOS), File.SetLastWriteTimeUtc on a symlink changes the target's time.
+      // To get a reliable mod time for the link itself, we might need to rely on its creation time
+      // or accept that it might reflect the target's time if recently created/modified.
+      // For simplicity, we'll get the current time of the link.
+      // If more precise control is needed, OS-specific 'touch' commands for symlinks would be required.
+      symlinkFileInfo.LastWriteTimeUtc = DateTime.UtcNow; // Attempt to update link's own mod time
+      expectedSymlinkModTime = new DateTimeOffset(new FileInfo(this.testSymlinkFileName).LastWriteTimeUtc).ToUnixTimeSeconds();
+
+      var info = Night.Filesystem.GetInfo(this.testSymlinkFileName);
+
+      Assert.NotNull(info);
+      Assert.Equal(FileType.Symlink, info.Type);
+      Assert.Equal(expectedSymlinkSize, info.Size);
+      _ = Assert.NotNull(info.ModTime);
+
+      // Increased tolerance for ModTime due to potential OS/FS differences in handling symlink mod times.
+      Assert.True(Math.Abs(info.ModTime.Value - expectedSymlinkModTime) <= 5, $"Expected ModTime for symlink around {expectedSymlinkModTime}, but got {info.ModTime}. Difference: {Math.Abs(info.ModTime.Value - expectedSymlinkModTime)}");
+    }
+    finally
+    {
+      this.CleanUpFiles();
     }
   }
 
-  // More test cases for existing files, directories, filters, and other overloads will be added here.
+  private void GenerateUniqueFileNames()
+  {
+    string guid = Guid.NewGuid().ToString("N");
+    this.testTargetFileName = Path.Combine(Path.GetTempPath(), $"night_test_getinfo_symlink_target_{guid}.txt");
+    this.testSymlinkFileName = Path.Combine(Path.GetTempPath(), $"night_test_getinfo_symlink_{guid}.txt");
+  }
+
+  private void CleanUpFiles()
+  {
+    // Best effort cleanup
+    try
+    {
+      if (!string.IsNullOrEmpty(this.testSymlinkFileName) && File.Exists(this.testSymlinkFileName))
+      {
+        // On Unix-like systems, File.Delete works for symlinks.
+        // On Windows, File.Delete on a symlink deletes the symlink, not the target.
+        File.Delete(this.testSymlinkFileName);
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"Warning: Failed to delete symlink file '{this.testSymlinkFileName}': {ex.Message}");
+    }
+
+    try
+    {
+      if (!string.IsNullOrEmpty(this.testTargetFileName) && File.Exists(this.testTargetFileName))
+      {
+        File.Delete(this.testTargetFileName);
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"Warning: Failed to delete target file '{this.testTargetFileName}': {ex.Message}");
+    }
+  }
 }
