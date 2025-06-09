@@ -60,6 +60,7 @@ namespace NightTest.Groups.Timer
       this.Run_GameTestCase(new GetDeltaTest());
       this.Run_GameTestCase(new GetAverageDeltaTest());
       this.Run_GameTestCase(new SleepTest());
+      this.Run_GameTestCase(new SleepTest_EarlyReturn());
       this.Run_GameTestCase(new StepTest());
     }
   }
