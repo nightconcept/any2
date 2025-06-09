@@ -86,9 +86,6 @@ namespace Night
       ConfigurationManager.LoadConfig();
       var windowConfig = ConfigurationManager.CurrentConfig.Window;
 
-      bool isTestingEnvironment = IsTestingEnvironment();
-      bool isCI = IsCIEnvironment();
-
       if (cliArgs == null || !cliArgs.IsSilentMode)
       {
         string nightVersionString = VersionInfo.GetVersion();
@@ -116,22 +113,6 @@ namespace Night
           _ = SDL.SetHint(SDL.Hints.VideoDriver, videoDriver!);
           _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
           LogManager.MinLevel = LogLevel.Debug;
-        }
-        else if (isTestingEnvironment && isCI)
-        {
-          // If we are in a testing environment on CI and no headless driver is specified,
-          // default to a headless driver to ensure tests can run.
-          videoDriver = "offscreen";
-          Logger.Info($"CI testing environment detected. Forcing '{videoDriver}' video driver and 'software'renderer.");
-          _ = SDL.SetHint(SDL.Hints.VideoDriver, videoDriver);
-          _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
-          _ = SDL.SetHint("SDL_FRAMEBUFFER_ACCELERATION", "0");
-          LogManager.MinLevel = LogLevel.Debug;
-        }
-        else if (isTestingEnvironment)
-        {
-          // This is a local test run. Treat it as a normal headed application.
-          Logger.Info("Local testing environment detected. Using default drivers for headed test.");
         }
         else
         {
@@ -576,81 +557,6 @@ namespace Night
       {
         Window.Close();
       }
-    }
-
-    /// <summary>
-    /// Detects if the application is running in a testing environment.
-    /// This includes CI/CD systems, automated test runners, or when explicitly configured for testing.
-    /// </summary>
-    /// <returns>True if running in a testing environment, false otherwise.</returns>
-    private static bool IsTestingEnvironment()
-    {
-      // Check for common CI/CD environment variables
-      var ciEnvironmentVars = new[]
-      {
-        "CI", "CONTINUOUS_INTEGRATION", "GITHUB_ACTIONS", "GITLAB_CI",
-        "JENKINS_URL", "BUILDKITE", "CIRCLECI", "TRAVIS", "APPVEYOR",
-      };
-
-      foreach (var envVar in ciEnvironmentVars)
-      {
-        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar)))
-        {
-          return true;
-        }
-      }
-
-      // Check for loaded test assemblies, a reliable way to detect a test runner.
-      if (AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name?.StartsWith("xunit", StringComparison.OrdinalIgnoreCase) ?? false))
-      {
-        return true;
-      }
-
-      // Check for test runner processes in the call stack or environment
-      try
-      {
-        var processName = Process.GetCurrentProcess().ProcessName;
-        if (processName.Contains("testhost") || processName.Contains("vstest") ||
-            processName.Contains("xunit"))
-        {
-          return true;
-        }
-      }
-      catch
-      {
-        // Ignore any exceptions during process name detection
-      }
-
-      // Check for SDL_VIDEODRIVER environment variable already set to testing modes
-      var videoDriver = Environment.GetEnvironmentVariable("SDL_VIDEODRIVER");
-      if (!string.IsNullOrEmpty(videoDriver) &&
-          (videoDriver.Equals("dummy", StringComparison.OrdinalIgnoreCase) ||
-           videoDriver.Equals("offscreen", StringComparison.OrdinalIgnoreCase)))
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-    private static bool IsCIEnvironment()
-    {
-      // Check for common CI/CD environment variables
-      var ciEnvironmentVars = new[]
-      {
-        "CI", "CONTINUOUS_INTEGRATION", "GITHUB_ACTIONS", "GITLAB_CI",
-        "JENKINS_URL", "BUILDKITE", "CIRCLECI", "TRAVIS", "APPVEYOR",
-      };
-
-      foreach (var envVar in ciEnvironmentVars)
-      {
-        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar)))
-        {
-          return true;
-        }
-      }
-
-      return false;
     }
 
     private static string GetFormattedPlatformString()
