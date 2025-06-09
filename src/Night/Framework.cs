@@ -128,11 +128,89 @@ namespace Night
             initializedSubsystemsFlags = SDL.InitFlags.Video | SDL.InitFlags.Events;
             if (!SDL.Init(initializedSubsystemsFlags))
             {
-              Logger.Error($"SDL_Init failed: {SDL.GetError()}");
-              return;
+              string sdlError = SDL.GetError();
+              Logger.Error($"SDL_Init failed: {sdlError}");
+
+              // Special handling for macOS headed mode when video init fails
+              if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !isHeadlessEnv)
+              {
+                Logger.Info("macOS headed mode video init failed. Attempting workarounds...");
+
+                // Clean up and try with different configuration
+                SDL.Quit();
+
+                // Try removing all hints and letting SDL auto-detect
+                _ = SDL.SetHint(SDL.Hints.VideoDriver, string.Empty);
+                _ = SDL.SetHint(SDL.Hints.MacBackgroundApp, "0");
+
+                Logger.Debug("Retrying SDL.Init() with auto-detection for macOS headed mode.");
+                if (!SDL.Init(initializedSubsystemsFlags))
+                {
+                  string secondError = SDL.GetError();
+                  Logger.Error($"SDL_Init auto-detection also failed: {secondError}");
+                  Logger.Error("macOS manual testing requires:");
+                  Logger.Error("1. Screen Recording permission for your terminal/IDE in System Preferences");
+                  Logger.Error("2. Running from a GUI application with proper entitlements");
+                  Logger.Error("3. Consider running: SDL_VIDEODRIVER=dummy mise man-test (for headless testing)");
+                  return;
+                }
+
+                Logger.Info("SDL.Init() successful with auto-detection on macOS.");
+              }
+
+              // Only fallback when user explicitly requested headless mode but it failed
+              else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) &&
+                  isHeadlessEnv &&
+                  sdlError.Contains("No available video device"))
+              {
+                Logger.Info("macOS headless mode failed. Retrying with explicit dummy driver configuration.");
+
+                // Clean up and retry with more explicit dummy driver setup
+                SDL.Quit();
+                _ = SDL.SetHint(SDL.Hints.VideoDriver, "dummy");
+                _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
+
+                Logger.Debug("Retrying SDL.Init() with explicit dummy driver configuration for macOS.");
+                if (!SDL.Init(initializedSubsystemsFlags))
+                {
+                  Logger.Error($"SDL_Init explicit dummy fallback also failed: {SDL.GetError()}");
+                  return;
+                }
+
+                Logger.Info("SDL.Init() successful with explicit dummy driver on macOS.");
+              }
+              else
+              {
+                return;
+              }
+            }
+            else
+            {
+              Logger.Info("SDL.Init() successful.");
             }
 
-            Logger.Info("SDL.Init() successful.");
+            // Now that SDL is initialized, we can check available drivers
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !isHeadlessEnv)
+            {
+              try
+              {
+                int numDrivers = SDL.GetNumVideoDrivers();
+                Logger.Debug($"Available video drivers: {numDrivers}");
+                for (int i = 0; i < numDrivers; i++)
+                {
+                  string driver = SDL.GetVideoDriver(i);
+                  Logger.Debug($"  Driver {i}: {driver}");
+                }
+
+                string? currentDriver = SDL.GetCurrentVideoDriver();
+                Logger.Info($"Successfully initialized with video driver: {currentDriver ?? "unknown"}");
+              }
+              catch (Exception ex)
+              {
+                Logger.Warn($"Could not enumerate video drivers: {ex.Message}");
+              }
+            }
+
             isSdlInitialized = true;
             sdlSuccessfullyInitializedThisRun = true;
           }
