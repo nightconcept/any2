@@ -43,22 +43,14 @@ namespace NightTest.Groups.SDL
     }
 
     /// <summary>
-    /// Runs the <see cref="NightSDL_GetVersionTest"/>.
+    /// Runs all GameTestCases for NightSDL functionality.
+    /// This includes tests for GetVersion and GetError.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_GetVersionTest()
+    public void Run_NightSDL_GameTests()
     {
       this.Run_GameTestCase(new NightSDL_GetVersionTest());
-    }
-
-    /// <summary>
-    /// Runs the <see cref="NightSDL_GetErrorTest"/>.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_GetErrorTest()
-    {
       this.Run_GameTestCase(new NightSDL_GetErrorTest());
     }
   }

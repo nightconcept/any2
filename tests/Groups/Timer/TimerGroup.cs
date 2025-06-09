@@ -48,62 +48,18 @@ namespace NightTest.Groups.Timer
     }
 
     /// <summary>
-    /// Runs the GetTimeTest IGame instance.
+    /// Runs all GameTestCases for the Timer module.
+    /// This includes tests for GetTime, GetFPS, GetDelta, GetAverageDelta, Sleep, and Step functionality.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_GetTimeTest()
+    public void Run_Timer_GameTests()
     {
       this.Run_GameTestCase(new GetTimeTest());
-    }
-
-    /// <summary>
-    /// Runs the GetFPSTest IGame instance.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_GetFPSTest()
-    {
       this.Run_GameTestCase(new GetFPSTest());
-    }
-
-    /// <summary>
-    /// Runs the GetDeltaTest IGame instance.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_GetDeltaTest()
-    {
       this.Run_GameTestCase(new GetDeltaTest());
-    }
-
-    /// <summary>
-    /// Runs the GetAverageDeltaTest IGame instance.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_GetAverageDeltaTest()
-    {
       this.Run_GameTestCase(new GetAverageDeltaTest());
-    }
-
-    /// <summary>
-    /// Runs the SleepTest IGame instance.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_SleepTest()
-    {
       this.Run_GameTestCase(new SleepTest());
-    }
-
-    /// <summary>
-    /// Runs the StepTest IGame instance.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_StepTest()
-    {
       this.Run_GameTestCase(new StepTest());
     }
   }

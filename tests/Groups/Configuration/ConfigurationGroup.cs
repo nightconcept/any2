@@ -48,72 +48,32 @@ namespace NightTest.Groups.Configuration
     }
 
     /// <summary>
-    /// Runs the GameConfig mod test. Also tests the AudioConfig, WindowConfig and ModuleConfig functionality.
+    /// Runs ModTestCases for the GameConfig feature within the Configuration module.
+    /// This includes tests for getting and setting GameConfig properties,
+    /// and indirectly tests AudioConfig, WindowConfig, and ModuleConfig functionality
+    /// as they are part of GameConfig.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_ConfigurationGameConfig_GetSet()
+    public void Run_ConfigurationGameConfig_ModTests()
     {
       this.Run_ModTestCase(new ConfigurationGameConfig_GetSet());
     }
 
     /// <summary>
-    /// Runs the ConfigurationManager IsLoaded property test.
+    /// Runs ModTestCases for the ConfigurationManager feature within the Configuration module.
+    /// This includes tests for IsLoaded property, and various scenarios of LoadConfig method
+    /// such as already loaded, file not existing, empty file, invalid JSON, and deserialization to null.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_ConfigurationManager_IsLoadedTest()
+    public void Run_ConfigurationManager_ModTests()
     {
       this.Run_ModTestCase(new ConfigurationManager_IsLoadedTest());
-    }
-
-    /// <summary>
-    /// Runs the ConfigurationManager LoadConfig already loaded test.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_ConfigurationManager_LoadConfig_AlreadyLoadedTest()
-    {
       this.Run_ModTestCase(new ConfigurationManager_LoadConfig_AlreadyLoadedTest());
-    }
-
-    /// <summary>
-    /// Runs the ConfigurationManager LoadConfig file not exists test.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_ConfigurationManager_LoadConfig_FileNotExistsTest()
-    {
       this.Run_ModTestCase(new ConfigurationManager_LoadConfig_FileNotExistsTest());
-    }
-
-    /// <summary>
-    /// Runs the ConfigurationManager LoadConfig empty file test.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_ConfigurationManager_LoadConfig_EmptyFileTest()
-    {
       this.Run_ModTestCase(new ConfigurationManager_LoadConfig_EmptyFileTest());
-    }
-
-    /// <summary>
-    /// Runs the ConfigurationManager LoadConfig invalid JSON test.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_ConfigurationManager_LoadConfig_InvalidJsonTest()
-    {
       this.Run_ModTestCase(new ConfigurationManager_LoadConfig_InvalidJsonTest());
-    }
-
-    /// <summary>
-    /// Runs the ConfigurationManager LoadConfig deserializes to null test.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_ConfigurationManager_LoadConfig_DeserializesToNullTest()
-    {
       this.Run_ModTestCase(new ConfigurationManager_LoadConfig_DeserializesToNullTest());
     }
   }

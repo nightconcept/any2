@@ -43,121 +43,34 @@ namespace NightTest.Groups.Framework
     }
 
     /// <summary>
-    /// Runs the test for CLI constructor default values.
+    /// Runs ModTestCases for the CLI feature within the Framework module.
+    /// This includes tests for CLI constructor arguments (default values, silent mode, log level, debug mode, session log, remaining args, combined args)
+    /// and ApplySettings method (log level, debug mode, session log, remaining args warning).
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_Constructor_DefaultValuesTest()
+    public void Run_FrameworkCLI_ModTests()
     {
       this.Run_ModTestCase(new NightCLI_Constructor_DefaultValuesTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI constructor silent mode flags.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_Constructor_SilentModeTest()
-    {
       this.Run_ModTestCase(new NightCLI_Constructor_SilentModeTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI constructor --log-level argument.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_Constructor_LogLevelTest()
-    {
       this.Run_ModTestCase(new NightCLI_Constructor_LogLevelTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI constructor --debug flag.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_Constructor_DebugModeTest()
-    {
       this.Run_ModTestCase(new NightCLI_Constructor_DebugModeTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI constructor --session-log flag.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_Constructor_SessionLogTest()
-    {
       this.Run_ModTestCase(new NightCLI_Constructor_SessionLogTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI constructor remaining arguments handling.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_Constructor_RemainingArgsTest()
-    {
       this.Run_ModTestCase(new NightCLI_Constructor_RemainingArgsTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI constructor combined arguments parsing.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_Constructor_CombinedArgsTest()
-    {
       this.Run_ModTestCase(new NightCLI_Constructor_CombinedArgsTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI ApplySettings method's effect on log level.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_ApplySettings_LogLevelTest()
-    {
       this.Run_ModTestCase(new NightCLI_ApplySettings_LogLevelTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI ApplySettings method's effect in debug mode.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_ApplySettings_DebugModeTest()
-    {
       this.Run_ModTestCase(new NightCLI_ApplySettings_DebugModeTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI ApplySettings method with session logging (no crash).
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_ApplySettings_SessionLogNoCrashTest()
-    {
       this.Run_ModTestCase(new NightCLI_ApplySettings_SessionLogNoCrashTest());
-    }
-
-    /// <summary>
-    /// Runs the test for CLI ApplySettings method with remaining/invalid arguments (no crash).
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_FrameworkCLI_ApplySettings_RemainingArgsWarningTest()
-    {
       this.Run_ModTestCase(new NightCLI_ApplySettings_RemainingArgsWarningTest());
     }
 
     /// <summary>
-    /// Runs the test for Night Framework.Run method with null IGame handling.
+    /// Runs ModTestCases for the Framework.Run method.
+    /// This includes tests for handling null IGame instances.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_FrameworkRun_NullIGame()
+    public void Run_FrameworkRun_ModTests()
     {
       this.Run_ModTestCase(new FrameworkRun_NullIGame());
     }

@@ -1,4 +1,4 @@
-// <copyright file="ReadWriteTests.cs" company="Night Circle">
+// <copyright file="Read1Tests.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
