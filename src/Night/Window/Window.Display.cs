@@ -31,6 +31,9 @@ using SDL3;
 
 namespace Night
 {
+  /// <summary>
+  /// Contains display-related functionality for the <see cref="Window"/> class.
+  /// </summary>
   public static partial class Window
   {
     /// <summary>

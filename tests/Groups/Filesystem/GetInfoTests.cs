@@ -35,7 +35,7 @@ using Xunit;
 namespace NightTest.Groups.Filesystem
 {
   /// <summary>
-  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns null when the path is null.
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string, FileType?)"/> returns null when the path is null.
   /// </summary>
   public class FilesystemGetInfo_NullPath_ReturnsNullTest : ModTestCase
   {
@@ -65,7 +65,7 @@ namespace NightTest.Groups.Filesystem
   }
 
   /// <summary>
-  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns null when the path is empty.
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string, FileType?)"/> returns null when the path is empty.
   /// </summary>
   public class FilesystemGetInfo_EmptyPath_ReturnsNullTest : ModTestCase
   {
@@ -93,7 +93,7 @@ namespace NightTest.Groups.Filesystem
   }
 
   /// <summary>
-  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns null for a path that does not exist.
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string, FileType?)"/> returns null for a path that does not exist.
   /// </summary>
   public class FilesystemGetInfo_PathDoesNotExist_ReturnsNullTest : ModTestCase
   {
@@ -132,7 +132,7 @@ namespace NightTest.Groups.Filesystem
   }
 
   /// <summary>
-  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns correct info for an existing file when no filter is applied.
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string, FileType?)"/> returns correct info for an existing file when no filter is applied.
   /// </summary>
   public class FilesystemGetInfo_FileExists_NoFilter_ReturnsFileInfoTest : ModTestCase
   {
@@ -305,7 +305,7 @@ namespace NightTest.Groups.Filesystem
   }
 
   /// <summary>
-  /// Tests that <see cref="Night.Filesystem.GetInfo(string?)"/> returns correct info for a directory with no filter.
+  /// Tests that <see cref="Night.Filesystem.GetInfo(string, FileType?)"/> returns correct info for a directory with no filter.
   /// </summary>
   public class FilesystemGetInfo_DirectoryExists_NoFilter_ReturnsDirectoryInfoTest : ModTestCase
   {

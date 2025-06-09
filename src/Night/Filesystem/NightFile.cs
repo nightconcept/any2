@@ -317,17 +317,26 @@ namespace Night
         return (true, null); // Already closed or never opened
       }
 
+      string? errorMessage = null;
+      bool success = true;
       try
       {
-        this.fileStream?.Close(); // Close also disposes the FileStream
-        this.fileStream = null;
-        this.currentMode = null;
-        return (true, null);
+        // If IsOpen is true, fileStream should not be null due to the IsOpen check.
+        this.fileStream!.Flush(); // Explicitly flush before closing.
+        this.fileStream!.Close(); // Close also disposes the FileStream.
       }
       catch (Exception ex)
       {
-        return (false, ex.Message);
+        errorMessage = ex.Message;
+        success = false;
       }
+      finally
+      {
+        this.fileStream = null;
+        this.currentMode = null;
+      }
+
+      return (success, errorMessage);
     }
 
     /// <summary>

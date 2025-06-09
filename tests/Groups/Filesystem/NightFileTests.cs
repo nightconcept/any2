@@ -138,44 +138,57 @@ namespace NightTest.Groups.Filesystem
       try
       {
         // Read Mode
-        var file = new NightFile(nonexistentFile);
-        var (success, _) = file.Open(Night.FileMode.Read);
-        Assert.False(success, "Opening a nonexistent file for read should fail.");
+        using (var file = new NightFile(nonexistentFile))
+        {
+          var (success, _) = file.Open(Night.FileMode.Read);
+          Assert.False(success, "Opening a nonexistent file for read should fail.");
+        }
 
-        file = new NightFile(existingFile);
-        (success, var error) = file.Open(Night.FileMode.Read);
-        Assert.True(success, $"Opening an existing file for read should succeed: {error}");
-        Assert.True(file.IsOpen);
-        _ = file.Close();
+        using (var file = new NightFile(existingFile))
+        {
+          var (success, error) = file.Open(Night.FileMode.Read);
+          Assert.True(success, $"Opening an existing file for read should succeed: {error}");
+          Assert.True(file.IsOpen);
+          _ = file.Close();
+        }
 
         // Write Mode
-        file = new NightFile(nonexistentFile);
-        (success, error) = file.Open(Night.FileMode.Write);
-        Assert.True(success, $"Opening a nonexistent file for write should succeed: {error}");
-        _ = file.Close();
-        Assert.True(File.Exists(nonexistentFile), "File should be created in write mode.");
-        File.Delete(nonexistentFile);
+        using (var file = new NightFile(nonexistentFile))
+        {
+          var (success, error) = file.Open(Night.FileMode.Write);
+          Assert.True(success, $"Opening a nonexistent file for write should succeed: {error}");
+          _ = file.Close(); // Close before Assert.True(File.Exists) to ensure write flush
+          Assert.True(File.Exists(nonexistentFile), "File should be created in write mode.");
+        }
 
-        file = new NightFile(existingFile);
-        (success, error) = file.Open(Night.FileMode.Write);
-        Assert.True(success, $"Opening an existing file for write should succeed: {error}");
-        _ = file.Close();
-        Assert.Equal(0L, new FileInfo(existingFile).Length);
+        // File.Delete for nonexistentFile in write mode is now done in finally block,
+        // but it's created and closed within the using block.
+        using (var file = new NightFile(existingFile))
+        {
+          var (success, error) = file.Open(Night.FileMode.Write);
+          Assert.True(success, $"Opening an existing file for write should succeed: {error}");
+          _ = file.Close(); // Close before checking length
+          Assert.Equal(0L, new FileInfo(existingFile).Length);
+        }
 
         // Append Mode
-        file = new NightFile(nonexistentFile);
-        (success, error) = file.Open(Night.FileMode.Append);
-        Assert.True(success, $"Opening a nonexistent file for append should succeed: {error}");
-        _ = file.Close();
-        Assert.True(File.Exists(nonexistentFile), "File should be created in append mode.");
-        File.Delete(nonexistentFile);
+        using (var file = new NightFile(nonexistentFile))
+        {
+          var (success, error) = file.Open(Night.FileMode.Append);
+          Assert.True(success, $"Opening a nonexistent file for append should succeed: {error}");
+          _ = file.Close(); // Close before Assert.True(File.Exists)
+          Assert.True(File.Exists(nonexistentFile), "File should be created in append mode.");
+        }
 
-        file = new NightFile(existingFile);
-        File.WriteAllText(existingFile, fileContent); // Restore content
-        (success, error) = file.Open(Night.FileMode.Append);
-        Assert.True(success, $"Opening an existing file for append should succeed: {error}");
-        _ = file.Close();
-        Assert.Equal((long)fileContent.Length, new FileInfo(existingFile).Length);
+        // File.Delete for nonexistentFile in append mode is now done in finally block.
+        using (var file = new NightFile(existingFile))
+        {
+          File.WriteAllText(existingFile, fileContent); // Restore content
+          var (success, error) = file.Open(Night.FileMode.Append);
+          Assert.True(success, $"Opening an existing file for append should succeed: {error}");
+          _ = file.Close(); // Close before checking length
+          Assert.Equal((long)fileContent.Length, new FileInfo(existingFile).Length);
+        }
       }
       finally
       {
@@ -213,23 +226,29 @@ namespace NightTest.Groups.Filesystem
       try
       {
         // Already open
-        var file = new NightFile(tempFile);
-        _ = file.Open("r");
-        var (success, _) = file.Open("r");
-        Assert.False(success, "Opening an already open file should fail.");
-        _ = file.Close();
+        using (var file = new NightFile(tempFile))
+        {
+          _ = file.Open("r");
+          var (success, _) = file.Open("r");
+          Assert.False(success, "Opening an already open file should fail.");
+          _ = file.Close();
+        }
 
         // Disposed
-        file = new NightFile(tempFile);
-        file.Dispose();
-        (success, _) = file.Open("r");
-        Assert.False(success, "Opening a disposed file should fail.");
+        using (var file = new NightFile(tempFile))
+        {
+          file.Dispose();
+          var (success, _) = file.Open("r");
+          Assert.False(success, "Opening a disposed file should fail.");
+        }
 
         // Invalid mode string
-        file = new NightFile(tempFile);
-        (success, var error) = file.Open("xyz");
-        Assert.False(success, "Opening with an invalid mode string should fail.");
-        Assert.Contains("Invalid file mode string", error!);
+        using (var file = new NightFile(tempFile))
+        {
+          var (success, error) = file.Open("xyz");
+          Assert.False(success, "Opening with an invalid mode string should fail.");
+          Assert.Contains("Invalid file mode string", error!);
+        }
       }
       finally
       {
@@ -257,39 +276,54 @@ namespace NightTest.Groups.Filesystem
     {
       var tempFile = Path.GetTempFileName();
       var content = "Line 1\nLine 2";
+
+      // Initial setup of the file content
       File.WriteAllText(tempFile, content, Encoding.UTF8);
 
       try
       {
-        var file = new NightFile(tempFile);
+        // Test case 1: Operations on a NightFile instance before proper read setup
+        using (var file = new NightFile(tempFile))
+        {
+          // Attempt to read when not open
+          var (data, error) = file.Read();
+          Assert.Null(data);
+          Assert.NotNull(error);
+          Assert.Contains("File is not open for reading", error);
 
-        var (data, error) = file.Read();
-        Assert.Null(data);
-        Assert.NotNull(error);
-        Assert.Contains("File is not open for reading", error);
+          // Attempt to read when open for writing
+          _ = file.Open(Night.FileMode.Write);
+          (data, error) = file.Read();
+          Assert.Null(data);
+          Assert.NotNull(error);
+          Assert.Contains("File is not open for reading", error);
+          _ = file.Close();
 
-        _ = file.Open(Night.FileMode.Write);
-        (data, error) = file.Read();
-        Assert.Null(data);
-        Assert.NotNull(error);
-        Assert.Contains("File is not open for reading", error);
-        _ = file.Close();
+          // This NightFile instance is now closed and will be disposed by the using statement.
+          // The file 'tempFile' was truncated by opening in Write mode.
+        }
 
-        // Re-open in read mode to check content. Note: Opening in Write mode truncates the file.
-        // So we now expect it to be empty. Let's first re-write the original content to test the read.
+        // Test case 2: Actual read test after ensuring the previous NightFile is disposed
+        // Re-write the original content because the previous Write mode truncated it.
+        // This File.WriteAllText should now succeed as the previous NightFile is disposed.
         File.WriteAllText(tempFile, content, Encoding.UTF8);
 
-        _ = file.Open(Night.FileMode.Read);
-        (data, error) = file.Read();
-        Assert.Null(error);
-        Assert.Equal(content, data);
+        using (var file = new NightFile(tempFile))
+        {
+          _ = file.Open(Night.FileMode.Read);
+          var (data, error) = file.Read();
+          Assert.Null(error);
+          Assert.Equal(content, data);
 
-        // Second read should return empty string as cursor is at the end
-        (data, error) = file.Read();
-        Assert.Null(error);
-        Assert.Equal(string.Empty, data);
+          // Second read should return empty string as cursor is at the end
+          (data, error) = file.Read();
+          Assert.Null(error);
+          Assert.Equal(string.Empty, data);
 
-        _ = file.Close();
+          _ = file.Close();
+
+          // This NightFile instance is now closed and will be disposed by the using statement.
+        }
       }
       finally
       {
@@ -321,32 +355,33 @@ namespace NightTest.Groups.Filesystem
 
       try
       {
-        var file = new NightFile(tempFile);
+        using (var file = new NightFile(tempFile))
+        {
+          var (data, error) = file.ReadBytes();
+          Assert.Null(data);
+          Assert.Equal("File is not open for reading.", error);
 
-        var (data, error) = file.ReadBytes();
-        Assert.Null(data);
-        Assert.Equal("File is not open for reading.", error);
+          _ = file.Open(Night.FileMode.Read);
+          (data, error) = file.ReadBytes();
+          Assert.Null(error);
+          Assert.Equal(content, data);
 
-        _ = file.Open(Night.FileMode.Read);
-        (data, error) = file.ReadBytes();
-        Assert.Null(error);
-        Assert.Equal(content, data);
+          // Second read should return empty array
+          (data, error) = file.ReadBytes();
+          Assert.Null(error);
+          Assert.Empty(data!);
 
-        // Second read should return empty array
-        (data, error) = file.ReadBytes();
-        Assert.Null(error);
-        Assert.Empty(data!);
+          _ = file.Close();
 
-        _ = file.Close();
-
-        // Reading after a partial read
-        _ = file.Open(Night.FileMode.Read);
-        var (partialData, _) = file.ReadBytes(2);
-        Assert.Equal(new byte[] { 1, 2 }, partialData);
-        (data, error) = file.ReadBytes();
-        Assert.Null(error);
-        Assert.Equal(new byte[] { 3, 4, 5 }, data);
-        _ = file.Close();
+          // Reading after a partial read
+          _ = file.Open(Night.FileMode.Read); // Re-open for this sub-test
+          var (partialData, _) = file.ReadBytes(2);
+          Assert.Equal(new byte[] { 1, 2 }, partialData);
+          (data, error) = file.ReadBytes();
+          Assert.Null(error);
+          Assert.Equal(new byte[] { 3, 4, 5 }, data);
+          _ = file.Close();
+        }
       }
       finally
       {
@@ -378,34 +413,36 @@ namespace NightTest.Groups.Filesystem
 
       try
       {
-        var file = new NightFile(tempFile);
-        _ = file.Open(Night.FileMode.Read);
+        using (var file = new NightFile(tempFile))
+        {
+          _ = file.Open(Night.FileMode.Read);
 
-        // Read 0 or negative bytes
-        var (data, error) = file.ReadBytes(0);
-        Assert.Null(error);
-        Assert.Empty(data!);
+          // Read 0 or negative bytes
+          var (data, error) = file.ReadBytes(0);
+          Assert.Null(error);
+          Assert.Empty(data!);
 
-        (data, error) = file.ReadBytes(-5);
-        Assert.Null(error);
-        Assert.Empty(data!);
+          (data, error) = file.ReadBytes(-5);
+          Assert.Null(error);
+          Assert.Empty(data!);
 
-        // Read specific number of bytes
-        (data, error) = file.ReadBytes(4);
-        Assert.Null(error);
-        Assert.Equal(new byte[] { 0, 1, 2, 3 }, data);
+          // Read specific number of bytes
+          (data, error) = file.ReadBytes(4);
+          Assert.Null(error);
+          Assert.Equal(new byte[] { 0, 1, 2, 3 }, data);
 
-        // Read more bytes than available
-        (data, error) = file.ReadBytes(100);
-        Assert.Null(error);
-        Assert.Equal(new byte[] { 4, 5, 6, 7, 8, 9 }, data);
+          // Read more bytes than available
+          (data, error) = file.ReadBytes(100);
+          Assert.Null(error);
+          Assert.Equal(new byte[] { 4, 5, 6, 7, 8, 9 }, data);
 
-        // Read at EOF
-        (data, error) = file.ReadBytes(1);
-        Assert.Null(error);
-        Assert.Empty(data!);
+          // Read at EOF
+          (data, error) = file.ReadBytes(1);
+          Assert.Null(error);
+          Assert.Empty(data!);
 
-        _ = file.Close();
+          _ = file.Close();
+        }
       }
       finally
       {
@@ -435,31 +472,35 @@ namespace NightTest.Groups.Filesystem
       try
       {
         // Dispose on a file that was never opened
-        var file = new NightFile(tempFile);
-        file.Dispose();
-        Assert.False(file.IsOpen);
+        using (var file = new NightFile(tempFile))
+        {
+          file.Dispose();
+          Assert.False(file.IsOpen);
+        }
 
         // Open a file, then dispose it
-        file = new NightFile(tempFile);
-        _ = file.Open("r");
-        Assert.True(file.IsOpen);
-        file.Dispose();
-        Assert.False(file.IsOpen, "IsOpen should be false after dispose");
+        using (var file = new NightFile(tempFile))
+        {
+          _ = file.Open("r");
+          Assert.True(file.IsOpen);
+          file.Dispose();
+          Assert.False(file.IsOpen, "IsOpen should be false after dispose");
 
-        // Calling methods on a disposed object should fail gracefully
-        var (success, error) = file.Open("r");
-        Assert.False(success);
-        Assert.Equal("Cannot open a disposed file.", error);
+          // Calling methods on a disposed object should fail gracefully
+          var (success, error) = file.Open("r");
+          Assert.False(success);
+          Assert.Equal("Cannot open a disposed file.", error);
 
-        var (data, readError) = file.Read();
-        Assert.Null(data);
-        Assert.NotNull(readError);
+          var (data, readError) = file.Read();
+          Assert.Null(data);
+          Assert.NotNull(readError);
 
-        var (closeSuccess, _) = file.Close();
-        Assert.True(closeSuccess, "Close on a disposed file should succeed without error.");
+          var (closeSuccess, _) = file.Close();
+          Assert.True(closeSuccess, "Close on a disposed file should succeed without error.");
 
-        // Call dispose multiple times
-        file.Dispose();
+          // Call dispose multiple times
+          file.Dispose();
+        }
       }
       finally
       {

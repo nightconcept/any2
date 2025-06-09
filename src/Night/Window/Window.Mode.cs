@@ -31,6 +31,9 @@ using SDL3;
 
 namespace Night
 {
+  /// <summary>
+  /// Contains window mode and attribute functionality for the <see cref="Window"/> class.
+  /// </summary>
   public static partial class Window
   {
     /// <summary>

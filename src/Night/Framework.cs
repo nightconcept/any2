@@ -113,7 +113,7 @@ namespace Night
           Logger.Info($"Headless mode explicitly requested via SDL_VIDEODRIVER='{videoDriver}'.");
           sdlLogOutputFunction = (userdata, category, priority, message) => { };
           SDL.SetLogOutputFunction(sdlLogOutputFunction, nint.Zero);
-          _ = SDL.SetHint(SDL.Hints.VideoDriver, videoDriver);
+          _ = SDL.SetHint(SDL.Hints.VideoDriver, videoDriver!);
           _ = SDL.SetHint(SDL.Hints.RenderDriver, "software");
           LogManager.MinLevel = LogLevel.Debug;
         }
