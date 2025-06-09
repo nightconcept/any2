@@ -33,7 +33,7 @@ using Xunit.Abstractions;
 namespace NightTest.Groups.Configuration
 {
   /// <summary>
-  /// Tests for the Night.Configuration functionality.
+  /// Tests for the <see cref="Night.ConfigurationManager"/> functionality.
   /// </summary>
   [Collection("SequentialTests")]
   public class ConfigurationGroup : TestGroup

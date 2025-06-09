@@ -171,7 +171,7 @@ namespace NightTest.Groups.Filesystem
     }
 
     /// <summary>
-    /// Runs a test to ensure GetAppdataDirectory returns a valid path.
+    /// Runs a test to ensure <see cref="Night.Filesystem.GetAppdataDirectory"/> returns a valid path.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
@@ -180,10 +180,8 @@ namespace NightTest.Groups.Filesystem
       this.Run_ModTestCase(new FilesystemGetAppdataDirectory_ReturnsValidPathTest());
     }
 
-    // Tests from NightFileTests.cs
-
     /// <summary>
-    /// Runs all NightFile mod test cases.
+    /// Runs all <see cref="Night.NightFile"/> mod test cases.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
@@ -197,6 +195,30 @@ namespace NightTest.Groups.Filesystem
       this.Run_ModTestCase(new NightFile_Read_Bytes());
       this.Run_ModTestCase(new NightFile_Read_BytesCounted());
       this.Run_ModTestCase(new NightFile_Dispose());
+    }
+
+    /// <summary>
+    /// Runs all <see cref="Night.Filesystem.Write(string, byte[], long?)" /> mod test cases.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FilesystemWrite_ModTests()
+    {
+      this.Run_ModTestCase(new FilesystemWrite_String_BasicNewFileTest());
+      this.Run_ModTestCase(new FilesystemWrite_Bytes_BasicNewFileTest());
+      this.Run_ModTestCase(new FilesystemWrite_String_OverwriteExistingFileTest());
+      this.Run_ModTestCase(new FilesystemWrite_Bytes_OverwriteExistingFileTest());
+      this.Run_ModTestCase(new FilesystemWrite_String_WithSizeTest());
+      this.Run_ModTestCase(new FilesystemWrite_Bytes_WithSizeTest());
+      this.Run_ModTestCase(new FilesystemWrite_String_SizeLargerThanDataTest());
+      this.Run_ModTestCase(new FilesystemWrite_Bytes_SizeLargerThanDataTest());
+      this.Run_ModTestCase(new FilesystemWrite_String_EmptyStringTest());
+      this.Run_ModTestCase(new FilesystemWrite_Bytes_EmptyArrayTest());
+      this.Run_ModTestCase(new FilesystemWrite_String_ZeroSizeTest());
+      this.Run_ModTestCase(new FilesystemWrite_Bytes_ZeroSizeTest());
+      this.Run_ModTestCase(new FilesystemWrite_ArgumentValidationTest());
+      this.Run_ModTestCase(new FilesystemWrite_CreateDirectoryTest());
+      this.Run_ModTestCase(new FilesystemWrite_PathIsDirectoryTest());
     }
   }
 }
