@@ -442,65 +442,135 @@ namespace NightTest.Groups.Filesystem
     }
 
     /// <summary>
-    /// Runs the FilesystemCreateDirectory_NewSingleDirTest IGame instance.
+    /// Runs a test for creating a single new directory.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemCreateDirectory_NewSingleDirTest()
     {
-      this.Run_GameTestCase(new FilesystemCreateDirectory_NewSingleDirTest());
+      this.Run_ModTestCase(new FilesystemCreateDirectory_NewSingleDirTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemCreateDirectory_ExistingDirTest IGame instance.
+    /// Runs a test for creating an already existing directory.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemCreateDirectory_ExistingDirTest()
     {
-      this.Run_GameTestCase(new FilesystemCreateDirectory_ExistingDirTest());
+      this.Run_ModTestCase(new FilesystemCreateDirectory_ExistingDirTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemCreateDirectory_NestedDirTest IGame instance.
+    /// Runs a test for creating nested directories.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemCreateDirectory_NestedDirTest()
     {
-      this.Run_GameTestCase(new FilesystemCreateDirectory_NestedDirTest());
+      this.Run_ModTestCase(new FilesystemCreateDirectory_NestedDirTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemCreateDirectory_ArgumentValidationTest IGame instance.
+    /// Runs a test for argument validation in the CreateDirectory method.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemCreateDirectory_ArgumentValidationTest()
     {
-      this.Run_GameTestCase(new FilesystemCreateDirectory_ArgumentValidationTest());
+      this.Run_ModTestCase(new FilesystemCreateDirectory_ArgumentValidationTest());
     }
 
     /// <summary>
-    /// Runs the FilesystemGetAppdataDirectory_ReturnsValidPathTest IGame instance.
+    /// Runs a test to ensure GetAppdataDirectory returns a valid path.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
     public void Run_FilesystemGetAppdataDirectory_ReturnsValidPathTest()
     {
-      this.Run_GameTestCase(new FilesystemGetAppdataDirectory_ReturnsValidPathTest());
+      this.Run_ModTestCase(new FilesystemGetAppdataDirectory_ReturnsValidPathTest());
     }
 
     // Tests from NightFileTests.cs
 
     /// <summary>
-    /// Runs the NightFile_Dispose_DoesNotThrowTest IGame instance.
+    /// Runs the <see cref="NightFile_Constructor"/> mod test case.
     /// </summary>
     [Fact]
     [Trait("TestType", "Automated")]
-    public void Run_NightFile_Dispose_DoesNotThrowTest()
+    public void Run_NightFile_Constructor_Mod()
     {
-      this.Run_GameTestCase(new NightFile_Dispose_DoesNotThrowTest());
+      this.Run_ModTestCase(new NightFile_Constructor());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="NightFile_OpenClose"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_NightFile_OpenClose_Mod()
+    {
+      this.Run_ModTestCase(new NightFile_OpenClose());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="NightFile_OpenModes"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_NightFile_OpenModes_Mod()
+    {
+      this.Run_ModTestCase(new NightFile_OpenModes());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="NightFile_OpenInvalidCases"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_NightFile_OpenInvalidCases_Mod()
+    {
+      this.Run_ModTestCase(new NightFile_OpenInvalidCases());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="NightFile_Read_Full"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_NightFile_Read_Full_Mod()
+    {
+      this.Run_ModTestCase(new NightFile_Read_Full());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="NightFile_Read_Bytes"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_NightFile_Read_Bytes_Mod()
+    {
+      this.Run_ModTestCase(new NightFile_Read_Bytes());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="NightFile_Read_BytesCounted"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_NightFile_Read_BytesCounted_Mod()
+    {
+      this.Run_ModTestCase(new NightFile_Read_BytesCounted());
+    }
+
+    /// <summary>
+    /// Runs the <see cref="NightFile_Dispose"/> mod test case.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_NightFile_Dispose_Mod()
+    {
+      this.Run_ModTestCase(new NightFile_Dispose());
     }
   }
 }

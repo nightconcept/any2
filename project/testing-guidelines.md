@@ -505,3 +505,4 @@ This section primarily applies to `GameTestCase` and `ManualTestCase`. `ModTestC
   11. Structs
   12. Classes (Nested)
 * Static members should appear before instance members.
+* **Running Tests**: Test must be run using this command while doing development (except for manual tests): `SDL_VIDEODRIVER=dummy dotnet test --filter TestType=Automated` instead of `dotnet test`. This is because headless testing is the preferred method.
