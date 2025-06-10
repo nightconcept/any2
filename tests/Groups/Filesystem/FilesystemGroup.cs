@@ -220,5 +220,16 @@ namespace NightTest.Groups.Filesystem
       this.Run_ModTestCase(new FilesystemWrite_CreateDirectoryTest());
       this.Run_ModTestCase(new FilesystemWrite_PathIsDirectoryTest());
     }
+
+    /// <summary>
+    /// Runs all <see cref="Night.FileSystemInfo" /> mod test cases.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FileSystemInfo_ModTests()
+    {
+      this.Run_ModTestCase(new FileSystemInfo_Constructor_DefaultValues());
+      this.Run_ModTestCase(new FileSystemInfo_Constructor());
+    }
   }
 }

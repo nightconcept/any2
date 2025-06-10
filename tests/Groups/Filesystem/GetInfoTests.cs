@@ -51,13 +51,8 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     public override void Run()
     {
-      // Arrange
-      string? path = null;
-
-      // Act
-#pragma warning disable CS8604 // Possible null reference argument. Test case specifically for null.
-      var info = Night.Filesystem.GetInfo(path);
-#pragma warning restore CS8604
+      // Test with null, suppress warning as it's a test case
+      var info = Night.Filesystem.GetInfo(null!);
 
       // Assert
       Assert.Null(info);
