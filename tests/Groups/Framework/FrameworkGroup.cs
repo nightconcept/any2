@@ -65,6 +65,16 @@ namespace NightTest.Groups.Framework
     }
 
     /// <summary>
+    /// Runs ModTestCases for the Framework.GetVersion method.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_FrameworkGetVersion_ModTests()
+    {
+      this.Run_ModTestCase(new Framework_GetVersionTest());
+    }
+
+    /// <summary>
     /// Runs ModTestCases for the Framework.Run method.
     /// This includes tests for handling null IGame instances.
     /// </summary>

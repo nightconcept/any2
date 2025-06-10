@@ -37,7 +37,7 @@ namespace Night
   public static partial class Window
   {
     /// <summary>
-    ///     Sets the display mode and properties of the window.
+    /// Sets the display mode and properties of the window.
     /// </summary>
     /// <param name="width">The width of the window.</param>
     /// <param name="height">The height of the window.</param>

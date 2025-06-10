@@ -1,4 +1,4 @@
-// <copyright file="Framework.cs" company="Night Circle">
+// <copyright file="FrameworkGetVersionTest.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -20,33 +20,41 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-
 using Night;
-using Night.Log;
 
-using SDL3;
+using NightTest.Core;
 
-namespace Night
+using Xunit;
+
+namespace NightTest.Groups.Framework
 {
   /// <summary>
-  /// Manages the main game loop and coordination of game states.
-  /// Provides the main entry point to run a game.
+  /// Tests the <see cref="Night.Framework.GetVersion()"/> method.
   /// </summary>
-  public static partial class Framework
+  public class Framework_GetVersionTest : ModTestCase
   {
+    /// <inheritdoc/>
+    public override string Name => "Framework.GetVersion";
+
+    /// <inheritdoc/>
+    public override string Description => "Tests that Night.Framework.GetVersion() returns the correct engine version.";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "Night.Framework.GetVersion() returned the correct version string.";
+
     /// <summary>
-    /// Gets the version of the Night Engine as a string.
+    /// Executes the test logic for GetVersion.
     /// </summary>
-    /// <returns>The version of the Night Engine as a string.</returns>
-    public static string GetVersion()
+    public override void Run()
     {
-      return VersionInfo.GetVersion();
+      // Arrange
+      string expectedVersion = VersionInfo.GetVersion();
+
+      // Act
+      string actualVersion = Night.Framework.GetVersion();
+
+      // Assert
+      Assert.Equal(expectedVersion, actualVersion);
     }
   }
 }
