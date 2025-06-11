@@ -20,7 +20,7 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 - [ ] `love.image`: Provides an interface to decode encoded image data.
 - [ ] `love.keyboard`: Provides an interface to the user's keyboard.
 - [ ] `love.mouse`: Provides an interface to the user's mouse.
-- [ ] `love.timer`: Provides high-resolution timing functionality.
+- [x] `love.timer`: Provides high-resolution timing functionality.
 - [ ] `love.window`: Provides an interface for the program's window.
 
 ### Callbacks - General
