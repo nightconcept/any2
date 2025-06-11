@@ -25,6 +25,37 @@ using SDL3;
 namespace Night
 {
   /// <summary>
+  /// Represents the basic state of the system's power supply.
+  /// </summary>
+  public enum PowerState
+  {
+    /// <summary>
+    /// Cannot determine power status, or an error occurred.
+    /// </summary>
+    Unknown,
+
+    /// <summary>
+    /// Not plugged in, running on the battery.
+    /// </summary>
+    Battery,
+
+    /// <summary>
+    /// Plugged in, no battery available.
+    /// </summary>
+    NoBattery,
+
+    /// <summary>
+    /// Plugged in, charging battery.
+    /// </summary>
+    Charging,
+
+    /// <summary>
+    /// Plugged in, battery charged.
+    /// </summary>
+    Charged,
+  }
+
+  /// <summary>
   /// Provides access to system-level information and functions.
   /// </summary>
   public static class System
@@ -90,6 +121,51 @@ namespace Night
     public static int GetProcessorCount()
     {
       return SDL.GetNumLogicalCPUCores();
+    }
+
+    /// <summary>
+    /// Gets information about the system's power supply.
+    /// This function is similar to LÖVE's love.system.getPowerInfo().
+    /// </summary>
+    /// <returns>
+    /// A tuple containing:
+    /// <list type="bullet">
+    /// <item><description><c>state</c>: The basic state of the power supply (<see cref="PowerState"/>).</description></item>
+    /// <item><description><c>percent</c>: Percentage of battery life left (0-100), or <c>null</c> if not applicable/determinable.</description></item>
+    /// <item><description><c>seconds</c>: Seconds of battery life left, or <c>null</c> if not applicable/determinable.</description></item>
+    /// </list>
+    /// </returns>
+    public static (PowerState State, int? Percent, int? Seconds) GetPowerInfo()
+    {
+      SDL.PowerState sdlState = SDL.GetPowerInfo(out int seconds, out int percent);
+
+      PowerState nightState;
+      switch (sdlState)
+      {
+        case SDL.PowerState.OnBattery:
+          nightState = PowerState.Battery;
+          break;
+        case SDL.PowerState.NoBattery:
+          nightState = PowerState.NoBattery;
+          break;
+        case SDL.PowerState.Charging:
+          nightState = PowerState.Charging;
+          break;
+        case SDL.PowerState.Charged:
+          nightState = PowerState.Charged;
+          break;
+        case SDL.PowerState.Error:
+        case SDL.PowerState.Unknown:
+        default:
+          nightState = PowerState.Unknown;
+          break;
+      }
+
+      // SDL returns -1 for seconds/percent if not available or error
+      int? nullablePercent = percent == -1 ? null : (int?)percent;
+      int? nullableSeconds = seconds == -1 ? null : (int?)seconds;
+
+      return (nightState, nullablePercent, nullableSeconds);
     }
   }
 }

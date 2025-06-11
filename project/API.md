@@ -101,9 +101,14 @@
 
 - GetClipboardText() - love.system.getClipboardText
 - GetOS() - love.system.getOS
+- GetPowerInfo() - love.system.getPowerInfo
 - GetProcessorCount() - love.system.getProcessorCount
 - SetClipboardText() - love.system.setClipboardText
   - SetClipboardText(string text)
+
+### Enums (System)
+
+- PowerState
 
 ## Timer
 
