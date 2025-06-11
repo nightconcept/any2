@@ -78,5 +78,18 @@ namespace Night
           return sdlPlatform;
       }
     }
+
+    /// <summary>
+    /// Gets the amount of logical processors in the system.
+    /// </summary>
+    /// <returns>Amount of logical processors.</returns>
+    /// <remarks>
+    /// The number includes the threads reported if technologies such as Intel's Hyper-threading are enabled.
+    /// For example, on a 4-core CPU with Hyper-threading, this function will return 8.
+    /// </remarks>
+    public static int GetProcessorCount()
+    {
+      return SDL.GetNumLogicalCPUCores();
+    }
   }
 }

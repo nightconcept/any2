@@ -101,6 +101,7 @@
 
 - GetClipboardText() - love.system.getClipboardText
 - GetOS() - love.system.getOS
+- GetProcessorCount() - love.system.getProcessorCount
 - SetClipboardText() - love.system.setClipboardText
   - SetClipboardText(string text)
 

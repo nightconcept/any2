@@ -1,4 +1,4 @@
-// <copyright file="SystemGroup.cs" company="Night Circle">
+// <copyright file="SystemGetProcessorCountTest.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -20,37 +20,40 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
+using Night;
+
 using NightTest.Core;
 
 using Xunit;
-using Xunit.Abstractions;
 
 namespace NightTest.Groups.SystemTests
 {
   /// <summary>
-  /// Test group for Night.System module.
+  /// Tests the <see cref="Night.System.GetProcessorCount"/> method
+  /// to ensure it returns a positive value.
   /// </summary>
-  [Collection("SequentialTests")] // As per guidelines, though likely not strictly needed for only ModTestCases
-  public class SystemGroup : TestGroup
+  public class SystemGetProcessorCount_ReturnsPositiveValueTest : ModTestCase
   {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SystemGroup"/> class.
-    /// </summary>
-    /// <param name="outputHelper">The xUnit output helper.</param>
-    public SystemGroup(ITestOutputHelper outputHelper)
-        : base(outputHelper)
-    {
-    }
+    /// <inheritdoc/>
+    public override string Name => "System.GetProcessorCount.ReturnsPositiveValue";
 
-    /// <summary>
-    /// Runs module tests for the Night.System functionality.
-    /// </summary>
-    [Fact]
-    [Trait("TestType", "Automated")]
-    public void Run_System_ModTests()
+    /// <inheritdoc/>
+    public override string Description => "Tests if Night.System.GetProcessorCount() returns a value greater than or equal to 1.";
+
+    /// <inheritdoc/>
+    public override string SuccessMessage => "Night.System.GetProcessorCount() returned a positive value as expected.";
+
+    /// <inheritdoc/>
+    public override void Run()
     {
-      this.Run_ModTestCase(new SystemGetOS_ReturnsCorrectPlatformStringTest());
-      this.Run_ModTestCase(new SystemGetProcessorCount_ReturnsPositiveValueTest());
+      // Arrange
+      int processorCount;
+
+      // Act
+      processorCount = Night.System.GetProcessorCount();
+
+      // Assert
+      Assert.True(processorCount >= 1, $"Expected processor count to be >= 1, but got {processorCount}.");
     }
   }
 }
