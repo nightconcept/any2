@@ -24,7 +24,6 @@ using SDL3;
 
 namespace Night
 {
-
   /// <summary>
   /// Provides access to system-level information and functions.
   /// </summary>

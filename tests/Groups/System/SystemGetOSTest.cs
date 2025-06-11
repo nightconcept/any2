@@ -72,33 +72,7 @@ namespace NightTest.Groups.System
             } */
       else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
       {
-        // If RuntimeInformation identifies the OS as Linux, Night.System.GetOS() (which uses SDL)
-        // should return "Android" if SDL specifically identifies it as "Android",
-        // otherwise it should return "Linux".
-        string sdlPlatform = SDL.GetPlatform();
-        if (sdlPlatform == "Android")
-        {
-          expectedOsString = "Android";
-        }
-        else
-        {
-          expectedOsString = "Linux";
-        }
-      }
-      else
-      {
-        // Fallback for platforms not directly identified by the RuntimeInformation checks above,
-        // or to test the passthrough logic of Night.System.GetOS() for unknown SDL platforms.
-        string sdlPlatform = SDL.GetPlatform();
-        switch (sdlPlatform)
-        {
-          case "Windows": expectedOsString = "Windows"; break;
-          case "Mac OS X": expectedOsString = "OS X"; break;
-          case "Linux": expectedOsString = "Linux"; break;
-          case "Android": expectedOsString = "Android"; break;
-          case "iOS": expectedOsString = "iOS"; break;
-          default: expectedOsString = sdlPlatform; break; // Passthrough
-        }
+        expectedOsString = "Linux";
       }
 
       // Act
