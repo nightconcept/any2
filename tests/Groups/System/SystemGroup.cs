@@ -25,7 +25,7 @@ using NightTest.Core;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace NightTest.Groups.System
+namespace NightTest.Groups.SystemTests
 {
   /// <summary>
   /// Test group for Night.System module.

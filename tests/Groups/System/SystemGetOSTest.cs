@@ -28,7 +28,7 @@ using SDL3;
 
 using Xunit;
 
-namespace NightTest.Groups.System
+namespace NightTest.Groups.SystemTests
 {
   /// <summary>
   /// Tests the <see cref="Night.System.GetOS()"/> method.
