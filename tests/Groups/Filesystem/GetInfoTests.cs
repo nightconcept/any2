@@ -292,7 +292,7 @@ namespace NightTest.Groups.Filesystem
             // Logging the warning to output, as ModTestCase doesn't have a Details property to append to in the same way
             // and this.Details is not typically used for cleanup warnings in ModTestCase.
             // Consider using ITestOutputHelper if more detailed logging is needed here.
-            System.Diagnostics.Debug.WriteLine($"Warning: Failed to delete test file '{this.testFileName}': {ex.Message}");
+            Debug.WriteLine($"Warning: Failed to delete test file '{this.testFileName}': {ex.Message}");
           }
         }
       }

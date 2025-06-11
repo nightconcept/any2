@@ -20,6 +20,9 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
+using System;
+using System.Diagnostics;
+
 using Night;
 
 using NightTest.Core;
@@ -35,7 +38,7 @@ namespace NightTest.Groups.Timer
 
     // Using TestStopwatch from base class for overall test duration
     // Need a separate stopwatch for measuring sleep itself
-    private System.Diagnostics.Stopwatch internalStopwatch = new System.Diagnostics.Stopwatch();
+    private Stopwatch internalStopwatch = new Stopwatch();
 
     /// <inheritdoc/>
     public override string Name => "Timer.Sleep";
@@ -91,7 +94,7 @@ namespace NightTest.Groups.Timer
 
     // Using TestStopwatch from base class for overall test duration
     // Need a separate stopwatch for measuring sleep itself
-    private System.Diagnostics.Stopwatch internalStopwatch = new System.Diagnostics.Stopwatch();
+    private Stopwatch internalStopwatch = new Stopwatch();
 
     /// <inheritdoc/>
     public override string Name => "Timer.Sleep";

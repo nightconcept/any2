@@ -20,9 +20,10 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
+using SDL3;
+
 namespace Night
 {
-  using SDL3;
 
   /// <summary>
   /// Provides access to system-level information and functions.
@@ -46,6 +47,36 @@ namespace Night
     public static string GetClipboardText()
     {
       return SDL.GetClipboardText();
+    }
+
+    /// <summary>
+    /// Gets the current operating system.
+    /// This function is similar to LÖVE's love.system.getOS().
+    /// </summary>
+    /// <returns>
+    /// The current operating system: "OS X", "Windows", "Linux", "Android", or "iOS".
+    /// Returns the raw platform string from SDL if the OS is not one of the above.
+    /// </returns>
+    public static string GetOS()
+    {
+      string sdlPlatform = SDL.GetPlatform();
+      switch (sdlPlatform)
+      {
+        case "Windows":
+          return "Windows";
+        case "Mac OS X":
+          return "OS X";
+        case "Linux":
+          return "Linux";
+        case "Android":
+          return "Android";
+        case "iOS":
+          return "iOS";
+        default:
+          // If SDL returns something unexpected, pass it through.
+          // This helps in identifying new/unhandled platforms.
+          return sdlPlatform;
+      }
     }
   }
 }
