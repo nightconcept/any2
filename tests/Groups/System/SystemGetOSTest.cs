@@ -50,7 +50,7 @@ namespace NightTest.Groups.System
     public override void Run()
     {
       // Arrange
-      string expectedOsString;
+      string expectedOsString = string.Empty;
 
       if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
       {
