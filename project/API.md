@@ -100,6 +100,7 @@
 ### Functions (System)
 
 - GetClipboardText() - love.system.getClipboardText
+- GetOS() - love.system.getOS
 - SetClipboardText() - love.system.setClipboardText
   - SetClipboardText(string text)
 

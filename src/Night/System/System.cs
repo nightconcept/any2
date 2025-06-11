@@ -64,6 +64,7 @@ namespace Night
         case "Windows":
           return "Windows";
         case "Mac OS X":
+        case "macOS":
           return "OS X";
         case "Linux":
           return "Linux";
