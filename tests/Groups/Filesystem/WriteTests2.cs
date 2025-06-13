@@ -213,32 +213,40 @@ namespace NightTest.Groups.Filesystem
     /// <inheritdoc/>
     public override void Run()
     {
-      // Invalid characters for a path/filename (e.g., '|')
-      string invalidFileName = "file_with_pipe|.txt";
-      string invalidPath = Path.Combine(Path.GetTempPath(), "NightEngineWriteTests", invalidFileName);
+      string invalidFileName;
+      string expectedErrorSubstring;
+      string problematicCharDisplay;
 
-      // Ensure the parent directory exists. Path.GetDirectoryName will correctly get the directory part.
-      _ = Directory.CreateDirectory(Path.GetDirectoryName(invalidPath)!);
-
-      var (success, errorMessage) = Night.Filesystem.Write(invalidPath, "some data");
-
-      Assert.False(success, "Write operation should have failed for invalid path characters.");
-      Assert.NotNull(errorMessage);
-
-      // The exact message from ArgumentException can vary, but Filesystem.Write wraps it.
-      // On Windows, an IOException is typically thrown for invalid path characters like '|',
-      // which Filesystem.Write wraps as "IO error:".
-      // On other platforms, an ArgumentException might be thrown or a different IOException.
       if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
       {
-        Assert.Contains("IO error", errorMessage, StringComparison.OrdinalIgnoreCase);
+        invalidFileName = "file_with_pipe|.txt";
+
+        // On Windows, '|' in filename leads to IOException, wrapped as "IO error:".
+        expectedErrorSubstring = "IO error";
+        problematicCharDisplay = "|";
       }
       else
       {
-        // Assuming "Argument error" is the expected wrapped message for ArgumentException
-        // or a similar path validation issue on non-Windows platforms for this specific test case.
-        Assert.Contains("Argument error", errorMessage, StringComparison.OrdinalIgnoreCase);
+        // Use a null character, which should cause ArgumentException from FileStream.
+        invalidFileName = "file_with_null\0char.txt";
+
+        // Night.Filesystem.Write wraps ArgumentException as "Argument error:".
+        expectedErrorSubstring = "Argument error";
+        problematicCharDisplay = "\\0";
       }
+
+      // Define the base directory for test files to ensure it exists.
+      // Path.GetDirectoryName will correctly extract this base directory even if invalidFileName contains problematic characters.
+      string testFilesBaseDir = Path.Combine(Path.GetTempPath(), "NightEngineWriteTests");
+      _ = Directory.CreateDirectory(testFilesBaseDir);
+
+      string invalidPath = Path.Combine(testFilesBaseDir, invalidFileName);
+
+      var (success, errorMessage) = Night.Filesystem.Write(invalidPath, "some data");
+
+      Assert.False(success, $"Write operation should have failed. OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription}, Char: '{problematicCharDisplay}', Path: {invalidPath}");
+      Assert.NotNull(errorMessage); // Ensure there is an error message.
+      Assert.Contains(expectedErrorSubstring, errorMessage, StringComparison.OrdinalIgnoreCase);
 
       // Cleanup: Attempt to delete the directory if it was created and is empty.
       // The invalid file itself wouldn't have been created.
