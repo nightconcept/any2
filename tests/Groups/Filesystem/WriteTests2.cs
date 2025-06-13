@@ -344,8 +344,6 @@ namespace NightTest.Groups.Filesystem
   /// </summary>
   public class FilesystemWrite_Error_IOExceptionLockedTest : BaseFilesystemWriteTest
   {
-    private static readonly ILogger Logger = LogManager.GetLogger(nameof(FilesystemWrite_Error_IOExceptionLockedTest));
-
     /// <inheritdoc/>
     public override string Name => "Filesystem.Write.Error.IOExceptionLockedTest";
 
