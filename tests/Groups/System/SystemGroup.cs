@@ -51,6 +51,7 @@ namespace NightTest.Groups.SystemTests
     {
       this.Run_ModTestCase(new SystemGetOS_ReturnsCorrectPlatformStringTest());
       this.Run_ModTestCase(new SystemGetProcessorCount_ReturnsPositiveValueTest());
+      this.Run_ModTestCase(new SystemGetPowerInfo_ReturnsValidDataTest());
     }
   }
 }

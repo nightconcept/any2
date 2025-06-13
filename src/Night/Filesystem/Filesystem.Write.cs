@@ -160,6 +160,20 @@ namespace Night
       }
       catch (IOException ex)
       {
+        // HResult for ERROR_FILENAME_EXCED_RANGE (path too long / invalid filename component) is 0x800700CE.
+        // This can be thrown by Directory.CreateDirectory if a segment of the path is too long,
+        // before FileStream itself might throw a PathTooLongException.
+        // We want to provide a consistent error message for path length issues.
+        const int ERROR_FILENAME_EXCED_RANGE = unchecked((int)0x800700CE);
+
+        if (ex.HResult == ERROR_FILENAME_EXCED_RANGE)
+        {
+          Logger.Error($"Path too long (caught as IOException with HResult 0x{ex.HResult:X8}) for file '{name}'. Original Message: {ex.Message}", ex);
+
+          // Return the same message as for PathTooLongException for consistency
+          return (false, "The specified path, file name, or both exceed the system-defined maximum length.");
+        }
+
         Logger.Error($"IO error trying to write to file '{name}'.", ex);
         return (false, $"IO error: {ex.Message}");
       }
