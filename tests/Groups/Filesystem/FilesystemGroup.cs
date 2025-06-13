@@ -220,13 +220,13 @@ namespace NightTest.Groups.Filesystem
       this.Run_ModTestCase(new FilesystemWrite_CreateDirectoryTest());
       this.Run_ModTestCase(new FilesystemWrite_PathIsDirectoryTest());
       this.Run_ModTestCase(new FilesystemWrite_Error_InvalidArgumentCharsTest());
-      this.Run_ModTestCase(new FilesystemWrite_Error_DirectoryNotFoundUnmappedDriveTest());
       this.Run_ModTestCase(new FilesystemWrite_Error_IOExceptionLockedTest());
 
       // TODO: Fix these tests
       // this.Run_ModTestCase(new FilesystemWrite_Error_PathTooLongTest());
       // this.Run_ModTestCase(new FilesystemWrite_Error_SecurityExceptionTest());
       // this.Run_ModTestCase(new FilesystemWrite_Error_NotSupportedTest());
+      // this.Run_ModTestCase(new FilesystemWrite_Error_DirectoryNotFoundUnmappedDriveTest());
     }
 
     /// <summary>

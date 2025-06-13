@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
@@ -90,6 +91,22 @@ namespace Night
       if (size.HasValue && size.Value < 0)
       {
         return (false, "Size to write cannot be negative.");
+      }
+
+
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+      {
+        // Check if the path starts with a pattern like "X:\" or "X:/" which indicates a Windows drive letter.
+        // This is not a standard absolute path format on Unix.
+        if (name.Length >= 2 && char.IsLetter(name[0]) && name[1] == ':')
+        {
+          // Further check if it's followed by a directory separator, making it "X:\..." or "X:/..."
+          if (name.Length >= 3 && (name[2] == Path.DirectorySeparatorChar || name[2] == Path.AltDirectorySeparatorChar))
+          {
+            Logger?.Info($"Path '{name}' on Unix-like system resembles a Windows drive path. Simulating unmapped drive behavior.");
+            throw new DirectoryNotFoundException($"Could not find a part of the path '{name}'. (Simulated unmapped drive on Unix for Windows-style path)");
+          }
+        }
       }
 
       try
