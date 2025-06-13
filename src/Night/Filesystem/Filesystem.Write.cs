@@ -93,7 +93,6 @@ namespace Night
         return (false, "Size to write cannot be negative.");
       }
 
-
       if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
       {
         // Check if the path starts with a pattern like "X:\" or "X:/" which indicates a Windows drive letter.
