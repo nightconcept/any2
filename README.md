@@ -3,6 +3,7 @@
 ![License](https://img.shields.io/github/license/nightconcept/NightEngine)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/nightconcept/NightEngine/ci.yml)
 ![GitHub last commit](https://img.shields.io/github/last-commit/nightconcept/NightEngine)
+[![codecov](https://codecov.io/gh/nightconcept/NightEngine/graph/badge.svg?token=F9ERB4J3BX)](https://codecov.io/gh/nightconcept/NightEngine)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/nightconcept/NightEngine/badge)](https://scorecard.dev/viewer/?uri=github.com/nightconcept/NightEngine)
 
 > [!WARNING]
