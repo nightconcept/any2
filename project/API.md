@@ -33,28 +33,6 @@
 - Rectangle
 - Sprite
 
-### Functions (Graphics)
-
-- Circle() - love.graphics.circle
-  - Circle(DrawMode mode, float x, float y, float radius, int segments)
-- Clear() - love.graphics.clear
-  - Clear(Color color)
-- Draw() - love.graphics.draw
-  - Draw(Sprite sprite, float x, float y, float rotation, float scaleX, float scaleY, float offsetX, float offsetY)
-- Line() - love.graphics.line
-  - Line(PointF[] points)
-  - Line(float x1, float y1, float x2, float y2)
-- NewImage() - love.graphics.newImage
-  - NewImage(string filePath)
-- Polygon() - love.graphics.polygon
-  - Polygon(DrawMode mode, PointF[] vertices)
-- Present() - love.graphics.present
-- Rectangle() - love.graphics.rectangle
-  - Rectangle(DrawMode mode, float x, float y, float width, float height)
-- SetColor() - love.graphics.setColor
-  - SetColor(Color color)
-  - SetColor(byte r, byte g, byte b, byte a)
-
 ### Enums (Graphics)
 
 - DrawMode
