@@ -34,7 +34,7 @@ namespace Night
   /// <summary>
   /// Provides 2D graphics rendering functionality.
   /// </summary>
-  public static class Graphics
+  public static partial class Graphics
   {
     private static readonly ILogger Logger = LogManager.GetLogger("Night.Graphics.Graphics");
 
@@ -570,6 +570,8 @@ namespace Night
         Logger.Error("Renderer pointer is null. Was Window.SetMode called successfully?");
         return;
       }
+
+      backgroundColor = color; // Store the new background color
 
       // Set color for clearing
       if (!SDL.SetRenderDrawColor(rendererPtr, color.R, color.G, color.B, color.A))

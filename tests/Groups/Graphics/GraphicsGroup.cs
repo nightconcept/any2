@@ -56,5 +56,16 @@ namespace NightTest.Groups.Graphics
     {
       this.Run_GameTestCase(new GraphicsClearColorTest());
     }
+
+    /// <summary>
+    /// Runs automated tests for Graphics.GetBackgroundColor.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Automated")]
+    public void Run_Graphics_GetBackgroundColor_GameTests()
+    {
+      this.Run_GameTestCase(new GraphicsGetBackgroundColor_DefaultTest());
+      this.Run_GameTestCase(new GraphicsGetBackgroundColor_AfterClearTest());
+    }
   }
 }
