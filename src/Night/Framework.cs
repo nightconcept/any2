@@ -22,12 +22,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
 using Night;
+using Night.Log;
 
 using SDL3;
 
@@ -37,360 +39,27 @@ namespace Night
   /// Manages the main game loop and coordination of game states.
   /// Provides the main entry point to run a game.
   /// </summary>
-  public static class Framework
+  public static partial class Framework
   {
-    private const int MaxDeltaHistorySamples = 60; // Store up to 1 second of deltas at 60fps
-
-    private static bool isSdlInitialized = false;
-    private static SDL.InitFlags initializedSubsystems = 0;
-
-    private static int frameCount = 0;
-    private static double fpsTimeAccumulator = 0.0;
-    private static List<double> deltaHistory = new List<double>();
-
-    private static bool inErrorState = false;
-
     /// <summary>
-    /// Gets a value indicating whether a flag indicating whether the core SDL systems, particularly for input,
-    /// have been successfully initialized by this Framework's Run method.
+    /// Gets the version of the Night Engine as a string.
     /// </summary>
-    public static bool IsInputInitialized { get; internal set; } = false;
-
-    /// <summary>
-    /// Runs the game instance.
-    /// The game loop will internally call Load, Update, and Draw methods
-    /// on the provided game logic.
-    /// This method will initialize and shut down required SDL subsystems.
-    /// </summary>
-    /// <param name="game">The game interface to run. Must implement <see cref="Night.IGame"/>.</param>
-    public static void Run(IGame game)
+    /// <returns>The version of the Night Engine as a string.</returns>
+    public static string GetVersion()
     {
-      if (game == null)
-      {
-        Console.WriteLine("Night.Framework.Run: gameLogic cannot be null.");
-        return;
-      }
-
-      ConfigurationManager.LoadConfig();
-      var windowConfig = ConfigurationManager.CurrentConfig.Window;
-
-      string nightVersionString = VersionInfo.GetVersion();
-      string sdlVersionString = NightSDL.GetVersion();
-      Console.WriteLine($"Night Engine: v{nightVersionString}");
-      Console.WriteLine($"SDL: v{sdlVersionString}");
-      Console.WriteLine(GetFormattedPlatformString());
-      Console.WriteLine($"Framework: {RuntimeInformation.FrameworkDescription}");
-
-      try
-      {
-        initializedSubsystems = SDL.InitFlags.Video | SDL.InitFlags.Events;
-        if (!SDL.Init(initializedSubsystems))
-        {
-          Console.WriteLine($"Night.Framework.Run: SDL_Init failed: {SDL.GetError()}");
-          return;
-        }
-
-        isSdlInitialized = true;
-        IsInputInitialized = (initializedSubsystems & SDL.InitFlags.Events) == SDL.InitFlags.Events;
-
-        // Setup initial window based on configuration BEFORE game.Load()
-        SDL.WindowFlags sdlFlags = (SDL.WindowFlags)0;
-        if (windowConfig.Resizable)
-        {
-          sdlFlags |= SDL.WindowFlags.Resizable;
-        }
-
-        if (windowConfig.Borderless)
-        {
-          sdlFlags |= SDL.WindowFlags.Borderless;
-        }
-
-        if (windowConfig.HighDPI)
-        {
-          sdlFlags |= SDL.WindowFlags.HighPixelDensity;
-        }
-
-        bool modeSet = Window.SetMode(windowConfig.Width, windowConfig.Height, sdlFlags);
-        if (!modeSet)
-        {
-          Console.WriteLine($"Night.Framework.Run: Failed to set initial window mode from configuration: {SDL.GetError()}");
-          CleanUpSDL();
-          return;
-        }
-
-        Window.SetTitle(windowConfig.Title ?? "Night Game");
-
-        if (windowConfig.Fullscreen)
-        {
-          FullscreenType fsType = windowConfig.FullscreenType.ToLowerInvariant() == "exclusive"
-                                    ? FullscreenType.Exclusive
-                                    : FullscreenType.Desktop;
-          if (!Window.SetFullscreen(true, fsType))
-          {
-            Console.WriteLine($"Night.Framework.Run: Failed to set initial fullscreen mode from configuration: {SDL.GetError()}");
-          }
-        }
-
-        if (Window.RendererPtr != nint.Zero)
-        {
-          if (!SDL.SetRenderVSync(Window.RendererPtr, windowConfig.VSync ? 1 : 0))
-          {
-            Console.WriteLine($"Night.Framework.Run: Failed to set initial VSync mode from configuration: {SDL.GetError()}");
-          }
-        }
-
-        if (windowConfig.X.HasValue && windowConfig.Y.HasValue && Window.Handle != nint.Zero)
-        {
-          _ = SDL.SetWindowPosition(Window.Handle, windowConfig.X.Value, windowConfig.Y.Value);
-        }
-
-        // Set window icon if specified in config
-        if (!string.IsNullOrEmpty(windowConfig.IconPath) && Window.Handle != nint.Zero)
-        {
-          // Assuming IconPath is relative to the game's executable directory or a common assets folder.
-          // AppContext.BaseDirectory should give the directory where the .exe is.
-          // If your assets are in a subdirectory like "assets", you might need:
-          // string iconFullPath = System.IO.Path.Combine(AppContext.BaseDirectory, "assets", windowConfig.IconPath);
-          // For now, let's assume IconPath can be resolved directly or is absolute.
-          // A more robust solution would involve the Filesystem module to resolve paths.
-          string iconFullPath = windowConfig.IconPath;
-          if (!Path.IsPathRooted(iconFullPath))
-          {
-            iconFullPath = Path.Combine(AppContext.BaseDirectory, iconFullPath);
-          }
-
-          if (!Window.SetIcon(iconFullPath))
-          {
-            Console.WriteLine($"Night.Framework.Run: Failed to set window icon from configuration: '{iconFullPath}'. Check path and image format.");
-          }
-        }
-
-        // End of initial window setup
-        try
-        {
-          // game.Load() can now use Graphics.NewImage(), and can also call Window.SetMode again to override.
-          game.Load();
-        }
-        catch (Exception e)
-        {
-          HandleGameException(e, game);
-          if (inErrorState)
-          {
-            CleanUpSDLAndWindow();
-            return;
-          }
-        }
-
-        // After game.Load(), check if window is still open.
-        // If game.Load() called Window.Close() or failed to maintain a window, we should not continue.
-        if (!Window.IsOpen())
-        {
-          Console.WriteLine("Night.Framework.Run: Window is not open after game.Load(). Exiting.");
-
-          // Ensure cleanup if window was closed by game.Load()
-          CleanUpSDLAndWindow();
-          return;
-        }
-
-        // If game.Load() *did* change window settings (e.g. VSync via a new SetMode call),
-        // we don't re-apply config VSync here unless we have a way to know it wasn't touched by game.
-        // The current Window.SetMode creates a new renderer, so VSync would be reset anyway if game called SetMode.
-        // So, if game called SetMode, it's responsible for its own VSync if it differs from config default for new renderer.
-        // If game didn't call SetMode, our initial VSync setting stands.
-        Night.Timer.Initialize();
-
-        frameCount = 0;
-        fpsTimeAccumulator = 0.0;
-        deltaHistory.Clear();
-
-        // Main game loop
-        while (Window.IsOpen() && !inErrorState)
-        {
-          // Calculate DeltaTime by calling Night.Timer.Step()
-          double deltaTime = Night.Timer.Step();
-
-          // FPS Calculation
-          frameCount++;
-          fpsTimeAccumulator += deltaTime;
-          if (fpsTimeAccumulator >= 1.0)
-          {
-            Night.Timer.CurrentFPS = frameCount;
-            frameCount = 0;
-
-            // Subtract 1 second, keep remainder for accuracy
-            fpsTimeAccumulator -= 1.0;
-          }
-
-          // Average Delta Calculation
-          deltaHistory.Add(deltaTime);
-          if (deltaHistory.Count > MaxDeltaHistorySamples)
-          {
-            // Keep the list size bounded
-            deltaHistory.RemoveAt(0);
-          }
-
-          if (deltaHistory.Count > 0)
-          {
-            Night.Timer.CurrentAverageDelta = deltaHistory.Average();
-          }
-
-          // Event Processing
-          while (SDL.PollEvent(out SDL.Event e) && !inErrorState)
-          {
-            var eventType = (SDL.EventType)e.Type;
-
-            if (eventType == SDL.EventType.Quit)
-            {
-              Window.Close();
-            }
-            else if (eventType == SDL.EventType.KeyDown)
-            {
-              try
-              {
-                // TODO: Rename these to match love2d
-                game.KeyPressed(
-                    (KeySymbol)e.Key.Key,
-                    (KeyCode)e.Key.Scancode,
-                    e.Key.Repeat);
-              }
-              catch (Exception exUser)
-              {
-                HandleGameException(exUser, game);
-              }
-            }
-            else if (eventType == SDL.EventType.KeyUp)
-            {
-              try
-              {
-                game.KeyReleased(
-                    (KeySymbol)e.Key.Key,
-                    (KeyCode)e.Key.Scancode);
-              }
-              catch (Exception exUser)
-              {
-                HandleGameException(exUser, game);
-              }
-            }
-            else if (eventType == SDL.EventType.MouseButtonDown)
-            {
-              try
-              {
-                game.MousePressed(
-                    (int)e.Button.X,
-                    (int)e.Button.Y,
-                    (MouseButton)e.Button.Button,
-                    /* istouch */ e.Button.Which == SDL.TouchMouseID,
-                    e.Button.Clicks);
-              }
-              catch (Exception exUser)
-              {
-                HandleGameException(exUser, game);
-              }
-            }
-            else if (eventType == SDL.EventType.MouseButtonUp)
-            {
-              try
-              {
-                game.MouseReleased(
-                    (int)e.Button.X,
-                    (int)e.Button.Y,
-                    (MouseButton)e.Button.Button,
-                    /* istouch */ e.Button.Which == SDL.TouchMouseID,
-                    e.Button.Clicks);
-              }
-              catch (Exception exUser)
-              {
-                HandleGameException(exUser, game);
-              }
-            }
-
-            // TODO: Add other event handling (mouse, etc.) as per future tasks.
-          }
-
-          // Check if error occurred during event processing
-          if (inErrorState)
-          {
-            // Error handler (Default or custom) should have run.
-            // Default handler enters its own loop or prepares for exit.
-            // If it was a custom handler, it might have cleared _inErrorState or decided to continue.
-            // If _inErrorState is still true, we break the main loop.
-            break;
-          }
-
-          // Update, do not update if an error has occurred and is being handled
-          if (!inErrorState)
-          {
-            try
-            {
-              game.Update((float)deltaTime);
-            }
-            catch (Exception exUser)
-            {
-              HandleGameException(exUser, game);
-              if (inErrorState)
-              {
-                break; // Exit main loop if error sets state
-              }
-            }
-          }
-
-          // Draw, do not draw if an error has occurred and is being handled
-          if (!inErrorState)
-          {
-            try
-            {
-              // Graphics.BeginFrame() / Clear etc. should be called by game.Draw() or a higher level abstraction.
-              // For now, FrameworkLoop does not manage the render target clearing directly.
-              // It's assumed game.Draw() handles everything from clear to present.
-              game.Draw();
-
-              // Present the drawn frame to the screen
-              Night.Graphics.Present();
-            }
-            catch (Exception exUser)
-            {
-              HandleGameException(exUser, game);
-
-              // If Draw fails, we typically still want to try and finish the frame/loop iteration
-              // unless _inErrorState is set by the handler to signal a desire to stop.
-              if (inErrorState)
-              {
-                break;
-              }
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        // This is for errors within Framework.Run itself, not game code.
-        Console.WriteLine($"Night.Framework.Run: An UNEXPECTED FRAMEWORK error occurred: {ex.ToString()}");
-
-        // Attempt to call default error handler for framework errors too, but without game instance.
-        HandleGameException(ex, null);
-      }
-      finally
-      {
-        // TODO: Call gameLogic.Quit() if it's added to IGame.
-        CleanUpSDLAndWindow();
-      }
+      return VersionInfo.GetVersion();
     }
 
     private static void HandleGameException(Exception e, IGame? gameInstance)
     {
-      inErrorState = true; // Signal that we are now in an error state.
-
+      Logger.Error($"HandleGameException: Error: {e.Message}", e);
+      inErrorState = true;
       var customHandler = Night.Error.GetHandler();
       if (customHandler != null)
       {
         try
         {
           customHandler(e);
-
-          // If custom handler returns, we assume it handled the error
-          // and the game might want to continue or has already quit.
-          // For now, we'll still close the window to be safe, unless custom handler re-opens it.
-          // This behavior might need refinement.
           if (Window.IsOpen())
           {
             Window.Close();
@@ -398,14 +67,11 @@ namespace Night
         }
         catch (Exception exHandler)
         {
-          // Error in the custom error handler itself!
-          Console.WriteLine($"Night.Framework.Run: CRITICAL: Exception in custom error handler: {exHandler.ToString()}");
-
-          // Fallback to a very minimal default behavior
-          Console.WriteLine($"Night.Framework.Run: Original game error: {e.ToString()}");
+          Logger.Fatal($"CRITICAL: Exception in custom error handler: {exHandler.ToString()}", exHandler);
+          Logger.Error($"Original game error: {e.ToString()}", e);
           if (Window.IsOpen())
           {
-            Window.Close(); // Ensure shutdown
+            Window.Close();
           }
         }
       }
@@ -417,31 +83,27 @@ namespace Night
 
     private static void DefaultErrorHandler(Exception e, IGame? gameInstance)
     {
-      Console.Error.WriteLine("--- Night Engine: Default Error Handler ---");
-      Console.Error.WriteLine($"An error occurred in the game: {e.GetType().Name}");
-      Console.Error.WriteLine($"Message: {e.Message}");
-      Console.Error.WriteLine("Stack Trace:");
-      Console.Error.WriteLine(e.StackTrace);
-      Console.Error.WriteLine("-------------------------------------------");
+      Logger.Error("--- Night Engine: Default Error Handler ---");
+      Logger.Error($"An error occurred in the game: {e.GetType().Name}", e);
+      Logger.Error($"Message: {e.Message}");
+      Logger.Error("Stack Trace:");
+      Logger.Error(e.StackTrace ?? "No stack trace available");
+      Logger.Error("-------------------------------------------");
 
       bool canDrawError = false;
       try
       {
-        // Assuming Graphics.RendererPtr is a good check for active graphics
         if (!Window.IsOpen() || (Window.RendererPtr == nint.Zero))
         {
-          Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window or Graphics not initialized. Attempting to set mode...");
-
-          // Attempt to set a basic window mode if not already open.
-          // Use a default size. WindowFlags can be minimal or Resizable.
+          Logger.Warn("(DefaultErrorHandler): Window or Graphics not initialized. Attempting to set mode...");
           if (Window.SetMode(800, 600, SDL.WindowFlags.Resizable))
           {
-            Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Window mode set to 800x600.");
+            Logger.Info("(DefaultErrorHandler): Window mode set to 800x600.");
             canDrawError = Window.RendererPtr != nint.Zero;
           }
           else
           {
-            Console.WriteLine($"Night.Framework.Run (DefaultErrorHandler): Failed to set window mode. SDL Error: {SDL.GetError()}");
+            Logger.Error($"(DefaultErrorHandler): Failed to set window mode. SDL Error: {SDL.GetError()}");
           }
         }
         else
@@ -449,33 +111,25 @@ namespace Night
           canDrawError = true;
         }
 
-        // Reset input state
         if (IsInputInitialized)
         {
           Mouse.SetVisible(true);
           Mouse.SetGrabbed(false);
           Mouse.SetRelativeMode(false);
-
-          // Mouse.SetCursor() - Skipped as per plan if complex; SDL default cursor should apply.
         }
       }
       catch (Exception resetEx)
       {
-        Console.Error.WriteLine($"Night.Framework.Run (DefaultErrorHandler): Exception during state reset: {resetEx.ToString()}");
-        canDrawError = false; // If reset fails, drawing might be unsafe.
+        Logger.Error($"(DefaultErrorHandler): Exception during state reset: {resetEx.ToString()}", resetEx);
+        canDrawError = false;
       }
 
       if (canDrawError)
       {
         try
         {
-          // Simple error display loop
           string fullErrorText = $"Error: {e.Message}\n\n{e.StackTrace}";
-
-          // Shorten for display if too long, or make it scrollable if we had font rendering
-          // For now, just display what fits or make user copy.
           Window.SetTitle($"Error - {gameInstance?.GetType().Name ?? "Night Game"}");
-
           bool runningErrorLoop = true;
           while (runningErrorLoop && Window.IsOpen())
           {
@@ -496,26 +150,6 @@ namespace Night
                   Window.Close();
                   break;
                 }
-
-                // Check for Ctrl+C - SDL.Keymod.Ctrl is a flag
-                if (ev.Key.Key == SDL.Keycode.C && ((SDL.GetModState() & SDL.Keymod.Ctrl) != 0))
-                {
-                  try
-                  {
-                    if (Night.System.SetClipboardText(fullErrorText))
-                    {
-                      Console.WriteLine("(Error copied to clipboard)");
-                    }
-                    else
-                    {
-                      Console.WriteLine($"(Failed to copy error to clipboard: {SDL.GetError()})");
-                    }
-                  }
-                  catch (Exception clipEx)
-                  {
-                    Console.WriteLine($"(Exception trying to copy to clipboard: {clipEx.Message})");
-                  }
-                }
               }
             }
 
@@ -524,123 +158,217 @@ namespace Night
               break;
             }
 
-            Graphics.Clear(new Color(89, 157, 220, 255)); // Blue background
-
-            // Graphics.Print functionality is NOT available.
-            // We will just show a blue screen and title. User must check console.
-            // If Night.Font was available:
-            // Graphics.SetColor(Night.Color.Black);
-            // Graphics.Print($"Error: {e.Message}", 10, 10, Window.GetWidth() - 20);
-            // Graphics.Print($"Press ESC to quit. Ctrl+C to copy.", 10, Window.GetHeight() - 30);
-            Graphics.Present();
-            Timer.Sleep(0.01f); // Sleep for 10ms
+            _ = SDL.SetRenderDrawColor(Window.RendererPtr, 30, 30, 30, 255);
+            _ = SDL.RenderClear(Window.RendererPtr);
+            _ = SDL.RenderPresent(Window.RendererPtr);
+            SDL.Delay(16);
           }
         }
         catch (Exception drawEx)
         {
-          Console.Error.WriteLine($"Night.Framework.Run (DefaultErrorHandler): Exception during error display loop: {drawEx.ToString()}");
+          Logger.Error($"(DefaultErrorHandler): Exception during error display loop: {drawEx.ToString()}", drawEx);
         }
       }
-      else
-      {
-        Console.WriteLine("Night.Framework.Run (DefaultErrorHandler): Cannot display visual error. Check console. Press Ctrl+C in console to quit if frozen.");
 
-        // Loop to keep process alive for a bit for console reading, or just exit.
-        // For now, just let it fall through to finally block.
-      }
-
-      // Ensure the main loop knows to terminate
       if (Window.IsOpen())
       {
         Window.Close();
       }
     }
 
-    private static void CleanUpSDLAndWindow()
-    {
-      // Shutdown window and related resources (renderer, etc.)
-      // This should happen before SDL.QuitSubSystem for Video.
-      // This case should ideally not be hit if _inErrorState or loop conditions were managed correctly
-      if (Window.IsOpen())
-      {
-        Console.WriteLine("Night.Framework.Run (CleanUpSDLAndWindow): Window was still open, attempting to close.");
-        Window.Close(); // This will set _isWindowOpen to false
-      }
-
-      // Window.Shutdown() handles destroying window, renderer, and SDL.QuitSubSystem(SDL.InitFlags.Video)
-      // It's important that Shutdown is called AFTER the error handler's visual loop might have used the window/renderer.
-      Window.Shutdown();
-
-      CleanUpSDL();
-    }
-
-    private static void CleanUpSDL()
-    {
-      if (isSdlInitialized)
-      {
-        // SDL.QuitSubSystem was already called for Video by Window.Shutdown().
-        // We only need to quit other subsystems explicitly initialized by Run if they weren't covered.
-        // However, SDL.Quit() handles all initialized subsystems.
-        SDL.Quit();
-        isSdlInitialized = false;
-        IsInputInitialized = false;
-        initializedSubsystems = 0;
-      }
-    }
-
     private static string GetFormattedPlatformString()
     {
-      if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+      string platformSpecificInfo;
+
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
       {
-        try
+        platformSpecificInfo = "Windows";
+      }
+      else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+      {
+        global::System.Version osVersion = global::System.Environment.OSVersion.Version; // e.g., 15.4.1
+        string versionString = osVersion.ToString(3); // Ensures Major.Minor.Patch format
+
+        string? marketingName = GetMacOsMarketingName(osVersion.Major);
+        if (!string.IsNullOrEmpty(marketingName))
         {
-          string macOSVersion = string.Empty;
-          string darwinVersion = string.Empty;
-
-          // Get macOS version
-          ProcessStartInfo swVersPsi = new ProcessStartInfo
-          {
-            FileName = "sw_vers",
-            Arguments = "-productVersion",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-          };
-          using (Process swVersProcess = Process.Start(swVersPsi)!)
-          {
-            macOSVersion = swVersProcess.StandardOutput.ReadToEnd().Trim();
-            swVersProcess.WaitForExit();
-          }
-
-          // Get Darwin kernel version
-          ProcessStartInfo unamePsi = new ProcessStartInfo
-          {
-            FileName = "uname",
-            Arguments = "-r",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-          };
-          using (Process unameProcess = Process.Start(unamePsi)!)
-          {
-            darwinVersion = unameProcess.StandardOutput.ReadToEnd().Trim();
-            unameProcess.WaitForExit();
-          }
-
-          if (!string.IsNullOrEmpty(macOSVersion) && !string.IsNullOrEmpty(darwinVersion))
-          {
-            return $"Platform: macOS {macOSVersion} (Darwin {darwinVersion})";
-          }
+          platformSpecificInfo = $"macOS {marketingName} {versionString}";
         }
-        catch (Exception ex)
+        else
         {
-          // Log the exception or handle it as needed, then fall back.
-          Console.WriteLine($"Night.Framework.Run: Could not retrieve detailed macOS version info: {ex.Message}");
+          // Fallback if marketing name not found
+          platformSpecificInfo = $"macOS {versionString}";
+        }
+      }
+      else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+      {
+        string? distroInfo = GetLinuxDistroInfoInternal();
+        string? kernelVersion = GetLinuxKernelVersionInternal();
+        var parts = new List<string>();
+
+        if (!string.IsNullOrEmpty(distroInfo))
+        {
+          parts.Add(distroInfo);
+        }
+        else
+        {
+          parts.Add("Linux"); // Fallback if distro info is not available
+        }
+
+        if (!string.IsNullOrEmpty(kernelVersion))
+        {
+          parts.Add($"(Kernel {kernelVersion})");
+        }
+
+        platformSpecificInfo = string.Join(" ", parts); // SA1513 for line 229 (closing 'if')
+      }
+      else
+      {
+        platformSpecificInfo = RuntimeInformation.OSDescription;
+      }
+
+      return $"Platform: {platformSpecificInfo} {RuntimeInformation.OSArchitecture}";
+    }
+
+    private static string? GetMacOsMarketingName(int majorVersion)
+    {
+      // This list should be updated as new macOS versions are released.
+      return majorVersion switch
+      {
+        15 => "Sequoia",
+        14 => "Sonoma",
+        13 => "Ventura",
+        12 => "Monterey",
+        11 => "Big Sur",
+
+        // Older versions can be added if necessary
+        _ => null, // No specific marketing name known for this major version
+      };
+    }
+
+    private static string? GetLinuxDistroInfoInternal()
+    {
+      const string osReleasePath = "/etc/os-release";
+      try
+      {
+        if (File.Exists(osReleasePath))
+        {
+          var lines = File.ReadAllLines(osReleasePath);
+          string? prettyName = null;
+          string? name = null;
+          string? version = null;
+
+          foreach (var line in lines)
+          {
+            if (line.StartsWith("PRETTY_NAME=", StringComparison.Ordinal))
+            {
+              prettyName = line.Substring("PRETTY_NAME=".Length).Trim('"');
+              break; // PRETTY_NAME is preferred
+            }
+            else if (line.StartsWith("NAME=", StringComparison.Ordinal))
+            {
+              name = line.Substring("NAME=".Length).Trim('"');
+            }
+            else if (line.StartsWith("VERSION=", StringComparison.Ordinal))
+            {
+              version = line.Substring("VERSION=".Length).Trim('"');
+            }
+          }
+
+          if (!string.IsNullOrEmpty(prettyName))
+          {
+            return prettyName;
+          }
+          else if (!string.IsNullOrEmpty(name))
+          {
+            return string.IsNullOrEmpty(version) ? name : $"{name} {version}";
+          }
+
+          Logger.Debug($"Could not parse relevant fields (PRETTY_NAME, NAME, VERSION) from '{osReleasePath}'."); // SA1513 for line 302 (closing 'else if')
+        }
+        else
+        {
+          Logger.Debug($"Linux distribution information file '{osReleasePath}' not found.");
+        }
+      }
+      catch (IOException ex)
+      {
+        Logger.Warn($"IO error reading '{osReleasePath}': {ex.Message}");
+      }
+      catch (UnauthorizedAccessException ex)
+      {
+        Logger.Warn($"Permission denied reading '{osReleasePath}': {ex.Message}");
+      }
+
+      // Catch-all for other unexpected errors // SA1108
+      catch (Exception ex)
+      {
+        Logger.Warn($"Failed to read or parse '{osReleasePath}': {ex.Message}");
+      }
+
+      return null;
+    }
+
+    private static string? GetLinuxKernelVersionInternal()
+    {
+      try
+      {
+        var startInfo = new ProcessStartInfo
+        {
+          FileName = "uname",
+          Arguments = "-r",
+          RedirectStandardOutput = true,
+          UseShellExecute = false,
+          CreateNoWindow = true,
+          RedirectStandardError = true, // SA1413: Added trailing comma
+        }; // SA1108: Moved comment "// Capture errors as well" from previous line
+
+        using (var process = Process.Start(startInfo))
+        {
+          if (process == null)
+          {
+            Logger.Warn("Failed to start 'uname' process (Process.Start returned null).");
+            return null;
+          }
+
+          string kernelVersion = process.StandardOutput.ReadToEnd().Trim();
+          string errorOutput = process.StandardError.ReadToEnd().Trim();
+          process.WaitForExit();
+
+          if (process.ExitCode != 0)
+          {
+            Logger.Warn($"'uname -r' exited with code {process.ExitCode}. Error: '{errorOutput}'.");
+            return null;
+          }
+
+          if (!string.IsNullOrEmpty(errorOutput) && string.IsNullOrEmpty(kernelVersion))
+          {
+            Logger.Warn($"'uname -r' produced error output: '{errorOutput}'."); // IDE0055: Fixed indentation (15 -> 12)
+          }
+
+          return string.IsNullOrEmpty(kernelVersion) ? null : kernelVersion; // SA1513 for line 361 (closing 'if')
         }
       }
 
-      // Fallback for non-macOS platforms or if macOS version retrieval fails
-      return $"Platform: {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})";
+      // Typically "file not found" or permission issues // SA1108
+      catch (Win32Exception ex)
+      {
+        Logger.Warn($"Failed to execute 'uname -r'. Is 'uname' in PATH and executable? Error: {ex.Message}"); // IDE0055: Fixed indentation (10 -> 8)
+      }
+
+      // e.g. if StandardOutput/Error not redirected // SA1108
+      catch (InvalidOperationException ex)
+      {
+        Logger.Warn($"Invalid operation while trying to run 'uname -r': {ex.Message}"); // IDE0055: Fixed indentation (10 -> 8)
+      }
+
+      // Catch other potential exceptions // SA1108
+      catch (Exception ex)
+      {
+        Logger.Warn($"An unexpected error occurred while executing 'uname -r': {ex.Message}");
+      }
+
+      return null;
     }
   }
 }
