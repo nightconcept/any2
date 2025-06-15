@@ -32,9 +32,9 @@ namespace SampleGame;
 
 /// <summary>
 /// A sample platformer game implementation using the Night engine.
-/// Implements the <see cref="IGame"/> interface for Night.Engine integration.
+/// Inherits from <see cref="Night.Game"/> to leverage default game loop and event handling.
 /// </summary>
-public class Platformer : IGame
+public class Platformer : Game
 {
   private Player player;
   private List<Night.Rectangle> platforms;
@@ -55,7 +55,7 @@ public class Platformer : IGame
   /// Loads game assets and initializes game state for the platformer.
   /// Called once at the start of the game by the Night.Engine.
   /// </summary>
-  public void Load()
+  public override void Load()
   {
     _ = Night.Window.SetMode(800, 600, SDL.WindowFlags.Resizable);
     Night.Window.SetTitle("Night Platformer Sample");
@@ -130,7 +130,7 @@ public class Platformer : IGame
   /// <param name="key">The <see cref="Night.KeySymbol"/> of the pressed key.</param>
   /// <param name="scancode">The <see cref="Night.KeyCode"/> (physical key code) of the pressed key.</param>
   /// <param name="isRepeat">True if this is a repeat key event, false otherwise.</param>
-  public void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
+  public static void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
   {
     // Minimal key handling, primarily for closing the window.
     if (key == KeySymbol.Escape)
@@ -159,47 +159,47 @@ public class Platformer : IGame
   }
 
   /// <inheritdoc/>
-  public void JoystickAdded(Joystick joystick)
+  public static void JoystickAdded(Joystick joystick)
   {
   }
 
   /// <inheritdoc/>
-  public void JoystickRemoved(Joystick joystick)
+  public static void JoystickRemoved(Joystick joystick)
   {
   }
 
   /// <inheritdoc/>
-  public void JoystickAxis(Joystick joystick, int axis, float value)
+  public static void JoystickAxis(Joystick joystick, int axis, float value)
   {
   }
 
   /// <inheritdoc/>
-  public void JoystickPressed(Joystick joystick, int button)
+  public static void JoystickPressed(Joystick joystick, int button)
   {
   }
 
   /// <inheritdoc/>
-  public void JoystickReleased(Joystick joystick, int button)
+  public static void JoystickReleased(Joystick joystick, int button)
   {
   }
 
   /// <inheritdoc/>
-  public void JoystickHat(Joystick joystick, int hat, JoystickHat direction)
+  public static void JoystickHat(Joystick joystick, int hat, JoystickHat direction)
   {
   }
 
   /// <inheritdoc/>
-  public void GamepadAxis(Joystick joystick, GamepadAxis axis, float value)
+  public static void GamepadAxis(Joystick joystick, GamepadAxis axis, float value)
   {
   }
 
   /// <inheritdoc/>
-  public void GamepadPressed(Joystick joystick, GamepadButton button)
+  public static void GamepadPressed(Joystick joystick, GamepadButton button)
   {
   }
 
   /// <inheritdoc/>
-  public void GamepadReleased(Joystick joystick, GamepadButton button)
+  public static void GamepadReleased(Joystick joystick, GamepadButton button)
   {
   }
 

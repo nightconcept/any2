@@ -20,6 +20,10 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
+using System;
+
+using SDL3;
+
 namespace Night
 {
   /// <summary>
@@ -206,6 +210,100 @@ namespace Night
     public virtual void GamepadReleased(Joystick joystick, GamepadButton button)
     {
       // Default implementation is empty.
+    }
+
+    /// <summary>
+    /// Provides the main game loop iteration logic as a callable function.
+    /// This default implementation mirrors LÖVE's `love.run()` behavior for a single frame,
+    /// returning a function that, when called, executes one iteration of the game loop.
+    /// </summary>
+    /// <returns>
+    /// A function (mainLoopIteration) which handles one frame, including event processing,
+    /// updates, drawing, and timing. The returned function returns:
+    /// - null: To indicate the game loop should continue.
+    /// - int value (e.g., 0): To indicate the game should exit with the specified status code.
+    /// </returns>
+    public virtual Func<int?> Run()
+    {
+      // This lambda represents one iteration of the main game loop.
+      return () =>
+      {
+        // Process SDL events
+        SDL.Event sdlEvent;
+        while (SDL.PollEvent(out sdlEvent))
+        {
+          var eventType = (SDL.EventType)sdlEvent.Type;
+          switch (eventType)
+          {
+            case SDL.EventType.Quit:
+              if (this.Quit()) // If Quit() returns true, it means allow the game to close.
+              {
+                return 0; // Signal to exit the game loop with status 0.
+              }
+
+              break;
+            case SDL.EventType.KeyDown:
+              this.KeyPressed((KeySymbol)sdlEvent.Key.Key, (KeyCode)sdlEvent.Key.Scancode, sdlEvent.Key.Repeat);
+              break;
+            case SDL.EventType.KeyUp:
+              this.KeyReleased((KeySymbol)sdlEvent.Key.Key, (KeyCode)sdlEvent.Key.Scancode);
+              break;
+            case SDL.EventType.MouseButtonDown:
+              this.MousePressed(
+                  (int)sdlEvent.Button.X, (int)sdlEvent.Button.Y,
+                  (MouseButton)sdlEvent.Button.Button,
+                  sdlEvent.Button.Which == SDL.TouchMouseID,
+                  sdlEvent.Button.Clicks);
+              break;
+            case SDL.EventType.MouseButtonUp:
+              this.MouseReleased(
+                  (int)sdlEvent.Button.X, (int)sdlEvent.Button.Y,
+                  (MouseButton)sdlEvent.Button.Button,
+                  sdlEvent.Button.Which == SDL.TouchMouseID,
+                  sdlEvent.Button.Clicks);
+              break;
+
+              // TODO: Implement full joystick and gamepad event handling here
+              // similar to Framework.Events.cs if this Run() model is adopted.
+              // e.g., JoystickAdded, JoystickRemoved, JoystickAxis, JoystickButton, etc.
+              // e.g., GamepadAxis, GamepadButton, etc.
+          }
+        }
+
+        // Update delta time
+        double dt = Night.Timer.Step();
+
+        // Call user's update logic
+        this.Update(dt);
+
+        // Draw graphics
+        if (Night.Window.IsOpen()) // Only draw if the window is actually open
+        {
+          // Assuming Night.Graphics.GetBackgroundColor() and Night.Graphics.Clear(Color) exist
+          // based on available test file names (GraphicsBackgroundColorTests, GraphicsClearTest).
+          Night.Graphics.Clear(Night.Graphics.GetBackgroundColor());
+          this.Draw();
+          Night.Graphics.Present();
+        }
+
+        // Brief sleep, as in LÖVE's example
+        Night.Timer.Sleep(0.001);
+
+        return null; // Signal to continue the game loop.
+      };
+    }
+
+    /// <summary>
+    /// Callback function triggered when the game is about to close.
+    /// The default implementation allows the game to quit.
+    /// </summary>
+    /// <returns>
+    /// False to cancel the quit attempt (and continue running the game),
+    /// true to allow the game to close.
+    /// </returns>
+    public virtual bool Quit()
+    {
+      return true; // Default behavior: allow the game to quit.
     }
   }
 }

@@ -32,18 +32,14 @@ namespace Night
     /// <summary>
     /// Gets the current background color.
     /// </summary>
-    /// <returns>A tuple containing the red, green, blue, and alpha components of the background color, normalized to 0.0-1.0.</returns>
+    /// <returns>The current background <see cref="Color"/>.</returns>
     /// <remarks>
-    /// The color components (r, g, b, a) are float values ranging from 0.0 (no intensity) to 1.0 (full intensity).
-    /// This reflects the color set by the last call to <see cref="Clear(Color)"/> or a default color if Clear hasn't been called.
+    /// This reflects the color set by the last call to <see cref="Graphics.SetBackgroundColor(Color)"/>
+    /// or <see cref="Graphics.Clear(Color)"/>, or the default color if neither has been called.
     /// </remarks>
-    public static (float R, float G, float B, float A) GetBackgroundColor()
+    public static Color GetBackgroundColor()
     {
-      float r = backgroundColor.R / 255.0f;
-      float g = backgroundColor.G / 255.0f;
-      float b = backgroundColor.B / 255.0f;
-      float a = backgroundColor.A / 255.0f;
-      return (r, g, b, a);
+      return backgroundColor;
     }
   }
 }

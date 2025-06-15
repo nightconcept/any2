@@ -144,5 +144,27 @@ namespace Night
     /// <param name="joystick">The Joystick object (which is also a gamepad).</param>
     /// <param name="button">The virtual gamepad button that was released.</param>
     void GamepadReleased(Joystick joystick, GamepadButton button);
+
+    /// <summary>
+    /// The main callback function, containing the main loop logic.
+    /// A sensible default is used when not overridden.
+    /// This function, when obtained, should be called repeatedly by the engine's main loop.
+    /// </summary>
+    /// <returns>
+    /// A function (mainLoopIteration) which handles one frame, including events and rendering, when called.
+    /// The returned mainLoopIteration function returns an optional integer:
+    /// - null: Continue the game loop.
+    /// - int value: Exit the game loop with the specified status code.
+    /// </returns>
+    Func<int?> Run();
+
+    /// <summary>
+    /// Callback function triggered when the game is about to close.
+    /// </summary>
+    /// <returns>
+    /// False to cancel the quit attempt (and continue running the game),
+    /// true to allow the game to close.
+    /// </returns>
+    bool Quit();
   }
 }

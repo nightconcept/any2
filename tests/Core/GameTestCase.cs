@@ -369,5 +369,15 @@ namespace NightTest.Core
 
       return false; // Test not yet completed
     }
+
+    public Func<int?> Run()
+    {
+      throw new NotImplementedException();
+    }
+
+    public bool Quit()
+    {
+      throw new NotImplementedException();
+    }
   }
 }
