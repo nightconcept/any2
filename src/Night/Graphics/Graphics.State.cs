@@ -34,8 +34,8 @@ namespace Night
     /// </summary>
     /// <returns>The current background <see cref="Color"/>.</returns>
     /// <remarks>
-    /// This reflects the color set by the last call to <see cref="Graphics.SetBackgroundColor(Color)"/>
-    /// or <see cref="Graphics.Clear(Color)"/>, or the default color if neither has been called.
+    /// This reflects the color set by the last call to <see cref="Graphics.Clear(Night.Color)"/>,
+    /// or the default color if Clear hasn't been called.
     /// </remarks>
     public static Color GetBackgroundColor()
     {

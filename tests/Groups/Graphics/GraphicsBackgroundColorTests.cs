@@ -33,7 +33,7 @@ namespace NightTest.Groups.Graphics
   /// </summary>
   public class GraphicsGetBackgroundColor_DefaultTest : GameTestCase
   {
-    private (float R, float G, float B, float A) defaultColor;
+    private Night.Color defaultColor;
 
     /// <inheritdoc/>
     public override string Name => "Graphics.GetBackgroundColor.Default";
@@ -70,11 +70,11 @@ namespace NightTest.Groups.Graphics
         return;
       }
 
-      // Default color is black (0,0,0,1)
-      bool rMatch = Math.Abs(this.defaultColor.R - 0.0f) < 0.001f;
-      bool gMatch = Math.Abs(this.defaultColor.G - 0.0f) < 0.001f;
-      bool bMatch = Math.Abs(this.defaultColor.B - 0.0f) < 0.001f;
-      bool aMatch = Math.Abs(this.defaultColor.A - 1.0f) < 0.001f; // Alpha should be 1 for opaque black
+      // Default color is black (0,0,0,255)
+      bool rMatch = this.defaultColor.R == 0;
+      bool gMatch = this.defaultColor.G == 0;
+      bool bMatch = this.defaultColor.B == 0;
+      bool aMatch = this.defaultColor.A == 255; // Alpha should be 255 for opaque black
 
       if (rMatch && gMatch && bMatch && aMatch)
       {
@@ -84,7 +84,7 @@ namespace NightTest.Groups.Graphics
       else
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Default background color is incorrect. Expected (0,0,0,1), Got (R={this.defaultColor.R}, G={this.defaultColor.G}, B={this.defaultColor.B}, A={this.defaultColor.A}).";
+        this.Details = $"Default background color is incorrect. Expected (0,0,0,255), Got (R={this.defaultColor.R}, G={this.defaultColor.G}, B={this.defaultColor.B}, A={this.defaultColor.A}).";
       }
 
       this.EndTest();
@@ -96,8 +96,8 @@ namespace NightTest.Groups.Graphics
   /// </summary>
   public class GraphicsGetBackgroundColor_AfterClearTest : GameTestCase
   {
-    private readonly Color testColorByte = new(51, 102, 153, 204); // R=0.2, G=0.4, B=0.6, A=0.8
-    private (float R, float G, float B, float A) retrievedColor;
+    private readonly Color testColorByte = new(51, 102, 153, 204);
+    private Night.Color retrievedColor;
 
     /// <inheritdoc/>
     public override string Name => "Graphics.GetBackgroundColor.AfterClear";
@@ -135,15 +135,10 @@ namespace NightTest.Groups.Graphics
         return;
       }
 
-      float expectedR = this.testColorByte.R / 255.0f;
-      float expectedG = this.testColorByte.G / 255.0f;
-      float expectedB = this.testColorByte.B / 255.0f;
-      float expectedA = this.testColorByte.A / 255.0f;
-
-      bool rMatch = Math.Abs(this.retrievedColor.R - expectedR) < 0.001f;
-      bool gMatch = Math.Abs(this.retrievedColor.G - expectedG) < 0.001f;
-      bool bMatch = Math.Abs(this.retrievedColor.B - expectedB) < 0.001f;
-      bool aMatch = Math.Abs(this.retrievedColor.A - expectedA) < 0.001f;
+      bool rMatch = this.retrievedColor.R == this.testColorByte.R;
+      bool gMatch = this.retrievedColor.G == this.testColorByte.G;
+      bool bMatch = this.retrievedColor.B == this.testColorByte.B;
+      bool aMatch = this.retrievedColor.A == this.testColorByte.A;
 
       if (rMatch && gMatch && bMatch && aMatch)
       {
@@ -153,7 +148,7 @@ namespace NightTest.Groups.Graphics
       else
       {
         this.CurrentStatus = TestStatus.Failed;
-        this.Details = $"Retrieved background color is incorrect. Expected (R={expectedR}, G={expectedG}, B={expectedB}, A={expectedA}), Got (R={this.retrievedColor.R}, G={this.retrievedColor.G}, B={this.retrievedColor.B}, A={this.retrievedColor.A}).";
+        this.Details = $"Retrieved background color is incorrect. Expected (R={this.testColorByte.R}, G={this.testColorByte.G}, B={this.testColorByte.B}, A={this.testColorByte.A}), Got (R={this.retrievedColor.R}, G={this.retrievedColor.G}, B={this.retrievedColor.B}, A={this.retrievedColor.A}).";
       }
 
       this.EndTest();

@@ -28,7 +28,7 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 
 - [x] `love.draw`: Callback function used to draw on the screen every frame.
 - [x] `love.load`: This function is called exactly once at the beginning of the game.
-- [ ] `love.run`: The main callback function, containing the main loop. A sensible default is used when left out.
+- [x] `love.run`: The main callback function, containing the main loop. A sensible default is used when left out.
 - [x] `love.update`: Callback function used to update the state of the game every frame.
 
 ### Callbacks - Keyboard

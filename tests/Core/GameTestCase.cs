@@ -193,6 +193,18 @@ namespace NightTest.Core
     {
     }
 
+    /// <inheritdoc/>
+    public Func<int?> Run()
+    {
+      throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public bool Quit()
+    {
+      throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Performs the specific load logic for the test case.
     /// Derived classes can override this method to implement their core load behavior.
@@ -368,16 +380,6 @@ namespace NightTest.Core
       }
 
       return false; // Test not yet completed
-    }
-
-    public Func<int?> Run()
-    {
-      throw new NotImplementedException();
-    }
-
-    public bool Quit()
-    {
-      throw new NotImplementedException();
     }
   }
 }

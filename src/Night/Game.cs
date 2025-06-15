@@ -236,11 +236,14 @@ namespace Night
           switch (eventType)
           {
             case SDL.EventType.Quit:
-              if (this.Quit()) // If Quit() returns true, it means allow the game to close.
+              // If Quit() returns true, it means allow the game to close.
+              if (this.Quit())
               {
-                return 0; // Signal to exit the game loop with status 0.
+                // Signal to exit the game loop with status 0.
+                return 0;
               }
 
+              // If Quit() returns false, the quit attempt is cancelled; continue processing.
               break;
             case SDL.EventType.KeyDown:
               this.KeyPressed((KeySymbol)sdlEvent.Key.Key, (KeyCode)sdlEvent.Key.Scancode, sdlEvent.Key.Repeat);
@@ -250,14 +253,16 @@ namespace Night
               break;
             case SDL.EventType.MouseButtonDown:
               this.MousePressed(
-                  (int)sdlEvent.Button.X, (int)sdlEvent.Button.Y,
+                  (int)sdlEvent.Button.X,
+                  (int)sdlEvent.Button.Y,
                   (MouseButton)sdlEvent.Button.Button,
                   sdlEvent.Button.Which == SDL.TouchMouseID,
                   sdlEvent.Button.Clicks);
               break;
             case SDL.EventType.MouseButtonUp:
               this.MouseReleased(
-                  (int)sdlEvent.Button.X, (int)sdlEvent.Button.Y,
+                  (int)sdlEvent.Button.X,
+                  (int)sdlEvent.Button.Y,
                   (MouseButton)sdlEvent.Button.Button,
                   sdlEvent.Button.Which == SDL.TouchMouseID,
                   sdlEvent.Button.Clicks);
@@ -277,7 +282,8 @@ namespace Night
         this.Update(dt);
 
         // Draw graphics
-        if (Night.Window.IsOpen()) // Only draw if the window is actually open
+        // Only draw if the window is actually open
+        if (Night.Window.IsOpen())
         {
           // Assuming Night.Graphics.GetBackgroundColor() and Night.Graphics.Clear(Color) exist
           // based on available test file names (GraphicsBackgroundColorTests, GraphicsClearTest).
@@ -289,7 +295,8 @@ namespace Night
         // Brief sleep, as in LÖVE's example
         Night.Timer.Sleep(0.001);
 
-        return null; // Signal to continue the game loop.
+        // Signal to continue the game loop.
+        return null;
       };
     }
 
@@ -303,7 +310,8 @@ namespace Night
     /// </returns>
     public virtual bool Quit()
     {
-      return true; // Default behavior: allow the game to quit.
+      // Default behavior: allow the game to quit.
+      return true;
     }
   }
 }

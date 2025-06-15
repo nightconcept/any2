@@ -83,7 +83,7 @@ public class Platformer : Game
   /// Called every frame by the Night.Engine.
   /// </summary>
   /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
-  public void Update(double deltaTime)
+  public override void Update(double deltaTime)
   {
     // Pass default joystick values as this sample isn't the primary focus for joystick control.
     this.player.Update(deltaTime, this.platforms, 0.0f, Night.JoystickHat.Centered, false);
@@ -101,7 +101,7 @@ public class Platformer : Game
   /// Draws the platformer game scene.
   /// Called every frame by the Night.Engine after Update.
   /// </summary>
-  public void Draw()
+  public override void Draw()
   {
     Night.Graphics.Clear(new Night.Color(135, 206, 235)); // Sky blue background
 
@@ -130,7 +130,7 @@ public class Platformer : Game
   /// <param name="key">The <see cref="Night.KeySymbol"/> of the pressed key.</param>
   /// <param name="scancode">The <see cref="Night.KeyCode"/> (physical key code) of the pressed key.</param>
   /// <param name="isRepeat">True if this is a repeat key event, false otherwise.</param>
-  public static void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
+  public override void KeyPressed(KeySymbol key, KeyCode scancode, bool isRepeat)
   {
     // Minimal key handling, primarily for closing the window.
     if (key == KeySymbol.Escape)
@@ -141,66 +141,75 @@ public class Platformer : Game
   }
 
   /// <inheritdoc/>
-  public void KeyReleased(KeySymbol key, KeyCode scancode)
+  public override void KeyReleased(KeySymbol key, KeyCode scancode)
   {
-    throw new NotImplementedException();
+    // base.KeyReleased(key, scancode); // Call base if you want to extend, or just leave empty.
   }
 
   /// <inheritdoc/>
-  public void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
+  public override void MousePressed(int x, int y, MouseButton button, bool istouch, int presses)
   {
-    throw new NotImplementedException();
+    // base.MousePressed(x, y, button, istouch, presses);
   }
 
   /// <inheritdoc/>
-  public void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses)
+  public override void MouseReleased(int x, int y, MouseButton button, bool istouch, int presses)
   {
-    throw new NotImplementedException();
+    // base.MouseReleased(x, y, button, istouch, presses);
   }
 
   /// <inheritdoc/>
-  public static void JoystickAdded(Joystick joystick)
+  public override void JoystickAdded(Joystick joystick)
   {
+    // base.JoystickAdded(joystick);
   }
 
   /// <inheritdoc/>
-  public static void JoystickRemoved(Joystick joystick)
+  public override void JoystickRemoved(Joystick joystick)
   {
+    // base.JoystickRemoved(joystick);
   }
 
   /// <inheritdoc/>
-  public static void JoystickAxis(Joystick joystick, int axis, float value)
+  public override void JoystickAxis(Joystick joystick, int axis, float value)
   {
+    // base.JoystickAxis(joystick, axis, value);
   }
 
   /// <inheritdoc/>
-  public static void JoystickPressed(Joystick joystick, int button)
+  public override void JoystickPressed(Joystick joystick, int button)
   {
+    // base.JoystickPressed(joystick, button);
   }
 
   /// <inheritdoc/>
-  public static void JoystickReleased(Joystick joystick, int button)
+  public override void JoystickReleased(Joystick joystick, int button)
   {
+    // base.JoystickReleased(joystick, button);
   }
 
   /// <inheritdoc/>
-  public static void JoystickHat(Joystick joystick, int hat, JoystickHat direction)
+  public override void JoystickHat(Joystick joystick, int hat, JoystickHat direction)
   {
+    // base.JoystickHat(joystick, hat, direction);
   }
 
   /// <inheritdoc/>
-  public static void GamepadAxis(Joystick joystick, GamepadAxis axis, float value)
+  public override void GamepadAxis(Joystick joystick, GamepadAxis axis, float value)
   {
+    // base.GamepadAxis(joystick, axis, value);
   }
 
   /// <inheritdoc/>
-  public static void GamepadPressed(Joystick joystick, GamepadButton button)
+  public override void GamepadPressed(Joystick joystick, GamepadButton button)
   {
+    // base.GamepadPressed(joystick, button);
   }
 
   /// <inheritdoc/>
-  public static void GamepadReleased(Joystick joystick, GamepadButton button)
+  public override void GamepadReleased(Joystick joystick, GamepadButton button)
   {
+    // base.GamepadReleased(joystick, button);
   }
 
   // Helper for collision detection (AABB)
