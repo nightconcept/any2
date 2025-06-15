@@ -284,6 +284,39 @@ public class SamplePlatformerGame : Night.Game
   // KeyReleased, MousePressed, and MouseReleased are inherited from Night.Game (default empty implementations)
   // and do not need to be overridden here if no specific action is required.
 
+  /// <summary>
+  /// Called when a joystick is connected.
+  /// </summary>
+  /// <param name="joystick">The joystick that was connected.</param>
+  public override void JoystickAdded(Joystick joystick)
+  {
+    Console.WriteLine($"SampleGame: Joystick Added! ID: {joystick.GetId()}, Name: '{joystick.GetName()}'");
+    Console.WriteLine($"SampleGame: Total Joysticks: {Night.Joysticks.GetJoystickCount()}");
+    var joysticks = Night.Joysticks.GetJoysticks();
+    Console.WriteLine($"SampleGame: Night.Joysticks.GetJoysticks().Count: {joysticks.Count}");
+    foreach (var j in joysticks)
+    {
+      Console.WriteLine($"  - Joystick ID: {j.GetId()}, Name: '{j.GetName()}', Connected: {j.IsConnected()}");
+    }
+  }
+
+  /// <summary>
+  /// Called when a joystick is disconnected.
+  /// </summary>
+  /// <param name="joystick">The joystick that was disconnected.</param>
+  public override void JoystickRemoved(Joystick joystick)
+  {
+    // Note: joystick.IsConnected() will likely be false here as Joysticks.RemoveJoystick sets it.
+    Console.WriteLine($"SampleGame: Joystick Removed! ID: {joystick.GetId()}, Name: '{joystick.GetName()}', WasConnected: {joystick.IsConnected()}");
+    Console.WriteLine($"SampleGame: Total Joysticks after removal: {Night.Joysticks.GetJoystickCount()}");
+    var joysticks = Night.Joysticks.GetJoysticks();
+    Console.WriteLine($"SampleGame: Night.Joysticks.GetJoysticks().Count after removal: {joysticks.Count}");
+    foreach (var j in joysticks)
+    {
+      Console.WriteLine($"  - Remaining Joystick ID: {j.GetId()}, Name: '{j.GetName()}', Connected: {j.IsConnected()}");
+    }
+  }
+
   // Helper for collision detection (AABB)
   private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
   {

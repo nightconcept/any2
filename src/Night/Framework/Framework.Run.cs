@@ -430,6 +430,7 @@ namespace Night
       {
         Logger.Debug($"Entering finally block. sdlSuccessfullyInitializedThisRun: {sdlSuccessfullyInitializedThisRun}, isSdlInitialized (static): {isSdlInitialized}");
         Window.Shutdown();
+        Night.Joysticks.ClearJoysticks(); // Clear joystick resources
 
         lock (SdlLock)
         {

@@ -1,4 +1,4 @@
-// <copyright file="VersionInfo.cs" company="Night Circle">
+// <copyright file="JoysticksGroup.cs" company="Night Circle">
 // zlib license
 //
 // Copyright (c) 2025 Danny Solivan, Night Circle
@@ -20,33 +20,36 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // </copyright>
 
-namespace Night
+using NightTest.Core;
+
+using Xunit;
+using Xunit.Abstractions;
+
+namespace NightTest.Groups.Joysticks
 {
   /// <summary>
-  /// Provides information about the Night library, such as its version.
+  /// Test group for Joystick related functionalities.
   /// </summary>
-  public static class VersionInfo
+  [Collection("SequentialTests")] // Important for tests that interact with the game window
+  public class JoysticksGroup : TestGroup
   {
     /// <summary>
-    /// Gets the full semantic version string (e.g., "1.0.0", "1.2.3-beta.1").
-    /// This value is updated by the GitHub release Action.
+    /// Initializes a new instance of the <see cref="JoysticksGroup"/> class.
     /// </summary>
-    public const string Version = "0.0.2";
-
-    /// <summary>
-    /// Gets the developer-assigned codename for the current version.
-    /// This value is manually updated by the developer.
-    /// </summary>
-    public const string CodeName = "Initial Codename"; // TODO: Placeholder
-
-    /// <summary>
-    /// Gets the Semantic Version of the Night library.
-    /// This version is set during the release process.
-    /// </summary>
-    /// <returns>The library's semantic version string.</returns>
-    public static string GetVersion()
+    /// <param name="outputHelper">The xUnit test output helper.</param>
+    public JoysticksGroup(ITestOutputHelper outputHelper)
+        : base(outputHelper)
     {
-      return Version;
+    }
+
+    /// <summary>
+    /// Runs the manual test case for joystick connection and disconnection events.
+    /// </summary>
+    [Fact]
+    [Trait("TestType", "Manual")]
+    public void Run_JoystickConnectionEventsTest()
+    {
+      this.Run_GameTestCase(new JoystickConnectionEventsTest());
     }
   }
 }

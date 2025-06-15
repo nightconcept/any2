@@ -84,8 +84,52 @@ namespace Night
             HandleGameException(exUser, game);
           }
         }
+        else if (eventType == SDL.EventType.JoystickAdded)
+        {
+          Logger.Info($"SDL_JOYSTICKADDED event: Joystick instance ID {e.JDevice.Which}");
+          Joystick? newJoystick = Night.Joysticks.AddJoystick(e.JDevice.Which);
+          if (newJoystick != null)
+          {
+            try
+            {
+              game.JoystickAdded(newJoystick);
+            }
+            catch (Exception exUser)
+            {
+              HandleGameException(exUser, game);
+            }
+          }
+          else
+          {
+            Logger.Warn($"Failed to add joystick with instance ID {e.JDevice.Which} via Joysticks.AddJoystick.");
+          }
+        }
+        else if (eventType == SDL.EventType.JoystickRemoved)
+        {
+          Logger.Info($"SDL_JOYSTICKREMOVED event: Joystick instance ID {e.JDevice.Which}");
+          Joystick? removedJoystick = Night.Joysticks.RemoveJoystick(e.JDevice.Which);
+          if (removedJoystick != null)
+          {
+            try
+            {
+              game.JoystickRemoved(removedJoystick);
+            }
+            catch (Exception exUser)
+            {
+              HandleGameException(exUser, game);
+            }
+            finally
+            {
+              removedJoystick.Dispose(); // Ensure joystick is disposed after event callback
+            }
+          }
+          else
+          {
+            Logger.Warn($"Failed to remove joystick with instance ID {e.JDevice.Which} via Joysticks.RemoveJoystick (it might have already been removed or was never fully added).");
+          }
+        }
 
-        // Joystick and Gamepad event handling will be added here in later phases
+        // Other Gamepad event handling will be added here in later phases
       }
     }
   }
