@@ -16,11 +16,11 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 ### Modules
 
 - [ ] `love.filesystem`: Provides an interface to the user's filesystem.
-- [ ] `love.graphics`: Drawing of shapes and images, management of screen geometry.
-- [ ] `love.image`: Provides an interface to decode encoded image data.
+- [ ] `love.graphics`: Drawing of shapes and images, management of screen geometry. Partial completion.
 - [ ] `love.joystick`: Provides an interface to connected joysticks.
 - [ ] `love.keyboard`: Provides an interface to the user's keyboard.
 - [ ] `love.mouse`: Provides an interface to the user's mouse.
+- [ ] `love.system`: Provides access to information about the user's system.
 - [x] `love.timer`: Provides high-resolution timing functionality.
 - [ ] `love.window`: Provides an interface for the program's window.
 
@@ -34,17 +34,16 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 ### Callbacks - Keyboard
 
 - [x] `love.keypressed`: Callback function triggered when a key is pressed.
-- [ ] `love.keyreleased`: Callback function triggered when a keyboard key is released.
+- [x] `love.keyreleased`: Callback function triggered when a keyboard key is released.
 
 ### Callbacks - Mouse
 
-- [ ] `love.mousepressed`: Callback function triggered when a mouse button is pressed.
-- [ ] `love.mousereleased`: Callback function triggered when a mouse button is released.
+- [x] `love.mousepressed`: Callback function triggered when a mouse button is pressed.
+- [x] `love.mousereleased`: Callback function triggered when a mouse button is released.
 
 ### Callbacks - General
 
-- [ ] `love.errhand`: The error handler, used to display error messages. (Note: `love.errorhandler` is also listed for 11.0, likely an alias or the preferred name)
-- [ ] `love.errorhandler`: The error handler, used to display error messages.
+- [x] `love.errorhandler`: The error handler, used to display error messages.
 - [ ] `love.joystickpressed`: Callback function triggered when a joystick button is pressed.
 - [ ] `love.joystickreleased`: Callback function triggered when a joystick button is released.
 - [ ] `love.gamepadaxis`: Called when a Joystick's virtual gamepad axis is moved.
@@ -63,10 +62,9 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 
 ### Modules
 
-- [ ] `love.audio`: Provides an audio interface for playback/recording sound.
 - [ ] `love.event`: Manages events, like keypresses.
-- [ ] `love.sound`: This module is responsible for decoding sound files.
-- [ ] `love.system`: Provides access to information about the user's system.
+- [ ] `love.image`: Provides an interface to decode encoded image data.
+- [ ] `love.graphics`: Drawing of shapes and images, management of screen geometry. Potential completion.
 
 ## Version 0.3.X
 
@@ -77,7 +75,9 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 
 ### Modules
 
+- [ ] `love.audio`: Provides an audio interface for playback/recording sound.
 - [ ] `love.font`: Allows you to work with fonts.
+- [ ] `love.sound`: This module is responsible for decoding sound files.
 
 ### Callbacks - General
 

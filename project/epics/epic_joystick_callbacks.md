@@ -38,9 +38,9 @@ Implement the following Love2D equivalent callback functions in `Night.Framework
 -   [ ] **P0.T3: (Optional) Create `Framework.InputEventHandlers.cs` (Partial Class).**
     -   [ ] If further granularity is desired, specific event handling logic (e.g., for `KeyDown`, `MouseButtonDown`) could be moved into separate private static methods, potentially in another partial class file like `Framework.InputEventHandlers.cs`. These would be called from `ProcessSdlEvents`.
     -   *Decision for now: Start with `Framework.Events.cs` and evaluate if further splitting is necessary after joystick events are added.*
--   [ ] **P0.V1: Verification:**
-    -   [ ] Compile the project successfully.
-    -   [ ] Run `SampleGame` and verify existing input (keyboard/mouse) and window events function as before.
+-   [x] **P0.V1: Verification:**
+    -   [x] Compile the project successfully.
+    -   [x] Run `SampleGame` and verify existing input (keyboard/mouse) and window events function as before.
 
 ## Phase 1: Core Joystick and Gamepad Infrastructure
 
@@ -68,9 +68,9 @@ Implement the following Love2D equivalent callback functions in `Night.Framework
     -   [x] Implement `internal static Joystick? RemoveJoystick(uint instanceId)`.
     -   [x] Implement `internal static Joystick? GetJoystickByInstanceId(uint instanceId)`.
     -   [x] Implement `internal static void ClearJoysticks()` for shutdown.
--   [ ] **P1.V1: Verification (Code Review & Compilation):**
-    -   [ ] All new and modified classes compile without errors.
-    -   [ ] Code adheres to project guidelines.
+-   [x] **P1.V1: Verification (Code Review & Compilation):**
+    -   [x] All new and modified classes compile without errors.
+    -   [x] Code adheres to project guidelines.
     -   [x] Namespace usage is correct (`Night` for public types).
 
 ## Phase 2: SDL Initialization and Basic Joystick Connection/Disconnection Events
