@@ -51,10 +51,10 @@ public class SamplePlatformerGame : Night.Game
   private bool goalReachedMessageShown = false; // To ensure message prints only once
 
   // Joystick input state
-  private float _joystickAxis0Value = 0.0f;
-  private Night.JoystickHat _joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
-  private bool _joystickAButtonPressed = false;
-  private uint? _inputProvidingJoystickId = null; // Store the ID of the joystick providing input
+  private float joystickAxis0Value = 0.0f;
+  private Night.JoystickHat joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+  private bool joystickAButtonPressed = false;
+  private uint? inputProvidingJoystickId = null; // Store the ID of the joystick providing input
 
   /// <summary>
   /// Initializes a new instance of the <see cref="SamplePlatformerGame"/> class.
@@ -120,22 +120,22 @@ public class SamplePlatformerGame : Night.Game
     Night.JoystickHat currentHatDirection = Night.JoystickHat.Centered; // Fully qualified name
     bool currentAButtonPressed = false;
 
-    if (this._inputProvidingJoystickId.HasValue)
+    if (this.inputProvidingJoystickId.HasValue)
     {
-      Joystick? inputJoystick = Night.Joysticks.GetJoystickByInstanceId(this._inputProvidingJoystickId.Value);
+      Joystick? inputJoystick = Night.Joysticks.GetJoystickByInstanceId(this.inputProvidingJoystickId.Value);
       if (inputJoystick != null && inputJoystick.IsConnected())
       {
-        currentAxisValue = this._joystickAxis0Value;
-        currentHatDirection = this._joystickHat0Direction;
-        currentAButtonPressed = this._joystickAButtonPressed; // Use stored state
+        currentAxisValue = this.joystickAxis0Value;
+        currentHatDirection = this.joystickHat0Direction;
+        currentAButtonPressed = this.joystickAButtonPressed; // Use stored state
       }
       else
       {
         // Joystick disconnected or no longer valid, reset stored values and ID
-        this._joystickAxis0Value = 0.0f;
-        this._joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
-        this._joystickAButtonPressed = false;
-        this._inputProvidingJoystickId = null;
+        this.joystickAxis0Value = 0.0f;
+        this.joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+        this.joystickAButtonPressed = false;
+        this.inputProvidingJoystickId = null;
       }
     }
 
@@ -339,13 +339,13 @@ public class SamplePlatformerGame : Night.Game
   {
     // Note: joystick.IsConnected() will likely be false here as Joysticks.RemoveJoystick sets it.
     Console.WriteLine($"SampleGame: Joystick Removed! ID: {joystick.GetId()}, Name: '{joystick.GetName()}', WasConnected: {joystick.IsConnected()}");
-    if (this._inputProvidingJoystickId.HasValue && this._inputProvidingJoystickId.Value == joystick.GetId())
+    if (this.inputProvidingJoystickId.HasValue && this.inputProvidingJoystickId.Value == joystick.GetId())
     {
       // The joystick that was providing input has been removed, reset stored values.
-      this._joystickAxis0Value = 0.0f;
-      this._joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
-      this._joystickAButtonPressed = false;
-      this._inputProvidingJoystickId = null;
+      this.joystickAxis0Value = 0.0f;
+      this.joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+      this.joystickAButtonPressed = false;
+      this.inputProvidingJoystickId = null;
       Console.WriteLine($"SampleGame: Input-providing joystick (ID: {joystick.GetId()}) was removed. Resetting its input state.");
     }
 
@@ -369,8 +369,8 @@ public class SamplePlatformerGame : Night.Game
     Console.WriteLine($"SampleGame: Joystick Axis! ID: {joystick.GetId()}, Axis: {axis}, Value: {value:F4}");
     if (axis == 0) // Typically left stick X-axis
     {
-      this._joystickAxis0Value = value;
-      this._inputProvidingJoystickId = (uint)joystick.GetId(); // Record which joystick is providing this input, cast to uint
+      this.joystickAxis0Value = value;
+      this.inputProvidingJoystickId = (uint)joystick.GetId(); // Record which joystick is providing this input, cast to uint
     }
   }
 
@@ -382,14 +382,15 @@ public class SamplePlatformerGame : Night.Game
   public override void JoystickPressed(Joystick joystick, int button)
   {
     Console.WriteLine($"SampleGame: Joystick Pressed! ID: {joystick.GetId()}, Button: {button}");
+
     // Assuming 'A' button (South) corresponds to raw button index 0 for many controllers,
     // or if we had a mapping to Night.GamepadButton.A, we'd check that.
     // For raw joystick, we'll assume button 0 is a common primary action button.
     // This part will be more robust in Phase 4 with GamepadPressed.
     if (button == 0) // Assuming raw button 0 is 'A'/South for testing P3
     {
-      this._joystickAButtonPressed = true;
-      this._inputProvidingJoystickId = joystick.GetId();
+      this.joystickAButtonPressed = true;
+      this.inputProvidingJoystickId = joystick.GetId();
     }
   }
 
@@ -403,7 +404,8 @@ public class SamplePlatformerGame : Night.Game
     Console.WriteLine($"SampleGame: Joystick Released! ID: {joystick.GetId()}, Button: {button}");
     if (button == 0) // Assuming raw button 0 is 'A'/South
     {
-      this._joystickAButtonPressed = false;
+      this.joystickAButtonPressed = false;
+
       // We don't reset _inputProvidingJoystickId here, as other inputs might still be active from this joystick.
       // It will be reset if the joystick is disconnected or if another joystick provides input.
     }
@@ -420,8 +422,8 @@ public class SamplePlatformerGame : Night.Game
     Console.WriteLine($"SampleGame: Joystick Hat! ID: {joystick.GetId()}, Hat: {hat}, Direction: {direction}");
     if (hat == 0) // Typically the first D-Pad/Hat
     {
-      this._joystickHat0Direction = direction;
-      this._inputProvidingJoystickId = (uint)joystick.GetId(); // Record which joystick is providing this input, cast to uint
+      this.joystickHat0Direction = direction;
+      this.inputProvidingJoystickId = (uint)joystick.GetId(); // Record which joystick is providing this input, cast to uint
     }
   }
 

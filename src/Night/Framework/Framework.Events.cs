@@ -128,7 +128,6 @@ namespace Night
             Logger.Warn($"Failed to remove joystick with instance ID {e.JDevice.Which} via Joysticks.RemoveJoystick (it might have already been removed or was never fully added).");
           }
         }
-
         else if (eventType == SDL.EventType.JoystickAxisMotion)
         {
           Logger.Debug($"SDL_JOYSTICKAXISMOTION event: Joystick {e.JAxis.Which}, Axis {e.JAxis.Axis}, Value {e.JAxis.Value}");

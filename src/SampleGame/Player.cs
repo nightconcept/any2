@@ -144,11 +144,13 @@ namespace SampleGame
       {
         this.velocityX = HorizontalSpeed;
       }
+
       // Joystick Axis input - next priority if D-Pad is not active
       else if (Math.Abs(joystickAxisValue) > joystickDeadzone)
       {
         this.velocityX = joystickAxisValue * HorizontalSpeed;
       }
+
       // Keyboard input - lowest priority if no joystick input for horizontal movement
       else
       {

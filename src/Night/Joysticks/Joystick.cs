@@ -91,6 +91,7 @@ namespace Night
     Y,
 
     // Aliases for face buttons
+
     /// <summary>
     /// Alias for the 'A' button (South face button).
     /// </summary>
