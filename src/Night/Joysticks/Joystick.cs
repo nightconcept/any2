@@ -23,6 +23,8 @@
 using System;
 using System.Collections.Generic;
 
+using SDL3;
+
 namespace Night.Joysticks
 {
   /// <summary>
@@ -287,14 +289,33 @@ namespace Night.Joysticks
   /// <summary>
   /// Represents a physical joystick.
   /// </summary>
-  public class Joystick
+  public class Joystick : IDisposable
   {
+    private readonly uint joystickID;
+    private readonly IntPtr joystickPtr;
+    private bool disposed = false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Joystick"/> class. Joystick instances are typically obtained via a method in the <c>Night.Joysticks.Joysticks</c> class.
     /// </summary>
-    internal Joystick()
+    /// <param name="joystickId">The SDL instance ID of the joystick.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the joystick cannot be opened.</exception>
+    internal Joystick(uint joystickId)
     {
-      // Initialization logic for a new Joystick object.
+      this.joystickID = joystickId;
+      this.joystickPtr = SDL.OpenJoystick(joystickId);
+      if (this.joystickPtr == IntPtr.Zero)
+      {
+        throw new InvalidOperationException($"Failed to open joystick with ID {joystickId}: {SDL.GetError()}");
+      }
+    }
+
+    /// <summary>
+    /// Finalizes an instance of the <see cref="Joystick"/> class.
+    /// </summary>
+    ~Joystick()
+    {
+      this.Dispose(false);
     }
 
     /// <summary>
@@ -303,7 +324,25 @@ namespace Night.Joysticks
     /// <returns>An array of floats, one for each axis direction.</returns>
     public float[] GetAxes()
     {
-      throw new NotImplementedException();
+      if (this.disposed)
+      {
+        return Array.Empty<float>();
+      }
+
+      int axisCount = SDL.GetNumJoystickAxes(this.joystickPtr);
+      if (axisCount < 0)
+      {
+        // Error case, perhaps log SDL.GetError() or return empty array
+        return Array.Empty<float>();
+      }
+
+      float[] axes = new float[axisCount];
+      for (int i = 0; i < axisCount; i++)
+      {
+        axes[i] = this.GetAxis(i);
+      }
+
+      return axes;
     }
 
     /// <summary>
@@ -313,7 +352,26 @@ namespace Night.Joysticks
     /// <returns>The direction of the specified axis.</returns>
     public float GetAxis(int axisIndex)
     {
-      throw new NotImplementedException();
+      if (this.disposed)
+      {
+        return 0.0f;
+      }
+
+      short rawValue = SDL.GetJoystickAxis(this.joystickPtr, axisIndex);
+
+      if (rawValue == 0)
+      {
+        return 0.0f;
+      }
+      else if (rawValue > 0)
+      {
+        return rawValue / 32767.0f;
+      }
+      else
+      {
+        // rawValue < 0
+        return rawValue / 32768.0f;
+      }
     }
 
     /// <summary>
@@ -472,7 +530,15 @@ namespace Night.Joysticks
     /// <returns>True if the gamepad button is pressed, false otherwise.</returns>
     public bool IsGamepadDown(GamepadButton button)
     {
-      throw new NotImplementedException();
+      if (this.disposed)
+      {
+        return false;
+      }
+
+      // The C# binding for the C function SDL_JoystickGetGamepadButton (which takes an SDL_Joystick*)
+      // was not found in the reviewed SDL3-CS PInvoke files.
+      // SDL.GetGamepadButton() takes an SDL_Gamepad* and is not directly applicable here.
+      throw new NotImplementedException("Binding for SDL_JoystickGetGamepadButton not found.");
     }
 
     /// <summary>
@@ -494,9 +560,86 @@ namespace Night.Joysticks
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Releases the resources used by the <see cref="Joystick"/> object.
+    /// </summary>
+    public void Dispose()
+    {
+      this.Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Releases the unmanaged resources used by the <see cref="Joystick"/> and optionally releases the managed resources.
+    /// </summary>
+    /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!this.disposed)
+      {
+        if (disposing)
+        {
+          // Dispose managed state (managed objects).
+        }
+
+        if (this.joystickPtr != IntPtr.Zero)
+        {
+          SDL.CloseJoystick(this.joystickPtr);
+
+          // Note: _joystickPtr is readonly, so cannot set to IntPtr.Zero here.
+          // Consider if it should be mutable if we want to allow re-opening or null check.
+          // For now, the dispose pattern assumes it's closed and not used again.
+        }
+
+        this.disposed = true;
+      }
+    }
+
     // LÖVE's Object supertype methods (Release, GetType, IsInstanceOf) are not
     // implemented here, consistent with other LÖVE object wrappers in this project
     // (e.g., Night.Sprite, Night.ImageData) which do not have a common base class
     // for these methods.
+
+    /*
+    // Helper method to map Night GamepadButton to SDL.GamepadButton
+    private static SDL.GamepadButton MapGamepadButton(GamepadButton button)
+    {
+      switch (button)
+      {
+        case GamepadButton.A:
+          return SDL.GamepadButton.South; // Typically 'A' on Xbox, Cross on PlayStation
+        case GamepadButton.B:
+          return SDL.GamepadButton.East;  // Typically 'B' on Xbox, Circle on PlayStation
+        case GamepadButton.X:
+          return SDL.GamepadButton.West;  // Typically 'X' on Xbox, Square on PlayStation
+        case GamepadButton.Y:
+          return SDL.GamepadButton.North; // Typically 'Y' on Xbox, Triangle on PlayStation
+        case GamepadButton.Back:
+          return SDL.GamepadButton.Back;
+        case GamepadButton.Guide:
+          return SDL.GamepadButton.Guide;
+        case GamepadButton.Start:
+          return SDL.GamepadButton.Start;
+        case GamepadButton.LeftStick:
+          return SDL.GamepadButton.LeftStick;
+        case GamepadButton.RightStick:
+          return SDL.GamepadButton.RightStick;
+        case GamepadButton.LeftShoulder:
+          return SDL.GamepadButton.LeftShoulder;
+        case GamepadButton.RightShoulder:
+          return SDL.GamepadButton.RightShoulder;
+        case GamepadButton.DPUp:
+          return SDL.GamepadButton.DpadUp;
+        case GamepadButton.DPDown:
+          return SDL.GamepadButton.DpadDown;
+        case GamepadButton.DPLeft:
+          return SDL.GamepadButton.DpadLeft;
+        case GamepadButton.DPRight:
+          return SDL.GamepadButton.DpadRight;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(button), $"Unmapped gamepad button: {button}");
+      }
+    }
+    */
   }
 }
