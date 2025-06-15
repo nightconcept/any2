@@ -2,13 +2,13 @@
 
 Most functions list the Love2D equivalent module/function/callback implementation.
 
-## Version 0.0.X
+## Version 0.1.0
 
 ### Project
 
 - [x] `docfx` generation onto GitHub pages
 - [x] Testing framework
-- [ ] Implement tests
+- [x] Implement tests
 - [ ] Logo and icon - nightO)engine
 - [x] CI
 - [ ] Logging system
@@ -18,6 +18,7 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 - [ ] `love.filesystem`: Provides an interface to the user's filesystem.
 - [ ] `love.graphics`: Drawing of shapes and images, management of screen geometry.
 - [ ] `love.image`: Provides an interface to decode encoded image data.
+- [ ] `love.joystick`: Provides an interface to connected joysticks.
 - [ ] `love.keyboard`: Provides an interface to the user's keyboard.
 - [ ] `love.mouse`: Provides an interface to the user's mouse.
 - [x] `love.timer`: Provides high-resolution timing functionality.
@@ -44,25 +45,6 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 
 - [ ] `love.errhand`: The error handler, used to display error messages. (Note: `love.errorhandler` is also listed for 11.0, likely an alias or the preferred name)
 - [ ] `love.errorhandler`: The error handler, used to display error messages.
-
-### Types
-
-- [ ] `Data`: The superclass of all data.
-- [ ] `Object`: The superclass of all LÖVE types.
-- [ ] `Variant`: The types supported by love.thread and love.event.
-
-### General
-
-- [x] Config Files: Game configuration settings.
-
-## Version 0.1.X
-
-### Modules
-
-- [ ] `love.joystick`: Provides an interface to connected joysticks.
-
-### Callbacks - Joystick
-
 - [ ] `love.joystickpressed`: Callback function triggered when a joystick button is pressed.
 - [ ] `love.joystickreleased`: Callback function triggered when a joystick button is released.
 - [ ] `love.gamepadaxis`: Called when a Joystick's virtual gamepad axis is moved.
@@ -72,6 +54,10 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 - [ ] `love.joystickaxis`: Called when a joystick axis moves.
 - [ ] `love.joystickhat`: Called when a joystick hat direction changes.
 - [ ] `love.joystickremoved`: Called when a Joystick is disconnected.
+
+### General
+
+- [x] Config Files: Game configuration settings.
 
 ## Version 0.2.X
 

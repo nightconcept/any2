@@ -148,6 +148,51 @@ namespace NightTest.Core
     {
     }
 
+    /// <inheritdoc/>
+    public virtual void JoystickAdded(Joystick joystick)
+    {
+    }
+
+    /// <inheritdoc/>
+    public virtual void JoystickRemoved(Joystick joystick)
+    {
+    }
+
+    /// <inheritdoc/>
+    public virtual void JoystickAxis(Joystick joystick, int axis, float value)
+    {
+    }
+
+    /// <inheritdoc/>
+    public virtual void JoystickPressed(Joystick joystick, int button)
+    {
+    }
+
+    /// <inheritdoc/>
+    public virtual void JoystickReleased(Joystick joystick, int button)
+    {
+    }
+
+    /// <inheritdoc/>
+    public virtual void JoystickHat(Joystick joystick, int hat, JoystickHat direction)
+    {
+    }
+
+    /// <inheritdoc/>
+    public virtual void GamepadAxis(Joystick joystick, GamepadAxis axis, float value)
+    {
+    }
+
+    /// <inheritdoc/>
+    public virtual void GamepadPressed(Joystick joystick, GamepadButton button)
+    {
+    }
+
+    /// <inheritdoc/>
+    public virtual void GamepadReleased(Joystick joystick, GamepadButton button)
+    {
+    }
+
     /// <summary>
     /// Performs the specific load logic for the test case.
     /// Derived classes can override this method to implement their core load behavior.

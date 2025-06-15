@@ -107,5 +107,105 @@ namespace Night
     {
       // Default implementation is empty.
     }
+
+    /// <summary>
+    /// Callback function triggered when a joystick is connected.
+    /// Override this method to handle joystick connection events.
+    /// </summary>
+    /// <param name="joystick">The Joystick object representing the connected device.</param>
+    public virtual void JoystickAdded(Joystick joystick)
+    {
+      // Default implementation is empty.
+    }
+
+    /// <summary>
+    /// Callback function triggered when a joystick is disconnected.
+    /// Override this method to handle joystick disconnection events.
+    /// </summary>
+    /// <param name="joystick">The Joystick object representing the disconnected device.</param>
+    public virtual void JoystickRemoved(Joystick joystick)
+    {
+      // Default implementation is empty.
+    }
+
+    /// <summary>
+    /// Callback function triggered when a joystick axis moves.
+    /// Override this method to handle joystick axis motion events.
+    /// </summary>
+    /// <param name="joystick">The Joystick object.</param>
+    /// <param name="axis">The index of the axis that moved.</param>
+    /// <param name="value">The new value of the axis, typically in the range -1.0 to 1.0.</param>
+    public virtual void JoystickAxis(Joystick joystick, int axis, float value)
+    {
+      // Default implementation is empty.
+    }
+
+    /// <summary>
+    /// Callback function triggered when a joystick button is pressed.
+    /// Override this method to handle joystick button press events.
+    /// </summary>
+    /// <param name="joystick">The Joystick object.</param>
+    /// <param name="button">The index of the button that was pressed.</param>
+    public virtual void JoystickPressed(Joystick joystick, int button)
+    {
+      // Default implementation is empty.
+    }
+
+    /// <summary>
+    /// Callback function triggered when a joystick button is released.
+    /// Override this method to handle joystick button release events.
+    /// </summary>
+    /// <param name="joystick">The Joystick object.</param>
+    /// <param name="button">The index of the button that was released.</param>
+    public virtual void JoystickReleased(Joystick joystick, int button)
+    {
+      // Default implementation is empty.
+    }
+
+    /// <summary>
+    /// Callback function triggered when a joystick hat direction changes.
+    /// Override this method to handle joystick hat motion events.
+    /// </summary>
+    /// <param name="joystick">The Joystick object.</param>
+    /// <param name="hat">The index of the hat that changed.</param>
+    /// <param name="direction">The new direction of the hat.</param>
+    public virtual void JoystickHat(Joystick joystick, int hat, JoystickHat direction)
+    {
+      // Default implementation is empty.
+    }
+
+    /// <summary>
+    /// Callback function triggered when a virtual gamepad axis is moved.
+    /// Override this method to handle gamepad axis motion events.
+    /// </summary>
+    /// <param name="joystick">The Joystick object (which is also a gamepad).</param>
+    /// <param name="axis">The virtual gamepad axis that moved.</param>
+    /// <param name="value">The new value of the axis, typically in the range -1.0 to 1.0.</param>
+    public virtual void GamepadAxis(Joystick joystick, GamepadAxis axis, float value)
+    {
+      // Default implementation is empty.
+    }
+
+    /// <summary>
+    /// Callback function triggered when a virtual gamepad button is pressed.
+    /// Override this method to handle gamepad button press events.
+    /// </summary>
+    /// <param name="joystick">The Joystick object (which is also a gamepad).</param>
+    /// <param name="button">The virtual gamepad button that was pressed.</param>
+    public virtual void GamepadPressed(Joystick joystick, GamepadButton button)
+    {
+      // Default implementation is empty.
+    }
+
+    /// <summary>
+    /// Callback function triggered when a virtual gamepad button is released.
+    /// Override this method to handle gamepad button release events.
+    /// </summary>
+    /// <param name="joystick">The Joystick object (which is also a gamepad).</param>
+    /// <param name="button">The virtual gamepad button that was released.</param>
+    public virtual void GamepadReleased(Joystick joystick, GamepadButton button)
+    {
+      // Default implementation is empty.
+    }
   }
 }

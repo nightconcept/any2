@@ -157,6 +157,51 @@ public class Platformer : IGame
     throw new NotImplementedException();
   }
 
+  /// <inheritdoc/>
+  public void JoystickAdded(Joystick joystick)
+  {
+  }
+
+  /// <inheritdoc/>
+  public void JoystickRemoved(Joystick joystick)
+  {
+  }
+
+  /// <inheritdoc/>
+  public void JoystickAxis(Joystick joystick, int axis, float value)
+  {
+  }
+
+  /// <inheritdoc/>
+  public void JoystickPressed(Joystick joystick, int button)
+  {
+  }
+
+  /// <inheritdoc/>
+  public void JoystickReleased(Joystick joystick, int button)
+  {
+  }
+
+  /// <inheritdoc/>
+  public void JoystickHat(Joystick joystick, int hat, JoystickHat direction)
+  {
+  }
+
+  /// <inheritdoc/>
+  public void GamepadAxis(Joystick joystick, GamepadAxis axis, float value)
+  {
+  }
+
+  /// <inheritdoc/>
+  public void GamepadPressed(Joystick joystick, GamepadButton button)
+  {
+  }
+
+  /// <inheritdoc/>
+  public void GamepadReleased(Joystick joystick, GamepadButton button)
+  {
+  }
+
   // Helper for collision detection (AABB)
   private static bool CheckAABBCollision(Night.Rectangle rect1, Night.Rectangle rect2)
   {

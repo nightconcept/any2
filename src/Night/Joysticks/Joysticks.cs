@@ -22,8 +22,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Night.Joysticks
+namespace Night
 {
   /// <summary>
   /// Provides functionality for managing and querying joysticks.
@@ -31,6 +32,8 @@ namespace Night.Joysticks
   /// </summary>
   public static class Joysticks
   {
+    private static readonly Dictionary<uint, Joystick> ActiveJoysticks = new Dictionary<uint, Joystick>();
+
     /// <summary>
     /// Gets a list of connected Joysticks.
     /// Corresponds to `love.joystick.getJoysticks()`.
@@ -38,7 +41,8 @@ namespace Night.Joysticks
     /// <returns>A list of currently connected <see cref="Joystick"/> objects.</returns>
     public static List<Joystick> GetJoysticks()
     {
-      throw new NotImplementedException();
+      // Return a copy to prevent external modification of the internal list
+      return ActiveJoysticks.Values.ToList();
     }
 
     /// <summary>
@@ -49,7 +53,81 @@ namespace Night.Joysticks
     /// <returns>The number of connected joysticks.</returns>
     public static int GetJoystickCount()
     {
-      throw new NotImplementedException();
+      return ActiveJoysticks.Count;
+    }
+
+    /// <summary>
+    /// Adds a joystick to the active list when an SDL_EVENT_JOYSTICK_ADDED event occurs.
+    /// </summary>
+    /// <param name="instanceId">The SDL instance ID of the joystick to add.</param>
+    /// <returns>The newly created and added <see cref="Joystick"/> instance, or null if it failed to open.</returns>
+    internal static Joystick? AddJoystick(uint instanceId)
+    {
+      if (ActiveJoysticks.ContainsKey(instanceId))
+      {
+        // Already exists, perhaps an erroneous event or already handled.
+        // Night.Log.LogManager.GetLogger("Joysticks").Warn($"Joystick with instance ID {instanceId} already exists in ActiveJoysticks.");
+        return ActiveJoysticks[instanceId];
+      }
+
+      try
+      {
+        Joystick newJoystick = new Joystick(instanceId);
+        ActiveJoysticks[instanceId] = newJoystick;
+        // Night.Log.LogManager.GetLogger("Joysticks").Info($"Joystick added: ID {newJoystick.GetId()}, Name '{newJoystick.GetName()}', InstanceID {instanceId}");
+        return newJoystick;
+      }
+      catch (InvalidOperationException ex)
+      {
+        // Night.Log.LogManager.GetLogger("Joysticks").Error($"Failed to add joystick with instance ID {instanceId}: {ex.Message}");
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Removes a joystick from the active list when an SDL_EVENT_JOYSTICK_REMOVED event occurs.
+    /// The Joystick object is returned so it can be passed to the event callback before disposal.
+    /// </summary>
+    /// <param name="instanceId">The SDL instance ID of the joystick to remove.</param>
+    /// <returns>The removed <see cref="Joystick"/> instance if found, otherwise null.</returns>
+    internal static Joystick? RemoveJoystick(uint instanceId)
+    {
+      if (ActiveJoysticks.TryGetValue(instanceId, out Joystick? joystickInstance))
+      {
+        ActiveJoysticks.Remove(instanceId);
+        joystickInstance.SetConnectedState(false); // Mark as disconnected
+        // Night.Log.LogManager.GetLogger("Joysticks").Info($"Joystick removed: ID {joystickInstance.GetId()}, Name '{joystickInstance.GetName()}', InstanceID {instanceId}");
+        return joystickInstance;
+      }
+      else
+      {
+        // Night.Log.LogManager.GetLogger("Joysticks").Warn($"Attempted to remove joystick with instance ID {instanceId}, but it was not found in ActiveJoysticks.");
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Gets an active joystick by its SDL instance ID.
+    /// </summary>
+    /// <param name="instanceId">The SDL instance ID of the joystick.</param>
+    /// <returns>The <see cref="Joystick"/> instance if found and active, otherwise null.</returns>
+    internal static Joystick? GetJoystickByInstanceId(uint instanceId)
+    {
+      ActiveJoysticks.TryGetValue(instanceId, out Joystick? joystickInstance);
+      return joystickInstance;
+    }
+
+    /// <summary>
+    /// Clears all active joysticks. Called during framework shutdown.
+    /// </summary>
+    internal static void ClearJoysticks()
+    {
+      foreach (var joystick in ActiveJoysticks.Values)
+      {
+        joystick.Dispose();
+      }
+      ActiveJoysticks.Clear();
+      // Night.Log.LogManager.GetLogger("Joysticks").Info("All active joysticks cleared and disposed.");
     }
   }
 }

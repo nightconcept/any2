@@ -125,7 +125,7 @@ namespace Night
           if (!isSdlInitialized)
           {
             Logger.Debug("Global isSdlInitialized is false. Attempting SDL.Init().");
-            initializedSubsystemsFlags = SDL.InitFlags.Video | SDL.InitFlags.Events;
+            initializedSubsystemsFlags = SDL.InitFlags.Video | SDL.InitFlags.Events | SDL.InitFlags.Joystick | SDL.InitFlags.Gamepad;
             if (!SDL.Init(initializedSubsystemsFlags))
             {
               string sdlError = SDL.GetError();
@@ -374,60 +374,7 @@ namespace Night
             Night.Timer.CurrentAverageDelta = deltaHistory.Average();
           }
 
-          while (SDL.PollEvent(out SDL.Event e) && !inErrorState)
-          {
-            var eventType = (SDL.EventType)e.Type;
-            Logger.Debug($"SDL Event polled: {eventType}");
-            if (eventType == SDL.EventType.Quit)
-            {
-              Logger.Info("SDL_QUIT event received. Closing window.");
-              Window.Close();
-            }
-            else if (eventType == SDL.EventType.KeyDown)
-            {
-              try
-              {
-                game.KeyPressed((KeySymbol)e.Key.Key, (KeyCode)e.Key.Scancode, e.Key.Repeat);
-              }
-              catch (Exception exUser)
-              {
-                HandleGameException(exUser, game);
-              }
-            }
-            else if (eventType == SDL.EventType.KeyUp)
-            {
-              try
-              {
-                game.KeyReleased((KeySymbol)e.Key.Key, (KeyCode)e.Key.Scancode);
-              }
-              catch (Exception exUser)
-              {
-                HandleGameException(exUser, game);
-              }
-            }
-            else if (eventType == SDL.EventType.MouseButtonDown)
-            {
-              try
-              {
-                game.MousePressed((int)e.Button.X, (int)e.Button.Y, (MouseButton)e.Button.Button, e.Button.Which == SDL.TouchMouseID, e.Button.Clicks);
-              }
-              catch (Exception exUser)
-              {
-                HandleGameException(exUser, game);
-              }
-            }
-            else if (eventType == SDL.EventType.MouseButtonUp)
-            {
-              try
-              {
-                game.MouseReleased((int)e.Button.X, (int)e.Button.Y, (MouseButton)e.Button.Button, e.Button.Which == SDL.TouchMouseID, e.Button.Clicks);
-              }
-              catch (Exception exUser)
-              {
-                HandleGameException(exUser, game);
-              }
-            }
-          }
+          ProcessSdlEvents(game); // Call to the new method in Framework.Events.cs
 
           if (inErrorState)
           {
