@@ -57,6 +57,17 @@ namespace Night
     }
 
     /// <summary>
+    /// Gets an active joystick by its SDL instance ID.
+    /// </summary>
+    /// <param name="instanceId">The SDL instance ID of the joystick.</param>
+    /// <returns>The <see cref="Joystick"/> instance if found and active, otherwise null.</returns>
+    public static Joystick? GetJoystickByInstanceId(uint instanceId)
+    {
+      _ = ActiveJoysticks.TryGetValue(instanceId, out Joystick? joystickInstance);
+      return joystickInstance;
+    }
+
+    /// <summary>
     /// Adds a joystick to the active list when an SDL_EVENT_JOYSTICK_ADDED event occurs.
     /// </summary>
     /// <param name="instanceId">The SDL instance ID of the joystick to add.</param>
@@ -106,17 +117,6 @@ namespace Night
         // Night.Log.LogManager.GetLogger("Joysticks").Warn($"Attempted to remove joystick with instance ID {instanceId}, but it was not found in ActiveJoysticks.");
         return null;
       }
-    }
-
-    /// <summary>
-    /// Gets an active joystick by its SDL instance ID.
-    /// </summary>
-    /// <param name="instanceId">The SDL instance ID of the joystick.</param>
-    /// <returns>The <see cref="Joystick"/> instance if found and active, otherwise null.</returns>
-    public static Joystick? GetJoystickByInstanceId(uint instanceId)
-    {
-      _ = ActiveJoysticks.TryGetValue(instanceId, out Joystick? joystickInstance);
-      return joystickInstance;
     }
 
     /// <summary>

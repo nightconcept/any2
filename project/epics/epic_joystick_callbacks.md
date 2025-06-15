@@ -113,8 +113,8 @@ Implement the following Love2D equivalent callback functions in `Night.Framework
       - [x] Call `game.JoystickHat(joystick, (int)e.JHat.Hat, (Night.JoystickHat)e.JHat.Value)`.
 - [x] **P3.V1: Verification (SampleGame):**
   - [x] Expand `SampleGame` to override and log all raw joystick callbacks.
-  - [ ] Test with a controller: move axes, press buttons, use D-Pad/hats.
-  - [ ] Verify correct joystick instance, axis/button/hat indices, and values are reported.
+  - [x] Test with a controller: move axes, press buttons, use D-Pad/hats.
+  - [x] Verify correct joystick instance, axis/button/hat indices, and values are reported.
 
 ## Phase 4: Implement Gamepad-Specific Input Events (Virtual Axes/Buttons)
 
@@ -159,6 +159,8 @@ Implement the following Love2D equivalent callback functions in `Night.Framework
 - The `Night.Joystick` class will attempt to open the device as an `SDL_Gamepad` if `SDL_IsGamepad` returns true. This allows it to serve data for both raw joystick functions and mapped gamepad functions.
 - Mapping SDL event data (raw axis values, SDL-specific enums) to the Love2D-style API (normalized floats, Night-specific enums) will be handled by helper methods within `Framework.Run.cs` (or its partial classes).
 - If specific SDL3-CS bindings are missing (e.g., for `SDL_GetJoystickMappingForID` or `SDL_JoystickHasRumble`), the corresponding `Night.Joystick` methods will return default "not supported" values (e.g., `null` for mapping string, `false` for rumble support) and log a warning. **(Current known issue)**
+
+- Addressing 14 build warnings (StyleCop &amp; IDE) as of 2025-06-15 to maintain code quality.
 
 ## Dependencies
 

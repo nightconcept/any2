@@ -35,6 +35,12 @@ namespace NightTest.Groups.Joysticks
   /// </summary>
   public class JoystickConnectionEventsTest : ManualTestCase
   {
+    private TestState currentState = TestState.InitialPromptConnect;
+    private string instructionText = string.Empty;
+    private List<string> consoleMessages = new List<string>();
+    private Joystick? lastConnectedJoystick;
+    private Joystick? lastDisconnectedJoystick;
+
     private enum TestState
     {
       InitialPromptConnect,
@@ -45,18 +51,46 @@ namespace NightTest.Groups.Joysticks
       TestComplete,
     }
 
-    private TestState currentState = TestState.InitialPromptConnect;
-    private string instructionText = string.Empty;
-    private List<string> consoleMessages = new List<string>();
-    private Joystick? lastConnectedJoystick;
-    private Joystick? lastDisconnectedJoystick;
-
     /// <inheritdoc/>
     public override string Name => "Joysticks.ConnectionEvents";
 
     /// <inheritdoc/>
     public override string Description => "Manually tests JoystickAdded and JoystickRemoved events. " +
                                          "User will be prompted to connect and disconnect a joystick and verify console output.";
+
+    /// <inheritdoc/>
+    public override void JoystickAdded(Joystick joystick)
+    {
+      base.JoystickAdded(joystick);
+      string msg = $"EVENT: Joystick ADDED - ID: {joystick.GetId()}, Name: '{joystick.GetName()}'";
+      Console.WriteLine(msg);
+      this.consoleMessages.Add(msg);
+      this.lastConnectedJoystick = joystick;
+
+      if (this.currentState == TestState.WaitingForConnect)
+      {
+        this.currentState = TestState.ConnectVerifiedPromptDisconnect;
+        this.UpdateInstructionText();
+      }
+    }
+
+    /// <inheritdoc/>
+    public override void JoystickRemoved(Joystick joystick)
+    {
+      base.JoystickRemoved(joystick);
+
+      // Note: joystick.IsConnected() will be false here.
+      string msg = $"EVENT: Joystick REMOVED - ID: {joystick.GetId()}, Name: '{joystick.GetName()}'";
+      Console.WriteLine(msg);
+      this.consoleMessages.Add(msg);
+      this.lastDisconnectedJoystick = joystick;
+
+      if (this.currentState == TestState.WaitingForDisconnect)
+      {
+        this.currentState = TestState.DisconnectVerifiedPromptPassFail;
+        this.UpdateInstructionText();
+      }
+    }
 
     /// <inheritdoc/>
     protected override void Load()
@@ -105,37 +139,11 @@ namespace NightTest.Groups.Joysticks
     }
 
     /// <inheritdoc/>
-    public override void JoystickAdded(Joystick joystick)
+    protected override void EndTest()
     {
-      base.JoystickAdded(joystick);
-      string msg = $"EVENT: Joystick ADDED - ID: {joystick.GetId()}, Name: '{joystick.GetName()}'";
-      Console.WriteLine(msg);
-      this.consoleMessages.Add(msg);
-      this.lastConnectedJoystick = joystick;
-
-      if (this.currentState == TestState.WaitingForConnect)
-      {
-        this.currentState = TestState.ConnectVerifiedPromptDisconnect;
-        this.UpdateInstructionText();
-      }
-    }
-
-    /// <inheritdoc/>
-    public override void JoystickRemoved(Joystick joystick)
-    {
-      base.JoystickRemoved(joystick);
-
-      // Note: joystick.IsConnected() will be false here.
-      string msg = $"EVENT: Joystick REMOVED - ID: {joystick.GetId()}, Name: '{joystick.GetName()}'";
-      Console.WriteLine(msg);
-      this.consoleMessages.Add(msg);
-      this.lastDisconnectedJoystick = joystick;
-
-      if (this.currentState == TestState.WaitingForDisconnect)
-      {
-        this.currentState = TestState.DisconnectVerifiedPromptPassFail;
-        this.UpdateInstructionText();
-      }
+      this.currentState = TestState.TestComplete;
+      this.UpdateInstructionText(); // Update text to show final status
+      base.EndTest();
     }
 
     private void UpdateInstructionText()
@@ -175,14 +183,6 @@ namespace NightTest.Groups.Joysticks
           this.instructionText = "Unknown test state.";
           break;
       }
-    }
-
-    /// <inheritdoc/>
-    protected override void EndTest()
-    {
-      this.currentState = TestState.TestComplete;
-      this.UpdateInstructionText(); // Update text to show final status
-      base.EndTest();
     }
   }
 }

@@ -27,6 +27,10 @@ using SDL3;
 
 namespace Night
 {
+  /// <summary>
+  /// Provides the core framework functionalities, including the main game loop and event processing.
+  /// This partial class specifically handles SDL event processing.
+  /// </summary>
   public static partial class Framework
   {
     private static void ProcessSdlEvents(IGame game)

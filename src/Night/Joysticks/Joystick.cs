@@ -359,6 +359,36 @@ namespace Night
     internal uint InstanceId => this.instanceId;
 
     /// <summary>
+    /// Gets the button, axis or hat that a virtual gamepad axis is bound to.
+    /// (This is a complex LÖVE feature and is currently not fully implemented.)
+    /// </summary>
+    /// <param name="axis">The virtual gamepad axis to check.</param>
+    /// <returns>A GamepadMappingResult indicating the physical input. Currently returns IsValid = false.</returns>
+    public static GamepadMappingResult GetGamepadMapping(GamepadAxis axis)
+    {
+      _ = axis; // Parameter is required for overload and future implementation.
+
+      // SDL_GetGamepadBindings might be useful here but is complex to parse.
+      // For now, returning not valid.
+      return new GamepadMappingResult { IsValid = false };
+    }
+
+    /// <summary>
+    /// Gets the button, axis or hat that a virtual gamepad button is bound to.
+    /// (This is a complex LÖVE feature and is currently not fully implemented.)
+    /// </summary>
+    /// <param name="button">The virtual gamepad button to check.</param>
+    /// <returns>A GamepadMappingResult indicating the physical input. Currently returns IsValid = false.</returns>
+    public static GamepadMappingResult GetGamepadMapping(GamepadButton button)
+    {
+      _ = button; // Parameter is required for overload and future implementation.
+
+      // SDL_GetGamepadBindings might be useful here but is complex to parse.
+      // For now, returning not valid.
+      return new GamepadMappingResult { IsValid = false };
+    }
+
+    /// <summary>
     /// Gets the direction of each axis.
     /// </summary>
     /// <returns>An array of floats, one for each axis direction, or an empty array if disposed or an error occurs.</returns>
@@ -491,32 +521,6 @@ namespace Night
     }
 
     /// <summary>
-    /// Gets the button, axis or hat that a virtual gamepad axis is bound to.
-    /// (This is a complex LÖVE feature and is currently not fully implemented.)
-    /// </summary>
-    /// <param name="axis">The virtual gamepad axis to check.</param>
-    /// <returns>A GamepadMappingResult indicating the physical input. Currently returns IsValid = false.</returns>
-    public static GamepadMappingResult GetGamepadMapping(GamepadAxis axis)
-    {
-      // SDL_GetGamepadBindings might be useful here but is complex to parse.
-      // For now, returning not valid.
-      return new GamepadMappingResult { IsValid = false };
-    }
-
-    /// <summary>
-    /// Gets the button, axis or hat that a virtual gamepad button is bound to.
-    /// (This is a complex LÖVE feature and is currently not fully implemented.)
-    /// </summary>
-    /// <param name="button">The virtual gamepad button to check.</param>
-    /// <returns>A GamepadMappingResult indicating the physical input. Currently returns IsValid = false.</returns>
-    public static GamepadMappingResult GetGamepadMapping(GamepadButton button)
-    {
-      // SDL_GetGamepadBindings might be useful here but is complex to parse.
-      // For now, returning not valid.
-      return new GamepadMappingResult { IsValid = false };
-    }
-
-    /// <summary>
     /// Gets the full gamepad mapping string of this Joystick, if it's recognized as a gamepad.
     /// </summary>
     /// <returns>The gamepad mapping string, or null if not a gamepad or disposed.</returns>
@@ -616,15 +620,6 @@ namespace Night
     public bool IsConnected()
     {
       return !this.disposed && this.isConnected;
-    }
-
-    /// <summary>
-    /// Sets the connected state. Internal use by Joysticks class.
-    /// </summary>
-    /// <param name="connected">True if connected, false otherwise.</param>
-    internal void SetConnectedState(bool connected)
-    {
-      this.isConnected = connected;
     }
 
     /// <summary>
@@ -728,6 +723,15 @@ namespace Night
     }
 
     /// <summary>
+    /// Sets the connected state. Internal use by Joysticks class.
+    /// </summary>
+    /// <param name="connected">True if connected, false otherwise.</param>
+    internal void SetConnectedState(bool connected)
+    {
+      this.isConnected = connected;
+    }
+
+    /// <summary>
     /// Releases unmanaged and - optionally - managed resources.
     /// </summary>
     /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
@@ -770,8 +774,9 @@ namespace Night
       {
         return rawValue / 32767.0f;
       }
-      else // rawValue < 0
+      else
       {
+        // rawValue < 0
         return rawValue / 32768.0f;
       }
     }

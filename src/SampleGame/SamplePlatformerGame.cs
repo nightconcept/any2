@@ -367,7 +367,9 @@ public class SamplePlatformerGame : Night.Game
   public override void JoystickAxis(Joystick joystick, int axis, float value)
   {
     Console.WriteLine($"SampleGame: Joystick Axis! ID: {joystick.GetId()}, Axis: {axis}, Value: {value:F4}");
-    if (axis == 0) // Typically left stick X-axis
+
+    // Typically left stick X-axis
+    if (axis == 0)
     {
       this.joystickAxis0Value = value;
       this.inputProvidingJoystickId = (uint)joystick.GetId(); // Record which joystick is providing this input, cast to uint
@@ -387,7 +389,8 @@ public class SamplePlatformerGame : Night.Game
     // or if we had a mapping to Night.GamepadButton.A, we'd check that.
     // For raw joystick, we'll assume button 0 is a common primary action button.
     // This part will be more robust in Phase 4 with GamepadPressed.
-    if (button == 0) // Assuming raw button 0 is 'A'/South for testing P3
+    // Assuming raw button 0 is 'A'/South for testing P3
+    if (button == 0)
     {
       this.joystickAButtonPressed = true;
       this.inputProvidingJoystickId = joystick.GetId();
@@ -402,7 +405,9 @@ public class SamplePlatformerGame : Night.Game
   public override void JoystickReleased(Joystick joystick, int button)
   {
     Console.WriteLine($"SampleGame: Joystick Released! ID: {joystick.GetId()}, Button: {button}");
-    if (button == 0) // Assuming raw button 0 is 'A'/South
+
+    // Assuming raw button 0 is 'A'/South
+    if (button == 0)
     {
       this.joystickAButtonPressed = false;
 
@@ -420,7 +425,9 @@ public class SamplePlatformerGame : Night.Game
   public override void JoystickHat(Joystick joystick, int hat, JoystickHat direction)
   {
     Console.WriteLine($"SampleGame: Joystick Hat! ID: {joystick.GetId()}, Hat: {hat}, Direction: {direction}");
-    if (hat == 0) // Typically the first D-Pad/Hat
+
+    // Typically the first D-Pad/Hat
+    if (hat == 0)
     {
       this.joystickHat0Direction = direction;
       this.inputProvidingJoystickId = (uint)joystick.GetId(); // Record which joystick is providing this input, cast to uint
