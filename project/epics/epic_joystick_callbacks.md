@@ -2,7 +2,7 @@
 
 **User Story:** As a game developer using Night.Framework, I want to be able to respond to joystick and gamepad events (axis movement, button presses/releases, device connections/disconnections) via Love2D-style callbacks, so I can easily implement input handling for these devices.
 
-**Status:** In-Progress
+**Status:** In-Progress (Phase 4 Ready for Review)
 
 ## Requirements
 
@@ -120,38 +120,40 @@ Implement the following Love2D equivalent callback functions in `Night.Framework
 
 **Goal:** Handle inputs from joysticks that are recognized as standard gamepads, using SDL's gamepad API.
 
-- [ ] **P4.T1: Implement `GamepadAxis`, `GamepadPressed`, `GamepadReleased` Event Handling.**
-  - [ ] In `ProcessSdlEvents` (or equivalent):
-    - [ ] Handle `SDL.EventType.GamepadAxisMotion`:
-      - [ ] Get `Joystick` instance using `e.GAxis.Which`. Check `joystick.IsGamepad()`.
-      - [ ] Normalize axis value from `e.GAxis.Value`.
-      - [ ] Map `e.GAxis.Axis` (an `SDL.GamepadAxis`) to `Night.GamepadAxis` (create `private static Night.GamepadAxis MapSdlGamepadAxisToNight(SDL.GamepadAxis sdlAxis)` helper).
-      - [ ] Call `game.GamepadAxis(joystick, nightAxis, normalizedValue)`.
-    - [ ] Handle `SDL.EventType.GamepadButtonDown`:
-      - [ ] Get `Joystick` instance. Check `joystick.IsGamepad()`.
-      - [ ] Map `e.GButton.Button` (an `SDL.GamepadButton`) to `Night.GamepadButton` (create `private static Night.GamepadButton MapSdlGamepadButtonToNight(SDL.GamepadButton sdlButton)` helper).
-      - [ ] Call `game.GamepadPressed(joystick, nightButton)`.
-    - [ ] Handle `SDL.EventType.GamepadButtonUp`:
-      - [ ] Get `Joystick` instance. Check `joystick.IsGamepad()`.
-      - [ ] Map `e.GButton.Button` to `Night.GamepadButton`.
-      - [ ] Call `game.GamepadReleased(joystick, nightButton)`.
-- [ ] **P4.V1: Verification (SampleGame - Full Controller Test):**
-  - [ ] Expand `SampleGame` to specifically test gamepad events.
-  - [ ] Use a standard gamepad (e.g., Xbox controller).
-  - [ ] Verify that both raw joystick events AND specific gamepad events are triggered appropriately.
-  - [ ] Log output from `joystick.GetGamepadAxis()`, `joystick.IsGamepadDown()` in the sample game's `Update` loop to cross-verify with event callbacks.
-  - [ ] Test basic player movement or actions in `SampleGame` controlled by gamepad inputs.
+**Status:** P4.V1 Complete (2025-06-15)
+
+- [x] **P4.T1: Implement `GamepadAxis`, `GamepadPressed`, `GamepadReleased` Event Handling.**
+  - [x] In `ProcessSdlEvents` (or equivalent):
+    - [x] Handle `SDL.EventType.GamepadAxisMotion`:
+      - [x] Get `Joystick` instance using `e.GAxis.Which`. Check `joystick.IsGamepad()`.
+      - [x] Normalize axis value from `e.GAxis.Value`.
+      - [x] Map `e.GAxis.Axis` (an `SDL.GamepadAxis`) to `Night.GamepadAxis` (create `private static Night.GamepadAxis MapSdlGamepadAxisToNight(SDL.GamepadAxis sdlAxis)` helper).
+      - [x] Call `game.GamepadAxis(joystick, nightAxis, normalizedValue)`.
+    - [x] Handle `SDL.EventType.GamepadButtonDown`:
+      - [x] Get `Joystick` instance. Check `joystick.IsGamepad()`.
+      - [x] Map `e.GButton.Button` (an `SDL.GamepadButton`) to `Night.GamepadButton` (create `private static Night.GamepadButton MapSdlGamepadButtonToNight(SDL.GamepadButton sdlButton)` helper).
+      - [x] Call `game.GamepadPressed(joystick, nightButton)`.
+    - [x] Handle `SDL.EventType.GamepadButtonUp`:
+      - [x] Get `Joystick` instance. Check `joystick.IsGamepad()`.
+      - [x] Map `e.GButton.Button` to `Night.GamepadButton`.
+      - [x] Call `game.GamepadReleased(joystick, nightButton)`.
+- [x] **P4.V1: Verification (SampleGame - Full Controller Test):**
+  - [x] Expand `SampleGame` to specifically test gamepad events.
+  - [x] Use a standard gamepad (e.g., Xbox controller).
+  - [x] Verify that both raw joystick events AND specific gamepad events are triggered appropriately.
+  - [x] Log output from `joystick.GetGamepadAxis()`, `joystick.IsGamepadDown()` in the sample game's `Update` loop to cross-verify with event callbacks.
+  - [x] Test basic player movement or actions in `SampleGame` controlled by gamepad inputs.
 
 ## Phase 5: Documentation and Final Review
 
-- [ ] **P5.T1: Add XML Documentation.**
-  - [ ] Ensure all new public APIs in `IGame.cs`, `Game.cs`, `Joystick.cs`, `Joysticks.cs` (and related enums) have comprehensive XML documentation comments.
-- [ ] **P5.T2: Update `project/README.md` or relevant docs.**
-  - [ ] If necessary, add a section on Joystick and Gamepad usage.
-- [ ] **P5.T3: Code Cleanup and Final Review.**
-  - [ ] Review all changes for adherence to `guidelines.md`.
-  - [ ] Check for any remaining TODOs or potential issues.
-  - [ ] Ensure logging is appropriate (not too verbose for release, but helpful for debugging).
+- [x] **P5.T1: Add XML Documentation.**
+  - [x] Ensure all new public APIs in `IGame.cs`, `Game.cs`, `Joystick.cs`, `Joysticks.cs` (and related enums) have comprehensive XML documentation comments.
+- [x] **P5.T2: Update `project/README.md` or relevant docs.**
+  - [x] If necessary, add a section on Joystick and Gamepad usage.
+- [x] **P5.T3: Code Cleanup and Final Review.**
+  - [x] Review all changes for adherence to `guidelines.md`.
+  - [x] Check for any remaining TODOs or potential issues.
+  - [x] Ensure logging is appropriate (not too verbose for release, but helpful for debugging).
 
 ## Notes & Decisions (To be updated during development)
 

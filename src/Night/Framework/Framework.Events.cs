@@ -213,6 +213,79 @@ namespace Night
             Logger.Warn($"Received JoystickHatMotion for unknown joystick instance ID {e.JHat.Which}");
           }
         }
+        else if (eventType == SDL.EventType.GamepadAxisMotion)
+        {
+          Logger.Debug($"SDL_GAMEPADAXISMOTION event: Joystick {e.GAxis.Which}, Axis {(SDL.GamepadAxis)e.GAxis.Axis}, Value {e.GAxis.Value}");
+          Joystick? joystick = Night.Joysticks.GetJoystickByInstanceId(e.GAxis.Which);
+          if (joystick != null)
+          {
+            if (joystick.IsGamepad())
+            {
+              try
+              {
+                float normalizedValue = NormalizeSdlAxisValue(e.GAxis.Value);
+                Night.GamepadAxis nightAxis = MapSdlGamepadAxisToNight((SDL.GamepadAxis)e.GAxis.Axis);
+                game.GamepadAxis(joystick, nightAxis, normalizedValue);
+              }
+              catch (Exception exUser)
+              {
+                HandleGameException(exUser, game);
+              }
+            }
+          }
+          else
+          {
+            Logger.Warn($"Received GamepadAxisMotion for unknown joystick instance ID {e.GAxis.Which}");
+          }
+        }
+        else if (eventType == SDL.EventType.GamepadButtonDown)
+        {
+          Logger.Debug($"SDL_GAMEPADBUTTONDOWN event: Joystick {e.GButton.Which}, Button {(SDL.GamepadButton)e.GButton.Button}");
+          Joystick? joystick = Night.Joysticks.GetJoystickByInstanceId(e.GButton.Which);
+          if (joystick != null)
+          {
+            if (joystick.IsGamepad())
+            {
+              try
+              {
+                Night.GamepadButton nightButton = MapSdlGamepadButtonToNight((SDL.GamepadButton)e.GButton.Button);
+                game.GamepadPressed(joystick, nightButton);
+              }
+              catch (Exception exUser)
+              {
+                HandleGameException(exUser, game);
+              }
+            }
+          }
+          else
+          {
+            Logger.Warn($"Received GamepadButtonDown for unknown joystick instance ID {e.GButton.Which}");
+          }
+        }
+        else if (eventType == SDL.EventType.GamepadButtonUp)
+        {
+          Logger.Debug($"SDL_GAMEPADBUTTONUP event: Joystick {e.GButton.Which}, Button {(SDL.GamepadButton)e.GButton.Button}");
+          Joystick? joystick = Night.Joysticks.GetJoystickByInstanceId(e.GButton.Which);
+          if (joystick != null)
+          {
+            if (joystick.IsGamepad())
+            {
+              try
+              {
+                Night.GamepadButton nightButton = MapSdlGamepadButtonToNight((SDL.GamepadButton)e.GButton.Button);
+                game.GamepadReleased(joystick, nightButton);
+              }
+              catch (Exception exUser)
+              {
+                HandleGameException(exUser, game);
+              }
+            }
+          }
+          else
+          {
+            Logger.Warn($"Received GamepadButtonUp for unknown joystick instance ID {e.GButton.Which}");
+          }
+        }
 
         // Other Gamepad event handling will be added here in later phases
       }
@@ -235,6 +308,70 @@ namespace Night
       // So, for positive values, divide by 32767.0f.
       // For negative values (excluding -32768), divide by 32768.0f to maintain symmetry around 0.
       return value < 0 ? value / 32768.0f : value / 32767.0f;
+    }
+
+    private static Night.GamepadAxis MapSdlGamepadAxisToNight(SDL.GamepadAxis sdlAxis)
+    {
+      switch (sdlAxis)
+      {
+        case SDL.GamepadAxis.LeftX:
+          return Night.GamepadAxis.LeftX;
+        case SDL.GamepadAxis.LeftY:
+          return Night.GamepadAxis.LeftY;
+        case SDL.GamepadAxis.RightX:
+          return Night.GamepadAxis.RightX;
+        case SDL.GamepadAxis.RightY:
+          return Night.GamepadAxis.RightY;
+        case SDL.GamepadAxis.LeftTrigger:
+          return Night.GamepadAxis.TriggerLeft;
+        case SDL.GamepadAxis.RightTrigger:
+          return Night.GamepadAxis.TriggerRight;
+        default:
+          Logger.Warn($"Unknown SDL.GamepadAxis: {sdlAxis}. Defaulting to LeftX.");
+          return Night.GamepadAxis.LeftX; // Or throw an exception
+      }
+    }
+
+    private static Night.GamepadButton MapSdlGamepadButtonToNight(SDL.GamepadButton sdlButton)
+    {
+      switch (sdlButton)
+      {
+        case SDL.GamepadButton.South: // A
+          return Night.GamepadButton.A;
+        case SDL.GamepadButton.East: // B
+          return Night.GamepadButton.B;
+        case SDL.GamepadButton.West: // X
+          return Night.GamepadButton.X;
+        case SDL.GamepadButton.North: // Y
+          return Night.GamepadButton.Y;
+        case SDL.GamepadButton.Back:
+          return Night.GamepadButton.Back;
+        case SDL.GamepadButton.Guide:
+          return Night.GamepadButton.Guide;
+        case SDL.GamepadButton.Start:
+          return Night.GamepadButton.Start;
+        case SDL.GamepadButton.LeftStick:
+          return Night.GamepadButton.LeftStick;
+        case SDL.GamepadButton.RightStick:
+          return Night.GamepadButton.RightStick;
+        case SDL.GamepadButton.LeftShoulder:
+          return Night.GamepadButton.LeftShoulder;
+        case SDL.GamepadButton.RightShoulder:
+          return Night.GamepadButton.RightShoulder;
+        case SDL.GamepadButton.DPadUp:
+          return Night.GamepadButton.DPUp;
+        case SDL.GamepadButton.DPadDown:
+          return Night.GamepadButton.DPDown;
+        case SDL.GamepadButton.DPadLeft:
+          return Night.GamepadButton.DPLeft;
+        case SDL.GamepadButton.DPadRight:
+          return Night.GamepadButton.DPRight;
+
+        // SDL.GamepadButton.Misc1, Paddle1, Paddle2, Paddle3, Paddle4, Touchpad are not in Night.GamepadButton
+        default:
+          Logger.Warn($"Unknown SDL.GamepadButton: {sdlButton}. Defaulting to A.");
+          return Night.GamepadButton.A; // Or throw an exception
+      }
     }
   }
 }

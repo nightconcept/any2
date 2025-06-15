@@ -54,7 +54,12 @@ public class SamplePlatformerGame : Night.Game
   private float joystickAxis0Value = 0.0f;
   private Night.JoystickHat joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
   private bool joystickAButtonPressed = false;
-  private uint? inputProvidingJoystickId = null; // Store the ID of the joystick providing input
+  private uint? inputProvidingJoystickId = null; // Store the ID of the joystick providing input (generic)
+
+  // Gamepad specific input state
+  private float gamepadLeftXValue = 0.0f;
+  private bool gamepadAButtonPressed = false;
+  private uint? gamepadProvidingJoystickId = null; // Store the ID of the joystick providing gamepad input
 
   /// <summary>
   /// Initializes a new instance of the <see cref="SamplePlatformerGame"/> class.
@@ -116,30 +121,64 @@ public class SamplePlatformerGame : Night.Game
     // Logger.Debug($"SamplePlatformerGame.Update: deltaTime={deltaTime:F5}");
 
     // Check if the input-providing joystick is still connected
-    float currentAxisValue = 0.0f;
-    Night.JoystickHat currentHatDirection = Night.JoystickHat.Centered; // Fully qualified name
-    bool currentAButtonPressed = false;
+    float finalHorizontalInput = 0.0f;
+    Night.JoystickHat finalHatDirection = Night.JoystickHat.Centered;
+    bool finalJumpPressed = false;
 
-    if (this.inputProvidingJoystickId.HasValue)
+    // Prioritize gamepad input if available and from the same joystick
+    if (this.gamepadProvidingJoystickId.HasValue)
     {
-      Joystick? inputJoystick = Night.Joysticks.GetJoystickByInstanceId(this.inputProvidingJoystickId.Value);
-      if (inputJoystick != null && inputJoystick.IsConnected())
+      Joystick? gamepadJoystick = Night.Joysticks.GetJoystickByInstanceId(this.gamepadProvidingJoystickId.Value);
+      if (gamepadJoystick != null && gamepadJoystick.IsConnected() && gamepadJoystick.IsGamepad())
       {
-        currentAxisValue = this.joystickAxis0Value;
-        currentHatDirection = this.joystickHat0Direction;
-        currentAButtonPressed = this.joystickAButtonPressed; // Use stored state
+        finalHorizontalInput = this.gamepadLeftXValue;
+        finalJumpPressed = this.gamepadAButtonPressed;
+
+        // Gamepad typically doesn't directly map to a single "hat" for player movement in this simple setup,
+        // so we might still use raw joystick hat if needed, or ignore for gamepad.
+        // For simplicity, if gamepad is active for axis/button, we might ignore raw hat.
+        // Or, if player.Update needs hat, we could still get it from raw joystick state.
+        // For now, let's assume gamepad axis/button overrides hat for player control.
+        finalHatDirection = Night.JoystickHat.Centered; // Or decide how to integrate if player needs it
+
+        // Log polled gamepad state for verification
+        Console.WriteLine($"SampleGame.Update: Polled Gamepad ID {gamepadJoystick.GetId()}: LeftX: {gamepadJoystick.GetGamepadAxis(Night.GamepadAxis.LeftX):F4}, A Button: {gamepadJoystick.IsGamepadDown(Night.GamepadButton.A)}");
       }
       else
       {
-        // Joystick disconnected or no longer valid, reset stored values and ID
+        // Gamepad-providing joystick disconnected or no longer a gamepad
+        this.gamepadLeftXValue = 0.0f;
+        this.gamepadAButtonPressed = false;
+        this.gamepadProvidingJoystickId = null;
+      }
+    }
+
+    // If gamepad input wasn't used, or to supplement it (e.g., for hat), check raw joystick input
+    if (this.inputProvidingJoystickId.HasValue && (!this.gamepadProvidingJoystickId.HasValue || this.gamepadProvidingJoystickId.Value != this.inputProvidingJoystickId.Value))
+    {
+      Joystick? rawJoystick = Night.Joysticks.GetJoystickByInstanceId(this.inputProvidingJoystickId.Value);
+      if (rawJoystick != null && rawJoystick.IsConnected())
+      {
+        if (!this.gamepadProvidingJoystickId.HasValue)
+        {
+          finalHorizontalInput = this.joystickAxis0Value;
+          finalJumpPressed = this.joystickAButtonPressed;
+        }
+
+        finalHatDirection = this.joystickHat0Direction; // Always take raw hat for now
+      }
+      else
+      {
+        // Raw input-providing joystick disconnected
         this.joystickAxis0Value = 0.0f;
-        this.joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+        this.joystickHat0Direction = Night.JoystickHat.Centered;
         this.joystickAButtonPressed = false;
         this.inputProvidingJoystickId = null;
       }
     }
 
-    this.player.Update(deltaTime, this.platforms, currentAxisValue, currentHatDirection, currentAButtonPressed);
+    // If both gamepadProvidingJoystickId and inputProvidingJoystickId are null, inputs remain 0/false/Centered.
+    this.player.Update(deltaTime, this.platforms, finalHorizontalInput, finalHatDirection, finalJumpPressed);
 
     // Check if player reached the goal platform
     // Adjust playerBounds slightly for the goal check to ensure "touching" counts,
@@ -346,7 +385,15 @@ public class SamplePlatformerGame : Night.Game
       this.joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
       this.joystickAButtonPressed = false;
       this.inputProvidingJoystickId = null;
-      Console.WriteLine($"SampleGame: Input-providing joystick (ID: {joystick.GetId()}) was removed. Resetting its input state.");
+      Console.WriteLine($"SampleGame: Raw input-providing joystick (ID: {joystick.GetId()}) was removed. Resetting its input state.");
+    }
+
+    if (this.gamepadProvidingJoystickId.HasValue && this.gamepadProvidingJoystickId.Value == joystick.GetId())
+    {
+      this.gamepadLeftXValue = 0.0f;
+      this.gamepadAButtonPressed = false;
+      this.gamepadProvidingJoystickId = null;
+      Console.WriteLine($"SampleGame: Gamepad input-providing joystick (ID: {joystick.GetId()}) was removed. Resetting its input state.");
     }
 
     Console.WriteLine($"SampleGame: Total Joysticks after removal: {Night.Joysticks.GetJoystickCount()}");
@@ -431,6 +478,53 @@ public class SamplePlatformerGame : Night.Game
     {
       this.joystickHat0Direction = direction;
       this.inputProvidingJoystickId = (uint)joystick.GetId(); // Record which joystick is providing this input, cast to uint
+    }
+  }
+
+  /// <summary>
+  /// Called when a virtual gamepad axis is moved.
+  /// </summary>
+  /// <param name="joystick">The joystick whose virtual gamepad axis moved.</param>
+  /// <param name="axis">The virtual gamepad axis.</param>
+  /// <param name="value">The new value of the virtual gamepad axis (-1.0 to 1.0).</param>
+  public override void GamepadAxis(Joystick joystick, Night.GamepadAxis axis, float value)
+  {
+    Console.WriteLine($"SampleGame: Gamepad Axis! ID: {joystick.GetId()}, Axis: {axis}, Value: {value:F4}");
+    if (axis == Night.GamepadAxis.LeftX)
+    {
+      this.gamepadLeftXValue = value;
+      this.gamepadProvidingJoystickId = joystick.GetId();
+    }
+  }
+
+  /// <summary>
+  /// Called when a virtual gamepad button is pressed.
+  /// </summary>
+  /// <param name="joystick">The joystick whose virtual gamepad button was pressed.</param>
+  /// <param name="button">The virtual gamepad button.</param>
+  public override void GamepadPressed(Joystick joystick, Night.GamepadButton button)
+  {
+    Console.WriteLine($"SampleGame: Gamepad Pressed! ID: {joystick.GetId()}, Button: {button}");
+    if (button == Night.GamepadButton.A || button == Night.GamepadButton.South)
+    {
+      this.gamepadAButtonPressed = true;
+      this.gamepadProvidingJoystickId = joystick.GetId();
+    }
+  }
+
+  /// <summary>
+  /// Called when a virtual gamepad button is released.
+  /// </summary>
+  /// <param name="joystick">The joystick whose virtual gamepad button was released.</param>
+  /// <param name="button">The virtual gamepad button.</param>
+  public override void GamepadReleased(Joystick joystick, Night.GamepadButton button)
+  {
+    Console.WriteLine($"SampleGame: Gamepad Released! ID: {joystick.GetId()}, Button: {button}");
+    if (button == Night.GamepadButton.A || button == Night.GamepadButton.South)
+    {
+      this.gamepadAButtonPressed = false;
+
+      // Do not reset gamepadProvidingJoystickId here, other gamepad inputs might be active.
     }
   }
 
