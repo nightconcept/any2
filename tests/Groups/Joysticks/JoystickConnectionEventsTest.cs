@@ -36,7 +36,6 @@ namespace NightTest.Groups.Joysticks
   public class JoystickConnectionEventsTest : ManualTestCase
   {
     private TestState currentState = TestState.InitialPromptConnect;
-    private string instructionText = string.Empty;
     private List<string> consoleMessages = new List<string>();
     private Joystick? lastConnectedJoystick;
     private Joystick? lastDisconnectedJoystick;
