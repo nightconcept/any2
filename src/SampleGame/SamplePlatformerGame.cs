@@ -53,6 +53,7 @@ public class SamplePlatformerGame : Night.Game
   // Joystick input state
   private float _joystickAxis0Value = 0.0f;
   private Night.JoystickHat _joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+  private bool _joystickAButtonPressed = false;
   private uint? _inputProvidingJoystickId = null; // Store the ID of the joystick providing input
 
   /// <summary>
@@ -117,6 +118,7 @@ public class SamplePlatformerGame : Night.Game
     // Check if the input-providing joystick is still connected
     float currentAxisValue = 0.0f;
     Night.JoystickHat currentHatDirection = Night.JoystickHat.Centered; // Fully qualified name
+    bool currentAButtonPressed = false;
 
     if (this._inputProvidingJoystickId.HasValue)
     {
@@ -125,17 +127,19 @@ public class SamplePlatformerGame : Night.Game
       {
         currentAxisValue = this._joystickAxis0Value;
         currentHatDirection = this._joystickHat0Direction;
+        currentAButtonPressed = this._joystickAButtonPressed; // Use stored state
       }
       else
       {
         // Joystick disconnected or no longer valid, reset stored values and ID
         this._joystickAxis0Value = 0.0f;
         this._joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+        this._joystickAButtonPressed = false;
         this._inputProvidingJoystickId = null;
       }
     }
 
-    this.player.Update(deltaTime, this.platforms, currentAxisValue, currentHatDirection);
+    this.player.Update(deltaTime, this.platforms, currentAxisValue, currentHatDirection, currentAButtonPressed);
 
     // Check if player reached the goal platform
     // Adjust playerBounds slightly for the goal check to ensure "touching" counts,
@@ -340,6 +344,7 @@ public class SamplePlatformerGame : Night.Game
       // The joystick that was providing input has been removed, reset stored values.
       this._joystickAxis0Value = 0.0f;
       this._joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+      this._joystickAButtonPressed = false;
       this._inputProvidingJoystickId = null;
       Console.WriteLine($"SampleGame: Input-providing joystick (ID: {joystick.GetId()}) was removed. Resetting its input state.");
     }
@@ -377,6 +382,15 @@ public class SamplePlatformerGame : Night.Game
   public override void JoystickPressed(Joystick joystick, int button)
   {
     Console.WriteLine($"SampleGame: Joystick Pressed! ID: {joystick.GetId()}, Button: {button}");
+    // Assuming 'A' button (South) corresponds to raw button index 0 for many controllers,
+    // or if we had a mapping to Night.GamepadButton.A, we'd check that.
+    // For raw joystick, we'll assume button 0 is a common primary action button.
+    // This part will be more robust in Phase 4 with GamepadPressed.
+    if (button == 0) // Assuming raw button 0 is 'A'/South for testing P3
+    {
+      this._joystickAButtonPressed = true;
+      this._inputProvidingJoystickId = joystick.GetId();
+    }
   }
 
   /// <summary>
@@ -387,6 +401,12 @@ public class SamplePlatformerGame : Night.Game
   public override void JoystickReleased(Joystick joystick, int button)
   {
     Console.WriteLine($"SampleGame: Joystick Released! ID: {joystick.GetId()}, Button: {button}");
+    if (button == 0) // Assuming raw button 0 is 'A'/South
+    {
+      this._joystickAButtonPressed = false;
+      // We don't reset _inputProvidingJoystickId here, as other inputs might still be active from this joystick.
+      // It will be reset if the joystick is disconnected or if another joystick provides input.
+    }
   }
 
   /// <summary>

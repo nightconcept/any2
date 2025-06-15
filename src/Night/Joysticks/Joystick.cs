@@ -90,6 +90,27 @@ namespace Night
     /// </summary>
     Y,
 
+    // Aliases for face buttons
+    /// <summary>
+    /// Alias for the 'A' button (South face button).
+    /// </summary>
+    South = A,
+
+    /// <summary>
+    /// Alias for the 'B' button (East face button).
+    /// </summary>
+    East = B,
+
+    /// <summary>
+    /// Alias for the 'X' button (West face button).
+    /// </summary>
+    West = X,
+
+    /// <summary>
+    /// Alias for the 'Y' button (North face button).
+    /// </summary>
+    North = Y,
+
     /// <summary>
     /// The 'Back' or 'Select' button.
     /// </summary>

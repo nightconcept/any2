@@ -86,7 +86,7 @@ public class Platformer : IGame
   public void Update(double deltaTime)
   {
     // Pass default joystick values as this sample isn't the primary focus for joystick control.
-    this.player.Update(deltaTime, this.platforms, 0.0f, Night.JoystickHat.Centered);
+    this.player.Update(deltaTime, this.platforms, 0.0f, Night.JoystickHat.Centered, false);
 
     Night.Rectangle playerBoundsForGoalCheck = new Night.Rectangle((int)this.player.X, (int)this.player.Y, this.player.Width, this.player.Height + 1);
     if (CheckAABBCollision(playerBoundsForGoalCheck, this.goalPlatform) && !this.goalReachedMessageShown)

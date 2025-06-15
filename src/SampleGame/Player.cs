@@ -120,7 +120,8 @@ namespace SampleGame
     /// <param name="platforms">A list of <see cref="Night.Rectangle"/> objects representing solid platforms.</param>
     /// <param name="joystickAxisValue">The current value of the joystick's horizontal axis (e.g., left stick X).</param>
     /// <param name="hatDirection">The current direction of the joystick's hat (e.g., D-pad).</param>
-    public void Update(double deltaTime, List<Night.Rectangle> platforms, float joystickAxisValue, Night.JoystickHat hatDirection)
+    /// <param name="joystickAButtonPressed">True if the joystick 'A' button is currently pressed.</param>
+    public void Update(double deltaTime, List<Night.Rectangle> platforms, float joystickAxisValue, Night.JoystickHat hatDirection, bool joystickAButtonPressed)
     {
       float dt = (float)deltaTime;
       const float joystickDeadzone = 0.2f;
@@ -164,8 +165,8 @@ namespace SampleGame
         }
       }
 
-      // Jump input (Keyboard only for now, can be expanded)
-      bool tryingToJump = Keyboard.IsDown(KeyCode.Space);
+      // Jump input
+      bool tryingToJump = joystickAButtonPressed || Keyboard.IsDown(KeyCode.Space);
       if (tryingToJump && this.isGrounded)
       {
         this.velocityY = JumpStrength;
