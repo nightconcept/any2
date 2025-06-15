@@ -113,7 +113,7 @@ namespace Night
     /// </summary>
     /// <param name="instanceId">The SDL instance ID of the joystick.</param>
     /// <returns>The <see cref="Joystick"/> instance if found and active, otherwise null.</returns>
-    internal static Joystick? GetJoystickByInstanceId(uint instanceId)
+    public static Joystick? GetJoystickByInstanceId(uint instanceId)
     {
       _ = ActiveJoysticks.TryGetValue(instanceId, out Joystick? joystickInstance);
       return joystickInstance;

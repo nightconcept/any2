@@ -546,9 +546,9 @@ namespace Night
     /// Gets the joystick's unique instance identifier.
     /// </summary>
     /// <returns>The joystick's ID (matches SDL_JoystickID).</returns>
-    public int GetId()
+    public uint GetId()
     {
-      return (int)this.instanceId;
+      return this.instanceId;
     }
 
     /// <summary>

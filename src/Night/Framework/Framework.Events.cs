@@ -129,8 +129,109 @@ namespace Night
           }
         }
 
+        else if (eventType == SDL.EventType.JoystickAxisMotion)
+        {
+          Logger.Debug($"SDL_JOYSTICKAXISMOTION event: Joystick {e.JAxis.Which}, Axis {e.JAxis.Axis}, Value {e.JAxis.Value}");
+          Joystick? joystick = Night.Joysticks.GetJoystickByInstanceId(e.JAxis.Which);
+          if (joystick != null)
+          {
+            try
+            {
+              float normalizedValue = NormalizeSdlAxisValue(e.JAxis.Value);
+              game.JoystickAxis(joystick, (int)e.JAxis.Axis, normalizedValue);
+            }
+            catch (Exception exUser)
+            {
+              HandleGameException(exUser, game);
+            }
+          }
+          else
+          {
+            Logger.Warn($"Received JoystickAxisMotion for unknown joystick instance ID {e.JAxis.Which}");
+          }
+        }
+        else if (eventType == SDL.EventType.JoystickButtonDown)
+        {
+          Logger.Debug($"SDL_JOYSTICKBUTTONDOWN event: Joystick {e.JButton.Which}, Button {e.JButton.Button}");
+          Joystick? joystick = Night.Joysticks.GetJoystickByInstanceId(e.JButton.Which);
+          if (joystick != null)
+          {
+            try
+            {
+              game.JoystickPressed(joystick, (int)e.JButton.Button);
+            }
+            catch (Exception exUser)
+            {
+              HandleGameException(exUser, game);
+            }
+          }
+          else
+          {
+            Logger.Warn($"Received JoystickButtonDown for unknown joystick instance ID {e.JButton.Which}");
+          }
+        }
+        else if (eventType == SDL.EventType.JoystickButtonUp)
+        {
+          Logger.Debug($"SDL_JOYSTICKBUTTONUP event: Joystick {e.JButton.Which}, Button {e.JButton.Button}");
+          Joystick? joystick = Night.Joysticks.GetJoystickByInstanceId(e.JButton.Which);
+          if (joystick != null)
+          {
+            try
+            {
+              game.JoystickReleased(joystick, (int)e.JButton.Button);
+            }
+            catch (Exception exUser)
+            {
+              HandleGameException(exUser, game);
+            }
+          }
+          else
+          {
+            Logger.Warn($"Received JoystickButtonUp for unknown joystick instance ID {e.JButton.Which}");
+          }
+        }
+        else if (eventType == SDL.EventType.JoystickHatMotion)
+        {
+          Logger.Debug($"SDL_JOYSTICKHATMOTION event: Joystick {e.JHat.Which}, Hat {e.JHat.Hat}, Value {(JoystickHat)e.JHat.Value}");
+          Joystick? joystick = Night.Joysticks.GetJoystickByInstanceId(e.JHat.Which);
+          if (joystick != null)
+          {
+            try
+            {
+              game.JoystickHat(joystick, (int)e.JHat.Hat, (JoystickHat)e.JHat.Value);
+            }
+            catch (Exception exUser)
+            {
+              HandleGameException(exUser, game);
+            }
+          }
+          else
+          {
+            Logger.Warn($"Received JoystickHatMotion for unknown joystick instance ID {e.JHat.Which}");
+          }
+        }
+
         // Other Gamepad event handling will be added here in later phases
       }
+    }
+
+    private static float NormalizeSdlAxisValue(short value)
+    {
+      // SDL axis values range from -32768 (SDL_JOYSTICK_AXIS_MIN) to 32767 (SDL_JOYSTICK_AXIS_MAX).
+      // We want to normalize this to -1.0f to 1.0f.
+      if (value == 0)
+      {
+        return 0.0f;
+      }
+      else if (value == -32768)
+      {
+        return -1.0f;
+      }
+
+      // For positive values, max is 32767. For negative, min is -32768 (already handled).
+      // So, for positive values, divide by 32767.0f.
+      // For negative values (excluding -32768), divide by 32768.0f to maintain symmetry around 0.
+      return value < 0 ? value / 32768.0f : value / 32767.0f;
     }
   }
 }

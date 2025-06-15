@@ -98,21 +98,21 @@ Implement the following Love2D equivalent callback functions in `Night.Framework
 
 **Goal:** Handle raw inputs from any connected joystick device.
 
-- [ ] **P3.T1: Implement `JoystickAxis`, `JoystickPressed`, `JoystickReleased`, `JoystickHat` Event Handling.**
-  - [ ] In `ProcessSdlEvents` (or equivalent):
-    - [ ] Handle `SDL.EventType.JoystickAxisMotion`:
-      - [ ] Get `Joystick` instance using `e.JAxis.Which`.
-      - [ ] Normalize axis value from `e.JAxis.Value` (-32768 to 32767) to -1.0f to 1.0f (create a private static helper `NormalizeSdlAxisValue` in `Framework.cs`).
-      - [ ] Call `game.JoystickAxis(joystick, (int)e.JAxis.Axis, normalizedValue)`.
-    - [ ] Handle `SDL.EventType.JoystickButtonDown`:
-      - [ ] Get `Joystick` instance. Call `game.JoystickPressed(joystick, (int)e.JButton.Button)`.
-    - [ ] Handle `SDL.EventType.JoystickButtonUp`:
-      - [ ] Get `Joystick` instance. Call `game.JoystickReleased(joystick, (int)e.JButton.Button)`.
-    - [ ] Handle `SDL.EventType.JoystickHatMotion`:
-      - [ ] Get `Joystick` instance. Cast `e.JHat.Value` (which is `SDL.Hat` enum) to `Night.JoystickHat`.
-      - [ ] Call `game.JoystickHat(joystick, (int)e.JHat.Hat, (Night.JoystickHat)e.JHat.Value)`.
-- [ ] **P3.V1: Verification (SampleGame):**
-  - [ ] Expand `SampleGame` to override and log all raw joystick callbacks.
+- [x] **P3.T1: Implement `JoystickAxis`, `JoystickPressed`, `JoystickReleased`, `JoystickHat` Event Handling.**
+  - [x] In `ProcessSdlEvents` (or equivalent):
+    - [x] Handle `SDL.EventType.JoystickAxisMotion`:
+      - [x] Get `Joystick` instance using `e.JAxis.Which`.
+      - [x] Normalize axis value from `e.JAxis.Value` (-32768 to 32767) to -1.0f to 1.0f (create a private static helper `NormalizeSdlAxisValue` in `Framework.Events.cs`).
+      - [x] Call `game.JoystickAxis(joystick, (int)e.JAxis.Axis, normalizedValue)`.
+    - [x] Handle `SDL.EventType.JoystickButtonDown`:
+      - [x] Get `Joystick` instance. Call `game.JoystickPressed(joystick, (int)e.JButton.Button)`.
+    - [x] Handle `SDL.EventType.JoystickButtonUp`:
+      - [x] Get `Joystick` instance. Call `game.JoystickReleased(joystick, (int)e.JButton.Button)`.
+    - [x] Handle `SDL.EventType.JoystickHatMotion`:
+      - [x] Get `Joystick` instance. Cast `e.JHat.Value` (which is `SDL.Hat` enum) to `Night.JoystickHat`.
+      - [x] Call `game.JoystickHat(joystick, (int)e.JHat.Hat, (Night.JoystickHat)e.JHat.Value)`.
+- [x] **P3.V1: Verification (SampleGame):**
+  - [x] Expand `SampleGame` to override and log all raw joystick callbacks.
   - [ ] Test with a controller: move axes, press buttons, use D-Pad/hats.
   - [ ] Verify correct joystick instance, axis/button/hat indices, and values are reported.
 

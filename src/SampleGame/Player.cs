@@ -118,9 +118,12 @@ namespace SampleGame
     /// </summary>
     /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
     /// <param name="platforms">A list of <see cref="Night.Rectangle"/> objects representing solid platforms.</param>
-    public void Update(double deltaTime, List<Night.Rectangle> platforms)
+    /// <param name="joystickAxisValue">The current value of the joystick's horizontal axis (e.g., left stick X).</param>
+    /// <param name="hatDirection">The current direction of the joystick's hat (e.g., D-pad).</param>
+    public void Update(double deltaTime, List<Night.Rectangle> platforms, float joystickAxisValue, Night.JoystickHat hatDirection)
     {
       float dt = (float)deltaTime;
+      const float joystickDeadzone = 0.2f;
 
       // Logger.Debug(
       //     $"Player.Update START: dt={dt.ToString("F5", CultureInfo.InvariantCulture)}, " +
@@ -130,16 +133,38 @@ namespace SampleGame
 
       // 1. Handle Input & Apply Jump Impulse
       this.velocityX = 0;
-      if (Keyboard.IsDown(KeyCode.Left) || Keyboard.IsDown(KeyCode.A))
+
+      // Joystick Hat (D-Pad) input - highest priority for horizontal movement
+      if ((hatDirection & Night.JoystickHat.Left) != 0)
       {
         this.velocityX = -HorizontalSpeed;
       }
-
-      if (Keyboard.IsDown(KeyCode.Right) || Keyboard.IsDown(KeyCode.D))
+      else if ((hatDirection & Night.JoystickHat.Right) != 0)
       {
         this.velocityX = HorizontalSpeed;
       }
+      // Joystick Axis input - next priority if D-Pad is not active
+      else if (Math.Abs(joystickAxisValue) > joystickDeadzone)
+      {
+        this.velocityX = joystickAxisValue * HorizontalSpeed;
+      }
+      // Keyboard input - lowest priority if no joystick input for horizontal movement
+      else
+      {
+        if (Keyboard.IsDown(KeyCode.Left) || Keyboard.IsDown(KeyCode.A))
+        {
+          this.velocityX = -HorizontalSpeed;
+        }
 
+        if (Keyboard.IsDown(KeyCode.Right) || Keyboard.IsDown(KeyCode.D))
+        {
+          // If left was also pressed, this will override. If only right, it sets.
+          // If both, right takes precedence here due to order.
+          this.velocityX = HorizontalSpeed;
+        }
+      }
+
+      // Jump input (Keyboard only for now, can be expanded)
       bool tryingToJump = Keyboard.IsDown(KeyCode.Space);
       if (tryingToJump && this.isGrounded)
       {

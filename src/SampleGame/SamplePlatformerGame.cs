@@ -50,6 +50,11 @@ public class SamplePlatformerGame : Night.Game
   private Night.Rectangle goalPlatform;
   private bool goalReachedMessageShown = false; // To ensure message prints only once
 
+  // Joystick input state
+  private float _joystickAxis0Value = 0.0f;
+  private Night.JoystickHat _joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+  private uint? _inputProvidingJoystickId = null; // Store the ID of the joystick providing input
+
   /// <summary>
   /// Initializes a new instance of the <see cref="SamplePlatformerGame"/> class.
   /// </summary>
@@ -108,7 +113,29 @@ public class SamplePlatformerGame : Night.Game
   public override void Update(double deltaTime)
   {
     // Logger.Debug($"SamplePlatformerGame.Update: deltaTime={deltaTime:F5}");
-    this.player.Update(deltaTime, this.platforms);
+
+    // Check if the input-providing joystick is still connected
+    float currentAxisValue = 0.0f;
+    Night.JoystickHat currentHatDirection = Night.JoystickHat.Centered; // Fully qualified name
+
+    if (this._inputProvidingJoystickId.HasValue)
+    {
+      Joystick? inputJoystick = Night.Joysticks.GetJoystickByInstanceId(this._inputProvidingJoystickId.Value);
+      if (inputJoystick != null && inputJoystick.IsConnected())
+      {
+        currentAxisValue = this._joystickAxis0Value;
+        currentHatDirection = this._joystickHat0Direction;
+      }
+      else
+      {
+        // Joystick disconnected or no longer valid, reset stored values and ID
+        this._joystickAxis0Value = 0.0f;
+        this._joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+        this._inputProvidingJoystickId = null;
+      }
+    }
+
+    this.player.Update(deltaTime, this.platforms, currentAxisValue, currentHatDirection);
 
     // Check if player reached the goal platform
     // Adjust playerBounds slightly for the goal check to ensure "touching" counts,
@@ -308,12 +335,73 @@ public class SamplePlatformerGame : Night.Game
   {
     // Note: joystick.IsConnected() will likely be false here as Joysticks.RemoveJoystick sets it.
     Console.WriteLine($"SampleGame: Joystick Removed! ID: {joystick.GetId()}, Name: '{joystick.GetName()}', WasConnected: {joystick.IsConnected()}");
+    if (this._inputProvidingJoystickId.HasValue && this._inputProvidingJoystickId.Value == joystick.GetId())
+    {
+      // The joystick that was providing input has been removed, reset stored values.
+      this._joystickAxis0Value = 0.0f;
+      this._joystickHat0Direction = Night.JoystickHat.Centered; // Fully qualified name
+      this._inputProvidingJoystickId = null;
+      Console.WriteLine($"SampleGame: Input-providing joystick (ID: {joystick.GetId()}) was removed. Resetting its input state.");
+    }
+
     Console.WriteLine($"SampleGame: Total Joysticks after removal: {Night.Joysticks.GetJoystickCount()}");
     var joysticks = Night.Joysticks.GetJoysticks();
     Console.WriteLine($"SampleGame: Night.Joysticks.GetJoysticks().Count after removal: {joysticks.Count}");
     foreach (var j in joysticks)
     {
       Console.WriteLine($"  - Remaining Joystick ID: {j.GetId()}, Name: '{j.GetName()}', Connected: {j.IsConnected()}");
+    }
+  }
+
+  /// <summary>
+  /// Called when a joystick axis moves.
+  /// </summary>
+  /// <param name="joystick">The joystick whose axis moved.</param>
+  /// <param name="axis">The index of the axis.</param>
+  /// <param name="value">The new value of the axis (-1.0 to 1.0).</param>
+  public override void JoystickAxis(Joystick joystick, int axis, float value)
+  {
+    Console.WriteLine($"SampleGame: Joystick Axis! ID: {joystick.GetId()}, Axis: {axis}, Value: {value:F4}");
+    if (axis == 0) // Typically left stick X-axis
+    {
+      this._joystickAxis0Value = value;
+      this._inputProvidingJoystickId = (uint)joystick.GetId(); // Record which joystick is providing this input, cast to uint
+    }
+  }
+
+  /// <summary>
+  /// Called when a joystick button is pressed.
+  /// </summary>
+  /// <param name="joystick">The joystick whose button was pressed.</param>
+  /// <param name="button">The index of the button.</param>
+  public override void JoystickPressed(Joystick joystick, int button)
+  {
+    Console.WriteLine($"SampleGame: Joystick Pressed! ID: {joystick.GetId()}, Button: {button}");
+  }
+
+  /// <summary>
+  /// Called when a joystick button is released.
+  /// </summary>
+  /// <param name="joystick">The joystick whose button was released.</param>
+  /// <param name="button">The index of the button.</param>
+  public override void JoystickReleased(Joystick joystick, int button)
+  {
+    Console.WriteLine($"SampleGame: Joystick Released! ID: {joystick.GetId()}, Button: {button}");
+  }
+
+  /// <summary>
+  /// Called when a joystick hat direction changes.
+  /// </summary>
+  /// <param name="joystick">The joystick whose hat changed.</param>
+  /// <param name="hat">The index of the hat.</param>
+  /// <param name="direction">The new direction of the hat.</param>
+  public override void JoystickHat(Joystick joystick, int hat, JoystickHat direction)
+  {
+    Console.WriteLine($"SampleGame: Joystick Hat! ID: {joystick.GetId()}, Hat: {hat}, Direction: {direction}");
+    if (hat == 0) // Typically the first D-Pad/Hat
+    {
+      this._joystickHat0Direction = direction;
+      this._inputProvidingJoystickId = (uint)joystick.GetId(); // Record which joystick is providing this input, cast to uint
     }
   }
 

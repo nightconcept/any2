@@ -85,7 +85,8 @@ public class Platformer : IGame
   /// <param name="deltaTime">The time elapsed since the last frame, in seconds.</param>
   public void Update(double deltaTime)
   {
-    this.player.Update(deltaTime, this.platforms);
+    // Pass default joystick values as this sample isn't the primary focus for joystick control.
+    this.player.Update(deltaTime, this.platforms, 0.0f, Night.JoystickHat.Centered);
 
     Night.Rectangle playerBoundsForGoalCheck = new Night.Rectangle((int)this.player.X, (int)this.player.Y, this.player.Width, this.player.Height + 1);
     if (CheckAABBCollision(playerBoundsForGoalCheck, this.goalPlatform) && !this.goalReachedMessageShown)
