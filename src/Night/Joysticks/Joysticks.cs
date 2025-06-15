@@ -74,10 +74,11 @@ namespace Night
       {
         Joystick newJoystick = new Joystick(instanceId);
         ActiveJoysticks[instanceId] = newJoystick;
+
         // Night.Log.LogManager.GetLogger("Joysticks").Info($"Joystick added: ID {newJoystick.GetId()}, Name '{newJoystick.GetName()}', InstanceID {instanceId}");
         return newJoystick;
       }
-      catch (InvalidOperationException ex)
+      catch (InvalidOperationException)
       {
         // Night.Log.LogManager.GetLogger("Joysticks").Error($"Failed to add joystick with instance ID {instanceId}: {ex.Message}");
         return null;
@@ -94,8 +95,9 @@ namespace Night
     {
       if (ActiveJoysticks.TryGetValue(instanceId, out Joystick? joystickInstance))
       {
-        ActiveJoysticks.Remove(instanceId);
+        _ = ActiveJoysticks.Remove(instanceId);
         joystickInstance.SetConnectedState(false); // Mark as disconnected
+
         // Night.Log.LogManager.GetLogger("Joysticks").Info($"Joystick removed: ID {joystickInstance.GetId()}, Name '{joystickInstance.GetName()}', InstanceID {instanceId}");
         return joystickInstance;
       }
@@ -113,7 +115,7 @@ namespace Night
     /// <returns>The <see cref="Joystick"/> instance if found and active, otherwise null.</returns>
     internal static Joystick? GetJoystickByInstanceId(uint instanceId)
     {
-      ActiveJoysticks.TryGetValue(instanceId, out Joystick? joystickInstance);
+      _ = ActiveJoysticks.TryGetValue(instanceId, out Joystick? joystickInstance);
       return joystickInstance;
     }
 
@@ -126,7 +128,9 @@ namespace Night
       {
         joystick.Dispose();
       }
+
       ActiveJoysticks.Clear();
+
       // Night.Log.LogManager.GetLogger("Joysticks").Info("All active joysticks cleared and disposed.");
     }
   }

@@ -152,47 +152,47 @@ namespace Night
   public enum JoystickHat : byte
   {
     /// <summary>
-    /// Hat is centered. (SDL_HAT_CENTERED)
+    /// Hat is centered. (SDL_HAT_CENTERED).
     /// </summary>
     Centered = 0x00,
 
     /// <summary>
-    /// Hat is pressed up. (SDL_HAT_UP)
+    /// Hat is pressed up. (SDL_HAT_UP).
     /// </summary>
     Up = 0x01,
 
     /// <summary>
-    /// Hat is pressed right. (SDL_HAT_RIGHT)
+    /// Hat is pressed right. (SDL_HAT_RIGHT).
     /// </summary>
     Right = 0x02,
 
     /// <summary>
-    /// Hat is pressed down. (SDL_HAT_DOWN)
+    /// Hat is pressed down. (SDL_HAT_DOWN).
     /// </summary>
     Down = 0x04,
 
     /// <summary>
-    /// Hat is pressed left. (SDL_HAT_LEFT)
+    /// Hat is pressed left. (SDL_HAT_LEFT).
     /// </summary>
     Left = 0x08,
 
     /// <summary>
-    /// Hat is pressed up and right. (SDL_HAT_RIGHTUP)
+    /// Hat is pressed up and right. (SDL_HAT_RIGHTUP).
     /// </summary>
     RightUp = Right | Up, // 0x03
 
     /// <summary>
-    /// Hat is pressed down and right. (SDL_HAT_RIGHTDOWN)
+    /// Hat is pressed down and right. (SDL_HAT_RIGHTDOWN).
     /// </summary>
     RightDown = Right | Down, // 0x06
 
     /// <summary>
-    /// Hat is pressed up and left. (SDL_HAT_LEFTUP)
+    /// Hat is pressed up and left. (SDL_HAT_LEFTUP).
     /// </summary>
     LeftUp = Left | Up, // 0x09
 
     /// <summary>
-    /// Hat is pressed down and left. (SDL_HAT_LEFTDOWN)
+    /// Hat is pressed down and left. (SDL_HAT_LEFTDOWN).
     /// </summary>
     LeftDown = Left | Down, // 0x0C
   }
@@ -291,11 +291,11 @@ namespace Night
   /// </summary>
   public class Joystick : IDisposable
   {
-    private readonly uint _instanceId;
-    private readonly IntPtr _joystickDevicePtr;
-    private IntPtr _gamepadDevicePtr = IntPtr.Zero;
-    private bool _disposed = false;
-    private bool _isConnected = true; // Assume connected on creation, updated by events
+    private readonly uint instanceId;
+    private readonly IntPtr joystickDevicePtr;
+    private IntPtr gamepadDevicePtr = IntPtr.Zero;
+    private bool disposed = false;
+    private bool isConnected = true; // Assume connected on creation, updated by events
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Joystick"/> class.
@@ -305,17 +305,17 @@ namespace Night
     /// <exception cref="InvalidOperationException">Thrown if the joystick cannot be opened.</exception>
     internal Joystick(uint instanceId)
     {
-      this._instanceId = instanceId;
-      this._joystickDevicePtr = SDL.OpenJoystick(instanceId);
-      if (this._joystickDevicePtr == IntPtr.Zero)
+      this.instanceId = instanceId;
+      this.joystickDevicePtr = SDL.OpenJoystick(instanceId);
+      if (this.joystickDevicePtr == IntPtr.Zero)
       {
         throw new InvalidOperationException($"Failed to open joystick with ID {instanceId}: {SDL.GetError()}");
       }
 
       if (SDL.IsGamepad(instanceId))
       {
-        this._gamepadDevicePtr = SDL.OpenGamepad(instanceId);
-        if (this._gamepadDevicePtr == IntPtr.Zero)
+        this.gamepadDevicePtr = SDL.OpenGamepad(instanceId);
+        if (this.gamepadDevicePtr == IntPtr.Zero)
         {
           // Log warning, but don't fail construction. It's still a valid joystick.
           // Night.Log.LogManager.GetLogger("Joystick").Warn($"Joystick {instanceId} is a gamepad, but failed to open as gamepad: {SDL.GetError()}");
@@ -334,7 +334,7 @@ namespace Night
     /// <summary>
     /// Gets the SDL instance ID of this joystick.
     /// </summary>
-    internal uint InstanceId => this._instanceId;
+    internal uint InstanceId => this.instanceId;
 
     /// <summary>
     /// Gets the direction of each axis.
@@ -342,12 +342,12 @@ namespace Night
     /// <returns>An array of floats, one for each axis direction, or an empty array if disposed or an error occurs.</returns>
     public float[] GetAxes()
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return Array.Empty<float>();
       }
 
-      int axisCount = SDL.GetNumJoystickAxes(this._joystickDevicePtr);
+      int axisCount = SDL.GetNumJoystickAxes(this.joystickDevicePtr);
       if (axisCount < 0)
       {
         return Array.Empty<float>();
@@ -369,12 +369,12 @@ namespace Night
     /// <returns>The direction of the specified axis (-1.0 to 1.0), or 0.0f if disposed.</returns>
     public float GetAxis(int axisIndex)
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return 0.0f;
       }
 
-      short rawValue = SDL.GetJoystickAxis(this._joystickDevicePtr, axisIndex);
+      short rawValue = SDL.GetJoystickAxis(this.joystickDevicePtr, axisIndex);
       return NormalizeAxisValue(rawValue);
     }
 
@@ -384,12 +384,12 @@ namespace Night
     /// <returns>The number of axes, or 0 if disposed or an error occurs.</returns>
     public int GetAxisCount()
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return 0;
       }
 
-      int count = SDL.GetNumJoystickAxes(this._joystickDevicePtr);
+      int count = SDL.GetNumJoystickAxes(this.joystickDevicePtr);
       return count < 0 ? 0 : count;
     }
 
@@ -399,12 +399,12 @@ namespace Night
     /// <returns>The number of buttons, or 0 if disposed or an error occurs.</returns>
     public int GetButtonCount()
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return 0;
       }
 
-      int count = SDL.GetNumJoystickButtons(this._joystickDevicePtr);
+      int count = SDL.GetNumJoystickButtons(this.joystickDevicePtr);
       return count < 0 ? 0 : count;
     }
 
@@ -414,12 +414,12 @@ namespace Night
     /// <returns>The device information.</returns>
     public DeviceInfo GetDeviceInfo()
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return new DeviceInfo { Guid = string.Empty };
       }
 
-      SDL.GUID sdlGuid = SDL.GetJoystickGUIDForID(this._instanceId);
+      SDL.GUID sdlGuid = SDL.GetJoystickGUIDForID(this.instanceId);
       SDL.GetJoystickGUIDInfo(sdlGuid, out short vendor, out short product, out short version, out _);
       byte[] guidBuffer = new byte[37]; // SDL_GUID_STRING_LENGTH is 36 + null terminator
       SDL.GUIDToString(sdlGuid, ref guidBuffer, guidBuffer.Length);
@@ -440,12 +440,12 @@ namespace Night
     /// <returns>The joystick's GUID as a string, or an empty string if disposed.</returns>
     public string GetGuid()
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return string.Empty;
       }
 
-      SDL.GUID sdlGuid = SDL.GetJoystickGUIDForID(this._instanceId);
+      SDL.GUID sdlGuid = SDL.GetJoystickGUIDForID(this.instanceId);
       byte[] guidBuffer = new byte[37]; // SDL_GUID_STRING_LENGTH is 36 + null terminator
       SDL.GUIDToString(sdlGuid, ref guidBuffer, guidBuffer.Length);
       return Encoding.UTF8.GetString(guidBuffer).Split('\0')[0];
@@ -458,13 +458,13 @@ namespace Night
     /// <returns>The direction of the gamepad axis (-1.0 to 1.0), or 0.0f if not a gamepad or disposed.</returns>
     public float GetGamepadAxis(GamepadAxis axis)
     {
-      if (this._disposed || this._gamepadDevicePtr == IntPtr.Zero)
+      if (this.disposed || this.gamepadDevicePtr == IntPtr.Zero)
       {
         return 0.0f;
       }
 
       SDL.GamepadAxis sdlAxis = MapNightGamepadAxisToSdl(axis);
-      short rawValue = SDL.GetGamepadAxis(this._gamepadDevicePtr, sdlAxis);
+      short rawValue = SDL.GetGamepadAxis(this.gamepadDevicePtr, sdlAxis);
       return NormalizeAxisValue(rawValue);
     }
 
@@ -474,7 +474,7 @@ namespace Night
     /// </summary>
     /// <param name="axis">The virtual gamepad axis to check.</param>
     /// <returns>A GamepadMappingResult indicating the physical input. Currently returns IsValid = false.</returns>
-    public GamepadMappingResult GetGamepadMapping(GamepadAxis axis)
+    public static GamepadMappingResult GetGamepadMapping(GamepadAxis axis)
     {
       // SDL_GetGamepadBindings might be useful here but is complex to parse.
       // For now, returning not valid.
@@ -487,7 +487,7 @@ namespace Night
     /// </summary>
     /// <param name="button">The virtual gamepad button to check.</param>
     /// <returns>A GamepadMappingResult indicating the physical input. Currently returns IsValid = false.</returns>
-    public GamepadMappingResult GetGamepadMapping(GamepadButton button)
+    public static GamepadMappingResult GetGamepadMapping(GamepadButton button)
     {
       // SDL_GetGamepadBindings might be useful here but is complex to parse.
       // For now, returning not valid.
@@ -500,7 +500,7 @@ namespace Night
     /// <returns>The gamepad mapping string, or null if not a gamepad or disposed.</returns>
     public string? GetGamepadMappingString()
     {
-      if (this._disposed || this._gamepadDevicePtr == IntPtr.Zero)
+      if (this.disposed || this.gamepadDevicePtr == IntPtr.Zero)
       {
         return null;
       }
@@ -516,14 +516,14 @@ namespace Night
     /// <returns>The direction of the specified hat, or JoystickHat.Centered if disposed or an error occurs.</returns>
     public JoystickHat GetHat(int hatIndex)
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return JoystickHat.Centered;
       }
 
       // SDL.GetJoystickHat returns an enum like SDL.JoystickHat or SDL.Hat
       // We need to cast it to byte to match our enum definition based on SDL_HAT_* values
-      byte sdlHatValue = (byte)SDL.GetJoystickHat(this._joystickDevicePtr, hatIndex);
+      byte sdlHatValue = (byte)SDL.GetJoystickHat(this.joystickDevicePtr, hatIndex);
       return (JoystickHat)sdlHatValue;
     }
 
@@ -533,12 +533,12 @@ namespace Night
     /// <returns>The number of hats, or 0 if disposed or an error occurs.</returns>
     public int GetHatCount()
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return 0;
       }
 
-      int count = SDL.GetNumJoystickHats(this._joystickDevicePtr);
+      int count = SDL.GetNumJoystickHats(this.joystickDevicePtr);
       return count < 0 ? 0 : count;
     }
 
@@ -548,7 +548,7 @@ namespace Night
     /// <returns>The joystick's ID (matches SDL_JoystickID).</returns>
     public int GetId()
     {
-      return (int)this._instanceId;
+      return (int)this.instanceId;
     }
 
     /// <summary>
@@ -557,12 +557,12 @@ namespace Night
     /// <returns>The joystick's name, or an empty string if disposed.</returns>
     public string GetName()
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return string.Empty;
       }
 
-      return SDL.GetJoystickName(this._joystickDevicePtr) ?? string.Empty;
+      return SDL.GetJoystickName(this.joystickDevicePtr) ?? string.Empty;
     }
 
     /// <summary>
@@ -571,7 +571,7 @@ namespace Night
     /// <returns>The current vibration strengths (0-1). Returns (0,0) if not supported or disposed.</returns>
     public VibrationStrength GetVibration()
     {
-      if (this._disposed || !this.IsVibrationSupported())
+      if (this.disposed || !this.IsVibrationSupported())
       {
         return new VibrationStrength { Left = 0f, Right = 0f };
       }
@@ -593,7 +593,7 @@ namespace Night
     /// <returns>True if the joystick is considered connected, false otherwise.</returns>
     public bool IsConnected()
     {
-      return !this._disposed && this._isConnected;
+      return !this.disposed && this.isConnected;
     }
 
     /// <summary>
@@ -602,7 +602,7 @@ namespace Night
     /// <param name="connected">True if connected, false otherwise.</param>
     internal void SetConnectedState(bool connected)
     {
-      this._isConnected = connected;
+      this.isConnected = connected;
     }
 
     /// <summary>
@@ -612,12 +612,12 @@ namespace Night
     /// <returns>True if the button is pressed, false otherwise or if disposed.</returns>
     public bool IsDown(int buttonIndex)
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return false;
       }
 
-      return SDL.GetJoystickButton(this._joystickDevicePtr, buttonIndex);
+      return SDL.GetJoystickButton(this.joystickDevicePtr, buttonIndex);
     }
 
     /// <summary>
@@ -626,7 +626,7 @@ namespace Night
     /// <returns>True if it's a gamepad and successfully opened as one, false otherwise or if disposed.</returns>
     public bool IsGamepad()
     {
-      return !this._disposed && this._gamepadDevicePtr != IntPtr.Zero;
+      return !this.disposed && this.gamepadDevicePtr != IntPtr.Zero;
     }
 
     /// <summary>
@@ -636,13 +636,13 @@ namespace Night
     /// <returns>True if the button is pressed, false otherwise, if not a gamepad, or if disposed.</returns>
     public bool IsGamepadDown(GamepadButton button)
     {
-      if (this._disposed || this._gamepadDevicePtr == IntPtr.Zero)
+      if (this.disposed || this.gamepadDevicePtr == IntPtr.Zero)
       {
         return false;
       }
 
       SDL.GamepadButton sdlButton = MapNightGamepadButtonToSdl(button);
-      return SDL.GetGamepadButton(this._gamepadDevicePtr, sdlButton);
+      return SDL.GetGamepadButton(this.gamepadDevicePtr, sdlButton);
     }
 
     /// <summary>
@@ -651,7 +651,7 @@ namespace Night
     /// <returns>True if vibration is supported, false otherwise or if disposed.</returns>
     public bool IsVibrationSupported()
     {
-      if (this._disposed)
+      if (this.disposed)
       {
         return false;
       }
@@ -668,14 +668,14 @@ namespace Night
     /// <param name="durationSeconds">Duration of the rumble in seconds. LÖVE's API implies continuous until changed; use a long duration or 0 for infinite if SDL supports.</param>
     public void SetVibration(float left, float right, float durationSeconds = 1.0f)
     {
-      if (this._disposed || !this.IsVibrationSupported())
+      if (this.disposed || !this.IsVibrationSupported())
       {
         return;
       }
 
       ushort leftStrength = (ushort)(Math.Clamp(left, 0f, 1f) * 65535);
       ushort rightStrength = (ushort)(Math.Clamp(right, 0f, 1f) * 65535);
-      uint durationMs = (uint)(Math.Max(0, durationSeconds) * 1000);
+      _ = (uint)(Math.Max(0, durationSeconds) * 1000);
 
       // SDL_RumbleJoystick: 0 duration means play for 0ms (i.e. stop).
       // To make it "continuous until changed" like LÖVE, we might need to manage this.
@@ -687,12 +687,12 @@ namespace Night
       // So, if left/right are > 0, we rumble for a "long time", if 0,0 we stop.
       if (leftStrength == 0 && rightStrength == 0)
       {
-        _ = SDL.RumbleJoystick(this._joystickDevicePtr, 0, 0, 0); // Stop rumble
+        _ = SDL.RumbleJoystick(this.joystickDevicePtr, 0, 0, 0); // Stop rumble
       }
       else
       {
         // Use a long duration to simulate continuous rumble until next SetVibration call
-        _ = SDL.RumbleJoystick(this._joystickDevicePtr, (short)leftStrength, (short)rightStrength, 30000); // 30 seconds, effectively "on"
+        _ = SDL.RumbleJoystick(this.joystickDevicePtr, (short)leftStrength, (short)rightStrength, 30000); // 30 seconds, effectively "on"
       }
     }
 
@@ -711,7 +711,7 @@ namespace Night
     /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
     protected virtual void Dispose(bool disposing)
     {
-      if (!this._disposed)
+      if (!this.disposed)
       {
         if (disposing)
         {
@@ -719,21 +719,22 @@ namespace Night
         }
 
         // Free unmanaged resources (unmanaged objects) and override a finalizer below.
-        if (this._gamepadDevicePtr != IntPtr.Zero)
+        if (this.gamepadDevicePtr != IntPtr.Zero)
         {
-          SDL.CloseGamepad(this._gamepadDevicePtr);
-          this._gamepadDevicePtr = IntPtr.Zero;
+          SDL.CloseGamepad(this.gamepadDevicePtr);
+          this.gamepadDevicePtr = IntPtr.Zero;
         }
 
-        if (this._joystickDevicePtr != IntPtr.Zero)
+        if (this.joystickDevicePtr != IntPtr.Zero)
         {
-          SDL.CloseJoystick(this._joystickDevicePtr);
+          SDL.CloseJoystick(this.joystickDevicePtr);
+
           // _joystickDevicePtr is readonly, so cannot set to IntPtr.Zero here.
           // This is fine as _disposed flag handles access.
         }
 
-        this._disposed = true;
-        this._isConnected = false;
+        this.disposed = true;
+        this.isConnected = false;
       }
     }
 

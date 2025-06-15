@@ -21,6 +21,7 @@
 // </copyright>
 
 using System;
+
 // using Night.Joysticks; // This was incorrect as Joysticks is a static class, types are in Night namespace.
 using SDL3;
 
@@ -83,6 +84,7 @@ namespace Night
             HandleGameException(exUser, game);
           }
         }
+
         // Joystick and Gamepad event handling will be added here in later phases
       }
     }

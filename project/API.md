@@ -37,6 +37,27 @@
 
 - DrawMode
 
+## Joysticks
+
+### Types (Joysticks)
+
+- DeviceInfo
+- GamepadMappingResult
+- Joystick
+- VibrationStrength
+
+### Functions (Joysticks)
+
+- GetJoystickCount() - love.joysticks.getJoystickCount
+- GetJoysticks() - love.joysticks.getJoysticks
+
+### Enums (Joysticks)
+
+- GamepadAxis
+- GamepadButton
+- JoystickHat
+- JoystickInputType
+
 ## Keyboard
 
 ### Functions (Keyboard)
