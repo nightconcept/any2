@@ -11,13 +11,13 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 - [x] Implement tests
 - [ ] Logo and icon - nightO)engine
 - [x] CI
-- [ ] Logging system
+- [x] Logging system
 
 ### Modules
 
 - [ ] `love.filesystem`: Provides an interface to the user's filesystem.
 - [ ] `love.graphics`: Drawing of shapes and images, management of screen geometry. Partial completion.
-- [ ] `love.joystick`: Provides an interface to connected joysticks.
+- [x] `love.joystick`: Provides an interface to connected joysticks.
 - [ ] `love.keyboard`: Provides an interface to the user's keyboard.
 - [ ] `love.mouse`: Provides an interface to the user's mouse.
 - [ ] `love.system`: Provides access to information about the user's system.
@@ -44,15 +44,15 @@ Most functions list the Love2D equivalent module/function/callback implementatio
 ### Callbacks - General
 
 - [x] `love.errorhandler`: The error handler, used to display error messages.
-- [ ] `love.joystickpressed`: Callback function triggered when a joystick button is pressed.
-- [ ] `love.joystickreleased`: Callback function triggered when a joystick button is released.
-- [ ] `love.gamepadaxis`: Called when a Joystick's virtual gamepad axis is moved.
-- [ ] `love.gamepadpressed`: Called when a Joystick's virtual gamepad button is pressed.
-- [ ] `love.gamepadreleased`: Called when a Joystick's virtual gamepad button is released.
-- [ ] `love.joystickadded`: Called when a Joystick is connected.
-- [ ] `love.joystickaxis`: Called when a joystick axis moves.
-- [ ] `love.joystickhat`: Called when a joystick hat direction changes.
-- [ ] `love.joystickremoved`: Called when a Joystick is disconnected.
+- [x] `love.joystickpressed`: Callback function triggered when a joystick button is pressed.
+- [x] `love.joystickreleased`: Callback function triggered when a joystick button is released.
+- [x] `love.gamepadaxis`: Called when a Joystick's virtual gamepad axis is moved.
+- [x] `love.gamepadpressed`: Called when a Joystick's virtual gamepad button is pressed.
+- [x] `love.gamepadreleased`: Called when a Joystick's virtual gamepad button is released.
+- [x] `love.joystickadded`: Called when a Joystick is connected.
+- [x] `love.joystickaxis`: Called when a joystick axis moves.
+- [x] `love.joystickhat`: Called when a joystick hat direction changes.
+- [x] `love.joystickremoved`: Called when a Joystick is disconnected.
 
 ### General
 
